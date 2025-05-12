@@ -1,0 +1,17 @@
+.width-restrictor-with-margin {
+  margin: 40px auto;
+  max-width: 600px;
+}
+
+
+.post-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 20px;
+  margin: 0 7.7% 1.25rem 7.7%;
+  padding: 12px 0 24px 0;
+  background: var(
+    --blue-theme-input-background-gradation,
+    linear-gradient(180deg, #ebedf0 0%, #f2f4f6 100%)
+  );
+}

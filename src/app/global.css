@@ -1,0 +1,39 @@
+@import "normalize.css";
+@import "@radix-ui/colors/black-alpha.css";
+@import "@radix-ui/colors/indigo.css";
+@import "@radix-ui/colors/slate.css";
+
+@media (max-width: 480px) {
+  :root {
+    font-size: 0.8em;
+  }
+}
+
+body {
+  margin: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+button {
+  border: unset;
+  cursor: pointer;
+
+  &.unset {
+    background: 0;
+  }
+}
+
+:root {
+  color: var(--slate-12);
+}
+
+*::selection {
+  background-color: var(--black-a2);
+}

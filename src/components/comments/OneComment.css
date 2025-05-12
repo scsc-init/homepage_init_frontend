@@ -1,0 +1,112 @@
+.one-comment-wrapper {
+  position: relative;
+  margin: 0 3%;
+  padding: 18px 6%;
+  border-bottom: 1px solid #0000002a;
+}
+
+.one-comment-wrapper.child {
+  padding-left: 12%;
+  background-color: #cad7ef;
+}
+
+.author-wrapper {
+  color: var(--Blue-Theme-Button-Gray-Text, #444);
+  font-family: Noto Sans KR;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 8px 0;
+}
+
+.text-wrapper {
+  color: var(--Blue-Theme-Button-Gray-Text, #444);
+  font-family: Noto Sans KR;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 8px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.date-wrapper {
+  position: absolute;
+  top: 1rem;
+  right: 5%;
+  color: var(--blue-theme-icon-main, #828282);
+  text-align: center;
+  font-family: Noto Sans KR;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.select-box {
+  /* width: 100%; */
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.select-wrapper {
+  display: flex;
+}
+
+.select-options-wrapper {
+  position: absolute;
+  top: 90%;
+  right: 5%;
+  background-color: var(--Blue-Theme-Button-Gray-Text, #d9d9d9);
+  font-family: Noto Sans KR;
+  width: 4rem;
+  height: 5rem;
+  z-index: 100;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.select-options-item {
+  /* background-color:var(--Blue-Theme-Button-Gray-Text, #444); */
+  color: var(--Blue-Theme-Button-Gray-Text, #444);
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.round-text-area {
+  /* border-radius: 1.2rem;
+  min-height: 8rem;
+  line-height: 2rem;
+  border: None;
+  text-align: center;
+  width: 80%;
+  margin: 2% auto 8% auto;
+  padding: 5%;
+  text-align: left;
+  padding: auto;
+  font-size: 1em;
+  font-family: 'Noto Sans KR';
+  color: #626262;
+  background: transparent;
+  box-shadow:
+    inset -5px -5px 10px #fffb,
+    inset 5px 5px 10px #757f8a88;
+  resize: none;
+  display: block;
+  box-sizing: border-box; */
+  width: 100%;
+  min-height: 5rem;
+}
+
+.comment-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 3%;
+  gap: 0.5rem;
+}

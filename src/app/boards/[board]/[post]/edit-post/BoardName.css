@@ -1,0 +1,14 @@
+.simji-name-wrapper {
+  margin: 0 7.7%;
+  color: var(--Blue-Theme-Main, #8aaae5);
+  font-family: Noto Sans KR;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.styled-link {
+  color: black;
+  text-decoration: none;
+}

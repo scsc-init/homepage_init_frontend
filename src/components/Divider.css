@@ -1,0 +1,6 @@
+@import "@radix-ui/colors/slate.css";
+
+.C_Divider {
+  border: 2px dashed var(--slate-5);
+  margin: 1rem 0;
+}

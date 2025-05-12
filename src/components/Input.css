@@ -1,0 +1,30 @@
+@import "@radix-ui/colors/slate.css";
+@import "@radix-ui/colors/indigo.css";
+
+.C_InputRoot {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+  gap: 0.2rem;
+}
+
+.C_InputLabel {
+  font-size: 0.8rem;
+  user-select: none;
+}
+
+.C_Input {
+  all: unset;
+
+  width: 100%;
+  padding: 0.4em 0;
+  border-bottom: 3px solid var(--slate-8);
+
+  &:focus {
+    border-bottom: 3px solid var(--indigo-8);
+  }
+
+  &::placeholder {
+    color: var(--slate-8);
+  }
+}

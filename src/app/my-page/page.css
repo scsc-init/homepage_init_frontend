@@ -1,0 +1,12 @@
+#MyPageContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#MyPage {
+  max-width: 60rem;
+  width: 100%;
+}

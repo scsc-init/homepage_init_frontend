@@ -1,0 +1,69 @@
+@import "@radix-ui/colors/slate.css";
+
+#Footer {
+  position: relative;
+  bottom: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 4rem;
+  height: 15rem;
+  background-color: var(--slate-8);
+  gap: 1.25rem;
+}
+
+@media (max-width: 1000px) {
+  #Footer {
+    flex-direction: column;
+    padding: 3rem;
+  }
+}
+
+#FooterInfoContainer {
+  width: 12.5rem;
+  min-width: 10rem;
+  height: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  & > div {
+    height: 1.25rem;
+    font-style: normal;
+    font-size: 0.9rem;
+    line-height: 1.25rem;
+    color: black;
+  }
+}
+
+.FooterLink {
+  cursor: pointer;
+}
+
+#FooterLogoList {
+  width: 10rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+@media screen and (max-width: 1000px) {
+  #FooterLogoList {
+    margin-left: auto;
+  }
+}
+
+.FooterLogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > img {
+    width: 24px;
+    height: 24px;
+  }
+}

@@ -1,0 +1,50 @@
+.gridContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto repeat(7, 1fr);
+  grid-template-rows: auto;
+  gap: 1px;
+}
+
+.row {
+  display: contents;
+}
+
+.header {
+  background-color: #f0f0f0;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.hour {
+  background-color: #f0f0f0;
+  text-align: right;
+  padding: 10px;
+}
+
+.daysContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.day {
+  width: 50px; /* Adjust width as needed */
+  text-align: center;
+  font-weight: bold;
+  margin: 0 5px; /* Adjust margin as needed */
+}
+
+.time {
+  width: 50px;
+  text-align: right;
+  padding-right: 10px;
+  font-size: 0.8rem;
+}

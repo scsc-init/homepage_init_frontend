@@ -1,0 +1,40 @@
+.submit-button-wrapper {
+  border-radius: 1.2rem;
+  min-height: 1.5rem;
+  /* line-height: 3.7rem; */
+  vertical-align: middle;
+  border: none;
+  text-align: center;
+  /* width: 15%; */
+
+  font-weight: 700;
+  font-size: 1em;
+  /* transform: translate(510%, 0); */
+  /* transform: translate(500%, -50%); */
+}
+
+.button-flex {
+  display: flex;
+  flex-direction: row-reverse; /* Change flex flow from right to left */
+  margin: 1rem 7.7%;
+}
+
+.layout {
+  max-width: 600px;
+  margin: 0 auto;
+  /* background: var(--blue-theme-background, #ebedf0); */
+  overflow: visible;
+}
+
+#BoardContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#Board {
+  max-width: 60rem;
+  width: 100%;
+}

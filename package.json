@@ -1,0 +1,40 @@
+{
+  "name": "24summer-temp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mdxeditor/editor": "^3.6.0",
+    "@radix-ui/colors": "^3.0.0",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-navigation-menu": "^1.2.0",
+    "@radix-ui/react-select": "^2.1.0",
+    "immer": "^10.1.1",
+    "marked": "^13.0.1",
+    "marked-react": "^2.0.0",
+    "next": "^14.2.28",
+    "normalize.css": "^8.0.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.52.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.4",
+    "postcss": "^8",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@9.8.0+sha512.8e4c3550fb500e808dbc30bb0ce4dd1eb614e30b1c55245f211591ec2cdf9c611cabd34e1364b42f564bd54b3945ed0f49d61d1bbf2ec9bd74b866fcdc723276"
+}

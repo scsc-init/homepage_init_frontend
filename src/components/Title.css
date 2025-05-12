@@ -1,0 +1,22 @@
+@import "@radix-ui/colors/indigo.css";
+
+.title-flex {
+  text-align: center;
+  color: var(--indigo-11);
+  font-family: "Noto Sans KR";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
+  margin-bottom: 29px;
+  padding: 0 24px 0 24px;
+  height: 25px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.width-restrictor {
+  margin: 0 auto;
+  max-width: 600px;
+}

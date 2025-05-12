@@ -1,0 +1,12 @@
+@import "@radix-ui/colors/slate.css";
+@import "@radix-ui/colors/blue.css";
+
+.C_tag {
+  background-color: var(--slate-1);
+  border: 1px solid var(--slate-7);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.1rem rgba(0, 0, 0, 0.1);
+  padding: 0.2rem;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
