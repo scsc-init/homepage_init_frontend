@@ -306,27 +306,45 @@ export default function SignupPage() {
         </>
       )}
       {stage === 3 && (
-        <>
-          <h2>학번 입력</h2>
+      <>
+        <h2>학번 입력</h2>
+        <div className="flex gap-2">
           <input
-            value={form.student_id}
-            onChange={(e) => setForm({ ...form, student_id:e.target.value })}
-            placeholder="202514276"
-            className="border p-2 w-full"
-          />
-          <button
-            onClick={() =>
-              validateStudentID(form.student_id, (valid) => {
-                if (!valid) return alert("학번 형식은 YYYYXXXXX 입니다.");
-                setStage(4);
-              })
+            value={form.student_id_year || ""}
+            onChange={(e) =>
+              setForm({ ...form, student_id_year: e.target.value })
             }
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            다음
-          </button>
-        </>
-      )}
+            placeholder="2025"
+            maxLength={4}
+            className="border p-2 w-1/2"
+          />
+          <span className="self-center">-</span>
+          <input
+            value={form.student_id_number || ""}
+            onChange={(e) =>
+              setForm({ ...form, student_id_number: e.target.value })
+            }
+            placeholder="12345"
+            maxLength={5}
+            className="border p-2 w-1/2"
+          />
+        </div>
+
+        <button
+          onClick={() => {
+            const fullID = `${form.student_id_year}${form.student_id_number}`;
+            validateStudentID(fullID, (valid) => {
+              if (!valid) return alert("학번 형식은 YYYY-XXXXX 입니다.");
+              setForm({ ...form, student_id: `${form.student_id_year}-${form.student_id_number}` });
+              setStage(4);
+            });
+          }}
+          className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+        >
+          다음
+        </button>
+      </>
+    )}
       {stage === 4 && (
         <>
           <h2>이름 입력</h2>
