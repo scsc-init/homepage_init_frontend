@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as Input from "@/components/Input";
@@ -11,8 +12,8 @@ import React, { useEffect } from "react";
 export default function LoginPage() {
   const loginStore = useLoginStore();
 
-  const emailRef = React.useRef<HTMLInputElement>(null);
-  const passwordRef = React.useRef<HTMLInputElement>(null);
+  const emailRef = React.useRef(null);
+  const passwordRef = React.useRef(null);
 
   useEffect(() => {
     if (loginStore.session_token && loginStore.login_token) {
@@ -21,48 +22,55 @@ export default function LoginPage() {
   }, []);
 
   const onLogin = async () => {
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
 
     if (!email || !password) {
       alert("이메일과 비밀번호를 모두 입력해주세요.");
       return;
     }
-
-    await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/auth/login", {
+    console.log("호출확인");
+    const res = await fetch("http://localhost:8080/api/user/login", {
       method: "POST",
-      mode: "cors",
+      credentials: "include", // ✅ 세션 쿠키 저장
       headers: {
         "Content-Type": "application/json",
+        "x-api-secret": "some-secret-code", // ✅ 반드시 필요
       },
-      body: JSON.stringify({ email, password }),
-    }).then(async (res) => {
-      const data = await res.json();
-      console.log(data);
-      console.log(res);
-      if (res.status === 200) {
-        loginStore.setSessionToken(data.session_token);
-        loginStore.setLoginToken(data.login_token);
-        loginStore.setId(data.id);
+      body: JSON.stringify({
+        frontend_secret: "some-secret-code",
+        email,
+      }),
+    });
+    console.log(res.status);
+    if (res.status === 204) {
+      // 로그인 성공 → 사용자 정보 가져오기
+      alert("로그인 성공");
+      const profileRes = await fetch("http://localhost:8080/api/user/profile", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "x-api-secret": "some-secret-code",
+        },
+      });
 
-        await fetch(
-          process.env.NEXT_PUBLIC_SERVER_URL + `/auth/user-info/${data.id}`,
-          {
-            method: "GET",
-          }
-        ).then(async (res) => {
-          const data = await res.json();
-          if (res.status === 200) {
-            loginStore.setName(data.name);
-          }
-        });
-
+      if (profileRes.status === 200) {
+        const profile = await profileRes.json();
+        loginStore.setName(profile.name);
+        loginStore.setId(profile.id);
         goToHome();
       } else {
-        alert(`로그인에 실패했습니다. ${data.detail}`);
+        alert("로그인 후 사용자 정보를 불러오지 못했습니다.");
       }
-    });
+    } else if (res.status === 404) {
+      alert("존재하지 않는 이메일입니다.");
+    } else if (res.status === 401) {
+      alert("API 인증에 실패했습니다.");
+    } else {
+      alert(`로그인 실패 (${res.status})`);
+    }
   };
+
 
   return (
     <div id="LoginContainer">
