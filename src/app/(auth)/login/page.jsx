@@ -1,106 +1,99 @@
-
 "use client";
 
-import * as Input from "@/components/Input";
 import * as Button from "@/components/Button";
 import { useLoginStore } from "@/state/LoginState";
 import { goToHome, goToSignup } from "@/util/navigation";
-import "./page.css";
 import Divider from "@/components/Divider";
 import React, { useEffect } from "react";
+import "./page.css";
 
 export default function LoginPage() {
   const loginStore = useLoginStore();
-
-  const emailRef = React.useRef(null);
-  const passwordRef = React.useRef(null);
 
   useEffect(() => {
     if (loginStore.session_token && loginStore.login_token) {
       goToHome();
     }
-  }, []);
 
-  const onLogin = async () => {
-    const email = emailRef.current.value;
-    const password = passwordRef.current.value;
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
 
-    if (!email || !password) {
-      alert("이메일과 비밀번호를 모두 입력해주세요.");
-      return;
-    }
-    console.log("호출확인");
-    const res = await fetch("http://localhost:8080/api/user/login", {
-      method: "POST",
-      credentials: "include", // ✅ 세션 쿠키 저장
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-secret": "some-secret-code", // ✅ 반드시 필요
-      },
-      body: JSON.stringify({
-        frontend_secret: "some-secret-code",
-        email,
-      }),
-    });
-    console.log(res.status);
-    if (res.status === 204) {
-      // 로그인 성공 → 사용자 정보 가져오기
-      alert("로그인 성공");
-      const profileRes = await fetch("http://localhost:8080/api/user/profile", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "x-api-secret": "some-secret-code",
-        },
-      });
+    window.handleCredentialResponse = async (response) => {
+      const { credential } = response;
+      try {
+        const payload = JSON.parse(
+          decodeURIComponent(
+            escape(window.atob(credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+          )
+        );
+        const { email } = payload;
 
-      if (profileRes.status === 200) {
-        const profile = await profileRes.json();
-        loginStore.setName(profile.name);
-        loginStore.setId(profile.id);
-        goToHome();
-      } else {
-        alert("로그인 후 사용자 정보를 불러오지 못했습니다.");
+        if (!email) {
+          alert("Google 계정에서 이메일을 가져올 수 없습니다.");
+          return;
+        }
+
+        const res = await fetch("http://localhost:8080/api/user/login", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-secret": "some-secret-code",
+          },
+          body: JSON.stringify({
+            frontend_secret: "some-secret-code",
+            email,
+          }),
+        });
+
+        if (res.status === 204) {
+          const profileRes = await fetch("http://localhost:8080/api/user/profile", {
+            method: "GET",
+            credentials: "include",
+            headers: { "x-api-secret": "some-secret-code" },
+          });
+          const profile = await profileRes.json();
+          loginStore.setName(profile.name);
+          loginStore.setId(profile.id);
+          goToHome();
+        } else if (res.status === 404) {
+          alert("가입되지 않은 계정입니다. 회원가입을 진행해주세요.");
+        } else {
+          alert("로그인 실패 (코드: " + res.status + ")");
+        }
+      } catch (err) {
+        console.error("Google 로그인 오류:", err);
+        alert("Google 인증 중 오류 발생");
       }
-    } else if (res.status === 404) {
-      alert("존재하지 않는 이메일입니다.");
-    } else if (res.status === 401) {
-      alert("API 인증에 실패했습니다.");
-    } else {
-      alert(`로그인 실패 (${res.status})`);
-    }
-  };
-
+    };
+  }, []);
 
   return (
     <div id="LoginContainer">
       <form id="LoginForm">
         <h1>로그인</h1>
         <Divider />
-        <div id="LoginInfo">
-          <Input.Root>
-            <Input.Label htmlFor="Email">스누메일</Input.Label>
-            <Input.Input
-              id="Email"
-              placeholder="jonggangjoajoa@snu.ac.kr"
-              ref={emailRef}
-            />
-          </Input.Root>
-          <Input.Root>
-            <Input.Label htmlFor="Password">비밀번호</Input.Label>
-            <Input.Input
-              id="Password"
-              type="password"
-              placeholder="123456"
-              ref={passwordRef}
-            />
-          </Input.Root>
+        <div id="GoogleLoginContainer" className="mt-4">
+          <div
+            id="g_id_onload"
+            data-client_id="832461792138-f6qpb4vn8knpi57a46p9a9ph7qvs92qh.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false"
+          ></div>
+          <div
+            className="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left"
+          ></div>
         </div>
-        <Divider />
         <div id="LoginButtonsContainer">
-          <Button.Root type="button" onClick={onLogin}>
-            로그인
-          </Button.Root>
           <Button.Root type="button" onClick={() => goToSignup()}>
             회원가입
           </Button.Root>
