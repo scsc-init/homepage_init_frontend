@@ -1,6 +1,7 @@
-# 24summer-temp
+# homepage init frontend
 
-2024학년도 여름 시그 운영을 위한 프론트엔드 서비스입니다.
+2025학년도 scsc 프론트엔드 서비스입니다.
+임시 레포입니다.
 
 ## env
 
