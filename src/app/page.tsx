@@ -6,16 +6,26 @@ type Activity = {
   title: string;
   description: string;
 };
-
+// test
 export default function Home() {
   const year = new Date().getFullYear() - 1984;
   return (
     <div id="Home">
       <div id="HomeImageContainer">
-        <h3>서울대학교 컴퓨터 연구회</h3>
+        <h1>서울대학교 컴퓨터 연구회</h1>
         <div style={{ paddingBottom: "1rem" }} className="TitleContainer">
-          <h1>Seoul National University</h1>
-          <h1>Computer Study Club</h1>
+          <h3>
+            <b>S</b>eoul National University
+          </h3>
+          <h3>
+            <b>C</b>omputer
+          </h3>
+          <h3>
+            <b>S</b>tudy
+          </h3>
+          <h3>
+            <b>C</b>lub
+          </h3>
         </div>
         <div style={{ paddingBottom: "2rem" }} className="TitleContainer">
           <h4>개발자로 가는 가장 빠른 첫 걸음,</h4>
@@ -62,7 +72,7 @@ export default function Home() {
         </div>
         <div id="HomeAboutContainer">
           <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
-          
+
           <div id="HomeAboutLinkList">
             {loadAboutData().map((fqa, id) => (
               <AboutBlock key={id} title={fqa.title} url={fqa.url} />
