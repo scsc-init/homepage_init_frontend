@@ -9,7 +9,7 @@ import UserIcon from "@@/vectors/user.svg";
 import * as Nav from "@radix-ui/react-navigation-menu";
 import "@/components/FloatingCard.css";
 
-const LogoIcon = ({ ...props }: React.ComponentPropsWithRef<"svg">) => {
+const LogoIcon = ({ ...props }) => {
   return (
     <button className="unset" onClick={() => goToHome()}>
       <SCSCLogo {...props} />
@@ -17,9 +17,10 @@ const LogoIcon = ({ ...props }: React.ComponentPropsWithRef<"svg">) => {
   );
 };
 
-const HeaderMenu = React.forwardRef<HTMLDivElement>((props, ref) => {
-  return <div ref={ref} id="HeaderMenu" {...props}></div>;
-});
+const HeaderMenu = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
+  (props, ref) => {
+    return <div ref={ref} id="HeaderMenu" {...props}></div>;
+  });
 
 export function HeaderNavigation() {
   return (
@@ -27,15 +28,37 @@ export function HeaderNavigation() {
       <Nav.List id="HeaderMenuList">
         <Nav.Item className="HeaderMenuItem" key="소개">
           <Nav.Trigger>소개</Nav.Trigger>
-          <Nav.Content className="HeaderMenuContent">A</Nav.Content>
+          <Nav.Content className="HeaderMenuContent">
+            <ul>
+              <li><button className="unset">운영진 소개</button></li>
+              <li><button className="unset">개발자 소개</button></li>
+              <li><button className="unset">동아리원 소개</button></li>
+            </ul>
+          </Nav.Content>
         </Nav.Item>
         <Nav.Item className="HeaderMenuItem" key="게시판">
           <Nav.Trigger>게시판</Nav.Trigger>
-          <Nav.Content className="HeaderMenuContent">B</Nav.Content>
+          <Nav.Content className="HeaderMenuContent">
+            <ul>
+              <li><button className="unset">자유 게시판</button></li>
+              <li><button className="unset">공지사항</button></li>
+            </ul>
+          </Nav.Content>
         </Nav.Item>
         <Nav.Item className="HeaderMenuItem" key="시그">
           <Nav.Trigger>시그</Nav.Trigger>
-          <Nav.Content className="HeaderMenuContent">C</Nav.Content>
+          <Nav.Content className="HeaderMenuContent">
+            <ul>
+              <li>
+                <button className="unset" onClick={() => window.location.href = "/sig"}>
+                  시그 목록
+                </button>
+              </li>
+              <li>
+                <button className="unset">피그 목록</button>
+              </li>
+            </ul>
+          </Nav.Content>
         </Nav.Item>
       </Nav.List>
       <div id="HeaderMenuViewportContainer">

@@ -219,3 +219,31 @@
     opacity: 0;
   }
 }
+
+
+/* ---- [NEW] Header dropdown content styling ---- */
+.HeaderMenuContent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.HeaderMenuContent li {
+  margin-bottom: 0.5rem;
+}
+
+.HeaderMenuContent button {
+  background: none;
+  border: none;
+  color: var(--slate-12);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+}
+
+.HeaderMenuContent button:hover {
+  color: var(--indigo-10);
+  font-weight: 600;
+  text-shadow: 0 0 0.1rem rgba(63, 131, 248, 0.4);
+}
