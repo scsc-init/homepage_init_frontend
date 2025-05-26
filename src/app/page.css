@@ -1,4 +1,5 @@
 @import "@radix-ui/colors/indigo.css";
+@import "@radix-ui/colors/black-alpha.css";
 @import "@radix-ui/colors/slate.css";
 
 p {
@@ -23,7 +24,7 @@ p {
   width: 100%;
   height: calc(100vh - 12.5rem);
 
-  background-color: var(--indigo-10);
+  background-color: var(--black-a12);
   color: white;
 
   display: flex;
@@ -36,6 +37,8 @@ p {
   padding: 5rem;
 }
 
+
+
 .TitleContainer {
   display: flex;
   flex-direction: column;
@@ -44,6 +47,15 @@ p {
 
   & > h1 {
     margin: 0;
+  }
+  & > h1 > b {
+    font-size: 70px;
+  }
+  & > h3{
+    margin: 0px;
+  }
+  & > h3 > b {
+    font-size: 30px;
   }
   & > h4 {
     margin: 0;
