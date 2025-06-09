@@ -30,9 +30,9 @@ export function HeaderNavigation() {
           <Nav.Trigger>소개</Nav.Trigger>
           <Nav.Content className="HeaderMenuContent">
             <ul>
+              <li><button className="unset" onClick={() => window.location.href = "/intro"}>동아리 소개</button></li>
               <li><button className="unset">운영진 소개</button></li>
-              <li><button className="unset">개발자 소개</button></li>
-              <li><button className="unset">동아리원 소개</button></li>
+              <li><button className="unset">개발자 크레딧</button></li>
             </ul>
           </Nav.Content>
         </Nav.Item>

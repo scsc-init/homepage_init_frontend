@@ -14,7 +14,7 @@ function Footer() {
         <div>
           <b>서울대학교 컴퓨터 연구회</b>
         </div>
-        <div>회장 정연호 010-8916-9161</div>
+        <div>회장 한성재 010-8916-9161</div>
         <div>scsc.snu@gmail.com</div>
         {/* <Link href="/rule">
           <div className="linkText" style={{ fontWeight: 400 }}>

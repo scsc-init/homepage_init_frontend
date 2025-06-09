@@ -209,6 +209,7 @@ p {
   border-top: 2px solid var(--slate-6);
   border-bottom: 2px solid var(--slate-6);
   margin-top: 4rem;
+  word-break: keep-all;
 }
 
 .ClubroomFacilityList {
@@ -236,12 +237,6 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-#Footer{display:none;}
-.Footer{display:none;}
-html, body {
-  overflow-y: hidden;
-  height: 100%;
 }
 
 .ClubroomCard:hover {
