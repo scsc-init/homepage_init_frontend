@@ -1,14 +1,14 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import fs from 'fs';
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+import fs from "fs";
 
 // DB 경로 정의
-const DB_PATH = './db/mydb.sqlite';
+const DB_PATH = "./db/mydb.sqlite";
 
 async function init() {
   // db 폴더 없으면 생성
-  if (!fs.existsSync('./db')) {
-    fs.mkdirSync('./db');
+  if (!fs.existsSync("./db")) {
+    fs.mkdirSync("./db");
   }
 
   const db = await open({
@@ -67,10 +67,10 @@ async function init() {
     END;
   `);
 
-  console.log('SQLite 초기화 완료');
+  console.log("SQLite 초기화 완료");
   await db.close();
 }
 
 init().catch((err) => {
-  console.error('DB 초기화 중 오류:', err);
+  console.error("DB 초기화 중 오류:", err);
 });

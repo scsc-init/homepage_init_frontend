@@ -1,7 +1,5 @@
 @import "@radix-ui/colors/slate.css";
 @import "@radix-ui/colors/black-alpha.css";
-
-
 .C_FloatingCard {
   background-color: color-mix(in srgb, var(--slate-3) 80%, transparent);
   backdrop-filter: blur(0.5rem);

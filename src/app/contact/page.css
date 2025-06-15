@@ -1,0 +1,105 @@
+@import "@radix-ui/colors/indigo.css";
+@import "@radix-ui/colors/slate.css";
+
+#Home {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#HomeContent {
+  width: 100%;
+  max-width: 60rem;
+  margin: 2rem auto 10rem auto;
+}
+
+#HomeDescriptionContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 5rem;
+}
+
+.ActivityBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: calc(100% - 4rem);
+  line-height: 1.5rem;
+  border: var(--slate-8) 2px dotted;
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.FadeOnScroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+}
+
+.FadeOnScroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.HomeAboutDescription {
+  display: inline-block;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.HomeAboutDescription:hover {
+  transform: translateX(5px);
+}
+
+.ContactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ContactLink {
+  color: var(--indigo-11);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease;
+}
+.ContactLink:hover {
+  color: var(--indigo-9);
+  text-decoration: underline;
+}
+
+.ContactIconLink {
+  display: flex;
+  align-items: center;
+}
+.ContactIconLink img {
+  vertical-align: middle;
+}
+
+.JoinButton {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--indigo-9);
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.JoinButton:hover {
+  background-color: var(--indigo-10);
+}

@@ -19,7 +19,7 @@ const Editor = dynamic(() => import("./MDXEditor"), {
 });
 
 const ForwardRefEditor = React.forwardRef<MDXEditorMethods, MDXEditorProps>(
-  (props, ref) => <Editor {...props} editorRef={ref} />
+  (props, ref) => <Editor {...props} editorRef={ref} />,
 );
 
 ForwardRefEditor.displayName = "ForwardRefEditor";
@@ -67,7 +67,7 @@ export default function Page() {
             ftf: data.ftf == "FTF" ? true : false,
           },
         }),
-      }
+      },
     );
 
     if (response.status === 200) {

@@ -1,5 +1,5 @@
-import { CommentType } from './CommentType';
-import { LifecyclePhase } from './GlobalTypes';
+import { CommentType } from "./CommentType";
+import { LifecyclePhase } from "./GlobalTypes";
 
 export interface PostTypeWithComments {
   id: number;

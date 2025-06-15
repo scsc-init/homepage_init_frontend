@@ -29,7 +29,7 @@ export default function OneComment({
   const [commentContent, setCommentContent] = useState(content);
 
   const handleCommentContentChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     setCommentContent(event.target.value);
   };

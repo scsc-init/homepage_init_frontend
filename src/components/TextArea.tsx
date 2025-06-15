@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useEffect, useRef } from 'react';
-import './TextArea.css';
+import React from "react";
+import { useEffect, useRef } from "react";
+import "./TextArea.css";
 
 interface TextAreaProps {
   label?: string;
@@ -26,15 +26,15 @@ export default function TextArea({
     let handle = handleRef.current;
     let isDragging = false;
 
-    handle.addEventListener('mousedown', (e) => {
+    handle.addEventListener("mousedown", (e) => {
       isDragging = true;
     });
 
-    document.addEventListener('mouseup', (e) => {
+    document.addEventListener("mouseup", (e) => {
       isDragging = false;
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
 
       let textarea = textareaRef.current;
@@ -48,10 +48,10 @@ export default function TextArea({
   }, [handleRef.current, textareaRef.current]);
 
   return (
-    <div className={`MT-textarea-root ${className || ''}`}>
+    <div className={`MT-textarea-root ${className || ""}`}>
       {label && <label className="MT-textarea-label"> {label} </label>}
       <textarea
-        className={`MT-textarea ${resizable ? 'MT-resizable' : ''}`}
+        className={`MT-textarea ${resizable ? "MT-resizable" : ""}`}
         ref={textareaRef}
         wrap="hard"
         {...props}

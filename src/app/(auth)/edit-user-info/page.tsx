@@ -47,7 +47,7 @@ export default function LoginPage() {
           process.env.NEXT_PUBLIC_SERVER_URL + `/auth/user-info/${data.id}`,
           {
             method: "GET",
-          }
+          },
         ).then(async (res) => {
           const data = await res.json();
           if (res.status === 200) {

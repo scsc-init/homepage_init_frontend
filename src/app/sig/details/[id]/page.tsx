@@ -32,7 +32,7 @@ export default function Page({ params }: { params: { id: string } }) {
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
         if (res.status === 200) {
           const jsonData = await res.json();
@@ -51,7 +51,7 @@ export default function Page({ params }: { params: { id: string } }) {
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
         if (res.status === 200) {
           const jsonData = await res.json();
@@ -79,7 +79,7 @@ export default function Page({ params }: { params: { id: string } }) {
             body: JSON.stringify({
               login_token: loginStore.login_token,
             }),
-          }
+          },
         );
         if (res.status === 200) {
           setJoined(await res.json());
@@ -111,7 +111,7 @@ export default function Page({ params }: { params: { id: string } }) {
           body: JSON.stringify({
             login_token: loginStore.login_token,
           }),
-        }
+        },
       );
 
       if (res.status === 200) {
@@ -136,7 +136,7 @@ export default function Page({ params }: { params: { id: string } }) {
           body: JSON.stringify({
             login_token: loginStore.login_token,
           }),
-        }
+        },
       );
 
       if (res.status === 200) {

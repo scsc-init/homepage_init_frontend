@@ -1,5 +1,5 @@
-import { PostTypeWithoutComments } from './PostType';
-import { UserType } from './UserType';
+import { PostTypeWithoutComments } from "./PostType";
+import { UserType } from "./UserType";
 
 export interface SimjiGroupType {
   id: number;

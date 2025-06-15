@@ -15,7 +15,7 @@ export default function Card({
       className={joinClassName(
         "C_Card",
         hoverGlow ? "hover" : undefined,
-        className
+        className,
       )}
       {...props}
     >

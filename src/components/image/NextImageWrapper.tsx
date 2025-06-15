@@ -1,6 +1,6 @@
-import Image from 'next/image';
+import Image from "next/image";
 
-import './NextImageWrapper.css';
+import "./NextImageWrapper.css";
 
 interface HrefType {
   src: string;

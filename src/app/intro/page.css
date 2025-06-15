@@ -9,16 +9,24 @@
   border-right: 2px solid white;
   overflow: hidden;
   width: 18ch;
-  animation: typing 3s steps(18, end) forwards, blink 0.75s step-end infinite;
+  animation:
+    typing 3s steps(18, end) forwards,
+    blink 0.75s step-end infinite;
 }
 
 @keyframes typing {
-  from { width: 0 }
-  to { width: 18ch }
+  from {
+    width: 0;
+  }
+  to {
+    width: 18ch;
+  }
 }
 
 @keyframes blink {
-  50% { border-color: transparent }
+  50% {
+    border-color: transparent;
+  }
 }
 
 .FadeInText {
@@ -27,14 +35,18 @@
 }
 
 @keyframes fadeIn {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Scroll-triggered fade */
 .FadeOnScroll {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
 }
 
 .FadeOnScroll.visible {
@@ -232,7 +244,9 @@ body {
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   text-align: center;
   display: flex;
   flex-direction: column;
