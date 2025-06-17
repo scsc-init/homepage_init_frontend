@@ -10,10 +10,18 @@ export default function MyPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+
+    if (!jwt) {
+      alert("로그인이 필요합니다.");
+      router.push("/login");
+      return;
+    }
+
     axios
       .get("http://localhost:8080/api/user/profile", {
-        withCredentials: true,
         headers: {
+          "x-jwt": jwt,
           "x-api-secret": "some-secret-code",
         },
       })
@@ -34,12 +42,15 @@ export default function MyPage() {
       })
       .catch((err) => {
         console.error("내 정보 조회 실패:", err);
-        if (err.response.status === 401) {
-          alert("로그인이 필요합니다.");
-          router.push("/login");
-        }
+        alert("세션이 만료되었거나 인증되지 않았습니다.");
+        router.push("/login");
       });
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt");
+    router.push("/");
+  };
 
   if (!user) return <p className="p-6">불러오는 중...</p>;
 
@@ -57,12 +68,21 @@ export default function MyPage() {
         </li>
       </ul>
 
-      <button
-        onClick={() => router.push("/edit-user-info")}
-        className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        정보 수정
-      </button>
+      <div className="mt-6 space-y-3">
+        <button
+          onClick={() => router.push("/edit-user-info")}
+          className="w-full bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          정보 수정
+        </button>
+
+        <button
+          onClick={handleLogout}
+          className="w-full bg-gray-300 text-black px-4 py-2 rounded"
+        >
+          로그아웃
+        </button>
+      </div>
     </div>
   );
 }

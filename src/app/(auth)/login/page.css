@@ -6,42 +6,55 @@
   width: 1.2rem;
   height: 1.2rem;
 }
-
+/* 전체 컨테이너: 화면 중앙 정렬 + 배경 */
 #LoginContainer {
-  position: relative;
-  min-width: 100%;
-  min-height: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  padding: 2rem;
 }
 
+/* 로그인 폼 카드 스타일 */
 #LoginForm {
-  position: relative;
-  margin: auto;
-  padding: 5rem 2.5rem;
-  width: 100%;
-  max-width: 25rem;
-
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  align-items: left;
+  align-items: stretch;
+  width: 100%;
+  max-width: 26rem;
+  padding: 3rem 2rem;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  gap: 1.5rem;
+  text-align: center;
+}
+
+/* Google 로그인 버튼 wrapper */
+#GoogleLoginWrapper {
+  width: 100%;
+  display: flex;
   justify-content: center;
 }
 
-#LoginInfo {
-  margin: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+/* 구글 버튼 자체 스타일 (iframe 안이라 제한적) */
+.g_id_signin {
+  width: 100% !important;
+  max-width: 20rem !important; /* 20rem ≈ 320px */
+  display: flex !important;
+  justify-content: center !important;
 }
 
+/* 회원가입 버튼 컨테이너 */
 #LoginButtonsContainer {
-  width: 100%;
   display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  & > * {
-    flex: 1;
-  }
+  justify-content: center;
+  width: 100%;
+}
+
+/* 버튼 자체 */
+#LoginButtonsContainer button {
+  width: 100%;
+  max-width: 20rem;
 }

@@ -61,3 +61,20 @@ body {
   object-fit: cover;
   border-radius: 0.75rem;
 }
+
+/* 마크다운 스타일 예시 */
+.RegulationItem h1,
+.RegulationItem h2,
+.RegulationItem h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.RegulationItem ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.RegulationItem p {
+  margin-bottom: 0.75rem;
+}

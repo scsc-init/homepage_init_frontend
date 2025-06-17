@@ -1,7 +1,5 @@
-// @ts-nocheck
 "use client";
 
-import type { ForwardedRef } from "react";
 import {
   headingsPlugin,
   listsPlugin,
@@ -11,8 +9,6 @@ import {
   toolbarPlugin,
   imagePlugin,
   MDXEditor,
-  type MDXEditorMethods,
-  type MDXEditorProps,
   UndoRedo,
   BoldItalicUnderlineToggles,
   BlockTypeSelect,
@@ -20,16 +16,18 @@ import {
   InsertImage,
   Separator,
 } from "@mdxeditor/editor";
+
 import "@mdxeditor/editor/style.css";
 
-export default function InitializedMDXEditor({
-  editorRef,
-  ...props
-}: { editorRef: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
+export default function InitializedMDXEditor(props) {
+  const { editorRef = null, markdown = "", onChange = () => {} } = props;
+
   return (
     <MDXEditor
+      ref={editorRef}
+      markdown={markdown}
+      onChange={onChange}
       plugins={[
-        // Example Plugin Usage
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
@@ -52,8 +50,6 @@ export default function InitializedMDXEditor({
           ),
         }),
       ]}
-      {...props}
-      ref={editorRef}
     />
   );
 }
