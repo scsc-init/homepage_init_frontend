@@ -29,8 +29,12 @@ export default function GoogleSignupPage() {
       try {
         const payload = JSON.parse(
           decodeURIComponent(
-            escape(window.atob(credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
-          )
+            escape(
+              window.atob(
+                credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
+              ),
+            ),
+          ),
         );
         const { email, name: rawName } = payload;
 
@@ -92,7 +96,7 @@ export default function GoogleSignupPage() {
           headers: {
             "x-api-secret": "some-secret-code",
           },
-        }
+        },
       );
       alert("회원가입 완료!");
     } catch (error) {
@@ -100,7 +104,9 @@ export default function GoogleSignupPage() {
         console.error("회원가입 실패 응답:", error.response);
         alert(
           "회원가입 실패: " +
-            (error.response?.data?.detail || error.response?.data || "알 수 없는 오류")
+            (error.response?.data?.detail ||
+              error.response?.data ||
+              "알 수 없는 오류"),
         );
       } else {
         alert("알 수 없는 오류가 발생했습니다.");

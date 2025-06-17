@@ -34,6 +34,6 @@ export const useLoginStore = create<LoginState & LoginActions>()(
     {
       name: "login-storage",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

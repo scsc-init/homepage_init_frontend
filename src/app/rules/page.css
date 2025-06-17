@@ -1,0 +1,63 @@
+#RegulationContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 4rem 0;
+  padding: 2rem;
+  border: var(--slate-6) 2px dashed;
+  border-radius: 1rem;
+  background-color: var(--slate-2);
+}
+
+.RegulationIntro {
+  font-size: 1.1rem;
+  color: var(--slate-11);
+  margin-bottom: 1rem;
+}
+
+.RegulationItem {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid var(--indigo-8);
+}
+
+.RegulationItem h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.RegulationItem p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--slate-12);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#Home {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+#HomeContent {
+  width: 100%;
+  max-width: 60rem;
+  margin: 2rem auto 10rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.ClubroomCardImage {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}

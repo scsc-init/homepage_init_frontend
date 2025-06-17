@@ -5,7 +5,7 @@ import "./Notice.css";
 export const Root = React.forwardRef(
   (
     { children, className, ...props }: React.ComponentProps<"div">,
-    ref: React.ForwardedRef<HTMLDivElement>
+    ref: React.ForwardedRef<HTMLDivElement>,
   ) => (
     <div
       className={joinClassName("C_NoticeRoot", className)}
@@ -14,14 +14,14 @@ export const Root = React.forwardRef(
     >
       {children}
     </div>
-  )
+  ),
 );
 Root.displayName = "Notice.Root";
 
 export const Icon = React.forwardRef(
   (
     { children, className, ...props }: React.ComponentProps<"div">,
-    ref: React.ForwardedRef<HTMLDivElement>
+    ref: React.ForwardedRef<HTMLDivElement>,
   ) => (
     <div
       className={joinClassName("C_NoticeIcon", className)}
@@ -30,6 +30,6 @@ export const Icon = React.forwardRef(
     >
       {children}
     </div>
-  )
+  ),
 );
 Icon.displayName = "Notice.Icon";

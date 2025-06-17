@@ -1,5 +1,5 @@
-import { LifecyclePhase } from './GlobalTypes';
-import { PostTypeWithComments } from './PostType';
+import { LifecyclePhase } from "./GlobalTypes";
+import { PostTypeWithComments } from "./PostType";
 
 export interface BoardType {
   id: number;

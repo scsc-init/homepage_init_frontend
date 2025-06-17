@@ -14,7 +14,7 @@ export default function Home() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     const fadeElements = document.querySelectorAll(".FadeOnScroll");
@@ -29,8 +29,6 @@ export default function Home() {
 
   return (
     <div id="Home">
-      
-
       <div id="HomeContent">
         <div id="HomeDescriptionContainer" className="FadeOnScroll">
           <h2>SCSC는 이러한 활동을 합니다</h2>
@@ -50,9 +48,10 @@ export default function Home() {
             </p>
           </div>
           <div className="ActivityBlock">
-            <h3>모각코</h3>
+            <h3>PIG</h3>
             <p>
-              동아리원이 함께 조를 짜 특정 장소에 모여 각자 코딩을 하는 스터디
+              본격적인 프로젝트와 팀 활동을 진행합니다. 홈페이지 관리를 담당하는
+              INIT 등이 있습니다. 학습 중심인 SIG보다 결과물 완성을 목표로 하는
               모임입니다.
             </p>
           </div>
@@ -73,7 +72,7 @@ export default function Home() {
           </div>
           <div className="HomeDescriptionActivityContainer">
             <p>총 부원 수</p>
-            <p className="HomeLargeText">1123</p>
+            <p className="HomeLargeText">1557</p>
           </div>
           <div className="HomeDescriptionActivityContainer">
             <p>개설된 SIG</p>
@@ -91,7 +90,8 @@ export default function Home() {
             {[
               {
                 title: "고성능 컴퓨터",
-                description: "개발 및 딥러닝 작업이 가능한 다양한 환경의 워크스테이션",
+                description:
+                  "개발 및 딥러닝 작업이 가능한 다양한 환경의 워크스테이션",
                 image: "/img1.jpg",
               },
               {
@@ -139,25 +139,65 @@ export default function Home() {
           <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
           <div id="HomeAboutLinkList">
             {[
-              { title: "리크루팅 정보 바로가기", url: "/" },
-              { title: "활동 내용 자세히 알아보기", url: "/video" },
-              { title: "공식 인스타그램", url: "/photo" },
-              { title: "공식 깃허브", url: "/facebook" },
-            ].map(({ title, url }, id) => (
-              <div
-                key={id}
-                className="HomeAboutDescription"
-                onClick={() => (window.location.href = url)}
-              >
-                <span>{title}</span>
-                <Arrow
-                  width="25px"
-                  height="25px"
-                  rotate="-90deg"
-                  color="#070707"
-                />
-              </div>
-            ))}
+              {
+                title: "리크루팅 정보 바로가기",
+                url: "/contact",
+                external: false,
+              },
+              {
+                title: "시그 목록 바로가기",
+                url: "/sig",
+                external: false,
+              },
+              {
+                title: "피그 목록 바로가기",
+                url: "/pig",
+                external: false,
+              },
+              {
+                title: "공식 인스타그램",
+                url: "https://www.instagram.com/scsc_snu/?hl=ko",
+                external: true,
+              },
+              {
+                title: "공식 깃허브",
+                url: "https://github.com/SNU-SCSC",
+                external: true,
+              },
+            ].map(({ title, url, external }, id) =>
+              external ? (
+                <a
+                  key={id}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="HomeAboutDescription"
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  <span>{title}</span>
+                  <Arrow
+                    width="25px"
+                    height="25px"
+                    rotate="-90deg"
+                    color="#070707"
+                  />
+                </a>
+              ) : (
+                <div
+                  key={id}
+                  className="HomeAboutDescription"
+                  onClick={() => (window.location.href = url)}
+                >
+                  <span>{title}</span>
+                  <Arrow
+                    width="25px"
+                    height="25px"
+                    rotate="-90deg"
+                    color="#070707"
+                  />
+                </div>
+              ),
+            )}
           </div>
         </div>
 
@@ -203,7 +243,12 @@ export default function Home() {
   );
 }
 
-function Arrow({ width = "70px", height = "70px", rotate = "0deg", color = "#a7a7a7" }) {
+function Arrow({
+  width = "70px",
+  height = "70px",
+  rotate = "0deg",
+  color = "#a7a7a7",
+}) {
   return (
     <svg
       width={width}

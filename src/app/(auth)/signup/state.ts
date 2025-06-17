@@ -97,5 +97,5 @@ export const useSignupStore = create<SignupState & SignupActions>()(
       set((state) => {
         state.departmentState = newState;
       }),
-  }))
+  })),
 );

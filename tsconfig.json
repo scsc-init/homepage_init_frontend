@@ -22,6 +22,14 @@
       "@@/*": ["./public/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/sig/page.jsx", "src/app/sig/create/page.jsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/sig/page.jsx",
+    "src/app/sig/create/page.jsx",
+    "src/app/layout.jsx"
+  ],
   "exclude": ["node_modules"]
 }

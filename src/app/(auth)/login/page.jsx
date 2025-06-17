@@ -26,8 +26,12 @@ export default function LoginPage() {
       try {
         const payload = JSON.parse(
           decodeURIComponent(
-            escape(window.atob(credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
-          )
+            escape(
+              window.atob(
+                credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
+              ),
+            ),
+          ),
         );
         const { email } = payload;
 
@@ -50,11 +54,14 @@ export default function LoginPage() {
         });
 
         if (res.status === 204) {
-          const profileRes = await fetch("http://localhost:8080/api/user/profile", {
-            method: "GET",
-            credentials: "include",
-            headers: { "x-api-secret": "some-secret-code" },
-          });
+          const profileRes = await fetch(
+            "http://localhost:8080/api/user/profile",
+            {
+              method: "GET",
+              credentials: "include",
+              headers: { "x-api-secret": "some-secret-code" },
+            },
+          );
           const profile = await profileRes.json();
           loginStore.setName(profile.name);
           loginStore.setId(profile.id);

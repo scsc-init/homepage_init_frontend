@@ -88,7 +88,7 @@ export const Label = ({
 export const Trigger = React.forwardRef(
   (
     { className, children, ...props }: ExtractProps<typeof Select.Trigger>,
-    ref: React.LegacyRef<HTMLButtonElement>
+    ref: React.LegacyRef<HTMLButtonElement>,
   ) => (
     <Select.Trigger
       className={joinClassName("C_SelectTrigger", className)}
@@ -100,7 +100,7 @@ export const Trigger = React.forwardRef(
         <DownIcon />
       </Icon>
     </Select.Trigger>
-  )
+  ),
 );
 Trigger.displayName = "Select.Trigger";
 
@@ -187,7 +187,7 @@ const Viewport = ({
 export const Item = React.forwardRef(
   (
     { children, className, ...props }: ExtractProps<typeof Select.Item>,
-    forwardedRef: ForwardedRef<HTMLDivElement>
+    forwardedRef: ForwardedRef<HTMLDivElement>,
   ) => {
     return (
       <Select.Item
@@ -201,7 +201,7 @@ export const Item = React.forwardRef(
         </Select.ItemIndicator>
       </Select.Item>
     );
-  }
+  },
 );
 Item.displayName = "Select.Item";
 

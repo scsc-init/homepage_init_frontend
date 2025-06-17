@@ -22,7 +22,7 @@ const Editor = dynamic(() => import("./MDXEditor"), {
 });
 
 const ForwardRefEditor = React.forwardRef<MDXEditorMethods, MDXEditorProps>(
-  (props, ref) => <Editor {...props} editorRef={ref} />
+  (props, ref) => <Editor {...props} editorRef={ref} />,
 );
 
 ForwardRefEditor.displayName = "ForwardRefEditor";
@@ -81,7 +81,7 @@ export default function CommentsComponent({
             content: data.content,
           },
         }),
-      }
+      },
     );
 
     if (response.status === 200) {
@@ -132,7 +132,7 @@ export default function CommentsComponent({
               is_child_comment={is_child_comment}
               changeParentCommentId={setParentCommentId}
             />
-          )
+          ),
         )}
       </div>
     </div>

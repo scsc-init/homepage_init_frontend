@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,9 +5,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 export default function MyPage() {
-  ;
-  ;
-  
   const [user, setUser] = useState(null);
   const [majors, setMajors] = useState(null);
   const router = useRouter();
@@ -24,11 +20,14 @@ export default function MyPage() {
       .then((res) => {
         setUser(res.data);
 
-        return axios.get(`http://localhost:8080/api/major/${res.data.major_id}`, {
-          headers: {
-            "x-api-secret": "some-secret-code",
+        return axios.get(
+          `http://localhost:8080/api/major/${res.data.major_id}`,
+          {
+            headers: {
+              "x-api-secret": "some-secret-code",
+            },
           },
-        });
+        );
       })
       .then((res) => {
         setMajors(res.data);
@@ -52,7 +51,10 @@ export default function MyPage() {
         <li>이름: {user.name}</li>
         <li>전화번호: {user.phone}</li>
         <li>학번: {user.student_id}</li>
-        <li>전공: {majors ? `${majors.college} - ${majors.major_name}` : "로딩 중..."}</li>
+        <li>
+          전공:{" "}
+          {majors ? `${majors.college} - ${majors.major_name}` : "로딩 중..."}
+        </li>
       </ul>
 
       <button
@@ -63,5 +65,4 @@ export default function MyPage() {
       </button>
     </div>
   );
-
 }

@@ -4,7 +4,9 @@ import dynamic from "next/dynamic";
 import { Controller } from "react-hook-form";
 import { useRef } from "react";
 
-const Editor = dynamic(() => import("../../app/sig/create/MDXEditor"), { ssr: false });
+const Editor = dynamic(() => import("../../app/sig/create/MDXEditor"), {
+  ssr: false,
+});
 
 export default function EditorSection({ control }) {
   const editorRef = useRef(null);

@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import NextImageWrapper from '../image/NextImageWrapper';
+import Link from "next/link";
+import NextImageWrapper from "../image/NextImageWrapper";
 
-import './PostSummary.css';
+import "./PostSummary.css";
 
 interface SimpleSimjiType {
   postTitle: string;
@@ -18,9 +18,9 @@ export default function PostSummary({
   motherBoardIdx,
   postIdx,
 }: SimpleSimjiType) {
-  let link = '';
+  let link = "";
 
-  if (motherBoardType == 'simji') {
+  if (motherBoardType == "simji") {
     link = `/simji-list/${motherBoardIdx}/${postIdx}`;
   } else {
     link = `/boards/${motherBoardIdx}/${postIdx}`;

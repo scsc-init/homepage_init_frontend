@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useState } from 'react';
-import './Dropdown.css';
+import React from "react";
+import { useState } from "react";
+import "./Dropdown.css";
 
 interface DropdownProps {
   subject: string;
@@ -25,8 +25,8 @@ export default function BoardDropdown({
   return (
     <div className="dropdown">
       <button onClick={toggleDropdown} className="dropdown-button">
-        <div style={{ fontSize: '12px' }}>
-          {subject + ': ' + items[selectedItemIndex]}
+        <div style={{ fontSize: "12px" }}>
+          {subject + ": " + items[selectedItemIndex]}
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -34,11 +34,11 @@ export default function BoardDropdown({
           height="0.6em"
           viewBox="0 0 24 24"
           style={{
-            transform: `${isDropdownOpen ? 'rotate(180deg)' : ''}`,
-            transformOrigin: 'center',
-            position: 'relative',
-            top: '2px',
-            left: '3px',
+            transform: `${isDropdownOpen ? "rotate(180deg)" : ""}`,
+            transformOrigin: "center",
+            position: "relative",
+            top: "2px",
+            left: "3px",
           }}
         >
           <path fill="currentColor" d="M1 21h22L12 2" />
@@ -55,8 +55,8 @@ export default function BoardDropdown({
                 setSelectedItemIndex(items.indexOf(item));
               }}
               className={
-                'dropdown-item ' +
-                (items.indexOf(item) === selectedItemIndex ? 'active' : '')
+                "dropdown-item " +
+                (items.indexOf(item) === selectedItemIndex ? "active" : "")
               }
             >
               {item}

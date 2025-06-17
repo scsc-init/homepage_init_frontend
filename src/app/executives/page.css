@@ -1,0 +1,205 @@
+#ExecutivePage {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#ExecutivePage > h2 {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2rem;
+}
+
+.ExecutiveGrid {
+  column-count: 4;
+  column-gap: 1.5rem;
+}
+
+.ExecutiveCard {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  break-inside: avoid;
+  transition: transform 0.2s ease;
+}
+
+.ExecutiveCard:hover {
+  transform: translateY(-4px);
+}
+
+.ExecutiveImage {
+  border-radius: 0.75rem;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.ExecutiveRole {
+  font-weight: bold;
+  color: var(--slate-11);
+  margin: 0.5rem 0 0.5rem;
+}
+
+.ExecutiveDescription {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--slate-12);
+  line-height: 1.5rem;
+  word-break: keep-all;
+}
+
+.ExecutiveDescriptionWrapper {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.4s ease,
+    opacity 0.4s ease;
+}
+
+.ExecutiveDescriptionWrapper.visible {
+  max-height: 200px; /* 필요에 따라 늘리기 */
+  opacity: 1;
+}
+
+.ExecutiveCard {
+  transition: all 0.3s ease;
+}
+
+.ExecutiveMasonry {
+  column-count: 4;
+  column-gap: 1.5rem;
+}
+
+.ExecutiveCard {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+.ExecutiveGridRows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}
+.ExecutiveCard {
+  width: 100%;
+  max-width: 250px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.ExecutiveGridColumns {
+  column-count: 4;
+  column-gap: 1.5rem;
+}
+
+.ExecutiveCard {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+#ExecutivePage::after {
+  content: "";
+  display: block;
+  height: 6rem;
+}
+.ExecutiveMasonry {
+  column-count: 4;
+  column-gap: 1.5rem;
+}
+
+.ExecutiveCard {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+.ExecutiveImageWrapper {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.ExecutiveOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  padding: 1rem;
+  text-align: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.ExecutiveImageWrapper:hover .ExecutiveOverlay {
+  opacity: 1;
+}
+
+.ExecutiveDescription {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ExecutiveImageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.ExecutiveImage {
+  object-fit: cover;
+}
+
+.ExecutiveOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  padding: 1rem;
+}
+
+.ExecutiveImageWrapper:hover .ExecutiveOverlay {
+  opacity: 1;
+}
+
+.ExecutiveDescription {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  line-height: 1.5;
+}
+.ExecutiveMasonry {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}

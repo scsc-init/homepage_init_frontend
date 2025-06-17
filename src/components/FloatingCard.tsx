@@ -15,7 +15,7 @@ const FloatingCard = React.forwardRef<HTMLDivElement, FloatingCardProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 FloatingCard.displayName = "FloatingCard";
 

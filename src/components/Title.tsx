@@ -1,4 +1,4 @@
-import './Title.css';
+import "./Title.css";
 
 export default function Title({
   text,

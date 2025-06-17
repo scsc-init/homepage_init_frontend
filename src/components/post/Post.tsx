@@ -9,11 +9,7 @@ interface PostProps {
   content: string;
 }
 
-export default function Post({
-  postTitle,
-  postAuthor,
-  content,
-}: PostProps) {
+export default function Post({ postTitle, postAuthor, content }: PostProps) {
   return (
     <>
       <TitleAuthor postTitle={postTitle} postAuthor={postAuthor} />
