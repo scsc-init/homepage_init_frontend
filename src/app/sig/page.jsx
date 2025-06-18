@@ -1,82 +1,46 @@
-/*import SigCreateButton from "./SigCreateButton";
+// /app/sig/page.jsx - SIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
+import Link from "next/link";
+import "./page.css";
 
 export default async function SigListPage() {
   const res = await fetch("http://localhost:8080/api/sigs", {
     method: "GET",
-    headers: {
-      "x-api-secret": "some-secret-code",
-    },
-    credentials: "include",
+    headers: { "x-api-secret": "some-secret-code" },
     cache: "no-store",
   });
 
-  if (res.status === 401 || res.status === 403) {
-    // SSR에선 redirect 못하므로 안내 메시지
+  if (!res.ok) {
     return (
-      <div className="text-center text-red-600 font-semibold mt-10">
-        로그인 후 이용 가능합니다.
+      <div className="text-center text-red-600 mt-10">
+        시그 정보를 불러올 수 없습니다.
       </div>
     );
   }
 
-  const data = await res.json();
+  const sigs = await res.json();
 
   return (
-    <div id="SigListContainer" className="p-6 max-w-4xl mx-auto">
-      <div id="SigList">
-        <h1 className="text-2xl font-bold mb-4">시그 리스트</h1>
-        <SigCreateButton />
-        <hr className="my-4" />
-        {data.map((sig) => (
-          <div key={sig.id} className="border rounded p-4 mb-4 bg-white shadow">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xl font-semibold">{sig.title}</h2>
-            </div>
-            <p className="text-gray-700">{sig.description}</p>
-          </div>
-        ))}
+    <div id="SigListContainer">
+      <div className="w-full flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">SIG 게시판</h1>
+        <Link href="/sig/create" id="SigCreateButton">
+          <button className="SigCreateBtn">SIG 만들기</button>
+        </Link>
       </div>
-    </div>
-  );
-}
-*/
 
-import SigCreateButton from "./SigCreateButton";
-
-export default async function SigListPage() {
-  const res = await fetch("http://localhost:8080/api/sigs", {
-    method: "GET",
-    headers: {
-      "x-api-secret": "some-secret-code",
-    },
-    credentials: "include",
-    cache: "no-store",
-  });
-
-  if (res.status === 401 || res.status === 403) {
-    // SSR에선 redirect 못하므로 안내 메시지
-    return (
-      <div className="text-center text-red-600 font-semibold mt-10">
-        로그인 후 이용 가능합니다.
-      </div>
-    );
-  }
-
-  const data = await res.json();
-
-  return (
-    <div id="SigListContainer" className="p-6 max-w-4xl mx-auto">
       <div id="SigList">
-        <h1 className="text-2xl font-bold mb-4">시그 리스트</h1>
-        <SigCreateButton />
-        <hr className="my-4" />
-        {data.map((sig) => (
-          <div key={sig.id} className="border rounded p-4 mb-4 bg-white shadow">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xl font-semibold">{sig.title}</h2>
+        {sigs.map((sig) => (
+          <Link key={sig.id} href={`/sig/${sig.id}`} className="sigLink">
+            <div className="sigCard">
+              <div className="sigTopbar">
+                <span className="sigTitle">{sig.title}</span>
+                <span className="sigUserCount">
+                  {sig.year}년 {sig.semester}학기
+                </span>
+              </div>
+              <div className="sigDescription">{sig.description}</div>
             </div>
-            <p className="text-gray-700">{sig.description}</p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

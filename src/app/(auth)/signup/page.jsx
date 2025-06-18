@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Departments from "@/data/departments";
+import "./page.css";
 
 export default function GoogleSignupPage() {
   const [form, setForm] = useState({
@@ -11,7 +12,7 @@ export default function GoogleSignupPage() {
     student_id_year: "",
     student_id_number: "",
     phone: "",
-    major_id: 0,
+    major_id: "",
   });
 
   const [majors, setMajors] = useState([]);
@@ -43,9 +44,10 @@ export default function GoogleSignupPage() {
           return;
         }
 
-        const cleanName = rawName.includes("/")
-          ? rawName.split("/")[0].trim()
-          : rawName;
+        const cleanName = rawName
+          .replace(/^[\s\u00AD\-\u2011\u2010\u2012\u2013\u2014\u2015]+/, "") // 이름 앞에 붙는 하이픈, &#173; 등 제거
+          .split("/")[0]
+          .trim();
 
         setForm((prev) => ({
           ...prev,
@@ -65,12 +67,8 @@ export default function GoogleSignupPage() {
       .get("http://localhost:8080/api/majors", {
         headers: { "x-api-secret": "some-secret-code" },
       })
-      .then((res) => {
-        setMajors(res.data);
-      })
-      .catch((err) => {
-        console.error("전공 목록 불러오기 실패:", err);
-      });
+      .then((res) => setMajors(res.data))
+      .catch((err) => console.error("전공 목록 불러오기 실패:", err));
   }, []);
 
   const validateEmail = (email) => {
@@ -85,12 +83,12 @@ export default function GoogleSignupPage() {
       await axios.post(
         "http://localhost:8080/api/user/create",
         {
-          frontend_secret: "some-secret-code",
           email: form.email,
           name: form.name,
           student_id: fullID,
           phone: form.phone,
-          major_id: form.major_id,
+          major_id: Number(form.major_id),
+          status: "pending",
         },
         {
           headers: {
@@ -98,7 +96,36 @@ export default function GoogleSignupPage() {
           },
         },
       );
+
+      const loginRes = await axios.post(
+        "http://localhost:8080/api/user/login",
+        { email: form.email },
+        {
+          headers: {
+            "x-api-secret": "some-secret-code",
+          },
+        },
+      );
+
+      const { jwt, id } = loginRes.data;
+
+      const hashBuffer = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(form.email),
+      );
+      const hashHex = [...new Uint8Array(hashBuffer)]
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+
+      localStorage.setItem("jwt", jwt);
+      localStorage.setItem("user_id", id);
+      localStorage.setItem(
+        "user_hash",
+        hashHex,
+      ); /* 6회차대로 미리 반영했으나, id와 hash는 사용하지 않고 있는 거 같습닏 ㅏ아ㅣㅈㄱ */
+
       alert("회원가입 완료!");
+      window.location.href = "/";
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("회원가입 실패 응답:", error.response);
@@ -141,7 +168,6 @@ export default function GoogleSignupPage() {
       {stage === 1 && (
         <>
           <input
-            type="email"
             value={form.email}
             disabled
             className="border p-2 w-full bg-gray-100"
@@ -227,9 +253,7 @@ export default function GoogleSignupPage() {
         <>
           <select
             className="border p-2 w-full"
-            onChange={(e) =>
-              setForm({ ...form, major_id: Number(e.target.value) })
-            }
+            onChange={(e) => setForm({ ...form, major_id: e.target.value })}
             value={form.major_id || ""}
           >
             <option value="">전공을 선택하세요</option>

@@ -1,54 +1,42 @@
-/*
-
 // app/sig/create/page.jsx
-import { cookies } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
 import CreateSigClient from "./CreateSigClient";
+import { useRouter } from "next/navigation";
 
-export default async function CreateSigPage() {
-  const cookieStore = cookies();
-  const res = await fetch("http://localhost:8080/api/user/profile", {
-    method: "GET",
-    headers: {
-      Cookie: cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join("; "),
-      "x-api-secret": "some-secret-code",
-    },
-  });
+export default function CreateSigPage() {
+  const [userId, setUserId] = useState(null);
+  const router = useRouter();
 
-  if (res.status === 401) {
-    // redirect to login if needed
-    return <p>로그인이 필요합니다.</p>;
-  }
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
 
-  const data = await res.json();
-  return <CreateSigClient userId={data.id} />;
-}
-*/
+    if (!jwt) {
+      alert("로그인이 필요합니다.");
+      router.push("/login");
+      return;
+    }
 
-// app/sig/create/page.jsx
-import { cookies } from "next/headers";
-import CreateSigClient from "./CreateSigClient";
+    fetch("http://localhost:8080/api/user/profile", {
+      headers: {
+        "x-jwt": jwt,
+        "x-api-secret": "some-secret-code",
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("인증 실패");
+        const user = await res.json();
+        setUserId(user.id);
+      })
+      .catch((err) => {
+        console.error("유저 인증 실패:", err);
+        alert("로그인이 필요합니다.");
+        router.push("/login");
+      });
+  }, []);
 
-export default async function CreateSigPage() {
-  const cookieStore = cookies();
-  const res = await fetch("http://localhost:8080/api/user/profile", {
-    method: "GET",
-    headers: {
-      Cookie: cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join("; "),
-      "x-api-secret": "some-secret-code",
-    },
-  });
+  if (!userId) return <p className="p-6">불러오는 중...</p>;
 
-  if (res.status === 401) {
-    // redirect to login if needed
-    return <p>로그인이 필요합니다.</p>;
-  }
-
-  const data = await res.json();
-  return <CreateSigClient userId={data.id} />;
+  return <CreateSigClient userId={userId} />;
 }

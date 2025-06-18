@@ -30,6 +30,38 @@ export default function Home() {
   return (
     <div id="Home">
       <div id="HomeContent">
+        <div id="HomeHistoryContainer" className="FadeOnScroll">
+          <h2>SCSC의 역사</h2>
+          <div className="ActivityBlock">
+            <p>
+              서울대학교 중앙 컴퓨터 동아리 SCSC는 <strong>1984년</strong>에
+              창립된 이래로 오랜 시간 동안 컴퓨터와 함께 성장해왔습니다.
+            </p>
+            <p>
+              초창기에는 서울대학교 기초과학부 소속의 소규모 학술 동아리로
+              시작하여,
+              <strong>1993년</strong>에는 중앙 동아리로 등록되며 본격적인 활동을
+              시작하였습니다. 이후 2000년대에는 홈페이지 운영, 서버 구축 등의
+              활동이 활발히 이루어지며 컴퓨터 중심 동아리로서의 색깔을 확고히
+              하였습니다.
+            </p>
+            <p>
+              <strong>2010년대</strong>에 들어서는 SIG 체계가 정착되며,
+              동아리원들이 자율적으로 스터디를 개설하고 운영하는 학습 중심의
+              문화가 자리잡기 시작했습니다. 또한 피그(PIG) 체계가 도입되며
+              프로젝트 기반의 실전 경험도 쌓을 수 있는 기회를 제공하게
+              되었습니다.
+            </p>
+            <p>
+              최근 <strong>2020년대</strong>에는 자율성과 친목을 중시하는 문화가
+              더욱 강조되며, 다양한 분야의 시그와 피그가 활발히 운영되고
+              있습니다. 세미나, 해커톤, 교류전 등 다양한 행사도 함께 진행되며,
+              단순한 개발을 넘어 사람과의 연결, 협업, 성장을 추구하는 동아리로
+              발전하고 있습니다.
+            </p>
+          </div>
+        </div>
+        <div style={{ height: "5vh" }}></div>
         <div id="HomeDescriptionContainer" className="FadeOnScroll">
           <h2>SCSC는 이러한 활동을 합니다</h2>
           <div className="ActivityBlock">
@@ -112,12 +144,12 @@ export default function Home() {
               {
                 title: "프린터기",
                 description: "컬러 인쇄가 가능한 최신형 프린터기",
-                image: "/img4.jpg",
+                image: "/img5.jpg",
               },
               {
                 title: "게임기",
                 description: "닌텐도 스위치, 프로콘, ps4",
-                image: "/img4.jpg",
+                image: "/img6.jpg",
               },
             ].map(({ title, description, image }, i) => (
               <div key={i} className="ClubroomCard">

@@ -1,10 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import "./page.css";
 
 export default function RegulationPage() {
+  const [markdown, setMarkdown] = useState("");
+
   useEffect(() => {
+    // 회칙.md의 GitHub Raw 주소
+    const mdURL =
+      "https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md";
+
+    fetch(mdURL)
+      .then((res) => res.text())
+      .then((text) => setMarkdown(text));
+
+    // 페이드 애니메이션
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -21,12 +33,6 @@ export default function RegulationPage() {
     return () => fadeElements.forEach((el) => observer.unobserve(el));
   }, []);
 
-  const regulations = [
-    "부원을 만나면 '응애'라고 한다.",
-    "근데 이 동아리에 규칙이 있나요",
-    "쌀먹이 동아리의 새로운 질서",
-  ];
-
   return (
     <div id="Home">
       <div id="HomeContent">
@@ -35,12 +41,9 @@ export default function RegulationPage() {
           <p className="RegulationIntro">
             SCSC 동아리의 운영과 규칙을 안내합니다.
           </p>
-          {regulations.map((content, index) => (
-            <div key={index} className="RegulationItem">
-              <h3>제{index + 1}조</h3>
-              <p>{content}</p>
-            </div>
-          ))}
+          <div className="RegulationItem">
+            <ReactMarkdown>{markdown}</ReactMarkdown>
+          </div>
         </div>
       </div>
     </div>

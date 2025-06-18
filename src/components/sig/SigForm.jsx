@@ -1,9 +1,16 @@
-// components/SigForm.jsx
+// components/sig/SigForm.jsx
 import SigInputField from "./SigInputField";
-import EditorSection from "./EditorSection";
 import * as Button from "@/components/Button";
+import { Controller } from "react-hook-form";
 
-export default function SigForm({ register, control, onSubmit, handleSubmit }) {
+export default function SigForm({
+  register,
+  control,
+  handleSubmit,
+  onSubmit,
+  Editor,
+  editorRef,
+}) {
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <SigInputField
@@ -18,7 +25,22 @@ export default function SigForm({ register, control, onSubmit, handleSubmit }) {
         register={register}
         name="description"
       />
-      <EditorSection control={control} />
+
+      <div>
+        <label className="block mb-2 font-semibold">상세 소개</label>
+        <Controller
+          name="editor"
+          control={control}
+          render={({ field }) => (
+            <Editor
+              ref={editorRef}
+              markdown={typeof field.value === "string" ? field.value : ""}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      </div>
+
       <Button.Root type="submit">SIG 생성</Button.Root>
     </form>
   );

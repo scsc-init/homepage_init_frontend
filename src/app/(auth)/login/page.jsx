@@ -8,13 +8,7 @@ import React, { useEffect } from "react";
 import "./page.css";
 
 export default function LoginPage() {
-  const loginStore = useLoginStore();
-
   useEffect(() => {
-    if (loginStore.session_token && loginStore.login_token) {
-      goToHome();
-    }
-
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
@@ -42,29 +36,28 @@ export default function LoginPage() {
 
         const res = await fetch("http://localhost:8080/api/user/login", {
           method: "POST",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             "x-api-secret": "some-secret-code",
           },
-          body: JSON.stringify({
-            frontend_secret: "some-secret-code",
-            email,
-          }),
+          body: JSON.stringify({ email }),
         });
 
-        if (res.status === 204) {
-          const profileRes = await fetch(
-            "http://localhost:8080/api/user/profile",
-            {
-              method: "GET",
-              credentials: "include",
-              headers: { "x-api-secret": "some-secret-code" },
-            },
+        if (res.status === 200) {
+          const { jwt, id, email } = await res.json();
+
+          localStorage.setItem("jwt", jwt);
+          localStorage.setItem("user_id", id);
+
+          const hashBuffer = await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(email),
           );
-          const profile = await profileRes.json();
-          loginStore.setName(profile.name);
-          loginStore.setId(profile.id);
+          const hashHex = [...new Uint8Array(hashBuffer)]
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
+          localStorage.setItem("user_hash", hashHex);
+
           goToHome();
         } else if (res.status === 404) {
           alert("가입되지 않은 계정입니다. 회원가입을 진행해주세요.");
@@ -80,7 +73,7 @@ export default function LoginPage() {
 
   return (
     <div id="LoginContainer">
-      <form id="LoginForm">
+      <form id="LoginForm" className="shadow-md bg-white rounded-xl">
         <h1>로그인</h1>
         <Divider />
         <div id="GoogleLoginContainer" className="mt-4">
@@ -90,15 +83,19 @@ export default function LoginPage() {
             data-callback="handleCredentialResponse"
             data-auto_prompt="false"
           ></div>
-          <div
-            className="g_id_signin"
-            data-type="standard"
-            data-size="large"
-            data-theme="outline"
-            data-text="sign_in_with"
-            data-shape="rectangular"
-            data-logo_alignment="left"
-          ></div>
+          <div id="GoogleLoginWrapper">
+            <div
+              className="g_id_signin"
+              data-client_id="832461792138-f6qpb4vn8knpi57a46p9a9ph7qvs92qh.apps.googleusercontent.com"
+              data-type="standard"
+              data-size="large"
+              data-theme="outline"
+              data-text="sign_in_with"
+              data-shape="rectangular"
+              data-logo_alignment="left"
+              data-width="300"
+            ></div>
+          </div>
         </div>
         <div id="LoginButtonsContainer">
           <Button.Root type="button" onClick={() => goToSignup()}>
