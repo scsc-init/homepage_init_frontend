@@ -8,8 +8,7 @@ export default function SigForm({
   control,
   handleSubmit,
   onSubmit,
-  Editor,
-  editorRef,
+  Editor, // forwardRef 없어도 됨
 }) {
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -33,9 +32,9 @@ export default function SigForm({
           control={control}
           render={({ field }) => (
             <Editor
-              ref={editorRef}
               markdown={typeof field.value === "string" ? field.value : ""}
               onChange={field.onChange}
+              // ❌ ref 완전히 제거됨
             />
           )}
         />

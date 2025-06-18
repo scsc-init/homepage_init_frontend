@@ -65,6 +65,7 @@ git clone https://github.com/scsc-init/homepage_init_frontend.git
 npm install
 npm install react-markdown #회칙 페이지와 게시판 페이지에 사용하려고 합니다.
 npm install react-markdown remark-gfm rehype-highlight highlight.js
+npm install rehype-raw
 
 ```
 

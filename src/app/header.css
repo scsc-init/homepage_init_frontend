@@ -48,7 +48,7 @@
 
 .HeaderMenuTrigger {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600; /* 기본 굵기 고정 */
   background: none;
   border: none;
   color: var(--slate-12);
@@ -115,7 +115,7 @@
 .HeaderMenuContent button:hover {
   background-color: var(--indigo-4);
   color: var(--indigo-11);
-  font-weight: 600;
+  /* font-weight 제거 or 동일하게 유지 */
 }
 
 #HeaderUser {

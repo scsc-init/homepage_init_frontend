@@ -30,37 +30,55 @@ export default function Home() {
   return (
     <div id="Home">
       <div id="HomeContent">
-        <div id="HomeHistoryContainer" className="FadeOnScroll">
-          <h2>SCSC의 역사</h2>
+        <div id="HomeIntroContainer" className="FadeOnScroll">
+          <h2>서울대학교 컴퓨터 연구회 SCSC를 소개합니다</h2>
           <div className="ActivityBlock">
             <p>
-              서울대학교 중앙 컴퓨터 동아리 SCSC는 <strong>1984년</strong>에
-              창립된 이래로 오랜 시간 동안 컴퓨터와 함께 성장해왔습니다.
+              <strong>한글, 리니지, 리니지2, 아이온.</strong>
+              <br />
+              이들의 공통점은 무엇일까요?
             </p>
             <p>
-              초창기에는 서울대학교 기초과학부 소속의 소규모 학술 동아리로
-              시작하여,
-              <strong>1993년</strong>에는 중앙 동아리로 등록되며 본격적인 활동을
-              시작하였습니다. 이후 2000년대에는 홈페이지 운영, 서버 구축 등의
-              활동이 활발히 이루어지며 컴퓨터 중심 동아리로서의 색깔을 확고히
-              하였습니다.
+              <strong>SCSC</strong>는 <strong>SNU Computer Study Club</strong>의
+              약자로,
+              <strong> 1984년부터 이어져 온 서울대학교 컴퓨터 연구회</strong>
+              입니다.
             </p>
             <p>
-              <strong>2010년대</strong>에 들어서는 SIG 체계가 정착되며,
-              동아리원들이 자율적으로 스터디를 개설하고 운영하는 학습 중심의
-              문화가 자리잡기 시작했습니다. 또한 피그(PIG) 체계가 도입되며
-              프로젝트 기반의 실전 경험도 쌓을 수 있는 기회를 제공하게
-              되었습니다.
+              세계 최초의 한글 워드프로세서인 <strong>한글 1.0</strong> 버전은
+              제3회 SCSC 전시회에서 처음 공개되었습니다. 이때 개발을 이끌었던{" "}
+              <strong>이찬진</strong>, <strong>김형집</strong>,{" "}
+              <strong>우원식</strong>, <strong>김택진</strong> 선배님들은
+              우리나라 소프트웨어 역사에서 빼놓을 수 없는 분들입니다.
             </p>
             <p>
-              최근 <strong>2020년대</strong>에는 자율성과 친목을 중시하는 문화가
-              더욱 강조되며, 다양한 분야의 시그와 피그가 활발히 운영되고
-              있습니다. 세미나, 해커톤, 교류전 등 다양한 행사도 함께 진행되며,
-              단순한 개발을 넘어 사람과의 연결, 협업, 성장을 추구하는 동아리로
-              발전하고 있습니다.
+              <strong>이찬진</strong>, <strong>김형집</strong>,{" "}
+              <strong>우원식</strong> 선배님은 <strong>‘한글과컴퓨터’</strong>
+              사에서 한글을 대중화시키셨습니다. <strong>김택진</strong> 선배님은
+              ‘한메소프트’를 창립해 &lt;한메 타자교사&gt;, &lt;한메 한글&gt;을
+              개발한 후, 1997년에는 <strong>‘NC소프트’</strong>를
+              창업하셨습니다.
+            </p>
+            <p>
+              또한 <strong>우원식</strong> 선배님은 ‘한글과컴퓨터’에서 나온 후{" "}
+              <strong>NC소프트</strong>의 다양한 게임 개발에 참여하였고,
+              <strong>&lt;아이온&gt;</strong> 개발을 총괄하셨습니다. 게임 개발
+              업계에서는 <em>‘천재 개발자’</em>로 불리고 계신 분입니다.
+            </p>
+            <p>
+              이 외에도 수많은 SCSC 선배님들이 여러 회사를 창업하고, 다양한
+              곳에서 핵심 직책을 맡고 계십니다.
+            </p>
+            <p>
+              <strong>한글, 리니지, 리니지2, 아이온의 공통점</strong>은 바로{" "}
+              <strong>
+                서울대학교 컴퓨터 동아리 SCSC가 없었다면 나오지 못했을 것들
+              </strong>
+              이라는 점입니다.
             </p>
           </div>
         </div>
+
         <div style={{ height: "5vh" }}></div>
         <div id="HomeDescriptionContainer" className="FadeOnScroll">
           <h2>SCSC는 이러한 활동을 합니다</h2>
