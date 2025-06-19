@@ -9,7 +9,7 @@ const executives = [
     name: "강명석",
     role: "대장",
     image: "/img1.jpg",
-    description: "그는 신입니다",
+    description: "init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아",
   },
   {
     name: "이한경",
@@ -19,9 +19,27 @@ const executives = [
   },
   {
     name: "박성현",
-    role: "Admin",
+    role: "프론트",
     image: "/img3.jpg",
-    description: "도무지 더 수정할 시간이 없으니 여기서 제출하겠습니다",
+    description: "카와이한 여고생쨩",
+  },
+  {
+    name: "황민기",
+    role: "봇이지뭐",
+    image: "/img4.jpg",
+    description: "커밋주작은뭐야",
+  },
+  {
+    name: "김재희",
+    role: "백엔드?",
+    image: "/img5.jpg",
+    description: "분명 프론트 대신 해줄줄 알았는데",
+  },
+  {
+    name: "윤영우",
+    role: "백엔드",
+    image: "/img6.jpg",
+    description: "고능",
   },
 ];
 

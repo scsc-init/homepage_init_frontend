@@ -79,3 +79,12 @@
 .SigCreateBtn:hover {
   background-color: var(--indigo-10);
 }
+
+.SigHeader {
+  width: 100%;
+  max-width: 60rem; /* SigListContainer와 동일하게 제한 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}

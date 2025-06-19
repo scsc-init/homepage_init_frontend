@@ -21,7 +21,7 @@ export default async function SigListPage() {
 
   return (
     <div id="SigListContainer">
-      <div className="w-full flex justify-between items-center mb-8">
+      <div className="SigHeader">
         <h1 className="text-3xl font-bold">SIG 게시판</h1>
         <Link href="/sig/create" id="SigCreateButton">
           <button className="SigCreateBtn">SIG 만들기</button>

@@ -11,7 +11,7 @@ const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const hideFooterRoutes = ["/login", "/signup"];
+  const hideFooterRoutes = ["/login", "/signup", "/my-page"];
 
   return (
     <html lang="ko">

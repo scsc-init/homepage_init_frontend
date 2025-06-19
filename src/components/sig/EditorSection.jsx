@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { Controller } from "react-hook-form";
 import { useRef } from "react";
 
-const Editor = dynamic(() => import("../../app/sig/create/MDXEditor"), {
+const Editor = dynamic(() => import("./MDXEditor.jsx"), {
   ssr: false,
 });
 
@@ -19,12 +19,13 @@ export default function EditorSection({ control }) {
         control={control}
         render={({ field }) => (
           <Editor
-            editorRef={editorRef}
-            markdown={field.value || "여기에 상세 소개를 작성해보세요."}
-            onChange={() => {}}
+            ref={editorRef}
+            markdown={field.value}
+            onChange={field.onChange}
           />
         )}
       />
+
       <Divider />
     </>
   );

@@ -178,7 +178,9 @@
   text-align: center;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  padding: 1rem;
+  /* 수정 사항 */
+  box-sizing: border-box;
+  padding: 0; /* 혹은 필요 시 padding-top만 소량 부여 */
 }
 
 .ExecutiveImageWrapper:hover .ExecutiveOverlay {
@@ -190,7 +192,9 @@
   font-weight: 600;
   color: white;
   line-height: 1.5;
+  margin: 0; /* 추가 */
 }
+
 .ExecutiveMasonry {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

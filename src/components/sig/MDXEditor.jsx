@@ -1,6 +1,9 @@
+// components/sig/MDXEditor.jsx
 "use client";
 
+import React, { forwardRef } from "react";
 import {
+  MDXEditor,
   headingsPlugin,
   listsPlugin,
   quotePlugin,
@@ -8,7 +11,6 @@ import {
   markdownShortcutPlugin,
   toolbarPlugin,
   imagePlugin,
-  MDXEditor,
   UndoRedo,
   BoldItalicUnderlineToggles,
   BlockTypeSelect,
@@ -19,12 +21,13 @@ import {
 
 import "@mdxeditor/editor/style.css";
 
-export default function InitializedMDXEditor(props) {
-  const { editorRef = null, markdown = "", onChange = () => {} } = props;
-
+const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
+  { markdown = "", onChange = () => {} },
+  ref,
+) {
   return (
     <MDXEditor
-      ref={editorRef}
+      ref={ref}
       markdown={markdown}
       onChange={onChange}
       plugins={[
@@ -52,4 +55,6 @@ export default function InitializedMDXEditor(props) {
       ]}
     />
   );
-}
+});
+
+export default InitializedMDXEditor;

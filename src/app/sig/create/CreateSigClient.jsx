@@ -1,12 +1,11 @@
+// app/sig/create/CreateSigClient.jsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import SigForm from "@/components/sig/SigForm";
-
-const Editor = dynamic(() => import("./MDXEditor.jsx"), { ssr: false });
+import Editor from "@/components/sig/EditorWrapper.jsx";
 
 export default function CreateSigClient() {
   const { register, control, handleSubmit } = useForm({
@@ -17,7 +16,6 @@ export default function CreateSigClient() {
     },
   });
 
-  const editorRef = useRef();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
 
@@ -60,7 +58,7 @@ export default function CreateSigClient() {
         body: JSON.stringify({
           title: data.title,
           description: data.description,
-          content: data.editor, // ✅ 여기서 직접 보내줌!
+          content: data.editor,
           year,
           semester,
         }),
@@ -84,16 +82,20 @@ export default function CreateSigClient() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">SIG 생성</h1>
-      <SigForm
-        register={register}
-        control={control}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        Editor={Editor}
-        editorRef={editorRef}
-      />
+    <div className="CreateSigContainer">
+      <div className="CreateSigHeader">
+        <h1 className="CreateSigTitle">SIG 생성</h1>
+        <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요.</p>
+      </div>
+      <div className="CreateSigCard">
+        <SigForm
+          register={register}
+          control={control}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          Editor={Editor}
+        />
+      </div>
     </div>
   );
 }
