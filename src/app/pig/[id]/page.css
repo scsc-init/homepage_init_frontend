@@ -1,0 +1,81 @@
+/* 페이지 전체 컨테이너 */
+.PigDetailContainer {
+  max-width: 60vw;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+}
+
+/* 제목 */
+.PigTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #111;
+}
+
+/* 학기 + 상태 */
+.PigInfo {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 설명 */
+.PigDescription {
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 구분선 */
+.PigDivider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 2rem 0;
+}
+
+/* 본문 */
+.PigContent {
+  line-height: 1.75;
+  font-size: 1rem;
+  color: #222;
+  word-break: break-word;
+}
+
+/* 마크다운 스타일 */
+.mdx-h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1.8rem 0 1rem;
+}
+
+.mdx-h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.mdx-p {
+  margin-bottom: 1.1rem;
+}
+
+.mdx-li {
+  margin-left: 1.2rem;
+  list-style-type: disc;
+  margin-bottom: 0.4rem;
+}
+
+.mdx-inline-code {
+  background: #f1f1f1;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.mdx-pre {
+  background: #f9f9f9;
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}

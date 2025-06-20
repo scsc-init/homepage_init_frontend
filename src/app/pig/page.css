@@ -1,0 +1,90 @@
+@import "@radix-ui/colors/indigo.css";
+@import "@radix-ui/colors/violet.css";
+@import "@radix-ui/colors/slate.css";
+
+#PigListContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+#PigList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pigLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.pigCard {
+  border: 1px solid var(--slate-6);
+  border-radius: 0.75rem;
+  background: white;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.pigCard:hover {
+  box-shadow: 0 2px 6px var(--slate-5);
+}
+
+.pigTopbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pigTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--indigo-11);
+}
+
+.pigUserCount {
+  font-size: 0.9rem;
+  color: var(--slate-10);
+}
+
+.pigDescription {
+  font-size: 0.95rem;
+  color: var(--slate-12);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+#PigCreateButton {
+  all: unset;
+}
+
+.PigCreateBtn {
+  background-color: var(--indigo-9);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.PigCreateBtn:hover {
+  background-color: var(--indigo-10);
+}
+
+.PigHeader {
+  width: 100%;
+  max-width: 60rem; /* PigListContainer와 동일하게 제한 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}

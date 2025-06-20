@@ -1,18 +1,18 @@
-// app/sig/create/CreateSigClient.jsx
+// app/pig/create/CreatePigClient.jsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import SigForm from "@/components/board/SigForm";
+import PigForm from "@/components/board/PigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
 
-export default function CreateSigClient() {
+export default function CreatePigClient() {
   const { register, control, handleSubmit } = useForm({
     defaultValues: {
       title: "",
       description: "",
-      editor: "여기에 SIG 내용을 작성해주세요.",
+      editor: "여기에 PIG 내용을 작성해주세요.",
     },
   });
 
@@ -48,7 +48,7 @@ export default function CreateSigClient() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/sig/create", {
+      const res = await fetch("http://localhost:8080/api/pig/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,12 +65,12 @@ export default function CreateSigClient() {
       });
 
       if (res.status === 201) {
-        alert("SIG 생성 성공!");
-        router.push("/sig");
+        alert("PIG 생성 성공!");
+        router.push("/pig");
       } else {
         const err = await res.json();
         throw new Error(
-          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
+          "PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
         );
       }
     } catch (err) {
@@ -82,13 +82,13 @@ export default function CreateSigClient() {
   };
 
   return (
-    <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 생성</h1>
-        <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요.</p>
+    <div className="CreatePigContainer">
+      <div className="CreatePigHeader">
+        <h1 className="CreatePigTitle">PIG 생성</h1>
+        <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
       </div>
-      <div className="CreateSigCard">
-        <SigForm
+      <div className="CreatePigCard">
+        <PigForm
           register={register}
           control={control}
           handleSubmit={handleSubmit}
