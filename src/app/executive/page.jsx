@@ -1,9 +1,11 @@
-import dynamic from "next/dynamic";
-const ExecutivePanelPage = dynamic(
-  () => import("../../executive_panel/ExecutivePanelPage"),
-  { ssr: false },
-);
+// @/app/executive/page.jsx
 
-export default function Page() {
-  return <ExecutivePanelPage />;
+import UserList from "@/app/executive/UserList";
+
+export default function ExecutivePanel() {
+  return (
+    <div className="executive-panel" style={{ padding: "2rem" }}>
+      <UserList />
+    </div>
+  );
 }
