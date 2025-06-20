@@ -78,3 +78,21 @@ body {
 .RegulationItem p {
   margin-bottom: 0.75rem;
 }
+
+.loading {
+  font-size: 1rem;
+  opacity: 0.6;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
