@@ -6,6 +6,15 @@
   width: 1.2rem;
   height: 1.2rem;
 }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  max-height: 100%;
+  overflow-y: hidden;
+}
 /* 전체 컨테이너: 화면 중앙 정렬 + 배경 */
 #LoginContainer {
   display: flex;
@@ -13,7 +22,6 @@
   align-items: center;
   min-height: 100vh;
   background-color: #f9f9f9;
-  padding: 2rem;
 }
 
 /* 로그인 폼 카드 스타일 */

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./header.css";
 import { goToLogin, goToMyPage } from "@/util/navigation";
-import { useLoginStore } from "@/state/LoginState";
+import { useLoginStore } from "@/state/LoginState.jsx";
 import UserIcon from "@@/vectors/user.svg";
 
 const LogoIcon = () => (
@@ -69,16 +69,16 @@ const menuData = [
   {
     title: "Board",
     items: [
-      { label: "Project Archives", url: "#" },
-      { label: "Album", url: "#" },
-      { label: "Notice", url: "#" },
+      { label: "Project Archives", url: "/board/3" },
+      { label: "Album", url: "/board/4" },
+      { label: "Notice", url: "/board/5" },
     ],
   },
   {
     title: "SIG/PIG",
     items: [
       { label: "SIG", url: "/sig" },
-      { label: "PIG", url: "#" },
+      { label: "PIG", url: "/pig" },
     ],
   },
   {

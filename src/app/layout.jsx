@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Noto_Sans_KR } from "next/font/google";
 import "./global.css";
 import Header from "./header";
-import Footer from "./footer";
+import Footer from "./footer.jsx";
 import Head from "next/head";
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });

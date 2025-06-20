@@ -1,3 +1,5 @@
+//게시판 전체의 input을 담당하므로, 없애기 어려울 것 같습니다.
+
 "use client";
 
 import "./Input.css";

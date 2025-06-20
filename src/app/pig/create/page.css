@@ -1,0 +1,57 @@
+#DetailsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#Details {
+  max-width: 60rem;
+  width: 100%;
+}
+
+#DetailsButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+
+  & > * {
+    flex: 1;
+  }
+}
+
+#PigTitle {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+#PigOptions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.CreatePigContainer {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.CreatePigHeader {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.CreatePigTitle {
+  font-size: 2.25rem; /* text-3xl */
+  font-weight: 700;
+  color: var(--indigo-11);
+  margin-bottom: 0.5rem;
+}
+
+.CreatePigSubtitle {
+  font-size: 1.1rem;
+  color: var(--slate-10);
+}

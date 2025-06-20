@@ -1,9 +1,7 @@
 "use client";
 
-import * as Button from "@/components/Button";
-import { useLoginStore } from "@/state/LoginState";
+import Button from "@/components/Button.jsx";
 import { goToHome, goToSignup } from "@/util/navigation";
-import Divider from "@/components/Divider";
 import React, { useEffect } from "react";
 import "./page.css";
 
@@ -44,19 +42,9 @@ export default function LoginPage() {
         });
 
         if (res.status === 200) {
-          const { jwt, id, email } = await res.json();
+          const { jwt } = await res.json();
 
           localStorage.setItem("jwt", jwt);
-          localStorage.setItem("user_id", id);
-
-          const hashBuffer = await crypto.subtle.digest(
-            "SHA-256",
-            new TextEncoder().encode(email),
-          );
-          const hashHex = [...new Uint8Array(hashBuffer)]
-            .map((b) => b.toString(16).padStart(2, "0"))
-            .join("");
-          localStorage.setItem("user_hash", hashHex);
 
           goToHome();
         } else if (res.status === 404) {
@@ -75,7 +63,6 @@ export default function LoginPage() {
     <div id="LoginContainer">
       <form id="LoginForm" className="shadow-md bg-white rounded-xl">
         <h1>로그인</h1>
-        <Divider />
         <div id="GoogleLoginContainer" className="mt-4">
           <div
             id="g_id_onload"
@@ -98,9 +85,9 @@ export default function LoginPage() {
           </div>
         </div>
         <div id="LoginButtonsContainer">
-          <Button.Root type="button" onClick={() => goToSignup()}>
+          <Button type="button" onClick={() => goToSignup()}>
             회원가입
-          </Button.Root>
+          </Button>
         </div>
       </form>
     </div>
