@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { goToLogin, goToMyPage } from "@/util/navigation";
-import UserIcon from "@@/vectors/user.svg";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default function HeaderClientArea() {
   const [user, setUser] = useState(null);
@@ -11,7 +10,7 @@ export default function HeaderClientArea() {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) return;
 
-    fetch("http://localhost:8080/api/user/profile", {
+    fetch(`${getBaseUrl()}/api/user/profile`, {
       headers: {
         "x-jwt": jwt,
         "x-api-secret": "some-secret-code",
@@ -25,13 +24,16 @@ export default function HeaderClientArea() {
       });
   }, []);
 
-  const isExecutive = user?.role === "executive" || user?.role === "president";
-
+  const isExecutive = user?.role >= 500;
   if (!user) {
     return (
-      <div id="HeaderUserLogin" onClick={goToLogin}>
+      <button
+        id="HeaderUserLogin"
+        className="unset"
+        onClick={() => (window.location.href = "/login")}
+      >
         로그인
-      </div>
+      </button>
     );
   }
 
@@ -45,9 +47,17 @@ export default function HeaderClientArea() {
           운영진 페이지
         </button>
       )}
-      <button id="HeaderUser" className="unset" onClick={goToMyPage}>
+      <button
+        id="HeaderUser"
+        className="unset"
+        onClick={() => (window.location.href = "/my-page")}
+      >
         <span id="HeaderUserName">{user.name}</span>
-        <UserIcon className="HeaderUserIcon" />
+        <img
+          src="/vectors/user.svg"
+          className="HeaderUserIcon"
+          alt="User Icon"
+        />
       </button>
     </>
   );

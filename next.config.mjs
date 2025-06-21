@@ -9,10 +9,16 @@ const nextConfig = {
   },
 
   async rewrites() {
+    const backendUrl = process.env.BACKEND_URL;
+
+    if (!backendUrl) {
+      throw new Error("BACKEND_URL is not defined in environment variables");
+    }
+
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:8080/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
       },
     ];
   },

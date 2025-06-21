@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default function GoogleSignupPage() {
   const [form, setForm] = useState({
@@ -63,7 +64,7 @@ export default function GoogleSignupPage() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/majors", {
+      .get(`${getBaseUrl()}/api/majors`, {
         headers: { "x-api-secret": "some-secret-code" },
       })
       .then((res) => setMajors(res.data))
@@ -80,7 +81,7 @@ export default function GoogleSignupPage() {
     const fullID = `${form.student_id_year}${form.student_id_number}`;
     try {
       await axios.post(
-        "http://localhost:8080/api/user/create",
+        `${getBaseUrl()}/api/user/create`,
         {
           email: form.email,
           name: form.name,
@@ -97,7 +98,7 @@ export default function GoogleSignupPage() {
       );
 
       const loginRes = await axios.post(
-        "http://localhost:8080/api/user/login",
+        `${getBaseUrl()}/api/user/login`,
         { email: form.email },
         {
           headers: {

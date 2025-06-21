@@ -5,11 +5,12 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
 import "./page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function SigDetailPage({ params }) {
   const { id } = params;
 
-  const res = await fetch(`http://localhost:8080/api/sig/${id}`, {
+  const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
     headers: { "x-api-secret": "some-secret-code" },
     cache: "no-store",
   });
@@ -25,7 +26,7 @@ export default async function SigDetailPage({ params }) {
   const sig = await res.json();
 
   const articleRes = await fetch(
-    `http://localhost:8080/api/article/${sig.content_id}`,
+    `${getBaseUrl()}/api/article/${sig.content_id}`,
     {
       headers: { "x-api-secret": "some-secret-code" },
       cache: "no-store",
@@ -37,17 +38,6 @@ export default async function SigDetailPage({ params }) {
   }
 
   const article = await articleRes.json();
-  console.log(article);
-
-  // ✅ markdown 파일 내용 가져오기
-  const contentRes = await fetch(
-    `http://localhost:8080/articles/${article.id}.md`, // 백엔드에서 파일을 서빙하는 경로여야 함
-    { cache: "no-store" },
-  );
-
-  const markdown = contentRes.ok
-    ? await contentRes.text()
-    : "내용을 불러올 수 없습니다.";
 
   return (
     <div className="SigDetailContainer">
@@ -72,7 +62,7 @@ export default async function SigDetailPage({ params }) {
             pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
           }}
         >
-          {markdown}
+          {article.content}
         </ReactMarkdown>
       </div>
     </div>

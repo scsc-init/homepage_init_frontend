@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
 import "@/app/board/[id]/create/page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
   ssr: false,
@@ -30,7 +31,7 @@ export default function CreateBoardArticleClient({ boardId }) {
       router.push("/login");
     }
 
-    fetch(`http://localhost:8080/api/board/${boardId}`, {
+    fetch(`${getBaseUrl()}/api/board/${boardId}`, {
       headers: { "x-api-secret": "some-secret-code" },
     })
       .then((res) =>
@@ -50,7 +51,7 @@ export default function CreateBoardArticleClient({ boardId }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/article/create", {
+      const res = await fetch(`${getBaseUrl()}/api/article/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

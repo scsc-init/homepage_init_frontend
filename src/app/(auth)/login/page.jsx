@@ -4,6 +4,7 @@ import Button from "@/components/Button.jsx";
 import { goToHome, goToSignup } from "@/util/navigation";
 import React, { useEffect } from "react";
 import "./page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default function LoginPage() {
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function LoginPage() {
           return;
         }
 
-        const res = await fetch("http://localhost:8080/api/user/login", {
+        const res = await fetch(`${getBaseUrl()}/api/user/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

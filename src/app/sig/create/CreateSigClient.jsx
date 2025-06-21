@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import SigForm from "@/components/board/SigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default function CreateSigClient() {
   const { register, control, handleSubmit } = useForm({
@@ -48,7 +49,7 @@ export default function CreateSigClient() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/sig/create", {
+      const res = await fetch(`${getBaseUrl()}/api/sig/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

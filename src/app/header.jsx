@@ -1,10 +1,9 @@
+// header.jsx
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import { goToLogin, goToMyPage } from "@/util/navigation";
-import { useLoginStore } from "@/state/LoginState.jsx";
-import UserIcon from "@@/vectors/user.svg";
+import HeaderClientArea from "./header_client"; // ✅ 추가
 
 const LogoIcon = () => (
   <button className="unset" onClick={() => (window.location.href = "/")}>
@@ -15,47 +14,7 @@ const LogoIcon = () => (
     />
   </button>
 );
-/*### About Us
 
-- **SCSC**
-- [ ] SCSC 역사 소개 페이지, Contact Us로 이동하는 기능이 있어야 함
-- **Executives**
-- [ ] 운영진 소개 페이지
-- **Developers**
-- [ ] 개발자 소개 페이지
-- **Rules**
-- [ ] 회칙 페이지
-
-### Board
-
-- **Project Archives / Album / Notice / More**
-- [ ] 전체 게시판 조회 페이지
-- [ ] 게시판 글 조회 페이지
-- [ ] 게시판 글 작성 페이지
-- [ ] 게시판 글 수정
-- [ ] 게시판 글 검색 기능
-
-### Sig/Pig
-
-- **Sig**
-- [ ] 시그 만들기 페이지
-- [ ] 시그 접수 페이지
-- [ ] 시그 접수 기능
-- [ ] 시그 수요조사 기능
-- [ ] 시그 소개글 조회 기능
-- **Pig**
-- [ ] 피그 조회 페이지
-- [ ] 피그 접수 페이지
-- [ ] 피그 접수 기능
-- [ ] 피그 수요조사 기능
-- [ ] 피그 소개글 조회 기능
-
-### Contact
-
-- **Contact Us**
-- [ ] SCSC 위치, 전화번호 페이지
-- **Join Us**
-- [ ] SCSC 가입 페이지 리디렉션 */
 const menuData = [
   {
     title: "About us",
@@ -135,9 +94,8 @@ function HeaderNavigation() {
 }
 
 export default function Header() {
-  const loginStore = useLoginStore();
   const headerRef = useRef(null);
-  const [spacerHeight, setSpacerHeight] = useState(null); // null → 조건부 적용을 위함
+  const [spacerHeight, setSpacerHeight] = useState(null);
 
   useEffect(() => {
     if (headerRef.current) {
@@ -156,23 +114,10 @@ export default function Header() {
             <HeaderNavigation />
           </div>
           <div id="HeaderRight">
-            <button id="HeaderUser" className="unset">
-              {loginStore.login_token ? (
-                <span id="HeaderUserName">{loginStore.name}</span>
-              ) : (
-                <div id="HeaderUserLogin" onClick={() => goToLogin()}>
-                  로그인
-                </div>
-              )}
-              <UserIcon
-                className="HeaderUserIcon"
-                onClick={() => goToMyPage()}
-              />
-            </button>
+            <HeaderClientArea /> {/* ✅ 사용자 영역만 클라이언트에서 렌더링 */}
           </div>
         </div>
       </div>
-
       <div
         id="HeaderSpacer"
         style={

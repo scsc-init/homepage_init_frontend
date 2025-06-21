@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default function MyPage() {
   const [user, setUser] = useState(null);
@@ -19,7 +20,7 @@ export default function MyPage() {
     }
 
     axios
-      .get("http://localhost:8080/api/user/profile", {
+      .get(`${getBaseUrl()}/api/user/profile`, {
         headers: {
           "x-jwt": jwt,
           "x-api-secret": "some-secret-code",
@@ -28,14 +29,11 @@ export default function MyPage() {
       .then((res) => {
         setUser(res.data);
 
-        return axios.get(
-          `http://localhost:8080/api/major/${res.data.major_id}`,
-          {
-            headers: {
-              "x-api-secret": "some-secret-code",
-            },
+        return axios.get(`${getBaseUrl()}/api/major/${res.data.major_id}`, {
+          headers: {
+            "x-api-secret": "some-secret-code",
           },
-        );
+        });
       })
       .then((res) => {
         setMajors(res.data);

@@ -1,9 +1,10 @@
 // /app/sig/page.jsx - SIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
 import Link from "next/link";
 import "./page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function SigListPage() {
-  const res = await fetch("http://localhost:8080/api/sigs", {
+  const res = await fetch(`${getBaseUrl()}/api/sigs`, {
     method: "GET",
     headers: { "x-api-secret": "some-secret-code" },
     cache: "no-store",
