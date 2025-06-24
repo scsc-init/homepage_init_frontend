@@ -1,15 +1,15 @@
-// app/article/[id]/page.jsx
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
 import "./page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function ArticleDetail({ params }) {
   const { id } = params;
 
-  const res = await fetch(`http://localhost:8080/api/article/${id}`, {
+  const res = await fetch(`${getBaseUrl()}/api/article/${id}`, {
     headers: { "x-api-secret": "some-secret-code" },
     cache: "no-store",
   });
@@ -23,6 +23,7 @@ export default async function ArticleDetail({ params }) {
   }
 
   const article = await res.json();
+  const markdown = article.content ?? "📛 내용이 비어 있습니다.";
 
   return (
     <div className="SigDetailContainer">
@@ -35,8 +36,18 @@ export default async function ArticleDetail({ params }) {
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw, rehypeHighlight]}
+          components={{
+            h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
+            h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
+            p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
+            li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
+            code: ({ node, ...props }) => (
+              <code className="mdx-inline-code" {...props} />
+            ),
+            pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
+          }}
         >
-          {article.content}
+          {markdown}
         </ReactMarkdown>
       </div>
     </div>

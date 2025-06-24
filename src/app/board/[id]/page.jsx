@@ -3,21 +3,19 @@
 
 import Link from "next/link";
 import "./page.css";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function BoardPage({ params }) {
   const boardId = params.id;
 
   // 게시글 목록
-  const articleRes = await fetch(
-    `http://localhost:8080/api/articles/${boardId}`,
-    {
-      headers: { "x-api-secret": "some-secret-code" },
-      cache: "no-store",
-    },
-  );
+  const articleRes = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
+    headers: { "x-api-secret": "some-secret-code" },
+    cache: "no-store",
+  });
 
   // 게시판 정보
-  const boardRes = await fetch(`http://localhost:8080/api/board/${boardId}`, {
+  const boardRes = await fetch(`${getBaseUrl()}/api/board/${boardId}`, {
     headers: { "x-api-secret": "some-secret-code" },
     cache: "no-store",
   });

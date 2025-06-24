@@ -1,4 +1,3 @@
-// app/pig/create/CreatePigClient.jsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import PigForm from "@/components/board/PigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default function CreatePigClient() {
-  const { register, control, handleSubmit } = useForm({
+  const { register, control, handleSubmit, watch } = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -18,6 +18,7 @@ export default function CreatePigClient() {
 
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const editorContent = watch("editor");
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
@@ -48,7 +49,7 @@ export default function CreatePigClient() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/pig/create", {
+      const res = await fetch(`${getBaseUrl()}/api/pig/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +59,8 @@ export default function CreatePigClient() {
         body: JSON.stringify({
           title: data.title,
           description: data.description,
-          content: data.editor,
+          content:
+            typeof data.editor === "string" ? data.editor : editorContent,
           year,
           semester,
         }),
@@ -68,10 +70,8 @@ export default function CreatePigClient() {
         alert("PIG 생성 성공!");
         router.push("/pig");
       } else {
-        const err = await res.json();
-        throw new Error(
-          "PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
-        );
+        const text = await res.text();
+        throw new Error("PIG 생성 실패: " + text);
       }
     } catch (err) {
       console.error(err);

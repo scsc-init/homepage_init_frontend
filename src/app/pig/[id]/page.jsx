@@ -5,11 +5,12 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
 import "./page.css"; // ✅ 추가
+import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function PigDetailPage({ params }) {
   const { id } = params;
 
-  const res = await fetch(`http://localhost:8080/api/pig/${id}`, {
+  const res = await fetch(`${getBaseUrl()}/api/pig/${id}`, {
     headers: { "x-api-secret": "some-secret-code" },
     cache: "no-store",
   });
@@ -25,7 +26,7 @@ export default async function PigDetailPage({ params }) {
   const pig = await res.json();
 
   const articleRes = await fetch(
-    `http://localhost:8080/api/article/${pig.content_id}`,
+    `${getBaseUrl()}/api/article/${pig.content_id}`,
     {
       headers: { "x-api-secret": "some-secret-code" },
       cache: "no-store",
