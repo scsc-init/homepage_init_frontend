@@ -11,7 +11,7 @@ const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const hideFooterRoutes = ["/login", "/signup", "/my-page"];
+  const hideFooterRoutes = ["/us/login", "/signup", "/about/my-page"];
 
   return (
     <html lang="ko">
@@ -42,9 +42,9 @@ export default function RootLayout({ children }) {
         <meta name="twitter:image" content="../../public/img4.jpg" />
       </Head>
       <body className={noto_sans_kr.className}>
-        <Header />
-        <div id="Body">
-          {children}
+        <div id="RootContainer">
+          <Header />
+          <main id="MainContent">{children}</main>
           {!hideFooterRoutes.includes(pathname) && <Footer />}
         </div>
       </body>

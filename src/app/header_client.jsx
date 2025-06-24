@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import Image from "next/image";
 
 export default function HeaderClientArea() {
   const [user, setUser] = useState(null);
@@ -30,7 +31,7 @@ export default function HeaderClientArea() {
       <button
         id="HeaderUserLogin"
         className="unset"
-        onClick={() => (window.location.href = "/login")}
+        onClick={() => (window.location.href = "/us/login")}
       >
         로그인
       </button>
@@ -50,13 +51,15 @@ export default function HeaderClientArea() {
       <button
         id="HeaderUser"
         className="unset"
-        onClick={() => (window.location.href = "/my-page")}
+        onClick={() => (window.location.href = "/about/my-page")}
       >
         <span id="HeaderUserName">{user.name}</span>
-        <img
+        <Image
           src="/vectors/user.svg"
           className="HeaderUserIcon"
           alt="User Icon"
+          width={24}
+          height={24}
         />
       </button>
     </>

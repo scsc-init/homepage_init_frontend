@@ -1,10 +1,7 @@
-import React from "react";
-import Image from "next/image";
 import MailLogo from "@@/vectors/mail.svg";
 import FacebookLogo from "@@/vectors/facebook.svg";
 import GithubLogo from "@@/vectors/github.svg";
 import InstagramLogo from "@@/vectors/instagram.svg";
-import Link from "next/link";
 import "./footer.css";
 
 function Footer() {

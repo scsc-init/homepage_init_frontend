@@ -14,8 +14,7 @@ export default function MyPage() {
     const jwt = localStorage.getItem("jwt");
 
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/login");
+      router.push("/us/login");
       return;
     }
 
@@ -39,11 +38,9 @@ export default function MyPage() {
         setMajors(res.data);
       })
       .catch((err) => {
-        console.error("내 정보 조회 실패:", err);
-        alert("세션이 만료되었거나 인증되지 않았습니다.");
-        router.push("/login");
+        router.push("/us/login");
       });
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");

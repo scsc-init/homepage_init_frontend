@@ -122,7 +122,7 @@ export default function ArticleList() {
 
     const payload = {
       title: article.title.trim(),
-      content: article.content.trim(), // ✅ 백엔드 요구 사항에 맞춰 content_src로 전송
+      content: article.content.trim(),
       board_id: Number(article.board_id),
     };
 

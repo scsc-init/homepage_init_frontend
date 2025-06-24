@@ -97,7 +97,7 @@ export default function Contact() {
               SCSC 가입을 원하시나요? 아래 버튼을 클릭하여 신청서를
               작성해주세요.
             </p>
-            <a href="./signup" className="JoinButton">
+            <a href="./login" className="JoinButton">
               Join us!
             </a>
           </div>

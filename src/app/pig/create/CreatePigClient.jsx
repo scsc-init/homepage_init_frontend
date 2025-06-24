@@ -23,7 +23,6 @@ export default function CreatePigClient() {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
       router.push("/login");
     }
   }, [router]);
@@ -37,8 +36,7 @@ export default function CreatePigClient() {
   const onSubmit = async (data) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/login");
+      router.push("/us/login");
       return;
     }
 

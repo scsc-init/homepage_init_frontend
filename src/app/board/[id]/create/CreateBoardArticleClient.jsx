@@ -27,8 +27,7 @@ export default function CreateBoardArticleClient({ boardId }) {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/login");
+      router.push("/us/login");
     }
 
     fetch(`${getBaseUrl()}/api/board/${boardId}`, {
