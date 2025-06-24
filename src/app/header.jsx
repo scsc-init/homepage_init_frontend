@@ -19,9 +19,9 @@ const menuData = [
   {
     title: "About us",
     items: [
-      { label: "SCSC", url: "/intro" },
-      { label: "Executives", url: "/executives" },
-      { label: "Developers", url: "/developers" },
+      { label: "SCSC", url: "/about" },
+      { label: "Executives", url: "/about/executive" },
+      { label: "Developers", url: "/about/developer" },
       { label: "Rules", url: "/rules" },
     ],
   },
@@ -43,7 +43,7 @@ const menuData = [
   {
     title: "Contact",
     items: [
-      { label: "Contact Us!", url: "/contact" },
+      { label: "Contact Us!", url: "/us/contact" },
       { label: "Join Us!", url: "/signup" },
     ],
   },

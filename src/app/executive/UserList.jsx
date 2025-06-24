@@ -1,24 +1,3 @@
-// @/app/executive/page.jsx
-
-/**
- * @author Kang Myeong Seok <tomskang@naver.com>
- * @created 2025-06-21
- *
- * @description
- * 이 컴포넌트는 executive 또는 president 권한을 가진 사용자 목록을 불러와,
- * 이름, 전공, 전화번호, 학번, 권한(role), 상태(status)를 편집할 수 있도록 제공합니다.
- * 각 사용자에 대해 변경된 내용을 저장 버튼을 통해 서버에 반영할 수 있습니다.
- *
- * 검색 로직 설명:
- * - 필터 입력값은 `filter` 상태로 관리됩니다.
- * - `updateFilterCriteria(field, value)` 함수는 필터 값을 갱신한 뒤,
- *   현재 전체 사용자 목록(`users`)에서 조건에 맞는 사용자만 필터링하여 `filteredUsers`에 저장합니다.
- * - 화면에는 `filteredUsers`만 렌더링되므로 실시간 검색이 가능합니다.
- *
- * 사용자가 정보를 편집할 경우 `updateUserField(userId, field, value)`를 통해
- * `users`와 `filteredUsers`를 동시에 업데이트하여 화면과 상태를 동기화합니다.
- **/
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -40,6 +19,7 @@ export default function UserList() {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
+
     const fetchUsersByRoles = async () => {
       const roles = [
         "lowest",
@@ -50,41 +30,42 @@ export default function UserList() {
         "executive",
         "president",
       ];
-      // TODO: CREATE BACKEND PATH /api/users?user_role=all AND APPLY IT
       const all = await Promise.all(
         roles.map(async (role) => {
           const res = await fetch(
             `${getBaseUrl()}/api/users?user_role=${role}`,
             {
               headers: { "x-api-secret": "some-secret-code", "x-jwt": jwt },
-            },
+            }
           );
           return res.ok ? await res.json() : [];
-        }),
+        })
       );
       const result = all.flat();
       const resultUnique = Array.from(
-        new Map(result.map((user) => [user.id, user])).values(),
+        new Map(result.map((user) => [user.id, user])).values()
       );
       setUsers(resultUnique);
       setFilteredUsers(resultUnique);
     };
+
     const fetchMajors = async () => {
       const res = await fetch(`${getBaseUrl()}/api/majors`, {
         headers: { "x-api-secret": "some-secret-code" },
       });
       if (res.ok) setMajors(await res.json());
     };
+
     fetchUsersByRoles();
     fetchMajors();
   }, []);
 
   const updateUserField = (userId, field, value) => {
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
+      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u))
     );
     setFilteredUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
+      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u))
     );
   };
 
@@ -100,12 +81,13 @@ export default function UserList() {
       (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
       (!newFilter.status ||
         lower(u.status).includes(lower(newFilter.status))) &&
-      (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
+      (!newFilter.major ||
+        lower(u.major_id).toString() === newFilter.major);
+
     setFilteredUsers(users.filter(matches));
   };
 
   const roleNumberToString = (val) => {
-    // TODO: CREATE BACKEND PATH THAT TAKE ROLE NUMBER AND STRING
     const map = {
       0: "lowest",
       100: "dormant",
@@ -115,12 +97,13 @@ export default function UserList() {
       500: "executive",
       1000: "president",
     };
-    return typeof val === "string" ? val : (map[val] ?? "member");
+    return typeof val === "string" ? val : map[val] ?? "member";
   };
 
   const sendUserData = async (user) => {
     const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [user.id]: true }));
+
     const updated = {
       name: user.name?.trim() || "이름없음",
       phone: user.phone?.trim() || "01000000000",
@@ -129,17 +112,23 @@ export default function UserList() {
       role: roleNumberToString(user.role),
       status: user.status || "active",
     };
-    const res = await fetch(`${getBaseUrl()}/api/executive/user/${user.id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-secret": "some-secret-code",
-        "x-jwt": jwt,
-      },
-      body: JSON.stringify(updated),
-    });
+
+    const res = await fetch(
+      `${getBaseUrl()}/api/executive/user/${user.id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-secret": "some-secret-code",
+          "x-jwt": jwt,
+        },
+        body: JSON.stringify(updated),
+      }
+    );
+
     if (res.status === 204) alert(`${user.name} 저장 완료`);
     else alert(`${user.name} 저장 실패: ${res.status}`);
+
     setSaving((prev) => ({ ...prev, [user.id]: false }));
     console.log("PAYLOAD SENT TO SERVER", updated);
   };
