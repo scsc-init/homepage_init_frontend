@@ -25,11 +25,7 @@ export default function SigList() {
         sigsRaw.map(async (sig) => {
           const articleRes = await fetch(
             `${getBaseUrl()}/api/article/${sig.content_id}`,
-            {
-              headers: {
-                "x-api-secret": "some-secret-code",
-              },
-            },
+            { headers: { "x-api-secret": "some-secret-code" } },
           );
           const article = articleRes.ok
             ? await articleRes.json()

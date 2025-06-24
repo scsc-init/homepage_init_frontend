@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
-import "./page.css"; // ✅ 추가
+import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function PigDetailPage({ params }) {
