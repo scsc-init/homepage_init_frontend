@@ -23,7 +23,7 @@ export default async function ArticleDetail({ params }) {
   }
 
   const article = await res.json();
-  const markdown = article.content ?? "📛 내용이 비어 있습니다.";
+  const markdown = article.content ?? "내용이 비어 있습니다.";
 
   return (
     <div className="SigDetailContainer">

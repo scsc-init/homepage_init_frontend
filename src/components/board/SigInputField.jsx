@@ -1,5 +1,5 @@
 // components/SigInputField.jsx
-import * as Input from "@/components/Input";
+import * as Input from "@/components/Input.jsx";
 
 export default function SigInputField({ label, placeholder, register, name }) {
   return (

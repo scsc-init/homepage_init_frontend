@@ -1,17 +1,11 @@
-// header.jsx
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import HeaderClientArea from "./header_client"; // ✅ 추가
+import HeaderClientArea from "./header_client";
+import Image from "next/image";
 
 const LogoIcon = () => (
   <button className="unset" onClick={() => (window.location.href = "/")}>
-    <img
-      src="/vectors/logo.svg"
-      alt="SCSC Logo"
-      style={{ width: "100px", height: "auto" }}
-    />
+    <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
   </button>
 );
 
@@ -20,9 +14,9 @@ const menuData = [
     title: "About us",
     items: [
       { label: "SCSC", url: "/about" },
-      { label: "Executives", url: "/about/executive" },
-      { label: "Developers", url: "/about/developer" },
-      { label: "Rules", url: "/rules" },
+      { label: "Executives", url: "/about/executives" },
+      { label: "Developers", url: "/about/developers" },
+      { label: "Rules", url: "/about/rules" },
     ],
   },
   {
@@ -44,7 +38,7 @@ const menuData = [
     title: "Contact",
     items: [
       { label: "Contact Us!", url: "/us/contact" },
-      { label: "Join Us!", url: "/signup" },
+      { label: "Join Us!", url: "/us/login" },
     ],
   },
 ];
@@ -114,7 +108,7 @@ export default function Header() {
             <HeaderNavigation />
           </div>
           <div id="HeaderRight">
-            <HeaderClientArea /> {/* ✅ 사용자 영역만 클라이언트에서 렌더링 */}
+            <HeaderClientArea />
           </div>
         </div>
       </div>

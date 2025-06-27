@@ -5,7 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
-export default function MyPage() {
+export default function MyProfileClient() {
   const [user, setUser] = useState(null);
   const [majors, setMajors] = useState(null);
   const router = useRouter();
@@ -14,8 +14,7 @@ export default function MyPage() {
     const jwt = localStorage.getItem("jwt");
 
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/login");
+      router.push("/us/login");
       return;
     }
 
@@ -28,22 +27,15 @@ export default function MyPage() {
       })
       .then((res) => {
         setUser(res.data);
-
         return axios.get(`${getBaseUrl()}/api/major/${res.data.major_id}`, {
           headers: {
             "x-api-secret": "some-secret-code",
           },
         });
       })
-      .then((res) => {
-        setMajors(res.data);
-      })
-      .catch((err) => {
-        console.error("내 정보 조회 실패:", err);
-        alert("세션이 만료되었거나 인증되지 않았습니다.");
-        router.push("/login");
-      });
-  }, []);
+      .then((res) => setMajors(res.data))
+      .catch(() => router.push("/us/login"));
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");

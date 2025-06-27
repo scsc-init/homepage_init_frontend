@@ -38,3 +38,20 @@ button {
 *::selection {
   background-color: var(--black-a2);
 }
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#RootContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#MainContent {
+  flex: 1;
+}
