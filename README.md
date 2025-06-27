@@ -7,48 +7,38 @@ Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성
 ## 주요 폴더
 
 ```
-├── public/ #리소스
-├── scripts/ #스크립트
-├── src/
-│   ├── app/
-│   │   ├── (auth)/ #로그인, 회원가입
-│   │   ├── boards/ #게시판(구현예정)
-│   │   ├── intro/ #소개페이지. 헤더의 SCSC 메뉴
-│   │   ├── my-page/ #마이페이지
-│   │   ├── sig/ #sig 목록. sig/create는 시그 생성
-│   │   ├── favicon.ico
-│   │   ├── footer.css
-│   │   ├── footer.tsx #수정 예정
-│   │   ├── global.css #전체 css
-│   │   ├── header.css #헤더
-│   │   ├── header.jsx #헤더
-│   │   ├── layout.tsx #레이아웃
-│   │   ├── page.css
-│   │   ├── page.jsx #메인페이지.
-│   │   └── page.tsx
-│   ├── components/ #component. ***현재 intro 페이지의 componentization이 덜 되었습니다.
-│   ├── data/
-│   ├── interfaces/
-│   ├── state/
-│   └── util/
-│       ├── extractProps.tsx
-│       ├── joinClassName.tsx
-│       ├── navigation.tsx
-│       ├── setAction.ts
-│       └── sleep.ts
-├── .eslintrc.json
-├── .gitignore
-├── .prettierrc
-├── README.md
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── pnpm-lock.yaml
-├── postcss.config.mjs
-├── test.js
-└── tsconfig.json
+## 파일 구조 및 페이지 설명
+
 ```
 
+src/
+└── app/
+├── about/
+│ ├── developers/ # 개발자 소개 페이지
+│ ├── executives/ # 운영진 소개 페이지
+│ ├── my-page/ # 내 정보 페이지
+│ ├── rules/ # 회칙 페이지 : 마크다운 파일을 불러와서 띄움
+│ └── page.jsx # SCSC 소개 메인 페이지
+├── article/[id]/ # 게시글 상세 페이지
+├── board/[id]/ # 게시글 목록 페이지(게시글 별 id로 접속)
+│ └── create/ # 새 글 작성 페이지
+├── executive/ # 운영진 전용 관리 페이지
+├── pig/
+│ ├── [id]/ # 개별 PIG 상세 페이지
+│ ├── create/ # 새 PIG 생성 페이지
+│ ├── PigCreateButton.jsx # PIG 생성 버튼
+│ └── page.jsx # 전체 PIG 목록 페이지
+├── sig/
+│ ├── [id]/ # 개별 SIG 상세 페이지
+│ ├── create/ # SIG 생성 페이지
+│ ├── SigCreateButton.jsx # SIG 생성 버튼
+│ └── page.jsx # 전체 SIG 목록 페이지
+└── us/
+│ └── (auth)/login/ # 로그인 + 회원가입 페이지 : 로그인 시도 후 db에 없으면 회원가입 진행
+│ ├── validator.jsx # 회원가입 사용자 데이터 형식 검사
+│ └── contact # 연락처 및 회원가입 링크
+
+````
 ---
 
 ## 설치 및 실행 방법
@@ -57,53 +47,12 @@ Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성
 
 ```bash
 git clone https://github.com/scsc-init/homepage_init_frontend.git
-```
+````
 
 ### 2. 패키지 설치
 
 ```bash
 npm install
-```
-├── public/ #리소스
-├── scripts/ #스크립트
-├── src/
-│   ├── app/
-│   │   ├── (auth)/ #로그인, 회원가입
-│   │   ├── boards/ #게시판(구현예정)
-│   │   ├── intro/ #소개페이지. 헤더의 SCSC 메뉴
-│   │   ├── my-page/ #마이페이지
-│   │   ├── sig/ #sig 목록. sig/create는 시그 생성
-│   │   ├── favicon.ico
-│   │   ├── footer.css
-│   │   ├── footer.tsx #수정 예정
-│   │   ├── global.css #전체 css
-│   │   ├── header.css #헤더
-│   │   ├── header.jsx #헤더
-│   │   ├── layout.tsx #레이아웃
-│   │   ├── page.css
-│   │   ├── page.jsx #메인페이지.
-│   │   └── page.tsx
-│   ├── components/ #component. ***현재 intro 페이지의 componentization이 덜 되었습니다.
-│   ├── data/
-│   ├── interfaces/
-│   ├── state/
-│   └── util/
-│       ├── extractProps.tsx
-│       ├── joinClassName.tsx
-│       ├── navigation.tsx
-│       ├── setAction.ts
-│       └── sleep.ts
-├── .eslintrc.json
-├── .gitignore
-├── .prettierrc
-├── README.md
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── pnpm-lock.yaml
-├── postcss.config.mjs
-├── test.js
-└── tsconfig.json
 ```
 
 ---

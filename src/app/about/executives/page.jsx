@@ -1,7 +1,5 @@
-"use client";
-
-import React from "react";
 import Image from "next/image";
+import ScrollEffectWrapper from "@/components/about/ScrollEffectWrapper";
 import "./page.css";
 
 const executives = [
@@ -91,26 +89,28 @@ export default function ExecutivesPage() {
   return (
     <div id="ExecutivePage">
       <h2>운영진 소개</h2>
-      <div className="ExecutiveMasonry">
-        {executives.map((person, index) => (
-          <div className="ExecutiveCard" key={index}>
-            <div className="ExecutiveImageWrapper">
-              <Image
-                src={person.image}
-                alt={person.name}
-                fill
-                className="ExecutiveImage"
-              />
-              <div className="ExecutiveOverlay">
-                <p className="ExecutiveDescription">{person.description}</p>
+      <ScrollEffectWrapper>
+        <div className="ExecutiveMasonry">
+          {executives.map((person, index) => (
+            <div className="ExecutiveCard" key={index}>
+              <div className="ExecutiveImageWrapper">
+                <Image
+                  src={person.image}
+                  alt={person.name}
+                  fill
+                  className="ExecutiveImage"
+                />
+                <div className="ExecutiveOverlay">
+                  <p className="ExecutiveDescription">{person.description}</p>
+                </div>
               </div>
+              <h3>{person.name}</h3>
+              <p className="ExecutiveRole">{person.role}</p>
+              {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
             </div>
-            <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </ScrollEffectWrapper>
     </div>
   );
 }
