@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import EntryRow from "./EntryRow.jsx";
 
 export default function SigList() {
   const [sigs, setSigs] = useState([]);
@@ -120,73 +121,14 @@ export default function SigList() {
       </thead>
       <tbody>
         {sigs.map((sig) => (
-          <tr key={sig.id}>
-            <td style={tdStyle}>{sig.id}</td>
-            <td style={tdStyle}>
-              <input
-                value={sig.title}
-                onChange={(e) => handleChange(sig.id, "title", e.target.value)}
-              />
-            </td>
-            <td style={tdStyle}>
-              <input
-                value={sig.description}
-                onChange={(e) =>
-                  handleChange(sig.id, "description", e.target.value)
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <textarea
-                value={sig.content}
-                onChange={(e) =>
-                  handleChange(sig.id, "content", e.target.value)
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <select
-                value={sig.status}
-                onChange={(e) => handleChange(sig.id, "status", e.target.value)}
-              >
-                <option value="surveying">설문중</option>
-                <option value="recruiting">모집중</option>
-                <option value="active">활동중</option>
-                <option value="inactive">비활성</option>
-              </select>
-            </td>
-            <td style={tdStyle}>
-              <input
-                type="number"
-                value={sig.year}
-                onChange={(e) =>
-                  handleChange(sig.id, "year", parseInt(e.target.value))
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <select
-                value={sig.semester}
-                onChange={(e) =>
-                  handleChange(sig.id, "semester", parseInt(e.target.value))
-                }
-              >
-                <option value={1}>1학기</option>
-                <option value={2}>2학기</option>
-              </select>
-            </td>
-            <td style={tdStyle}>
-              <button onClick={() => handleSave(sig)} disabled={saving[sig.id]}>
-                저장
-              </button>
-              <button
-                onClick={() => handleDelete(sig.id)}
-                style={{ marginLeft: "0.5rem" }}
-              >
-                삭제
-              </button>
-            </td>
-          </tr>
+          <EntryRow
+            key={sig.id}
+            entry={sig}
+            onChange={handleChange}
+            onSave={handleSave}
+            onDelete={handleDelete}
+            saving={saving}
+          />
         ))}
       </tbody>
     </table>
