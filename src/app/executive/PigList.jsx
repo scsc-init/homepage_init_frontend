@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import EntryRow from "./EntryRow.jsx";
 
 export default function PigList() {
   const [pigs, setPigs] = useState([]);
@@ -124,73 +125,14 @@ export default function PigList() {
       </thead>
       <tbody>
         {pigs.map((pig) => (
-          <tr key={pig.id}>
-            <td style={tdStyle}>{pig.id}</td>
-            <td style={tdStyle}>
-              <input
-                value={pig.title}
-                onChange={(e) => handleChange(pig.id, "title", e.target.value)}
-              />
-            </td>
-            <td style={tdStyle}>
-              <input
-                value={pig.description}
-                onChange={(e) =>
-                  handleChange(pig.id, "description", e.target.value)
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <textarea
-                value={pig.content ?? ""}
-                onChange={(e) =>
-                  handleChange(pig.id, "content", e.target.value)
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <select
-                value={pig.status}
-                onChange={(e) => handleChange(pig.id, "status", e.target.value)}
-              >
-                <option value="surveying">설문중</option>
-                <option value="recruiting">모집중</option>
-                <option value="active">활동중</option>
-                <option value="inactive">비활성</option>
-              </select>
-            </td>
-            <td style={tdStyle}>
-              <input
-                type="number"
-                value={pig.year}
-                onChange={(e) =>
-                  handleChange(pig.id, "year", parseInt(e.target.value))
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <select
-                value={pig.semester}
-                onChange={(e) =>
-                  handleChange(pig.id, "semester", parseInt(e.target.value))
-                }
-              >
-                <option value={1}>1학기</option>
-                <option value={2}>2학기</option>
-              </select>
-            </td>
-            <td style={tdStyle}>
-              <button onClick={() => handleSave(pig)} disabled={saving[pig.id]}>
-                저장
-              </button>
-              <button
-                onClick={() => handleDelete(pig.id)}
-                style={{ marginLeft: "0.5rem" }}
-              >
-                삭제
-              </button>
-            </td>
-          </tr>
+          <EntryRow
+            key={pig.id}
+            entry={pig}
+            onChange={handleChange}
+            onSave={handleSave}
+            onDelete={handleDelete}
+            saving={saving}
+          />
         ))}
       </tbody>
     </table>
