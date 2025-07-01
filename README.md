@@ -39,23 +39,7 @@ src/
 │ └── contact # 연락처 및 회원가입 링크
 
 ````
----
 
-## 설치 및 실행 방법
-
-### 1. 레포지토리 클론
-
-```bash
-git clone https://github.com/scsc-init/homepage_init_frontend.git
-````
-
-### 2. 패키지 설치
-
-```bash
-npm install
-```
-
----
 
 ## 설치 및 실행 방법
 
@@ -92,3 +76,4 @@ npm run dev
 - **Zustand**: 상태 관리
 - **CSS Modules**
 - **ESLint + Prettier**
+````
