@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function WithAuthorization({ children }) {
   const [allowed, setAllowed] = useState(null);
@@ -16,7 +17,7 @@ export default function WithAuthorization({ children }) {
       try {
         const res = await fetch(`${getBaseUrl()}/api/user/profile`, {
           headers: {
-            "x-api-secret": "some-secret-code",
+            "x-api-secret": getApiSecret(),
             "x-jwt": jwt,
           },
         });

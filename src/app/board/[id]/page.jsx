@@ -4,19 +4,20 @@
 import Link from "next/link";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function BoardPage({ params }) {
   const boardId = params.id;
 
   // 게시글 목록
   const articleRes = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
-    headers: { "x-api-secret": "some-secret-code" },
+    headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 
   // 게시판 정보
   const boardRes = await fetch(`${getBaseUrl()}/api/board/${boardId}`, {
-    headers: { "x-api-secret": "some-secret-code" },
+    headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 

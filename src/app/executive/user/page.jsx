@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import WithAuthorization from "@/components/WithAuthorization";
 import UserList from "@/app/executive/UserList";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function ExecutiveUserPage() {
   const [standbys, setStandbys] = useState([]);
@@ -18,7 +19,7 @@ export default function ExecutiveUserPage() {
         `${getBaseUrl()}/api/executive/user/standby/list`,
         {
           headers: {
-            "x-api-secret": "some-secret-code",
+            "x-api-secret": getApiSecret(),
             "x-jwt": jwt,
           },
         },
@@ -43,7 +44,7 @@ export default function ExecutiveUserPage() {
       `${getBaseUrl()}/api/executive/user/standby/process`,
       {
         method: "POST",
-        headers: { "x-api-secret": "some-secret-code", "x-jwt": jwt },
+        headers: { "x-api-secret": getApiSecret(), "x-jwt": jwt },
         body: form,
       },
     );

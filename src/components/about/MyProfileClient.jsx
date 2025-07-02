@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
@@ -22,14 +23,14 @@ export default function MyProfileClient() {
       .get(`${getBaseUrl()}/api/user/profile`, {
         headers: {
           "x-jwt": jwt,
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
         },
       })
       .then((res) => {
         setUser(res.data);
         return axios.get(`${getBaseUrl()}/api/major/${res.data.major_id}`, {
           headers: {
-            "x-api-secret": "some-secret-code",
+            "x-api-secret": getApiSecret(),
           },
         });
       })

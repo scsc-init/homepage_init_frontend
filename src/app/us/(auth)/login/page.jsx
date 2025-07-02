@@ -5,6 +5,7 @@ import axios from "axios";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import * as validator from "./validator";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -54,7 +55,7 @@ export default function LoginPage() {
           `${getBaseUrl()}/api/user/login`,
           { email },
           {
-            headers: { "x-api-secret": "some-secret-code" },
+            headers: { "x-api-secret": getApiSecret() },
           },
         );
         const { jwt } = res.data;
@@ -74,7 +75,7 @@ export default function LoginPage() {
   useEffect(() => {
     axios
       .get(`${getBaseUrl()}/api/majors`, {
-        headers: { "x-api-secret": "some-secret-code" },
+        headers: { "x-api-secret": getApiSecret() },
       })
       .then((res) => setMajors(res.data));
   }, []);
@@ -94,7 +95,7 @@ export default function LoginPage() {
         status: "pending",
       },
       {
-        headers: { "x-api-secret": "some-secret-code" },
+        headers: { "x-api-secret": getApiSecret() },
       },
     );
 
@@ -104,7 +105,7 @@ export default function LoginPage() {
         email: form.email,
       },
       {
-        headers: { "x-api-secret": "some-secret-code" },
+        headers: { "x-api-secret": getApiSecret() },
       },
     );
 

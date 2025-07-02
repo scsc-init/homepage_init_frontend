@@ -6,6 +6,7 @@ import PigList from "./PigList";
 import MajorList from "./MajorList";
 import Link from "next/link";
 import WithAuthorization from "@/components/WithAuthorization";
+import ScscStatusPanel from "./ScscStatusPanel";
 
 export default function AdminPanel() {
   return (
@@ -24,7 +25,8 @@ export default function AdminPanel() {
 
         <h2>PIG 관리</h2>
         <PigList />
-
+        <h2>Scsc status 관리</h2>
+        <ScscStatusPanel />
         <h2>전공 관리</h2>
         <MajorList />
       </div>
