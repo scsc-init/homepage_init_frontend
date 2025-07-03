@@ -5,12 +5,13 @@ import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function ArticleDetail({ params }) {
   const { id } = params;
 
   const res = await fetch(`${getBaseUrl()}/api/article/${id}`, {
-    headers: { "x-api-secret": "some-secret-code" },
+    headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 

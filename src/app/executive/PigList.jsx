@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import EntryRow from "./EntryRow.jsx";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function PigList() {
   const [pigs, setPigs] = useState([]);
@@ -13,7 +14,7 @@ export default function PigList() {
       const jwt = localStorage.getItem("jwt");
       const res = await fetch(`${getBaseUrl()}/api/pigs`, {
         headers: {
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": jwt,
         },
       });
@@ -28,7 +29,7 @@ export default function PigList() {
             `${getBaseUrl()}/api/article/${pig.content_id}`,
             {
               headers: {
-                "x-api-secret": "some-secret-code",
+                "x-api-secret": getApiSecret(),
               },
             },
           );
@@ -61,7 +62,7 @@ export default function PigList() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": jwt,
         },
         body: JSON.stringify({
@@ -91,7 +92,7 @@ export default function PigList() {
     const res = await fetch(`${getBaseUrl()}/api/executive/pig/${id}/delete`, {
       method: "POST",
       headers: {
-        "x-api-secret": "some-secret-code",
+        "x-api-secret": getApiSecret(),
         "x-jwt": jwt,
       },
     });

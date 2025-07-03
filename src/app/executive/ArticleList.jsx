@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 const targetBoardIds = [3, 4, 5];
 
@@ -17,7 +18,7 @@ export default function ArticleList() {
       const boardResults = await Promise.all(
         targetBoardIds.map(async (id) => {
           const res = await fetch(`${getBaseUrl()}/api/board/${id}`, {
-            headers: { "x-api-secret": "some-secret-code" },
+            headers: { "x-api-secret": getApiSecret() },
           });
           return res.ok ? await res.json() : null;
         }),
@@ -31,7 +32,7 @@ export default function ArticleList() {
       for (const boardId of targetBoardIds) {
         const res = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
           headers: {
-            "x-api-secret": "some-secret-code",
+            "x-api-secret": getApiSecret(),
             "x-jwt": jwt,
           },
         });
@@ -69,7 +70,7 @@ export default function ArticleList() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": localStorage.getItem("jwt"),
         },
         body: JSON.stringify({ name: board.name }),
@@ -92,7 +93,7 @@ export default function ArticleList() {
       {
         method: "DELETE",
         headers: {
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": localStorage.getItem("jwt"),
         },
       },
@@ -135,7 +136,7 @@ export default function ArticleList() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-secret": "some-secret-code",
+            "x-api-secret": getApiSecret(),
             "x-jwt": jwt,
           },
           body: JSON.stringify(payload),
@@ -164,7 +165,7 @@ export default function ArticleList() {
       {
         method: "POST",
         headers: {
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": localStorage.getItem("jwt"),
         },
       },

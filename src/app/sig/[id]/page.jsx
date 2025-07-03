@@ -7,11 +7,13 @@ import "highlight.js/styles/github.css";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
+import { getApiSecret } from "@/util/getApiSecret";
+
 export default async function SigDetailPage({ params }) {
   const { id } = params;
 
   const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
-    headers: { "x-api-secret": "some-secret-code" },
+    headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 
@@ -28,7 +30,7 @@ export default async function SigDetailPage({ params }) {
   const articleRes = await fetch(
     `${getBaseUrl()}/api/article/${sig.content_id}`,
     {
-      headers: { "x-api-secret": "some-secret-code" },
+      headers: { "x-api-secret": getApiSecret() },
       cache: "no-store",
     },
   );

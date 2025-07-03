@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import PigForm from "@/components/board/PigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function CreatePigClient() {
   const { register, control, handleSubmit, watch } = useForm({
@@ -51,7 +52,7 @@ export default function CreatePigClient() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": jwt,
         },
         body: JSON.stringify({

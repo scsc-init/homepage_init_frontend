@@ -2,19 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 import Image from "next/image";
 
 export default function HeaderClientArea() {
   const [user, setUser] = useState(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const jwt = localStorage.getItem("jwt");
     if (!jwt) return;
 
     fetch(`${getBaseUrl()}/api/user/profile`, {
       headers: {
         "x-jwt": jwt,
-        "x-api-secret": "some-secret-code",
+        "x-api-secret": getApiSecret(),
       },
     })
       .then((res) => (res.ok ? res.json() : Promise.reject()))
@@ -26,24 +29,66 @@ export default function HeaderClientArea() {
   }, []);
 
   const isExecutive = user?.role >= 500;
-  if (!user) {
+
+  // SSR 시 placeholder 렌더링 (공간 고정)
+  if (!isClient) {
     return (
-      <button
-        id="HeaderUserLogin"
-        className="unset"
-        onClick={() => (window.location.href = "/us/login")}
+      <div
+        style={{
+          width: "12rem",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+        aria-hidden
       >
-        로그인
-      </button>
+        &nbsp;
+      </div>
     );
   }
 
+  // 로그인 전 (CSR)
+  if (!user) {
+    return (
+      <div
+        style={{
+          width: "12rem",
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}
+      >
+        <button
+          id="HeaderUserLogin"
+          className="unset"
+          onClick={() => (window.location.href = "/us/login")}
+        >
+          로그인
+        </button>
+      </div>
+    );
+  }
+
+  // 로그인 후
   return (
-    <>
+    <div
+      style={{
+        width: "12rem",
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        gap: "0.75rem",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+      }}
+    >
       {isExecutive && (
         <button
           className="unset"
           onClick={() => (window.location.href = "/executive")}
+          style={{
+            whiteSpace: "nowrap",
+            fontSize: "0.875rem",
+          }}
         >
           운영진 페이지
         </button>
@@ -52,8 +97,24 @@ export default function HeaderClientArea() {
         id="HeaderUser"
         className="unset"
         onClick={() => (window.location.href = "/about/my-page")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.3rem",
+          overflow: "hidden",
+        }}
       >
-        <span id="HeaderUserName">{user.name}</span>
+        <span
+          id="HeaderUserName"
+          style={{
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            maxWidth: "5rem",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {user.name}
+        </span>
         <Image
           src="/vectors/user.svg"
           className="HeaderUserIcon"
@@ -62,6 +123,6 @@ export default function HeaderClientArea() {
           height={24}
         />
       </button>
-    </>
+    </div>
   );
 }

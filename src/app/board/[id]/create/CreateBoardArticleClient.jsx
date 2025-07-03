@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
 import "@/app/board/[id]/create/page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
   ssr: false,
@@ -31,7 +32,7 @@ export default function CreateBoardArticleClient({ boardId }) {
     }
 
     fetch(`${getBaseUrl()}/api/board/${boardId}`, {
-      headers: { "x-api-secret": "some-secret-code" },
+      headers: { "x-api-secret": getApiSecret() },
     })
       .then((res) =>
         res.ok
@@ -54,7 +55,7 @@ export default function CreateBoardArticleClient({ boardId }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": jwt,
         },
         body: JSON.stringify({

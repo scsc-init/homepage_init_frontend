@@ -171,7 +171,7 @@ export default function Home() {
             <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
             <div id="HomeAboutLinkList">
               {[
-                { title: "리크루팅 정보 바로가기", url: "/contact" },
+                { title: "리크루팅 정보 바로가기", url: "/us/contact" },
                 { title: "시그 목록 바로가기", url: "/sig" },
                 { title: "피그 목록 바로가기", url: "/pig" },
               ].map(({ title, url }, i) => (

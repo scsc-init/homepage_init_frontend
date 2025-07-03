@@ -6,12 +6,13 @@ import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function PigDetailPage({ params }) {
   const { id } = params;
 
   const res = await fetch(`${getBaseUrl()}/api/pig/${id}`, {
-    headers: { "x-api-secret": "some-secret-code" },
+    headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 
@@ -28,7 +29,7 @@ export default async function PigDetailPage({ params }) {
   const articleRes = await fetch(
     `${getBaseUrl()}/api/article/${pig.content_id}`,
     {
-      headers: { "x-api-secret": "some-secret-code" },
+      headers: { "x-api-secret": getApiSecret() },
       cache: "no-store",
     },
   );

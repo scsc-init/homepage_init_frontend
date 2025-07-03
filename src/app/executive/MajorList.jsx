@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function MajorList() {
   const [majors, setMajors] = useState([]);
@@ -13,7 +14,7 @@ export default function MajorList() {
 
   const fetchMajors = async () => {
     const res = await fetch(`${getBaseUrl()}/api/majors`, {
-      headers: { "x-api-secret": "some-secret-code" },
+      headers: { "x-api-secret": getApiSecret() },
     });
     if (res.ok) setMajors(await res.json());
   };
@@ -31,7 +32,7 @@ export default function MajorList() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": localStorage.getItem("jwt"),
         },
         body: JSON.stringify(major),
@@ -48,7 +49,7 @@ export default function MajorList() {
       {
         method: "POST",
         headers: {
-          "x-api-secret": "some-secret-code",
+          "x-api-secret": getApiSecret(),
           "x-jwt": localStorage.getItem("jwt"),
         },
       },
@@ -64,7 +65,7 @@ export default function MajorList() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-secret": "some-secret-code",
+        "x-api-secret": getApiSecret(),
         "x-jwt": localStorage.getItem("jwt"),
       },
       body: JSON.stringify(newMajor),

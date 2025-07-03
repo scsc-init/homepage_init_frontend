@@ -2,11 +2,12 @@
 import Link from "next/link";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function SigListPage() {
   const res = await fetch(`${getBaseUrl()}/api/sigs`, {
     method: "GET",
-    headers: { "x-api-secret": "some-secret-code" },
+    headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 

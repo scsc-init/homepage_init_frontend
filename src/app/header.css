@@ -139,3 +139,23 @@
 #HeaderSpacer {
   height: 3.5rem; /* fallback for SSR */
 }
+
+.HeaderUserFixed {
+  display: inline-block;
+  width: 4.5rem;
+  text-align: center;
+}
+
+#HeaderRight {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 8rem;
+}
+
+.HeaderUserFixed {
+  display: inline-block;
+  width: 4.5rem;
+  text-align: center;
+}

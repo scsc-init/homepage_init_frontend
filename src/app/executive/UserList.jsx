@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
@@ -35,15 +36,15 @@ export default function UserList() {
           const res = await fetch(
             `${getBaseUrl()}/api/users?user_role=${role}`,
             {
-              headers: { "x-api-secret": "some-secret-code", "x-jwt": jwt },
-            }
+              headers: { "x-api-secret": getApiSecret(), "x-jwt": jwt },
+            },
           );
           return res.ok ? await res.json() : [];
-        })
+        }),
       );
       const result = all.flat();
       const resultUnique = Array.from(
-        new Map(result.map((user) => [user.id, user])).values()
+        new Map(result.map((user) => [user.id, user])).values(),
       );
       setUsers(resultUnique);
       setFilteredUsers(resultUnique);
@@ -51,7 +52,7 @@ export default function UserList() {
 
     const fetchMajors = async () => {
       const res = await fetch(`${getBaseUrl()}/api/majors`, {
-        headers: { "x-api-secret": "some-secret-code" },
+        headers: { "x-api-secret": getApiSecret() },
       });
       if (res.ok) setMajors(await res.json());
     };
@@ -62,10 +63,10 @@ export default function UserList() {
 
   const updateUserField = (userId, field, value) => {
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u))
+      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
     );
     setFilteredUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u))
+      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
     );
   };
 
@@ -81,8 +82,7 @@ export default function UserList() {
       (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
       (!newFilter.status ||
         lower(u.status).includes(lower(newFilter.status))) &&
-      (!newFilter.major ||
-        lower(u.major_id).toString() === newFilter.major);
+      (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
 
     setFilteredUsers(users.filter(matches));
   };
@@ -97,7 +97,7 @@ export default function UserList() {
       500: "executive",
       1000: "president",
     };
-    return typeof val === "string" ? val : map[val] ?? "member";
+    return typeof val === "string" ? val : (map[val] ?? "member");
   };
 
   const sendUserData = async (user) => {
@@ -113,18 +113,15 @@ export default function UserList() {
       status: user.status || "active",
     };
 
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/user/${user.id}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-secret": "some-secret-code",
-          "x-jwt": jwt,
-        },
-        body: JSON.stringify(updated),
-      }
-    );
+    const res = await fetch(`${getBaseUrl()}/api/executive/user/${user.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-secret": getApiSecret(),
+        "x-jwt": jwt,
+      },
+      body: JSON.stringify(updated),
+    });
 
     if (res.status === 204) alert(`${user.name} 저장 완료`);
     else alert(`${user.name} 저장 실패: ${res.status}`);
