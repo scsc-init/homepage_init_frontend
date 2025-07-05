@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
-export default function UserList() {
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [majors, setMajors] = useState([]);
+export default function UserList({ users: usersDefault, majors = [] }) {
+  const [users, setUsers] = useState(usersDefault ?? []);
+  const [filteredUsers, setFilteredUsers] = useState(usersDefault ?? []);
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
     name: "",
@@ -17,49 +16,6 @@ export default function UserList() {
     status: "",
     major: "",
   });
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-
-    const fetchUsersByRoles = async () => {
-      const roles = [
-        "lowest",
-        "dormant",
-        "newcomer",
-        "member",
-        "oldboy",
-        "executive",
-        "president",
-      ];
-      const all = await Promise.all(
-        roles.map(async (role) => {
-          const res = await fetch(
-            `${getBaseUrl()}/api/users?user_role=${role}`,
-            {
-              headers: { "x-api-secret": getApiSecret(), "x-jwt": jwt },
-            },
-          );
-          return res.ok ? await res.json() : [];
-        }),
-      );
-      const result = all.flat();
-      const resultUnique = Array.from(
-        new Map(result.map((user) => [user.id, user])).values(),
-      );
-      setUsers(resultUnique);
-      setFilteredUsers(resultUnique);
-    };
-
-    const fetchMajors = async () => {
-      const res = await fetch(`${getBaseUrl()}/api/majors`, {
-        headers: { "x-api-secret": getApiSecret() },
-      });
-      if (res.ok) setMajors(await res.json());
-    };
-
-    fetchUsersByRoles();
-    fetchMajors();
-  }, []);
 
   const updateUserField = (userId, field, value) => {
     setUsers((prev) =>

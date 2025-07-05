@@ -1,50 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import EntryRow from "./EntryRow.jsx";
 import { getApiSecret } from "@/util/getApiSecret";
 
-export default function PigList() {
-  const [pigs, setPigs] = useState([]);
+export default function PigList({ pigs: pigsDefault }) {
+  const [pigs, setPigs] = useState(pigsDefault ?? []);
   const [saving, setSaving] = useState({});
-
-  useEffect(() => {
-    const fetchPigs = async () => {
-      const jwt = localStorage.getItem("jwt");
-      const res = await fetch(`${getBaseUrl()}/api/pigs`, {
-        headers: {
-          "x-api-secret": getApiSecret(),
-          "x-jwt": jwt,
-        },
-      });
-
-      if (!res.ok) return;
-
-      const pigsRaw = await res.json();
-
-      const pigsWithContent = await Promise.all(
-        pigsRaw.map(async (pig) => {
-          const articleRes = await fetch(
-            `${getBaseUrl()}/api/article/${pig.content_id}`,
-            {
-              headers: {
-                "x-api-secret": getApiSecret(),
-              },
-            },
-          );
-          const article = articleRes.ok
-            ? await articleRes.json()
-            : { content: "" };
-          return { ...pig, content: article.content };
-        }),
-      );
-
-      setPigs(pigsWithContent);
-    };
-
-    fetchPigs();
-  }, []);
 
   const handleChange = (id, field, value) => {
     setPigs((prev) =>

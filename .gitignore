@@ -12,6 +12,9 @@
 # testing
 /coverage
 
+# for developers
+/ignoredir/
+
 # next.js
 /.next/
 /out/

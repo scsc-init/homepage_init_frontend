@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -12,7 +12,7 @@ const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
   ssr: false,
 });
 
-export default function CreateBoardArticleClient({ boardId }) {
+export default function CreateBoardArticleClient({ boardInfo }) {
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       title: "",
@@ -23,28 +23,6 @@ export default function CreateBoardArticleClient({ boardId }) {
   const router = useRouter();
   const content = watch("editor");
   const [submitting, setSubmitting] = useState(false);
-  const [boardInfo, setBoardInfo] = useState(null);
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-    }
-
-    fetch(`${getBaseUrl()}/api/board/${boardId}`, {
-      headers: { "x-api-secret": getApiSecret() },
-    })
-      .then((res) =>
-        res.ok
-          ? res.json()
-          : Promise.reject("게시판 정보를 불러올 수 없습니다."),
-      )
-      .then((data) => setBoardInfo(data))
-      .catch((err) => {
-        console.error(err);
-        alert("게시판 정보를 불러올 수 없습니다.");
-      });
-  }, [boardId, router]);
 
   const onSubmit = async (data) => {
     const jwt = localStorage.getItem("jwt");
@@ -61,13 +39,13 @@ export default function CreateBoardArticleClient({ boardId }) {
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
-          board_id: parseInt(boardId),
+          board_id: parseInt(boardInfo.id),
         }),
       });
 
       if (res.status === 201) {
         alert("게시글 작성 완료!");
-        router.push(`/board/${boardId}`);
+        router.push(`/board/${boardInfo.id}`);
       } else {
         const err = await res.json();
         throw new Error("작성 실패: " + (err.detail ?? JSON.stringify(err)));

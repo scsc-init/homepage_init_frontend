@@ -1,23 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
-export default function MajorList() {
-  const [majors, setMajors] = useState([]);
+export default function MajorList({ majors: majorsDefault }) {
+  const [majors, setMajors] = useState(majorsDefault ?? []);
   const [newMajor, setNewMajor] = useState({ college: "", major_name: "" });
-
-  useEffect(() => {
-    fetchMajors();
-  }, []);
-
-  const fetchMajors = async () => {
-    const res = await fetch(`${getBaseUrl()}/api/majors`, {
-      headers: { "x-api-secret": getApiSecret() },
-    });
-    if (res.ok) setMajors(await res.json());
-  };
 
   const updateMajorField = (id, field, value) => {
     setMajors((prev) =>

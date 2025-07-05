@@ -1,46 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import EntryRow from "./EntryRow.jsx";
 import { getApiSecret } from "@/util/getApiSecret";
 
-export default function SigList() {
-  const [sigs, setSigs] = useState([]);
+export default function SigList({ sigs: sigsDefault }) {
+  const [sigs, setSigs] = useState(sigsDefault ?? []);
   const [saving, setSaving] = useState({});
-
-  useEffect(() => {
-    const fetchSigs = async () => {
-      const jwt = localStorage.getItem("jwt");
-      const res = await fetch(`${getBaseUrl()}/api/sigs`, {
-        headers: {
-          "x-api-secret": getApiSecret(),
-          "x-jwt": jwt,
-        },
-      });
-
-      if (!res.ok) return;
-
-      const sigsRaw = await res.json();
-
-      const sigsWithContent = await Promise.all(
-        sigsRaw.map(async (sig) => {
-          const articleRes = await fetch(
-            `${getBaseUrl()}/api/article/${sig.content_id}`,
-            { headers: { "x-api-secret": getApiSecret() } },
-          );
-          const article = articleRes.ok
-            ? await articleRes.json()
-            : { content: "" };
-          return { ...sig, content: article.content };
-        }),
-      );
-
-      setSigs(sigsWithContent);
-    };
-
-    fetchSigs();
-  }, []);
 
   const handleChange = (id, field, value) => {
     setSigs((prev) =>
