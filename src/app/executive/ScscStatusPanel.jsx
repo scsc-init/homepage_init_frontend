@@ -20,29 +20,8 @@ const TRANSITION_MAP = {
 
 const getNextStates = (current) => TRANSITION_MAP[current] || [];
 
-export default function ScscStatusPanel() {
-  const [currentStatus, setCurrentStatus] = useState("");
+export default function ScscStatusPanel({ currentStatus }) {
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    const fetchStatus = async () => {
-      const jwt = localStorage.getItem("jwt");
-
-      const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
-        headers: {
-          "x-api-secret": getApiSecret(),
-          "x-jwt": jwt,
-        },
-      });
-
-      if (res.ok) {
-        const json = await res.json();
-        setCurrentStatus(json.status);
-      }
-    };
-
-    fetchStatus();
-  }, []);
 
   const handleSave = async (newStatus) => {
     const jwt = localStorage.getItem("jwt");

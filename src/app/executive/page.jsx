@@ -7,8 +7,13 @@ import MajorList from "./MajorList";
 import Link from "next/link";
 import WithAuthorization from "@/components/WithAuthorization";
 import ScscStatusPanel from "./ScscStatusPanel";
+import { getApiSecret } from "@/util/getApiSecret";
+import { getBaseUrl } from "@/util/getBaseUrl";
+import React from "react";
 
-export default function AdminPanel() {
+export default async function AdminPanel() {
+  const scscGlobalStatus = await fetchScscGlobalStatus();
+
   return (
     <WithAuthorization>
       <div className="admin-panel" style={{ padding: "2rem" }}>
@@ -26,10 +31,19 @@ export default function AdminPanel() {
         <h2>PIG 관리</h2>
         <PigList />
         <h2>Scsc status 관리</h2>
-        <ScscStatusPanel />
+        <ScscStatusPanel currentStatus={scscGlobalStatus.status} />
         <h2>전공 관리</h2>
         <MajorList />
       </div>
     </WithAuthorization>
   );
+}
+
+async function fetchScscGlobalStatus() {
+  const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
+    method: "GET",
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
+  return res.ok ? await res.json() : "";
 }
