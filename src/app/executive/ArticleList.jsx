@@ -1,52 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
-const targetBoardIds = [3, 4, 5];
-
-export default function ArticleList() {
-  const [boards, setBoards] = useState([]);
-  const [articles, setArticles] = useState({});
+export default function ArticleList({
+  boards: boardsDefault,
+  articles: articlesDefault,
+}) {
+  const [boards, setBoards] = useState(boardsDefault ?? []);
+  const [articles, setArticles] = useState(articlesDefault ?? {});
   const [saving, setSaving] = useState({});
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-
-    const fetchBoards = async () => {
-      const boardResults = await Promise.all(
-        targetBoardIds.map(async (id) => {
-          const res = await fetch(`${getBaseUrl()}/api/board/${id}`, {
-            headers: { "x-api-secret": getApiSecret() },
-          });
-          return res.ok ? await res.json() : null;
-        }),
-      );
-      setBoards(boardResults.filter(Boolean));
-    };
-
-    const fetchArticles = async () => {
-      const jwt = localStorage.getItem("jwt");
-      const all = {};
-      for (const boardId of targetBoardIds) {
-        const res = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
-          headers: {
-            "x-api-secret": getApiSecret(),
-            "x-jwt": jwt,
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          all[boardId] = data;
-        }
-      }
-      setArticles(all);
-    };
-
-    fetchBoards();
-    fetchArticles();
-  }, []);
 
   const handleBoardChange = (id, value) => {
     setBoards((prev) =>
@@ -91,7 +55,7 @@ export default function ArticleList() {
     const res = await fetch(
       `${getBaseUrl()}/api/executive/board/delete/${id}`,
       {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "x-api-secret": getApiSecret(),
           "x-jwt": localStorage.getItem("jwt"),

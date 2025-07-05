@@ -6,7 +6,6 @@ import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function PigListPage() {
   const res = await fetch(`${getBaseUrl()}/api/pigs`, {
-    method: "GET",
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });

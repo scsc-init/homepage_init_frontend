@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import WithAuthorization from "@/components/WithAuthorization";
-import UserList from "@/app/executive/UserList";
+import UserList from "./UserList";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
