@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import "./page.css";
-import { getBaseUrl } from "@/util/getBaseUrl";
 import * as validator from "./validator";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -50,19 +47,17 @@ export default function LoginPage() {
         ?.trim();
       if (!email || !cleanName) return;
 
-      try {
-        const res = await axios.post(
-          `${getBaseUrl()}/api/user/login`,
-          { email },
-          {
-            headers: { "x-api-secret": getApiSecret() },
-          },
-        );
-        const { jwt } = res.data;
+      const res = await fetch(`/api/user/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        const { jwt } = await res.json();
         localStorage.setItem("jwt", jwt);
         window.location.href = "/";
-      } catch (err) {
-        if (err.response?.status === 404) {
+      } else {
+        if (res.status === 404) {
           setForm((prev) => ({ ...prev, email, name: cleanName }));
           setStage(1);
         } else {
@@ -73,43 +68,38 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`${getBaseUrl()}/api/majors`, {
-        headers: { "x-api-secret": getApiSecret() },
-      })
-      .then((res) => setMajors(res.data));
-  }, []);
+    if (stage !== 4) return;
+    const fetchMajors = async () => {
+      const res = await fetch(`/api/majors`);
+      setMajors(await res.json());
+    };
+    fetchMajors();
+  }, [stage]);
 
   const handleSubmit = async () => {
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
 
-    await axios.post(
-      `${getBaseUrl()}/api/user/create`,
-      {
+    await fetch(`/api/user/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         email: form.email,
         name: form.name,
         student_id,
         phone,
         major_id: Number(form.major_id),
         status: "pending",
-      },
-      {
-        headers: { "x-api-secret": getApiSecret() },
-      },
-    );
+      }),
+    });
 
-    const loginRes = await axios.post(
-      `${getBaseUrl()}/api/user/login`,
-      {
-        email: form.email,
-      },
-      {
-        headers: { "x-api-secret": getApiSecret() },
-      },
-    );
+    const loginRes = await fetch(`/api/user/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: form.email }),
+    });
 
-    const { jwt } = loginRes.data;
+    const { jwt } = await loginRes.json();
     localStorage.setItem("jwt", jwt);
     window.location.href = "/";
   };

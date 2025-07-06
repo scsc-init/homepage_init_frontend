@@ -80,7 +80,6 @@ git clone https://github.com/scsc-init/homepage_init_frontend.git
 
 ```bash
 npm install
-npm install react-markdown remark-gfm rehype-highlight highlight.js rehype-raw
 ```
 
 ### 3. 개발 서버 실행
