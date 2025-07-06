@@ -2,8 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function WithAuthorization({ children }) {
   const [allowed, setAllowed] = useState(null);
@@ -15,11 +13,8 @@ export default function WithAuthorization({ children }) {
       if (!jwt) return setAllowed(false);
 
       try {
-        const res = await fetch(`${getBaseUrl()}/api/user/profile`, {
-          headers: {
-            "x-api-secret": getApiSecret(),
-            "x-jwt": jwt,
-          },
+        const res = await fetch(`/api/user/profile`, {
+          headers: { "x-jwt": jwt },
         });
 
         if (!res.ok) {

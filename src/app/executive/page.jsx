@@ -9,7 +9,6 @@ import WithAuthorization from "@/components/WithAuthorization";
 import ScscStatusPanel from "./ScscStatusPanel";
 import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
-import React from "react";
 
 export default async function AdminPanel() {
   const boards = await fetchBoards();
