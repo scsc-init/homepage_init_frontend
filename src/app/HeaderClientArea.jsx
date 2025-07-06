@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 import Image from "next/image";
 
 export default function HeaderClientArea() {
@@ -10,22 +8,22 @@ export default function HeaderClientArea() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return;
+    const fetchProfile = async () => {
+      setIsClient(true);
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
 
-    fetch(`${getBaseUrl()}/api/user/profile`, {
-      headers: {
-        "x-jwt": jwt,
-        "x-api-secret": getApiSecret(),
-      },
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data) => setUser(data))
-      .catch(() => {
+      const res = await fetch(`/api/user/profile`, {
+        headers: { "x-jwt": jwt },
+      });
+      if (res.ok) setUser(await res.json());
+      else {
         localStorage.removeItem("jwt");
         setUser(null);
-      });
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   const isExecutive = user?.role >= 500;
