@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
 import "@/app/board/[id]/create/page.css";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 
 const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
   ssr: false,
@@ -29,11 +27,10 @@ export default function CreateBoardArticleClient({ boardInfo }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`${getBaseUrl()}/api/article/create`, {
+      const res = await fetch(`/api/article/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-secret": getApiSecret(),
           "x-jwt": jwt,
         },
         body: JSON.stringify({
