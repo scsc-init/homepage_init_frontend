@@ -1,10 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function MajorList({ majors: majorsDefault }) {
+  const router = useRouter();
   const [majors, setMajors] = useState(majorsDefault ?? []);
   const [newMajor, setNewMajor] = useState({ college: "", major_name: "" });
 
@@ -15,34 +15,24 @@ export default function MajorList({ majors: majorsDefault }) {
   };
 
   const saveMajor = async (major) => {
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/major/update/${major.id}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-secret": getApiSecret(),
-          "x-jwt": localStorage.getItem("jwt"),
-        },
-        body: JSON.stringify(major),
+    const res = await fetch(`/api/executive/major/update/${major.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": localStorage.getItem("jwt"),
       },
-    );
+      body: JSON.stringify(major),
+    });
     if (res.status === 204) alert("저장 완료");
     else alert("저장 실패: " + res.status);
   };
 
   const deleteMajor = async (id) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/major/delete/${id}`,
-      {
-        method: "POST",
-        headers: {
-          "x-api-secret": getApiSecret(),
-          "x-jwt": localStorage.getItem("jwt"),
-        },
-      },
-    );
+    const res = await fetch(`/api/executive/major/delete/${id}`, {
+      method: "POST",
+      headers: { "x-jwt": localStorage.getItem("jwt") },
+    });
     if (res.status === 204) {
       alert("삭제 완료");
       setMajors((prev) => prev.filter((m) => m.id !== id));
@@ -50,19 +40,18 @@ export default function MajorList({ majors: majorsDefault }) {
   };
 
   const createMajor = async () => {
-    const res = await fetch(`${getBaseUrl()}/api/executive/major/create`, {
+    const res = await fetch(`/api/executive/major/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-secret": getApiSecret(),
         "x-jwt": localStorage.getItem("jwt"),
       },
       body: JSON.stringify(newMajor),
     });
     if (res.status === 201) {
-      alert("추가 완료");
       setNewMajor({ college: "", major_name: "" });
-      fetchMajors();
+      // router.refresh(); // 데이터를 새로 불러와야 하는데 잘 안 되네요
+      alert("추가 완료");
     } else alert("추가 실패: " + res.status);
   };
 
