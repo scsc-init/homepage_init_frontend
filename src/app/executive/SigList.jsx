@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
 import EntryRow from "./EntryRow.jsx";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function SigList({ sigs: sigsDefault }) {
   const [sigs, setSigs] = useState(sigsDefault ?? []);
@@ -19,25 +17,21 @@ export default function SigList({ sigs: sigsDefault }) {
     const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [sig.id]: true }));
 
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/sig/${sig.id}/update`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-secret": getApiSecret(),
-          "x-jwt": jwt,
-        },
-        body: JSON.stringify({
-          title: sig.title,
-          description: sig.description,
-          content: sig.content,
-          status: sig.status,
-          year: sig.year,
-          semester: sig.semester,
-        }),
+    const res = await fetch(`/api/executive/sig/${sig.id}/update`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
       },
-    );
+      body: JSON.stringify({
+        title: sig.title,
+        description: sig.description,
+        content: sig.content,
+        status: sig.status,
+        year: sig.year,
+        semester: sig.semester,
+      }),
+    });
 
     if (res.status === 204) {
       alert("저장 완료");
@@ -52,12 +46,9 @@ export default function SigList({ sigs: sigsDefault }) {
     const jwt = localStorage.getItem("jwt");
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
-    const res = await fetch(`${getBaseUrl()}/api/executive/sig/${id}/delete`, {
+    const res = await fetch(`/api/executive/sig/${id}/delete`, {
       method: "POST",
-      headers: {
-        "x-api-secret": getApiSecret(),
-        "x-jwt": jwt,
-      },
+      headers: { "x-jwt": jwt },
     });
 
     if (res.status === 204) {

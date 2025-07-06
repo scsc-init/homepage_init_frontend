@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
 import EntryRow from "./EntryRow.jsx";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);
@@ -19,25 +17,21 @@ export default function PigList({ pigs: pigsDefault }) {
     const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [pig.id]: true }));
 
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/pig/${pig.id}/update`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-secret": getApiSecret(),
-          "x-jwt": jwt,
-        },
-        body: JSON.stringify({
-          title: pig.title,
-          description: pig.description,
-          content: pig.content,
-          status: pig.status,
-          year: pig.year,
-          semester: pig.semester,
-        }),
+    const res = await fetch(`/api/executive/pig/${pig.id}/update`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
       },
-    );
+      body: JSON.stringify({
+        title: pig.title,
+        description: pig.description,
+        content: pig.content,
+        status: pig.status,
+        year: pig.year,
+        semester: pig.semester,
+      }),
+    });
 
     if (res.status === 204) {
       alert("저장 완료");
@@ -52,12 +46,9 @@ export default function PigList({ pigs: pigsDefault }) {
     const jwt = localStorage.getItem("jwt");
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
-    const res = await fetch(`${getBaseUrl()}/api/executive/pig/${id}/delete`, {
+    const res = await fetch(`/api/executive/pig/${id}/delete`, {
       method: "POST",
-      headers: {
-        "x-api-secret": getApiSecret(),
-        "x-jwt": jwt,
-      },
+      headers: { "x-jwt": jwt },
     });
 
     if (res.status === 204) {
