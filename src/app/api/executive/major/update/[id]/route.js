@@ -1,21 +1,10 @@
-import { headers } from "next/headers";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { handleApiRequest } from "@/app/api/apiWrapper";
 
 export async function POST(request, { params }) {
-  const headersList = headers();
-  const jwt = headersList.get("x-jwt");
-  const { id } = await params;
-  const body = await request.json();
-  const res = await fetch(`${getBaseUrl()}/api/executive/major/update/${id}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-secret": getApiSecret(),
-      "x-jwt": jwt,
-    },
-    body: JSON.stringify(body),
-    cache: "no-store",
-  });
-  return res;
+  return handleApiRequest(
+    "POST",
+    "/api/executive/major/update/{id}",
+    { params },
+    request,
+  );
 }
