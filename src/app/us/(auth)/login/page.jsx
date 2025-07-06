@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";

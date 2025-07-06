@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { useState } from "react";
 
 export default function UserList({ users: usersDefault, majors = [] }) {
   const [users, setUsers] = useState(usersDefault ?? []);
@@ -69,11 +67,10 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       status: user.status || "active",
     };
 
-    const res = await fetch(`${getBaseUrl()}/api/executive/user/${user.id}`, {
+    const res = await fetch(`/api/executive/user/${user.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-secret": getApiSecret(),
         "x-jwt": jwt,
       },
       body: JSON.stringify(updated),

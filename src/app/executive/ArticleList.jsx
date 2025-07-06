@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function ArticleList({
   boards: boardsDefault,
@@ -28,18 +26,14 @@ export default function ArticleList({
   };
 
   const saveBoard = async (board) => {
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/board/update/${board.id}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-secret": getApiSecret(),
-          "x-jwt": localStorage.getItem("jwt"),
-        },
-        body: JSON.stringify({ name: board.name }),
+    const res = await fetch(`/api/executive/board/update/${board.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": localStorage.getItem("jwt"),
       },
-    );
+      body: JSON.stringify({ name: board.name }),
+    });
 
     if (res.status === 204) {
       alert("게시판 이름 수정 완료");
@@ -52,16 +46,10 @@ export default function ArticleList({
     const ok = confirm("게시판을 삭제하시겠습니까?");
     if (!ok) return;
 
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/board/delete/${id}`,
-      {
-        method: "POST",
-        headers: {
-          "x-api-secret": getApiSecret(),
-          "x-jwt": localStorage.getItem("jwt"),
-        },
-      },
-    );
+    const res = await fetch(`/api/executive/board/delete/${id}`, {
+      method: "POST",
+      headers: { "x-jwt": localStorage.getItem("jwt") },
+    });
 
     if (res.status === 204) {
       alert("삭제 완료");
@@ -72,13 +60,6 @@ export default function ArticleList({
   };
 
   const saveArticle = async (article) => {
-    const jwt = localStorage.getItem("jwt");
-
-    if (!jwt) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-
     // 필드 검증
     if (!article.title || !article.content || !article.board_id) {
       alert("제목, 내용, 게시판 ID는 필수입니다.");
@@ -94,18 +75,14 @@ export default function ArticleList({
     console.log("🚀 최종 전송 payload", payload);
 
     try {
-      const res = await fetch(
-        `${getBaseUrl()}/api/executive/article/update/${article.id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-secret": getApiSecret(),
-            "x-jwt": jwt,
-          },
-          body: JSON.stringify(payload),
+      const res = await fetch(`/api/executive/article/update/${article.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-jwt": localStorage.getItem("jwt"),
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       if (res.status === 204) {
         alert("✅ 게시글 수정 완료");
@@ -124,16 +101,10 @@ export default function ArticleList({
     const ok = confirm("정말 삭제하시겠습니까?");
     if (!ok) return;
 
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/article/delete/${id}`,
-      {
-        method: "POST",
-        headers: {
-          "x-api-secret": getApiSecret(),
-          "x-jwt": localStorage.getItem("jwt"),
-        },
-      },
-    );
+    const res = await fetch(`/api/executive/article/delete/${id}`, {
+      method: "POST",
+      headers: { "x-jwt": localStorage.getItem("jwt") },
+    });
 
     if (res.status === 204) {
       setArticles((prev) => ({

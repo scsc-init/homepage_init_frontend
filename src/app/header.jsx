@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import HeaderClientArea from "./header_client";
+import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";
 
 const LogoIcon = () => (

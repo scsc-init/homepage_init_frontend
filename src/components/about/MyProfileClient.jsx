@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
@@ -13,29 +10,25 @@ export default function MyProfileClient() {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-
     if (!jwt) {
       router.push("/us/login");
       return;
     }
 
-    axios
-      .get(`${getBaseUrl()}/api/user/profile`, {
-        headers: {
-          "x-jwt": jwt,
-          "x-api-secret": getApiSecret(),
-        },
-      })
-      .then((res) => {
-        setUser(res.data);
-        return axios.get(`${getBaseUrl()}/api/major/${res.data.major_id}`, {
-          headers: {
-            "x-api-secret": getApiSecret(),
-          },
+    const fetchProfile = async () => {
+      try {
+        const resUser = await fetch(`/api/user/profile`, {
+          headers: { "x-jwt": jwt },
         });
-      })
-      .then((res) => setMajors(res.data))
-      .catch(() => router.push("/us/login"));
+        const userData = await resUser.json();
+        setUser(userData);
+        const resMajor = await fetch(`/api/major/${userData.major_id}`);
+        setMajors(await resMajor.json());
+      } catch (e) {
+        router.push("/us/login");
+      }
+    };
+    fetchProfile();
   }, [router]);
 
   const handleLogout = () => {

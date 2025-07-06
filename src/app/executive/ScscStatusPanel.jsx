@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
 
 const STATUS_MAP = {
   surveying: "설문중",
@@ -28,18 +26,14 @@ export default function ScscStatusPanel({ scscGlobalStatus }) {
     const jwt = localStorage.getItem("jwt");
     setSaving(true);
 
-    const res = await fetch(
-      `${getBaseUrl()}/api/executive/scsc/global/status`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-secret": getApiSecret(),
-          "x-jwt": jwt,
-        },
-        body: JSON.stringify({ status: newStatus }),
+    const res = await fetch(`/api/executive/scsc/global/status`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
       },
-    );
+      body: JSON.stringify({ status: newStatus }),
+    });
 
     if (res.status === 204) {
       alert("상태가 변경되었습니다.");
