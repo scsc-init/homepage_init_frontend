@@ -1,6 +1,8 @@
 # InitFrontend
 
 Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성, 게시판 등 다양한 기능을 지원합니다.
+최종 수정일 : 2025-07-11
+작성자 : 이한경 윤영우 강명석 박성현
 
 ---
 
@@ -99,3 +101,43 @@ npm run dev
 - **Zustand**: 상태 관리
 - **CSS Modules**
 - **ESLint + Prettier**
+
+---
+
+## Google Auth 2.0 관리
+
+- **us/(auth)/login/page.jsx의 아래 코드는 scsc 구글 계정 또는 공식 도메인이 변경될 경우 수정할 필요가 있습니다.**
+
+```
+return (
+    <div id="GoogleSignupContainer">
+      <div className="GoogleSignupCard">
+        {stage === 0 && (
+          <div>
+            <div
+              id="g_id_onload"
+              data-client_id="832461792138-f6qpb4vn8knpi57a46p9a9ph7qvs92qh.apps.googleusercontent.com"
+              data-callback="handleCredentialResponse"
+              data-auto_prompt="false"
+            ></div>
+            <div
+              className="g_id_signin"
+              data-type="standard"
+              data-size="large"
+              data-theme="outline"
+              data-text="sign_in_with"
+              data-shape="rectangular"
+              data-logo_alignment="left"
+            ></div>
+          </div>
+        )}
+        ...
+```
+
+- https://console.cloud.google.com/auth/clients
+- OAuth 2.0 Client IDs 항목에서 **+ Create Credentials** 클릭 후 OAuth 클라이언트 ID를 선택하십시오.
+- 유형은 웹 애플리케이션으로 선택하십시오.
+- Authorized redirect URIs(승인된 리디렉션 URI)를 입력하세요. *로그인 성공 후 사용자를 돌려보낼 주소*를 입력하면 됩니다.
+- 보통 로컬 개발환경인 경우 http://localhost:3000를, 배포 환경인 경우 https://(your-domain)/api/auth/callback/google을 입력하면 됩니다.
+- 발급된 Client ID를 복사해주세요.
+- us/(auth)/login/page.jsx에서 data-client_id를 복사한 id로 변경해주세요.
