@@ -17,6 +17,7 @@ export default function LoginPage() {
     major_id: "",
   });
   const [majors, setMajors] = useState([]);
+  const [college, setCollege] = useState("");
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
@@ -235,21 +236,37 @@ export default function LoginPage() {
 
         {stage === 4 && (
           <>
-            <select
-              onChange={(e) => setForm({ ...form, major_id: e.target.value })}
-              value={form.major_id}
-            >
-              <option value="">전공 선택</option>
-              {majors.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.college} - {m.major_name}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <select
+                onChange={(e) => setCollege(e.target.value)}
+                value={college}
+              >
+                <option value="">단과대학 선택</option>
+                {[...new Set(majors.map((m) => (m.college)))].map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <select
+                onChange={(e) => setForm({ ...form, major_id: e.target.value })}
+                value={form.major_id}
+              >
+                <option value="">학과/학부 선택</option>
+                {majors.filter((m) => (m.college == college)).map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.major_name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               onClick={() => {
-                if (!form.major_id) {
-                  alert("전공을 선택하세요.");
+                if (!college) {
+                  alert("단과대학을 선택하세요.");
+                  return;
+                } else if (!form.major_id) {
+                  alert("학과/학부를 선택하세요.");
                   return;
                 }
                 handleSubmit();
