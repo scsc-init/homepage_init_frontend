@@ -12,9 +12,7 @@ Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성
 
 ```env
 BACKEND_URL=http://localhost:8080
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
 API_SECRET=some-secret-code
-NEXT_PUBLIC_API_SECRET=some-secret-code
 ```
 
 백엔드의 .env 파일은 저기에 맞춰서 작성하시면 됩니다. 제가 작성한 내용은 이렇습니다.
