@@ -112,7 +112,7 @@ export default function LoginPage() {
           <div>
             <div
               id="g_id_onload"
-              data-client_id="832461792138-f6qpb4vn8knpi57a46p9a9ph7qvs92qh.apps.googleusercontent.com"
+              data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"
               data-callback="handleCredentialResponse"
               data-auto_prompt="false"
             ></div>
