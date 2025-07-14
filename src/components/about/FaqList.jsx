@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Arrow from "./Arrow";
 
 export default function FaqList() {
-  const [openId, setOpenId] = useState(null);
-
   const faqs = [
     {
       question: "동아리 활동에 어느 정도의 시간을 할애해야 하나요?",
@@ -32,18 +29,14 @@ export default function FaqList() {
   return (
     <div id="HomeFQAContainer">
       <h2>자주 묻는 질문</h2>
-      {faqs.map((faq, id) => (
-        <div
-          key={id}
-          className="HomeFQA"
-          onClick={() => setOpenId(openId === id ? null : id)}
-          style={{ cursor: "pointer" }}
-        >
-          <div className="HomeFQAQuestion">
+      {faqs.map((faq, idx) => (
+        <div className="HomeFQA" key={idx}>
+          <input type="checkbox" id={`faq-${idx}`} />
+          <label htmlFor={`faq-${idx}`} className="HomeFQAQuestion">
             <h4>{faq.question}</h4>
             <Arrow width="20px" height="20px" color="#070707" />
-          </div>
-          {openId === id && <div className="HomeFQAHidden">{faq.answer}</div>}
+          </label>
+          <div className="HomeFQAHidden">{faq.answer}</div>
         </div>
       ))}
     </div>
