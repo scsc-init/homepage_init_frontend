@@ -22,7 +22,7 @@ export default function CreatePigClient() {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      router.push("/login");
+      router.push("/us/login");
     }
   }, [router]);
 
