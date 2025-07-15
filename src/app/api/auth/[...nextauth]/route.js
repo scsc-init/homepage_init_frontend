@@ -17,25 +17,11 @@ const handler = NextAuth({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: user.email }),
+            redirect: "manual",
           },
         );
 
-        if (loginRes.ok) {
-          return true;
-        } else if (loginRes.status === 404) {
-          await fetch(`${process.env.NEXTAUTH_URL}/api/user/create`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: user.email,
-              name: user.name,
-              student_id: "",
-              phone: "",
-              major_id: null,
-              status: "pending",
-            }),
-          });
-
+        if ([200, 302, 404].includes(loginRes.status)) {
           return true;
         } else {
           return false;
