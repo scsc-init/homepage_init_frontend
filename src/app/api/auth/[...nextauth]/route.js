@@ -21,6 +21,7 @@ const handler = NextAuth({
           },
         );
 
+
         if ([200, 302, 404].includes(loginRes.status)) {
           return true;
         } else {
