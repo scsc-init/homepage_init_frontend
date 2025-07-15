@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
@@ -33,7 +34,7 @@ export default function MyProfileClient() {
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
-    router.push("/");
+    signOut({ callbackUrl: "/" });
   };
 
   if (!user) return <p className="p-6">불러오는 중...</p>;
