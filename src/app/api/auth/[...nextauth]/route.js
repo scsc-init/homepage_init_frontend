@@ -17,10 +17,12 @@ const handler = NextAuth({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: user.email }),
+            redirect: "manual",
           },
         );
 
-        if (loginRes.ok) {
+
+        if ([200, 302, 404].includes(loginRes.status)) {
           return true;
         } else {
           return false;
