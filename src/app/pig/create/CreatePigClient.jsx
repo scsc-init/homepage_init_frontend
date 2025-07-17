@@ -1,3 +1,4 @@
+// app/pig/create/CreatePigClient.jsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import PigForm from "@/components/board/PigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
 
 export default function CreatePigClient() {
+  const [user, setUser] = useState();
   const { register, control, handleSubmit, watch } = useForm({
     defaultValues: {
       title: "",
@@ -17,13 +19,23 @@ export default function CreatePigClient() {
 
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const editorContent = watch("editor");
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.push("/us/login");
     }
+    
+    const fetchProfile = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
+
+      const res = await fetch(`/api/user/profile`, {
+        headers: { "x-jwt": jwt },
+      });
+      if (res.ok) setUser(await res.json());
+    };
+    fetchProfile();
   }, [router]);
 
   const inferSemester = (month) => {
@@ -37,6 +49,12 @@ export default function CreatePigClient() {
     if (!jwt) {
       router.push("/us/login");
       return;
+    }
+    
+    if (!user) {
+      alert("잠시 뒤 다시 시도해주세요")
+    } else if (!user.discord_id) {
+      if (!confirm("계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?")) return;
     }
 
     const now = new Date();
@@ -55,8 +73,7 @@ export default function CreatePigClient() {
         body: JSON.stringify({
           title: data.title,
           description: data.description,
-          content:
-            typeof data.editor === "string" ? data.editor : editorContent,
+          content: data.editor,
           year,
           semester,
         }),
