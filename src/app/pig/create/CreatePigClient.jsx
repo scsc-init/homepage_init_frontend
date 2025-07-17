@@ -89,9 +89,7 @@ export default function CreatePigClient() {
         router.push("/pig");
       } else {
         const err = await res.json();
-        throw new Error(
-          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
-        );
+        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
