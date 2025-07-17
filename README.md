@@ -21,6 +21,7 @@ src/
     │   ├── my-page/            # 내 정보 페이지
     │   ├── rules/              # 회칙 페이지 : 마크다운 파일을 불러와서 띄움
     │   └── page.jsx            # SCSC 소개 메인 페이지
+    ├── api/                    # Nextjs 서버 라우터
     ├── article/[id]/           # 게시글 상세 페이지
     ├── board/[id]/             # 게시글 목록 페이지 (id별)
     │   └── create/             # 새 글 작성 페이지
