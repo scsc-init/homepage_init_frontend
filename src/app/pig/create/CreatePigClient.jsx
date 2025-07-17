@@ -1,11 +1,11 @@
 // app/pig/create/CreatePigClient.jsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import PigForm from "@/components/board/PigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
+import PigForm from "@/components/board/PigForm";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function CreatePigClient() {
   const [user, setUser] = useState();
@@ -25,7 +25,7 @@ export default function CreatePigClient() {
     if (!jwt) {
       router.push("/us/login");
     }
-    
+
     const fetchProfile = async () => {
       const jwt = localStorage.getItem("jwt");
       if (!jwt) return;
@@ -50,11 +50,16 @@ export default function CreatePigClient() {
       router.push("/us/login");
       return;
     }
-    
+
     if (!user) {
-      alert("잠시 뒤 다시 시도해주세요")
+      alert("잠시 뒤 다시 시도해주세요");
     } else if (!user.discord_id) {
-      if (!confirm("계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?")) return;
+      if (
+        !confirm(
+          "계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?",
+        )
+      )
+        return;
     }
 
     const now = new Date();
@@ -83,8 +88,10 @@ export default function CreatePigClient() {
         alert("PIG 생성 성공!");
         router.push("/pig");
       } else {
-        const text = await res.text();
-        throw new Error("PIG 생성 실패: " + text);
+        const err = await res.json();
+        throw new Error(
+          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
+        );
       }
     } catch (err) {
       console.error(err);

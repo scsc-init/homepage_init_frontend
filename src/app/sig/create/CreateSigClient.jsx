@@ -1,11 +1,11 @@
 // app/sig/create/CreateSigClient.jsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import SigForm from "@/components/board/SigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
+import SigForm from "@/components/board/SigForm";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function CreateSigClient() {
   const [user, setUser] = useState();
@@ -52,9 +52,14 @@ export default function CreateSigClient() {
     }
 
     if (!user) {
-      alert("잠시 뒤 다시 시도해주세요")
+      alert("잠시 뒤 다시 시도해주세요");
     } else if (!user.discord_id) {
-      if (!confirm("계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?")) return;
+      if (
+        !confirm(
+          "계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?",
+        )
+      )
+        return;
     }
 
     const now = new Date();
