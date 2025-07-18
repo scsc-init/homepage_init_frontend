@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -11,6 +11,49 @@ const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
 });
 
 export default function CreateBoardArticleClient({ boardInfo }) {
+  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      router.replace("/us/login");
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/user/profile", {
+          headers: { "x-jwt": jwt },
+        });
+
+        if (!res.ok) {
+          localStorage.removeItem("jwt");
+          router.replace("/us/login");
+          return;
+        }
+
+        const user = await res.json();
+
+        if (parseInt(boardInfo.id) === 5 && user.role < 500) {
+          alert("접근 권한이 없습니다.");
+          router.replace("/");
+          return;
+        }
+
+        setAuthorized(true);
+      } catch (err) {
+        console.error("유저 인증 실패", err);
+        router.replace("/us/login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [boardInfo.id, router]);
+
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       title: "",
@@ -18,7 +61,6 @@ export default function CreateBoardArticleClient({ boardInfo }) {
     },
   });
 
-  const router = useRouter();
   const content = watch("editor");
   const [submitting, setSubmitting] = useState(false);
 
@@ -53,6 +95,14 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return <div className="text-center mt-10">로딩 중...</div>;
+  }
+
+  if (!authorized) {
+    return null;
+  }
 
   return (
     <div className="CreateSigContainer">
