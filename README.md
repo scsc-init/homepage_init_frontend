@@ -1,39 +1,14 @@
 # InitFrontend
 
 Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성, 게시판 등 다양한 기능을 지원합니다.
-최종 수정일 : 2025-07-15
+
+> 최종 수정일 : 2025-07-17
+
 작성자 : 이한경 윤영우 강명석 박성현
 
 ---
 
-## `.env.local` 설정
 
-아래 내용을 `.env.local` 파일에 복사해서 넣어주세요:
-
-```env
-BACKEND_URL=http://localhost:8080
-API_SECRET=some-secret-code
-```
-
-백엔드의 .env 파일은 저기에 맞춰서 작성하시면 됩니다. 제가 작성한 내용은 이렇습니다.
-
-```
-API_SECRET="some-secret-code"
-JWT_SECRET="some-jwt-secret"
-JWT_VALID_SECONDS=3600
-SQLITE_FILENAME="test.db"
-IMAGE_DIR=./uploaded_images
-IMAGE_MAX_SIZE=5242880
-FILE_DIR=./uploaded_files
-FILE_MAX_SIZE=10485760
-ARTICLE_DIR=./articles
-USER_CHECK=TRUE
-ENROLLMENT_FEE=300000
-CORS_ALL_ACCEPT=true
-
-```
-
----
 
 ## 주요 폴더 구조 및 페이지 설명
 
@@ -46,6 +21,7 @@ src/
     │   ├── my-page/            # 내 정보 페이지
     │   ├── rules/              # 회칙 페이지 : 마크다운 파일을 불러와서 띄움
     │   └── page.jsx            # SCSC 소개 메인 페이지
+    ├── api/                    # Nextjs 서버 라우터
     ├── article/[id]/           # 게시글 상세 페이지
     ├── board/[id]/             # 게시글 목록 페이지 (id별)
     │   └── create/             # 새 글 작성 페이지
@@ -82,23 +58,28 @@ git clone https://github.com/scsc-init/homepage_init_frontend.git
 npm install
 ```
 
-### 3. 개발 서버 실행
+### 3. `.env.local` 설정
+
+아래 내용을 `.env.local` 파일에 넣어주세요:
+
+```env
+BACKEND_URL=http://localhost:8080
+API_SECRET=some-secret-code
+GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
+GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
+NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
+NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
+```
+
+Google OAuth, NextAuth 설정에 관한 자세한 설명은 아래를 참고하세요.
+
+### 4. 개발 서버 실행
 
 ```bash
 npm run dev
 ```
 
 접속: [http://localhost:3000](http://localhost:3000)
-
----
-
-## 주요 기술 스택
-
-- **Next.js 14 (App Router)**
-- **React 18**, TypeScript
-- **Zustand**: 상태 관리
-- **CSS Modules**
-- **ESLint + Prettier**
 
 ---
 
@@ -124,7 +105,16 @@ NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
 NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 ```
 
-각 내용을 설명하겠습니다.
-client id, secret은 api/auth/[...nextauth]/route.js에서 사용합니다.
-nextauth secret은 임의로 정한 뒤, 배포할 때 환경변수 등록하시면 됩니다.
-nextauth url은 도메인 받아서 넣으시면 됩니다.
+- client id, secret은 api/auth/[...nextauth]/route.js에서 사용합니다.
+- nextauth secret은 임의로 정한 뒤, 배포할 때 환경변수 등록하시면 됩니다.
+- nextauth url은 도메인 받아서 넣으시면 됩니다.
+
+---
+
+## 주요 기술 스택
+
+- **Next.js 14 (App Router)**
+- **React 18**, TypeScript
+- **Zustand**: 상태 관리
+- **CSS Modules**
+- **ESLint + Prettier**
