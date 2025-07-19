@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function HeaderClientArea() {
   const [user, setUser] = useState(null);
@@ -36,7 +37,7 @@ export default function HeaderClientArea() {
     fetchProfile();
   }, []);
 
-  const isExecutive = user?.role >= 500;
+  const isExecutive = user?.role >= minExecutiveLevel;
 
   if (loading) {
     return (
@@ -53,7 +54,6 @@ export default function HeaderClientArea() {
     );
   }
 
-  // 🔹 로그인 X
   if (!user) {
     return (
       <div
@@ -75,7 +75,6 @@ export default function HeaderClientArea() {
     );
   }
 
-  // 🔹 로그인 O
   return (
     <div
       style={{
