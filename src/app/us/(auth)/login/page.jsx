@@ -96,7 +96,7 @@ export default function LoginPage() {
 
     const { jwt } = await loginRes.json();
     localStorage.setItem("jwt", jwt);
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (
