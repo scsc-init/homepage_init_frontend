@@ -55,7 +55,7 @@ export default function MyProfileClient() {
 
       <div className="mt-6 space-y-3">
         <button
-          onClick={() => router.push("/edit-user-info")}
+          onClick={() => router.push("/us/edit-user-info")}
           className="w-full bg-blue-600 text-white px-4 py-2 rounded"
         >
           정보 수정

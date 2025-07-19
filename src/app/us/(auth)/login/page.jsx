@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import "./page.css";
-import * as validator from "./validator";
+import * as validator from "@/components/validator.jsx";
 
 export default function LoginPage() {
   const { data: session } = useSession();
