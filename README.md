@@ -8,8 +8,6 @@ Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성
 
 ---
 
-
-
 ## 주요 폴더 구조 및 페이지 설명
 
 ```txt
@@ -118,3 +116,9 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 - **Zustand**: 상태 관리
 - **CSS Modules**
 - **ESLint + Prettier**
+
+---
+
+## 유지보수 관련 사항
+
+/util/constatns.jsx에 프론트에서 설정해야할 변수와 값들이 있습니다. 수정할 필요가 있다면 백엔드와 협의해 작성해주세요.
