@@ -42,7 +42,7 @@ export default function LoginPage() {
         if (res.ok) {
           const { jwt } = await res.json();
           localStorage.setItem("jwt", jwt);
-          router.push("/");
+          window.location.replace("/");
         } else if (res.status === 404) {
           setForm((prev) => ({
             ...prev,
