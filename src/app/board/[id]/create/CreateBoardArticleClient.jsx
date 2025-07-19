@@ -36,8 +36,8 @@ export default function CreateBoardArticleClient({ boardInfo }) {
 
         const user = await res.json();
 
-        if (parseInt(boardInfo.id) === 5 && user.role < 500) {
-          alert("접근 권한이 없습니다.");
+        if (user.role < boardInfo.writing_permission_level) {
+          alert("이 게시판에 글을 작성할 권한이 없습니다.");
           router.replace("/");
           return;
         }
@@ -52,7 +52,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
     };
 
     fetchUser();
-  }, [boardInfo.id, router]);
+  }, [boardInfo.writing_permission_level, router]);
 
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
