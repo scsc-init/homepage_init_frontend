@@ -5,32 +5,22 @@ import Image from "next/image";
 
 export default function HeaderClientArea() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setIsClient(true);
       const jwt = localStorage.getItem("jwt");
-      if (!jwt) {
-        setLoading(false);
-        return;
+      if (!jwt) return;
+
+      const res = await fetch(`/api/user/profile`, {
+        headers: { "x-jwt": jwt },
+      });
+      if (res.ok) setUser(await res.json());
+      else {
+        localStorage.removeItem("jwt");
+        setUser(null);
       }
-
-      try {
-        const res = await fetch(`/api/user/profile`, {
-          headers: { "x-jwt": jwt },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
-          localStorage.removeItem("jwt");
-        }
-      } catch (err) {
-        console.error("Profile fetch error:", err);
-      }
-
-      setLoading(false);
     };
 
     fetchProfile();
@@ -38,7 +28,8 @@ export default function HeaderClientArea() {
 
   const isExecutive = user?.role >= 500;
 
-  if (loading) {
+  // SSR 시 placeholder 렌더링 (공간 고정)
+  if (!isClient) {
     return (
       <div
         style={{
@@ -53,7 +44,7 @@ export default function HeaderClientArea() {
     );
   }
 
-  // 🔹 로그인 X
+  // 로그인 전 (CSR)
   if (!user) {
     return (
       <div
@@ -75,7 +66,7 @@ export default function HeaderClientArea() {
     );
   }
 
-  // 🔹 로그인 O
+  // 로그인 후
   return (
     <div
       style={{
@@ -92,7 +83,10 @@ export default function HeaderClientArea() {
         <button
           className="unset"
           onClick={() => (window.location.href = "/executive")}
-          style={{ fontSize: "0.875rem" }}
+          style={{
+            whiteSpace: "nowrap",
+            fontSize: "0.875rem",
+          }}
         >
           운영진 페이지
         </button>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
@@ -34,7 +33,7 @@ export default function MyProfileClient() {
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
-    signOut({ callbackUrl: "/" });
+    router.push("/");
   };
 
   if (!user) return <p className="p-6">불러오는 중...</p>;
@@ -55,7 +54,7 @@ export default function MyProfileClient() {
 
       <div className="mt-6 space-y-3">
         <button
-          onClick={() => router.push("/us/edit-user-info")}
+          onClick={() => router.push("/edit-user-info")}
           className="w-full bg-blue-600 text-white px-4 py-2 rounded"
         >
           정보 수정
