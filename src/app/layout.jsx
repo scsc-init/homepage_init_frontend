@@ -6,6 +6,7 @@ import "./global.css";
 import Header from "./header";
 import Footer from "./footer.jsx";
 import Head from "next/head";
+import { SessionProvider } from "next-auth/react";
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
@@ -42,11 +43,13 @@ export default function RootLayout({ children }) {
         <meta name="twitter:image" content="../../public/img4.jpg" />
       </Head>
       <body className={noto_sans_kr.className}>
-        <div id="RootContainer">
-          <Header />
-          <main id="MainContent">{children}</main>
-          {!hideFooterRoutes.includes(pathname) && <Footer />}
-        </div>
+        <SessionProvider>
+          <div id="RootContainer">
+            <Header />
+            <main id="MainContent">{children}</main>
+            {!hideFooterRoutes.includes(pathname) && <Footer />}
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );

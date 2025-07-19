@@ -1,12 +1,13 @@
 // /app/pig/[id]/page.jsx
+import { getApiSecret } from "@/util/getApiSecret";
+import { getBaseUrl } from "@/util/getBaseUrl";
+import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import "highlight.js/styles/github.css";
+import remarkGfm from "remark-gfm";
 import "./page.css";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import PigJoinLeaveButton from "./PigJoinLeaveButton";
 
 export default async function PigDetailPage({ params }) {
   const { id } = params;
@@ -47,6 +48,7 @@ export default async function PigDetailPage({ params }) {
         {pig.year}학년도 {pig.semester}학기 · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>
+      <PigJoinLeaveButton pigId={id} />
       <hr className="PigDivider" />
       <div className="PigContent">
         <ReactMarkdown

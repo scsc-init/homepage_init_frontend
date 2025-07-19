@@ -1,13 +1,14 @@
 // app/sig/create/CreateSigClient.jsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import SigForm from "@/components/board/SigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
+import SigForm from "@/components/board/SigForm";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function CreateSigClient() {
+  const [user, setUser] = useState();
   const { register, control, handleSubmit } = useForm({
     defaultValues: {
       title: "",
@@ -24,6 +25,17 @@ export default function CreateSigClient() {
     if (!jwt) {
       router.push("/us/login");
     }
+
+    const fetchProfile = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
+
+      const res = await fetch(`/api/user/profile`, {
+        headers: { "x-jwt": jwt },
+      });
+      if (res.ok) setUser(await res.json());
+    };
+    fetchProfile();
   }, [router]);
 
   const inferSemester = (month) => {
@@ -37,6 +49,17 @@ export default function CreateSigClient() {
     if (!jwt) {
       router.push("/us/login");
       return;
+    }
+
+    if (!user) {
+      alert("잠시 뒤 다시 시도해주세요");
+    } else if (!user.discord_id) {
+      if (
+        !confirm(
+          "계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?",
+        )
+      )
+        return;
     }
 
     const now = new Date();
@@ -66,9 +89,7 @@ export default function CreateSigClient() {
         router.push("/sig");
       } else {
         const err = await res.json();
-        throw new Error(
-          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
-        );
+        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
