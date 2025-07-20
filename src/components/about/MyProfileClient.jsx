@@ -34,6 +34,7 @@ export default function MyProfileClient() {
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
+    sessionStorage.clear();
     signOut({ callbackUrl: "/" });
   };
 

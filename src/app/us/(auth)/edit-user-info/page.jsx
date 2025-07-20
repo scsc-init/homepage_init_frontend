@@ -40,7 +40,7 @@ export default function EditUserInfoPage() {
       const resMajors = await fetch("/api/majors");
       const majorList = await resMajors.json();
       setMajors(majorList);
-      setLoading(false);
+      setLoading(false);  
     };
     fetchData();
   }, [router]);

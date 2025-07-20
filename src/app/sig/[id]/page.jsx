@@ -1,6 +1,6 @@
 // /app/sig/[id]/page.jsx
-import { getApiSecret } from "@/util/getApiSecret";
-import { getBaseUrl } from "@/util/getBaseUrl";
+"use client";
+
 import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
@@ -8,38 +8,56 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import "./page.css";
 import SigJoinLeaveButton from "./SigJoinLeaveButton";
+import EditSigButton from "./EditSigButton"
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
 
-export default async function SigDetailPage({ params }) {
+export default function SigDetailPage({ params }) {
   const { id } = params;
+  const router = useRouter();
+  const [sig, setSig] = useState(null);
+  const [article, setArticle] = useState(null);
+  const [members, setMembers] = useState([]);
 
-  const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/sig/${id}`);
+        if (!res.ok) {
+          alert("게시글 정보 없음")
+          router.push('/sig')
+          return;
+        }
+        const sigData = await res.json();
+        setSig(sigData);
 
-  if (!res.ok) {
-    return (
-      <div className="p-6 text-center text-red-600">
-        존재하지 않는 SIG입니다.
-      </div>
-    );
-  }
+        const articleRes = await fetch(`/api/article/${sigData.content_id}`);
+        if (!articleRes.ok) {
+          alert("게시글 로딩 실패");
+          router.push("/sig")
+          return;
+        }
+        const articleData = await articleRes.json();
+        setArticle(articleData);
 
-  const sig = await res.json();
+        const membersRes = await fetch(`/api/sig/${id}/members`);
+        if (!membersRes.ok) {
+          alert("시그 인원 로딩 실패");
+          router.push("/sig")
+          return;
+        }
+        const membersData = await membersRes.json();
+        setMembers(membersData);
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        router.push("/sig");
+      }
+    };
 
-  const articleRes = await fetch(
-    `${getBaseUrl()}/api/article/${sig.content_id}`,
-    {
-      headers: { "x-api-secret": getApiSecret() },
-      cache: "no-store",
-    },
-  );
+    fetchData();
+  }, [id, router]);
 
-  if (!articleRes.ok) {
-    return <div className="p-6 text-center text-red-600">게시글 로딩 실패</div>;
-  }
-
-  const article = await articleRes.json();
+  if (!sig || !article) return <div className="p-6">로딩 중...</div>;
 
   return (
     <div className="SigDetailContainer">
@@ -49,6 +67,7 @@ export default async function SigDetailPage({ params }) {
       </p>
       <p className="SigDescription">{sig.description}</p>
       <SigJoinLeaveButton sigId={id}/>
+      <EditSigButton sigId={id}/>
       <hr className="SigDivider" />
       <div className="SigContent">
         <ReactMarkdown
@@ -67,6 +86,11 @@ export default async function SigDetailPage({ params }) {
         >
           {article.content}
         </ReactMarkdown>
+      </div>
+      <hr></hr>
+      <div>
+        시그 인원
+
       </div>
     </div>
   );
