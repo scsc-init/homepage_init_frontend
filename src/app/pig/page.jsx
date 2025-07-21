@@ -1,31 +1,52 @@
-// /app/pig/page.jsx - PIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
+// /app/pig/page.jsx - SIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
+"use client";
+
 import Link from "next/link";
 import "./page.css";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-export default async function PigListPage() {
-  const res = await fetch(`${getBaseUrl()}/api/pigs`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
+export default function PigListPage() {
+  const [pigs, setPigs] = useState();
 
-  if (!res.ok) {
-    return (
-      <div className="text-center text-red-600 mt-10">
-        피그 정보를 불러올 수 없습니다.
-      </div>
-    );
+  const router = useRouter();
+
+  const semesterMap = {
+    1: "1",
+    2: "S",
+    3: "2",
+    4: "W",
   }
 
-  const pigs = await res.json();
+  useEffect(() => {
+    const setData = async () => {
+      const res = await fetch(`/api/pigs`, {
+      });
+    
+      if (!res.ok) {
+        alert("피그 정보를 불러올 수 없습니다.");
+        router.push('/');
+      }
+    
+      const pigs = await res.json();
+      setPigs(pigs);
+    };
+    setData();
+  }, [router]);
+
+  useEffect(() => {
+    if (!pigs) return;
+    setPigs([...pigs].sort((a, b) => a.id - b.id));
+  }, [pigs]);
+
+  if (!pigs) return <div>로딩중...</div>
 
   return (
     <div id="PigListContainer">
       <div className="PigHeader">
-        <h1 className="text-3xl font-bold">PIG 게시판</h1>
+        <h1 className="text-3xl font-bold">SIG 게시판</h1>
         <Link href="/pig/create" id="PigCreateButton">
-          <button className="PigCreateBtn">PIG 만들기</button>
+          <button className="PigCreateBtn">SIG 만들기</button>
         </Link>
       </div>
 
@@ -36,7 +57,7 @@ export default async function PigListPage() {
               <div className="pigTopbar">
                 <span className="pigTitle">{pig.title}</span>
                 <span className="pigUserCount">
-                  {pig.year}년 {pig.semester}학기
+                  {pig.year}년 {semesterMap[pig.semester]}학기
                 </span>
               </div>
               <div className="pigDescription">{pig.description}</div>

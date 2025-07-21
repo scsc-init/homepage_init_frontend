@@ -1,4 +1,4 @@
-// app/pig/create/CreatePigClient.jsx
+// app/pig/edit/[id]/EditPigClient.jsx
 "use client";
 
 import Editor from "@/components/board/EditorWrapper.jsx";
@@ -7,17 +7,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-export default function CreatePigClient() {
+export default function EditPigClient({ pigId }) {
   const router = useRouter();
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("pigForm") : null;
-  const parsed = saved ? JSON.parse(saved) : null;
-
-  const { register, control, handleSubmit, watch, formState: { isDirty } } = useForm({
-    defaultValues: parsed || {
+  const { register, control, handleSubmit, reset, formState: { isDirty } } = useForm({
+    defaultValues: {
       title: "",
       description: "",
       editor: "",
@@ -41,14 +38,34 @@ export default function CreatePigClient() {
       else router.push("/us/login");
     };
     fetchProfile();
-  }, [router]);
 
-  const watched = watch();
-  useEffect(() => {
-    if (!isFormSubmitted.current) {
-      sessionStorage.setItem("pigForm", JSON.stringify(watched));
-    }
-  }, [watched]);
+    const fetchPigData = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
+
+      const res = await fetch(`/api/pig/${pigId}`, {
+        headers: { "x-jwt": jwt },
+      });
+
+      if (!res.ok) {alert("피그 정보를 불러오지 못했습니다."); router.push("/pig");}
+
+      const pig = await res.json();
+      const articleRes = await fetch(
+        `/api/article/${pig.content_id}`,
+        {},
+      );
+
+      if (!articleRes.ok) {alert("피그 정보를 불러오지 못했습니다."); router.push("/pig");}
+      const article = await articleRes.json();
+      console.log(article)
+      reset({
+        title: pig.title ?? "",
+        description: pig.description ?? "",
+        editor: article.content ?? "",
+      });
+    };
+    fetchPigData();
+  }, [router]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -97,7 +114,12 @@ export default function CreatePigClient() {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/pig/create`, {
+      console.log("Payload being sent:", {
+        title: data.title,
+        description: data.description,
+        content: data.editor,
+      });
+      const res = await fetch(`/api/pig/${pigId}/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,13 +132,13 @@ export default function CreatePigClient() {
         }),
       });
 
-      if (res.status === 201) {
-        alert("SIG 생성 성공!");
-        isFormSubmitted.current = true;
+      if (res.status === 204) {
+        alert("SIG 수정 성공!");
         router.push("/pig");
       } else {
         const err = await res.json();
-        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
+        console.log(err);
+        alert("SIG 수정 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
@@ -129,8 +151,7 @@ export default function CreatePigClient() {
   return (
     <div className="CreatePigContainer">
       <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">SIG 생성</h1>
-        <p className="CreatePigSubtitle">새로운 SIG를 만들어 보세요.</p>
+        <h1 className="CreatePigTitle">SIG 수정</h1>
       </div>
       <div className="CreatePigCard">
         <PigForm

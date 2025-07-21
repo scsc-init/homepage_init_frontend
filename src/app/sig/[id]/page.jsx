@@ -18,6 +18,7 @@ export default function SigDetailPage({ params }) {
   const [sig, setSig] = useState(null);
   const [article, setArticle] = useState(null);
   const [members, setMembers] = useState([]);
+  const [memberNames, setMemberNames] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +58,23 @@ export default function SigDetailPage({ params }) {
     fetchData();
   }, [id, router]);
 
-  if (!sig || !article) return <div className="p-6">로딩 중...</div>;
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try { if (!members) return;
+      for (const member in members) {
+        const res = await fetch(`/api/user/${member.id}`);
+        const m = await res.json();
+        if (res.ok) {setMemberNames([...memberNames].push(m.name))}
+        else {alert("시그 인원 로딩 실패"); router.push("/sig");}
+      } }
+      catch (e) {
+        alert(`${e}`); router.push('/sig')
+      }
+    };
+    fetchMembers();
+  }, [members])
+
+  if (!sig || !article) return <div>로딩 중...</div>;
 
   return (
     <div className="SigDetailContainer">
@@ -90,7 +107,7 @@ export default function SigDetailPage({ params }) {
       <hr></hr>
       <div>
         시그 인원
-
+        {memberNames.map((m) => (<div>{m}</div>))}
       </div>
     </div>
   );

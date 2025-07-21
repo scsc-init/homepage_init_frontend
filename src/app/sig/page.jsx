@@ -1,24 +1,45 @@
 // /app/sig/page.jsx - SIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
+"use client";
+
 import Link from "next/link";
 import "./page.css";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-export default async function SigListPage() {
-  const res = await fetch(`${getBaseUrl()}/api/sigs`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
+export default function SigListPage() {
+  const [sigs, setSigs] = useState();
 
-  if (!res.ok) {
-    return (
-      <div className="text-center text-red-600 mt-10">
-        시그 정보를 불러올 수 없습니다.
-      </div>
-    );
+  const router = useRouter();
+
+  const semesterMap = {
+    1: "1",
+    2: "S",
+    3: "2",
+    4: "W",
   }
 
-  const sigs = await res.json();
+  useEffect(() => {
+    const setData = async () => {
+      const res = await fetch(`/api/sigs`, {
+      });
+    
+      if (!res.ok) {
+        alert("시그 정보를 불러올 수 없습니다.");
+        router.push('/');
+      }
+    
+      const sigs = await res.json();
+      setSigs(sigs);
+    };
+    setData();
+  }, [router]);
+
+  useEffect(() => {
+    if (!sigs) return;
+    setSigs([...sigs].sort((a, b) => a.id - b.id));
+  }, [sigs]);
+
+  if (!sigs) return <div>로딩중...</div>
 
   return (
     <div id="SigListContainer">
@@ -36,7 +57,7 @@ export default async function SigListPage() {
               <div className="sigTopbar">
                 <span className="sigTitle">{sig.title}</span>
                 <span className="sigUserCount">
-                  {sig.year}년 {sig.semester}학기
+                  {sig.year}년 {semesterMap[sig.semester]}학기
                 </span>
               </div>
               <div className="sigDescription">{sig.description}</div>
