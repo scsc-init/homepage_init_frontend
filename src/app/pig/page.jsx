@@ -1,16 +1,10 @@
 // /app/pig/page.jsx - PIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
-"use client";
-
 import Link from "next/link";
 import "./page.css";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
-export default function PigListPage() {
-  const [pigs, setPigs] = useState();
-
-  const router = useRouter();
-
+export default async function PigListPage() {
   const semesterMap = {
     1: "1",
     2: "S",
@@ -18,28 +12,19 @@ export default function PigListPage() {
     4: "W",
   }
 
-  useEffect(() => {
-    const setData = async () => {
-      const res = await fetch(`/api/pigs`, {
-      });
-    
-      if (!res.ok) {
-        alert("피그 정보를 불러올 수 없습니다.");
-        router.push('/');
-      }
-    
-      const pigs = await res.json();
-      setPigs(pigs);
-    };
-    setData();
-  }, [router]);
+  const res = await fetch(`${getBaseUrl()}/api/pigs`, {
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
 
-  useEffect(() => {
-    if (!pigs) return;
-    setPigs([...pigs].sort((a, b) => a.id - b.id));
-  }, [pigs]);
+  if (!res.ok) {
+    return <div>피그 정보를 불러올 수 없습니다.</div>
+  }
 
-  if (!pigs) return <div>로딩중...</div>
+  const pigs = await res.json();
+  if (!Array.isArray(pigs)) return <div>로딩중...</div>
+
+  pigs.sort((a, b) => b.id - a.id);
 
   return (
     <div id="PigListContainer">
