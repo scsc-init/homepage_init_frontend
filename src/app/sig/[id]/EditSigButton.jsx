@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function EditSigButton({ sigId }) {
   const [isOwner, setIsOwner] = useState(false);
@@ -35,7 +36,7 @@ export default function EditSigButton({ sigId }) {
       const owner_id = (await res.json()).owner
       if (res.ok && user) {
         setIsOwner(user.id === owner_id);
-        if (user.role >= 500) setIsExecutive(true);
+        if (user.role >= minExecutiveLevel) setIsExecutive(true);
       }
     };
     fetchSig();
