@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import "./page.css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function PigListPage() {

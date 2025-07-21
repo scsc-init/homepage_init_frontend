@@ -107,7 +107,7 @@ export default function PigDetailPage({ params }) {
       <hr></hr>
       <div>
         피그 인원
-        {memberNames.map((m) => (<div>{m}</div>))}
+        {memberNames.map((m, idx) => (<div key={idx}>{m}</div>))}
       </div>
     </div>
   );
