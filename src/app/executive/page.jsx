@@ -35,7 +35,7 @@ export default async function AdminPanel() {
         <h2>PIG 관리</h2>
         <PigList pigs={pigs} />
         <h2>Scsc status 관리</h2>
-        <ScscStatusPanel scscGlobalStatus={scscGlobalStatus} />
+        <ScscStatusPanel scscGlobalStatus={scscGlobalStatus.status} semester={scscGlobalStatus.semester} year={scscGlobalStatus.year}/>
         <h2>전공 관리</h2>
         <MajorList majors={majors} />
       </div>
@@ -130,7 +130,7 @@ async function fetchScscGlobalStatus() {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-  return res.ok ? (await res.json()).status : "";
+  return res.ok ? (await res.json()) : "";
 }
 
 async function fetchMajors() {
