@@ -1,4 +1,4 @@
-// /app/pig/page.jsx - SIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
+// /app/pig/page.jsx - PIG 리스트 페이지 (디자인 단정화: 버튼화 + 링크 데코 완전 제거 + 읽기 좋은 글자)
 "use client";
 
 import Link from "next/link";
@@ -44,9 +44,9 @@ export default function PigListPage() {
   return (
     <div id="PigListContainer">
       <div className="PigHeader">
-        <h1 className="text-3xl font-bold">SIG 게시판</h1>
+        <h1 className="text-3xl font-bold">PIG 게시판</h1>
         <Link href="/pig/create" id="PigCreateButton">
-          <button className="PigCreateBtn">SIG 만들기</button>
+          <button className="PigCreateBtn">PIG 만들기</button>
         </Link>
       </div>
 

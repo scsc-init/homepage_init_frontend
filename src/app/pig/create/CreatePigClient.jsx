@@ -111,12 +111,12 @@ export default function CreatePigClient() {
       });
 
       if (res.status === 201) {
-        alert("SIG 생성 성공!");
+        alert("PIG 생성 성공!");
         isFormSubmitted.current = true;
         router.push("/pig");
       } else {
         const err = await res.json();
-        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
+        alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
@@ -129,8 +129,8 @@ export default function CreatePigClient() {
   return (
     <div className="CreatePigContainer">
       <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">SIG 생성</h1>
-        <p className="CreatePigSubtitle">새로운 SIG를 만들어 보세요.</p>
+        <h1 className="CreatePigTitle">PIG 생성</h1>
+        <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
       </div>
       <div className="CreatePigCard">
         <PigForm

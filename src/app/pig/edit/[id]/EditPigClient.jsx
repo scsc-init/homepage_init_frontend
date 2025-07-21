@@ -133,12 +133,12 @@ export default function EditPigClient({ pigId }) {
       });
 
       if (res.status === 204) {
-        alert("SIG 수정 성공!");
+        alert("PIG 수정 성공!");
         router.push("/pig");
       } else {
         const err = await res.json();
         console.log(err);
-        alert("SIG 수정 실패: " + (err.detail ?? JSON.stringify(err)));
+        alert("PIG 수정 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
@@ -151,7 +151,7 @@ export default function EditPigClient({ pigId }) {
   return (
     <div className="CreatePigContainer">
       <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">SIG 수정</h1>
+        <h1 className="CreatePigTitle">PIG 수정</h1>
       </div>
       <div className="CreatePigCard">
         <PigForm
