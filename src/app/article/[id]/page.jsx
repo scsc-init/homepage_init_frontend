@@ -1,21 +1,44 @@
+"use client";
+
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github.css";
 import "./page.css";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function ArticleDetail({ params }) {
+export default function ArticleDetail({ params }) {
+  const router = useRouter();
+  const [article, setArticle] = useState();
+
   const { id } = params;
 
-  const res = await fetch(`${getBaseUrl()}/api/article/${id}`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      router.push("/us/login");
+    }
 
-  if (!res.ok) {
+    const fetchContents = async () => {
+      try {
+        const contentRes = await fetch(`/api/article/${id}`, {
+          headers: { "x-jwt": jwt },
+        });
+        if (!contentRes.ok) {
+          alert("게시글 로딩 실패");
+        }
+        const article = await contentRes.json();
+        setArticle(article);
+      } catch (e) {
+        alert(`게시글 불러오기 중 오류: ${e}`);
+      }
+    };
+    fetchContents();
+  }, [router]);
+
+  if (!article) {
     return (
       <div className="p-6 text-center text-red-600">
         게시글을 찾을 수 없습니다.
@@ -23,7 +46,6 @@ export default async function ArticleDetail({ params }) {
     );
   }
 
-  const article = await res.json();
   const markdown = article.content ?? "내용이 비어 있습니다.";
 
   return (
