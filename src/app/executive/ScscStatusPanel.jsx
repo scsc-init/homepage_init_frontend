@@ -2,6 +2,13 @@
 
 import React, { useState } from "react";
 
+const SEMESTER_MAP = {
+  1: "1",
+  2: "여름",
+  3: "2",
+  4: "겨울",
+}
+
 const STATUS_MAP = {
   surveying: "설문중",
   recruiting: "모집중",
@@ -9,16 +16,23 @@ const STATUS_MAP = {
   inactive: "비활성",
 };
 
-const TRANSITION_MAP = {
+const TRANSITION_MAP_REGULAR = {
   inactive: ["surveying"],
   surveying: ["recruiting"],
   recruiting: ["active"],
-  active: ["surveying", "inactive"],
+  active: ["surveying"],
 };
 
-const getNextStates = (current) => TRANSITION_MAP[current] || [];
+const TRANSITION_MAP_SEASONAL = {
+  inactive: ["surveying"],
+  surveying: ["recruiting"],
+  recruiting: ["active"],
+  active: ["inactive"],
+};
 
-export default function ScscStatusPanel({ scscGlobalStatus }) {
+const getNextStates = (current, semester) => (semester%2===1) ? (TRANSITION_MAP_REGULAR[current] || []) : (TRANSITION_MAP_SEASONAL[current] || [])
+
+export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   const [currentStatus, setCurrentStatus] = useState(scscGlobalStatus);
   const [saving, setSaving] = useState(false);
 
@@ -46,40 +60,44 @@ export default function ScscStatusPanel({ scscGlobalStatus }) {
     setSaving(false);
   };
 
-  const nextStates = getNextStates(currentStatus);
+  const nextStates = getNextStates(currentStatus, semester);
 
   return (
     <div style={{ marginBottom: "2rem" }}>
       <h2>SCSC 전체 상태 관리</h2>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          flexWrap: "wrap",
-        }}
-      >
-        <div style={{ fontWeight: "bold" }}>
-          {STATUS_MAP[currentStatus] || currentStatus}
-        </div>
-        <span style={{ fontSize: "1.2rem" }}>→</span>
-        {nextStates.map((status) => (
-          <button
-            key={status}
-            onClick={() => handleSave(status)}
-            disabled={saving}
+      {!currentStatus ? (<div>상태를 불러오지 못했습니다.</div>) : (
+        <div>
+          <div>{year}년 {SEMESTER_MAP[semester]}학기</div>
+          <div
             style={{
-              padding: "0.5rem 1rem",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              background: "#f0f0f0",
-              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              flexWrap: "wrap",
             }}
           >
-            {STATUS_MAP[status]}
-          </button>
-        ))}
-      </div>
+            <div style={{ fontWeight: "bold" }}>
+              {STATUS_MAP[currentStatus] || currentStatus}
+            </div>
+            <span style={{ fontSize: "1.2rem" }}>→</span>
+            {nextStates.map((status) => (
+              <button
+                key={status}
+                onClick={() => handleSave(status)}
+                disabled={saving}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                  background: "#f0f0f0",
+                  cursor: "pointer",
+                }}
+              >
+                {STATUS_MAP[status]}
+              </button>
+            ))}
+          </div>
+        </div>)}
     </div>
   );
 }
