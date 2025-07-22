@@ -136,6 +136,7 @@ export default function LoginPage() {
             </p>
             <button
               onClick={() => {
+                if (process.env.NEXT_PUBLIC_SNU_EMAIL_CHECK==="FALSE") {setStage(2); return;}
                 validator.email(form.email, (ok) =>
                   ok ? setStage(2) : alert("snu.ac.kr 이메일만 허용됩니다."),
                 );

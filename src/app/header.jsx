@@ -3,12 +3,12 @@ import "./header.css";
 import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";
 
-const LogoIcon = () => (
+const LogoIcon = ({year, semester}) => (
   <>
     <button className="unset" onClick={() => (window.location.href = "/")}>
       <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
     </button>
-    
+    {(!year || !semester) ? <div></div> : <div>{year} - {SEMESTER_MAP[semester]}학기</div>}
   </>
 );
 
@@ -46,9 +46,19 @@ const menuData = [
   },
 ];
 
+const SEMESTER_MAP = {
+  1: "1",
+  2: "S",
+  3: "2",
+  4: "W",
+}
+
 function HeaderNavigation() {
   const [openIndex, setOpenIndex] = useState(null);
+  
   const timeoutRef = useRef();
+
+  
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);
@@ -93,6 +103,8 @@ function HeaderNavigation() {
 export default function Header() {
   const headerRef = useRef(null);
   const [spacerHeight, setSpacerHeight] = useState(null);
+  const [year, setYear] = useState(0);
+  const [semester, setSemester] = useState(0);
 
   useEffect(() => {
     if (headerRef.current) {
@@ -100,12 +112,23 @@ export default function Header() {
     }
   }, []);
 
+  useEffect(() => {
+    const loadGSCSC = async () => {
+      const res = await fetch(`/api/scsc/global/status`, {});
+      if (!res.ok) return;
+      const scscData = await res.json();
+      setYear(scscData.year);
+      setSemester(scscData.semester);
+    }
+    loadGSCSC();
+  }, []);
+
   return (
     <>
       <div id="HeaderContainer" ref={headerRef}>
         <div id="Header">
           <div id="HeaderLeft">
-            <LogoIcon />
+            <LogoIcon year={year} semester={semester}/>
           </div>
           <div id="HeaderCenter">
             <HeaderNavigation />
