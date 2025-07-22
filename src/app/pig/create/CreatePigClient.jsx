@@ -13,10 +13,17 @@ export default function CreatePigClient() {
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("pigForm") : null;
+  const saved =
+    typeof window !== "undefined" ? sessionStorage.getItem("pigForm") : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
-  const { register, control, handleSubmit, watch, formState: { isDirty } } = useForm({
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { isDirty },
+  } = useForm({
     defaultValues: parsed || {
       title: "",
       description: "",
@@ -60,7 +67,9 @@ export default function CreatePigClient() {
 
     const handleRouteChange = (url) => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm("작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?");
+        const confirmed = confirm(
+          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
+        );
         if (!confirmed) {
           router.events.emit("routeChangeError");
           throw "Route change aborted by user.";

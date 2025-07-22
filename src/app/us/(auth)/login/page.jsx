@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import "./page.css";
-import * as validator from "@/components/validator.jsx";
+import * as validator from "./validator";
 
 export default function LoginPage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-
   const [stage, setStage] = useState(0);
   const [form, setForm] = useState({
     email: "",
@@ -23,44 +18,55 @@ export default function LoginPage() {
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState("");
-
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
 
   useEffect(() => {
-    const tryLogin = async () => {
-      if (!session) return;
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
 
-      try {
-        const res = await fetch("/api/user/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: session.user.email }),
-        });
+    window.handleCredentialResponse = async (response) => {
+      const { credential } = response;
+      const payload = JSON.parse(
+        decodeURIComponent(
+          escape(
+            window.atob(
+              credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
+            ),
+          ),
+        ),
+      );
 
-        if (res.ok) {
-          const { jwt } = await res.json();
-          localStorage.setItem("jwt", jwt);
-          window.location.replace("/");
-        } else if (res.status === 404) {
-          setForm((prev) => ({
-            ...prev,
-            email: session.user.email,
-            name: session.user.name,
-          }));
+      const { email, name: rawName } = payload;
+      const cleanName = rawName
+        ?.replace(/^[-\s\u00AD\u2010-\u2015]+/, "")
+        .split("/")[0]
+        ?.trim();
+      if (!email || !cleanName) return;
+
+      const res = await fetch(`/api/user/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        const { jwt } = await res.json();
+        localStorage.setItem("jwt", jwt);
+        window.location.href = "/";
+      } else {
+        if (res.status === 404) {
+          setForm((prev) => ({ ...prev, email, name: cleanName }));
           setStage(1);
         } else {
           alert("로그인 중 오류 발생");
         }
-      } catch (err) {
-        console.error("로그인 실패:", err);
-        alert("로그인 중 네트워크 오류가 발생했습니다.");
       }
     };
-
-    tryLogin();
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     if (stage !== 4) return;
@@ -104,9 +110,21 @@ export default function LoginPage() {
       <div className="GoogleSignupCard">
         {stage === 0 && (
           <div>
-            <button onClick={() => signIn("google")}>
-              Google 계정으로 로그인
-            </button>
+            <div
+              id="g_id_onload"
+              data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"
+              data-callback="handleCredentialResponse"
+              data-auto_prompt="false"
+            ></div>
+            <div
+              className="g_id_signin"
+              data-type="standard"
+              data-size="large"
+              data-theme="outline"
+              data-text="sign_in_with"
+              data-shape="rectangular"
+              data-logo_alignment="left"
+            ></div>
           </div>
         )}
 
@@ -139,7 +157,7 @@ export default function LoginPage() {
                 onChange={(e) => {
                   const val = e.target.value;
                   setForm({ ...form, student_id_year: val });
-                  if (val.length === 4) studentIdNumberRef.current?.focus();
+                  if (val.length === 4) studentIdNumberRef.current.focus();
                 }}
                 maxLength={4}
                 placeholder="2025"
@@ -177,7 +195,7 @@ export default function LoginPage() {
                 onChange={(e) => {
                   const val = e.target.value;
                   setForm({ ...form, phone1: val });
-                  if (val.length === 3) phone2Ref.current?.focus();
+                  if (val.length === 3) phone2Ref.current.focus();
                 }}
                 maxLength={3}
                 placeholder="010"
@@ -188,7 +206,7 @@ export default function LoginPage() {
                 onChange={(e) => {
                   const val = e.target.value;
                   setForm({ ...form, phone2: val });
-                  if (val.length === 4) phone3Ref.current?.focus();
+                  if (val.length === 4) phone3Ref.current.focus();
                 }}
                 maxLength={4}
                 placeholder="1234"
@@ -224,7 +242,7 @@ export default function LoginPage() {
                 value={college}
               >
                 <option value="">단과대학 선택</option>
-                {[...new Set(majors.map((m) => m.college))].map((c) => (
+                {[...new Set(majors.map((m) => (m.college)))].map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -235,13 +253,11 @@ export default function LoginPage() {
                 value={form.major_id}
               >
                 <option value="">학과/학부 선택</option>
-                {majors
-                  .filter((m) => m.college === college)
-                  .map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.major_name}
-                    </option>
-                  ))}
+                {majors.filter((m) => (m.college == college)).map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.major_name}
+                  </option>
+                ))}
               </select>
             </div>
             <button

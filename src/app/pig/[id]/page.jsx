@@ -4,9 +4,9 @@ import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import "./page.css";
 import PigJoinLeaveButton from "./PigJoinLeaveButton";
-import EditPigButton from "./EditPigButton"
-import PigMembers from "./PigMembers"
-import PigContents from "./PigContents"
+import EditPigButton from "./EditPigButton";
+import PigMembers from "./PigMembers";
+import PigContents from "./PigContents";
 
 export default async function PigDetailPage({ params }) {
   const { id } = params;
@@ -33,12 +33,12 @@ export default async function PigDetailPage({ params }) {
         {pig.year}학년도 {pig.semester}학기 · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>
-      <PigJoinLeaveButton pigId={id}/>
-      <EditPigButton pigId={id}/>
+      <PigJoinLeaveButton pigId={id} />
+      <EditPigButton pigId={id} />
       <hr className="PigDivider" />
-      <PigContents pigContentId={pig.content_id}/>
+      <PigContents pigContentId={pig.content_id} />
       <hr></hr>
-      <PigMembers pigId={id}/>
+      <PigMembers pigId={id} />
     </div>
   );
 }

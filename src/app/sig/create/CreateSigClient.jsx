@@ -6,6 +6,8 @@ import SigForm from "@/components/board/SigForm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+import SigForm from "@/components/board/SigForm";
+import Editor from "@/components/board/EditorWrapper.jsx";
 
 export default function CreateSigClient() {
   const router = useRouter();
@@ -13,10 +15,17 @@ export default function CreateSigClient() {
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== "undefined" ? sessionStorage.getItem("sigForm") : null;
+  const saved =
+    typeof window !== "undefined" ? sessionStorage.getItem("sigForm") : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
-  const { register, control, handleSubmit, watch, formState: { isDirty } } = useForm({
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { isDirty },
+  } = useForm({
     defaultValues: parsed || {
       title: "",
       description: "",
@@ -60,7 +69,9 @@ export default function CreateSigClient() {
 
     const handleRouteChange = (url) => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm("작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?");
+        const confirmed = confirm(
+          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
+        );
         if (!confirmed) {
           router.events.emit("routeChangeError");
           throw "Route change aborted by user.";
@@ -116,7 +127,9 @@ export default function CreateSigClient() {
         router.push("/sig");
       } else {
         const err = await res.json();
-        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
+        throw new Error(
+          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
+        );
       }
     } catch (err) {
       console.error(err);

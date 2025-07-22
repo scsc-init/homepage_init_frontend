@@ -4,9 +4,9 @@ import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import "./page.css";
 import SigJoinLeaveButton from "./SigJoinLeaveButton";
-import EditSigButton from "./EditSigButton"
-import SigMembers from "./SigMembers"
-import SigContents from "./SigContents"
+import EditSigButton from "./EditSigButton";
+import SigMembers from "./SigMembers";
+import SigContents from "./SigContents";
 
 export default async function SigDetailPage({ params }) {
   const { id } = params;
@@ -33,12 +33,12 @@ export default async function SigDetailPage({ params }) {
         {sig.year}학년도 {sig.semester}학기 · 상태: {sig.status}
       </p>
       <p className="SigDescription">{sig.description}</p>
-      <SigJoinLeaveButton sigId={id}/>
-      <EditSigButton sigId={id}/>
+      <SigJoinLeaveButton sigId={id} />
+      <EditSigButton sigId={id} />
       <hr className="SigDivider" />
-      <SigContents sigContentId={sig.content_id}/>
+      <SigContents sigContentId={sig.content_id} />
       <hr></hr>
-      <SigMembers sigId={id}/>
+      <SigMembers sigId={id} />
     </div>
   );
 }
