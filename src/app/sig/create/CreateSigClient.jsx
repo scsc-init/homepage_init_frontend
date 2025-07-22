@@ -6,8 +6,6 @@ import SigForm from "@/components/board/SigForm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import SigForm from "@/components/board/SigForm";
-import Editor from "@/components/board/EditorWrapper.jsx";
 
 export default function CreateSigClient() {
   const router = useRouter();
@@ -127,9 +125,7 @@ export default function CreateSigClient() {
         router.push("/sig");
       } else {
         const err = await res.json();
-        throw new Error(
-          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
-        );
+        alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
