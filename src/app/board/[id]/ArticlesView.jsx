@@ -17,7 +17,8 @@ export default function BoardPage({ board }) {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      router.push("/us/login");
+      alert("로그인이 필요합니다.");
+      router.push("/us/login"); return;
     }
 
     const fetchContents = async () => {
