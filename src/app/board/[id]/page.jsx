@@ -5,15 +5,10 @@ import Link from "next/link";
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
+import ArticlesView from "./ArticlesView";
 
 export default async function BoardPage({ params }) {
   const boardId = params.id;
-
-  // 게시글 목록
-  const articleRes = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
 
   // 게시판 정보
   const boardRes = await fetch(`${getBaseUrl()}/api/board/${boardId}`, {
@@ -21,7 +16,7 @@ export default async function BoardPage({ params }) {
     cache: "no-store",
   });
 
-  if (!articleRes.ok || !boardRes.ok || boardId == 1 || boardId == 2) {
+  if (!boardRes.ok || boardId == 1 || boardId == 2) {
     return (
       <div className="text-center text-red-600 mt-10">
         게시글을 불러올 수 없습니다.
@@ -29,7 +24,6 @@ export default async function BoardPage({ params }) {
     );
   }
 
-  const articles = await articleRes.json();
   const board = await boardRes.json();
 
   return (
@@ -44,27 +38,7 @@ export default async function BoardPage({ params }) {
         </Link>
       </div>
 
-      <div id="SigList">
-        {articles.map((article) => (
-          <Link
-            key={article.id}
-            href={`/article/${article.id}`}
-            className="sigLink"
-          >
-            <div className="sigCard">
-              <div className="sigTopbar">
-                <span className="sigTitle">{article.title}</span>
-                <span className="sigUserCount">
-                  {new Date(article.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="sigDescription">
-                {article.content.slice(0, 80)}...
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <ArticlesView board={board} />
     </div>
   );
 }
