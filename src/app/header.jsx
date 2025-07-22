@@ -4,9 +4,12 @@ import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";
 
 const LogoIcon = () => (
-  <button className="unset" onClick={() => (window.location.href = "/")}>
-    <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
-  </button>
+  <>
+    <button className="unset" onClick={() => (window.location.href = "/")}>
+      <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
+    </button>
+    
+  </>
 );
 
 const menuData = [

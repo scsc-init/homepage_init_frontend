@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const SEMESTER_MAP = {
@@ -35,6 +36,7 @@ const getNextStates = (current, semester) => (semester%2===1) ? (TRANSITION_MAP_
 export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   const [currentStatus, setCurrentStatus] = useState(scscGlobalStatus);
   const [saving, setSaving] = useState(false);
+  const router = useRouter();
 
   const handleSave = async (newStatus) => {
     const jwt = localStorage.getItem("jwt");
@@ -52,6 +54,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
     if (res.status === 204) {
       alert("상태가 변경되었습니다.");
       setCurrentStatus(newStatus);
+      router.refresh();
     } else {
       const error = await res.text();
       alert("업데이트 실패: " + error);

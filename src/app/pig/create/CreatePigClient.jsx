@@ -123,6 +123,7 @@ export default function CreatePigClient() {
         alert("PIG 생성 성공!");
         isFormSubmitted.current = true;
         router.push("/pig");
+        router.refresh();
       } else {
         const err = await res.json();
         alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
