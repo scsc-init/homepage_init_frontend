@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function HeaderClientArea() {
   const [user, setUser] = useState(null);
@@ -26,7 +27,7 @@ export default function HeaderClientArea() {
     fetchProfile();
   }, []);
 
-  const isExecutive = user?.role >= 500;
+  const isExecutive = user?.role >= minExecutiveLevel;
 
   // SSR 시 placeholder 렌더링 (공간 고정)
   if (!isClient) {
@@ -44,7 +45,6 @@ export default function HeaderClientArea() {
     );
   }
 
-  // 로그인 전 (CSR)
   if (!user) {
     return (
       <div
@@ -66,7 +66,6 @@ export default function HeaderClientArea() {
     );
   }
 
-  // 로그인 후
   return (
     <div
       style={{

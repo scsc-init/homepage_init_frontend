@@ -1,37 +1,17 @@
 # InitFrontend
 
 Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성, 게시판 등 다양한 기능을 지원합니다.
-최종 수정일 : 2025-07-11
+
+> 최종 수정일 : 2025-07-21
+
 작성자 : 이한경 윤영우 강명석 박성현
 
 ---
 
-## `.env.local` 설정
+## 브랜치 설명
 
-아래 내용을 `.env.local` 파일에 복사해서 넣어주세요:
-
-```env
-BACKEND_URL=http://localhost:8080
-API_SECRET=some-secret-code
-```
-
-백엔드의 .env 파일은 저기에 맞춰서 작성하시면 됩니다. 제가 작성한 내용은 이렇습니다.
-
-```
-API_SECRET="some-secret-code"
-JWT_SECRET="some-jwt-secret"
-JWT_VALID_SECONDS=3600
-SQLITE_FILENAME="test.db"
-IMAGE_DIR=./uploaded_images
-IMAGE_MAX_SIZE=5242880
-FILE_DIR=./uploaded_files
-FILE_MAX_SIZE=10485760
-ARTICLE_DIR=./articles
-USER_CHECK=TRUE
-ENROLLMENT_FEE=300000
-CORS_ALL_ACCEPT=true
-
-```
+- main: 배포된 코드를 저장하며 버전 별로 태그가 붙어 있습니다.
+- develop(default): 개발 중인 코드를 저장합니다. 
 
 ---
 
@@ -46,6 +26,7 @@ src/
     │   ├── my-page/            # 내 정보 페이지
     │   ├── rules/              # 회칙 페이지 : 마크다운 파일을 불러와서 띄움
     │   └── page.jsx            # SCSC 소개 메인 페이지
+    ├── api/                    # Nextjs 서버 라우터
     ├── article/[id]/           # 게시글 상세 페이지
     ├── board/[id]/             # 게시글 목록 페이지 (id별)
     │   └── create/             # 새 글 작성 페이지
@@ -82,13 +63,56 @@ git clone https://github.com/scsc-init/homepage_init_frontend.git
 npm install
 ```
 
-### 3. 개발 서버 실행
+### 3. `.env.local` 설정
+
+아래 내용을 `.env.local` 파일에 넣어주세요:
+
+```env
+BACKEND_URL=http://localhost:8080
+API_SECRET=some-secret-code
+GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
+GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
+NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
+NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
+```
+
+Google OAuth, NextAuth 설정에 관한 자세한 설명은 아래를 참고하세요.
+
+### 4. 개발 서버 실행
 
 ```bash
 npm run dev
 ```
 
 접속: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Google Auth 2.0 관리
+
+- **scsc 구글 계정 또는 공식 도메인이 변경될 경우 auth 관련 코드를 수정할 필요가 있습니다.**
+
+- https://console.cloud.google.com/auth/clients에 접속하세요
+- OAuth 2.0 Client IDs 항목에서 **+ Create Credentials** 클릭 후 OAuth 클라이언트 ID를 선택하십시오.
+- 유형은 웹 애플리케이션으로 선택하십시오.
+- Authorized redirect URIs(승인된 리디렉션 URI)를 입력하세요. *로그인 성공 후 사용자를 돌려보낼 주소*를 입력하면 됩니다.
+- 보통 로컬 개발환경인 경우 http://localhost:3000/api/auth/callback/google를, 배포 환경인 경우 https://(your-domain)/api/auth/callback/google을 입력하면 됩니다.
+- 발급된 Client ID를 복사해주세요.
+
+## next auth 설정
+
+- 아래 내용을 `.env.local`에 추가하십시오.
+
+```env
+GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
+GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
+NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
+NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
+```
+
+- client id, secret은 api/auth/[...nextauth]/route.js에서 사용합니다.
+- nextauth secret은 임의로 정한 뒤, 배포할 때 환경변수 등록하시면 됩니다.
+- nextauth url은 도메인 받아서 넣으시면 됩니다.
 
 ---
 
@@ -102,40 +126,6 @@ npm run dev
 
 ---
 
-## Google Auth 2.0 관리
+## 유지보수 관련 사항
 
-- **us/(auth)/login/page.jsx의 아래 코드는 scsc 구글 계정 또는 공식 도메인이 변경될 경우 수정할 필요가 있습니다.**
-
-```
-return (
-    <div id="GoogleSignupContainer">
-      <div className="GoogleSignupCard">
-        {stage === 0 && (
-          <div>
-            <div
-              id="g_id_onload"
-              data-client_id="832461792138-f6qpb4vn8knpi57a46p9a9ph7qvs92qh.apps.googleusercontent.com"
-              data-callback="handleCredentialResponse"
-              data-auto_prompt="false"
-            ></div>
-            <div
-              className="g_id_signin"
-              data-type="standard"
-              data-size="large"
-              data-theme="outline"
-              data-text="sign_in_with"
-              data-shape="rectangular"
-              data-logo_alignment="left"
-            ></div>
-          </div>
-        )}
-        ...
-```
-
-- https://console.cloud.google.com/auth/clients
-- OAuth 2.0 Client IDs 항목에서 **+ Create Credentials** 클릭 후 OAuth 클라이언트 ID를 선택하십시오.
-- 유형은 웹 애플리케이션으로 선택하십시오.
-- Authorized redirect URIs(승인된 리디렉션 URI)를 입력하세요. *로그인 성공 후 사용자를 돌려보낼 주소*를 입력하면 됩니다.
-- 보통 로컬 개발환경인 경우 http://localhost:3000를, 배포 환경인 경우 https://(your-domain)/api/auth/callback/google을 입력하면 됩니다.
-- 발급된 Client ID를 복사해주세요.
-- us/(auth)/login/page.jsx에서 data-client_id를 복사한 id로 변경해주세요.
+/util/constatns.jsx에 프론트에서 설정해야할 변수와 값들이 있습니다. 수정할 필요가 있다면 백엔드와 협의해 작성해주세요.

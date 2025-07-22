@@ -102,7 +102,7 @@ export default function LoginPage() {
 
     const { jwt } = await loginRes.json();
     localStorage.setItem("jwt", jwt);
-    window.location.href = "/";
+    window.location.replace("/");
   };
 
   return (
