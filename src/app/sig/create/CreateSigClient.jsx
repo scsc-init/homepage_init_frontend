@@ -1,36 +1,90 @@
 // app/sig/create/CreateSigClient.jsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import SigForm from "@/components/board/SigForm";
 import Editor from "@/components/board/EditorWrapper.jsx";
+import SigForm from "@/components/board/SigForm";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useForm } from "react-hook-form";
 
 export default function CreateSigClient() {
-  const { register, control, handleSubmit } = useForm({
-    defaultValues: {
+  const router = useRouter();
+  const [user, setUser] = useState();
+  const isFormSubmitted = useRef(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const saved =
+    typeof window !== "undefined" ? sessionStorage.getItem("sigForm") : null;
+  const parsed = saved ? JSON.parse(saved) : null;
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { isDirty },
+  } = useForm({
+    defaultValues: parsed || {
       title: "",
       description: "",
-      editor: "여기에 SIG 내용을 작성해주세요.",
+      editor: "",
     },
   });
-
-  const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.push("/us/login");
     }
+
+    const fetchProfile = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
+
+      const res = await fetch(`/api/user/profile`, {
+        headers: { "x-jwt": jwt },
+      });
+      if (res.ok) setUser(await res.json());
+      else router.push("/us/login");
+    };
+    fetchProfile();
   }, [router]);
 
-  const inferSemester = (month) => {
-    if ([2, 3, 4, 5].includes(month)) return 1;
-    if ([6, 7, 8, 9, 10].includes(month)) return 2;
-    return 1;
-  };
+  const watched = watch();
+  useEffect(() => {
+    if (!isFormSubmitted.current) {
+      sessionStorage.setItem("sigForm", JSON.stringify(watched));
+    }
+  }, [watched]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (!isFormSubmitted.current && isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    const handleRouteChange = (url) => {
+      if (!isFormSubmitted.current && isDirty) {
+        const confirmed = confirm(
+          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
+        );
+        if (!confirmed) {
+          router.events.emit("routeChangeError");
+          throw "Route change aborted by user.";
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    router.events?.on?.("routeChangeStart", handleRouteChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      router.events?.off?.("routeChangeStart", handleRouteChange);
+    };
+  }, [isDirty]);
 
   const onSubmit = async (data) => {
     const jwt = localStorage.getItem("jwt");
@@ -39,10 +93,16 @@ export default function CreateSigClient() {
       return;
     }
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const semester = inferSemester(now.getMonth() + 1);
-
+    if (!user) {
+      alert("잠시 뒤 다시 시도해주세요");
+    } else if (!user.discord_id) {
+      if (
+        !confirm(
+          "계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?",
+        )
+      )
+        return;
+    }
     setSubmitting(true);
 
     try {
@@ -56,19 +116,16 @@ export default function CreateSigClient() {
           title: data.title,
           description: data.description,
           content: data.editor,
-          year,
-          semester,
         }),
       });
 
       if (res.status === 201) {
         alert("SIG 생성 성공!");
+        isFormSubmitted.current = true;
         router.push("/sig");
       } else {
         const err = await res.json();
-        throw new Error(
-          "SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)),
-        );
+        alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);

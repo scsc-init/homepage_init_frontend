@@ -5,20 +5,26 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function PigListPage() {
+  const semesterMap = {
+    1: "1",
+    2: "S",
+    3: "2",
+    4: "W",
+  }
+
   const res = await fetch(`${getBaseUrl()}/api/pigs`, {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
 
   if (!res.ok) {
-    return (
-      <div className="text-center text-red-600 mt-10">
-        피그 정보를 불러올 수 없습니다.
-      </div>
-    );
+    return <div>피그 정보를 불러올 수 없습니다.</div>
   }
 
   const pigs = await res.json();
+  if (!Array.isArray(pigs)) return <div>로딩중...</div>
+
+  pigs.sort((a, b) => b.id - a.id);
 
   return (
     <div id="PigListContainer">
@@ -36,7 +42,7 @@ export default async function PigListPage() {
               <div className="pigTopbar">
                 <span className="pigTitle">{pig.title}</span>
                 <span className="pigUserCount">
-                  {pig.year}년 {pig.semester}학기
+                  {pig.year}년 {semesterMap[pig.semester]}학기
                 </span>
               </div>
               <div className="pigDescription">{pig.description}</div>
