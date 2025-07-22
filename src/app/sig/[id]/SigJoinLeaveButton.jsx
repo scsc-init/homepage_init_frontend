@@ -51,6 +51,7 @@ export default function SigJoinLeaveButton({ sigId }) {
     });
 
     if (res.ok) {
+      window.location.reload();
       alert("가입 성공");
     } else {
       const err = await res.json();

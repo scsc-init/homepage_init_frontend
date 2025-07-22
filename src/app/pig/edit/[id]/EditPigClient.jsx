@@ -13,7 +13,13 @@ export default function EditPigClient({ pigId }) {
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const { register, control, handleSubmit, reset, formState: { isDirty } } = useForm({
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -47,17 +53,22 @@ export default function EditPigClient({ pigId }) {
         headers: { "x-jwt": jwt },
       });
 
-      if (!res.ok) {alert("피그 정보를 불러오지 못했습니다."); router.push("/pig");}
+      if (!res.ok) {
+        alert("피그 정보를 불러오지 못했습니다.");
+        router.push("/pig");
+      }
 
       const pig = await res.json();
-      const articleRes = await fetch(
-        `/api/article/${pig.content_id}`,
-        {},
-      );
+      const articleRes = await fetch(`/api/article/${pig.content_id}`, {
+        headers: { "x-jwt": jwt },
+      });
 
-      if (!articleRes.ok) {alert("피그 정보를 불러오지 못했습니다."); router.push("/pig");}
+      if (!articleRes.ok) {
+        alert("피그 정보를 불러오지 못했습니다.");
+        router.push("/pig");
+      }
       const article = await articleRes.json();
-      console.log(article)
+      console.log(article);
       reset({
         title: pig.title ?? "",
         description: pig.description ?? "",
@@ -77,7 +88,9 @@ export default function EditPigClient({ pigId }) {
 
     const handleRouteChange = (url) => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm("작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?");
+        const confirmed = confirm(
+          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
+        );
         if (!confirmed) {
           router.events.emit("routeChangeError");
           throw "Route change aborted by user.";
