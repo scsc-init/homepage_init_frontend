@@ -14,5 +14,5 @@ async function fetchBoardInfo(boardId) {
     cache: "no-store",
   });
   if (res.ok) return res.json();
-  else throw new Error("게시판 정보를 불러올 수 없습니다.");
+  else console.error(err);
 }

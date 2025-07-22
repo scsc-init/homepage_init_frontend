@@ -1,13 +1,13 @@
 // /app/sig/[id]/page.jsx
-import { getApiSecret } from "@/util/getApiSecret";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
+import "highlight.js/styles/github.css";
 import "./page.css";
-import SigJoinLeaveButton from "./SigJoinLeaveButton";
+import { getBaseUrl } from "@/util/getBaseUrl";
+
+import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function SigDetailPage({ params }) {
   const { id } = params;
@@ -48,7 +48,6 @@ export default async function SigDetailPage({ params }) {
         {sig.year}학년도 {sig.semester}학기 · 상태: {sig.status}
       </p>
       <p className="SigDescription">{sig.description}</p>
-      <SigJoinLeaveButton sigId={id}/>
       <hr className="SigDivider" />
       <div className="SigContent">
         <ReactMarkdown
