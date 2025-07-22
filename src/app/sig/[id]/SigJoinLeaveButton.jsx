@@ -70,6 +70,7 @@ export default function SigJoinLeaveButton({ sigId }) {
     });
 
     if (res.ok) {
+      window.location.reload();
       alert("탈퇴 성공");
     } else {
       const err = await res.json();
