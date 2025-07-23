@@ -29,8 +29,9 @@ export default function EditSigClient({ sigId }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
+    if (!jwt) { 
+      alert("로그인이 필요합니다.");
+      router.push("/us/login"); return;
     }
 
     const fetchProfile = async () => {

@@ -22,6 +22,14 @@ export default function CreateBoardArticleClient({ boardInfo }) {
   const content = watch("editor");
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) { 
+      alert("로그인이 필요합니다.");
+      router.push("/us/login"); return;
+    }
+  }, [router]);
+
   const onSubmit = async (data) => {
     const jwt = localStorage.getItem("jwt");
     setSubmitting(true);
