@@ -16,7 +16,7 @@ export default function BoardPage({ board }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
+    if (!jwt) { 
       alert("로그인이 필요합니다.");
       router.push("/us/login"); return;
     }
@@ -40,10 +40,26 @@ export default function BoardPage({ board }) {
     fetchContents();
   }, [router]);
 
-  if (!articles || !board || boardId == 1 || boardId == 2) {
+  if (boardId == 1 || boardId == 2) {
+    return (
+      <div className="text-center text-red-600 mt-10">
+        잘못된 접근입니다.
+      </div>
+    );
+  }
+
+  if (!board) {
     return (
       <div className="text-center text-red-600 mt-10">
         게시글을 불러올 수 없습니다.
+      </div>
+    );
+  }
+
+  if (!Array.isArray(articles)) {
+    return (
+      <div className="text-center text-red-600 mt-10">
+        로딩중...
       </div>
     );
   }

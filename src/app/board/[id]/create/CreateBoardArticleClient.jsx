@@ -11,10 +11,10 @@ const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
 });
 
 export default function CreateBoardArticleClient({ boardInfo }) {
-  const { register, handleSubmit, setValue, watch } = useForm({
+  const { register, handleSubmit, setValue, watch, formState: { isDirty } } = useForm({
     defaultValues: {
       title: "",
-      editor: "여기에 게시글 내용을 작성해주세요.",
+      editor: "",
     },
   });
 
