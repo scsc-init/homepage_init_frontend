@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -11,16 +11,54 @@ const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
 });
 
 export default function CreateBoardArticleClient({ boardInfo }) {
-  const { register, handleSubmit, setValue, watch } = useForm({
+  const { register, handleSubmit, setValue, watch, formState: { isDirty } } = useForm({
     defaultValues: {
       title: "",
-      editor: "여기에 게시글 내용을 작성해주세요.",
+      editor: "",
     },
   });
 
   const router = useRouter();
   const content = watch("editor");
   const [submitting, setSubmitting] = useState(false);
+  const isFormSubmitted = useRef(false);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) { 
+      alert("로그인이 필요합니다.");
+      router.push("/us/login"); return;
+    }
+  }, [router]);
+
+  useEffect(() => {
+      const handleBeforeUnload = (e) => {
+        if (!isFormSubmitted.current && isDirty) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      };
+  
+      const handleRouteChange = (url) => {
+        if (!isFormSubmitted.current && isDirty) {
+          const confirmed = confirm(
+            "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
+          );
+          if (!confirmed) {
+            router.events.emit("routeChangeError");
+            throw "Route change aborted by user.";
+          }
+        }
+      };
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      router.events?.on?.("routeChangeStart", handleRouteChange);
+  
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        router.events?.off?.("routeChangeStart", handleRouteChange);
+      };
+    }, [isDirty]);
 
   const onSubmit = async (data) => {
     const jwt = localStorage.getItem("jwt");
