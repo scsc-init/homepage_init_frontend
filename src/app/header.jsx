@@ -1,149 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import HeaderClientArea from "./HeaderClientArea";
-import Image from "next/image";
+import MainHeader from "./headerComponents";
+import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
-const LogoIcon = ({year, semester}) => (
-  <>
-    <button className="unset" onClick={() => (window.location.href = "/")}>
-      <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
-    </button>
-    {(!year || !semester) ? <div></div> : <div>{year} - {SEMESTER_MAP[semester]}학기</div>}
-  </>
-);
+export default async function Header() {
+  const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
 
-const menuData = [
-  {
-    title: "About us",
-    items: [
-      { label: "SCSC", url: "/about" },
-      { label: "Executives", url: "/about/executives" },
-      { label: "Developers", url: "/about/developers" },
-      { label: "Rules", url: "/about/rules" },
-    ],
-  },
-  {
-    title: "Board",
-    items: [
-      { label: "Project Archives", url: "/board/3" },
-      { label: "Album", url: "/board/4" },
-      { label: "Notice", url: "/board/5" },
-    ],
-  },
-  {
-    title: "SIG/PIG",
-    items: [
-      { label: "SIG", url: "/sig" },
-      { label: "PIG", url: "/pig" },
-    ],
-  },
-  {
-    title: "Contact",
-    items: [
-      { label: "Contact Us!", url: "/us/contact" },
-      { label: "Join Us!", url: "/us/login" },
-    ],
-  },
-];
+  if (!res.ok) {
+    console.error("Failed to fetch SCSC status");
+    return <Header year={0} semester={0} />;
+  }
 
-const SEMESTER_MAP = {
-  1: "1",
-  2: "S",
-  3: "2",
-  4: "W",
-}
-
-function HeaderNavigation() {
-  const [openIndex, setOpenIndex] = useState(null);
-  
-  const timeoutRef = useRef();
-
-  
-
-  const handleMouseEnter = (index) => {
-    clearTimeout(timeoutRef.current);
-    setOpenIndex(index);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setOpenIndex(null);
-    }, 200);
-  };
-
-  return (
-    <ul id="HeaderMenuList">
-      {menuData.map((menu, index) => (
-        <li
-          className="HeaderMenuItem"
-          key={menu.title}
-          onMouseEnter={() => handleMouseEnter(index)}
-          onMouseLeave={handleMouseLeave}
-        >
-          <button className="HeaderMenuTrigger">{menu.title}</button>
-          <div
-            className={`HeaderMenuContent ${openIndex === index ? "open" : ""}`}
-          >
-            <ul>
-              {menu.items.map((item) => (
-                <li key={item.label}>
-                  <button onClick={() => (window.location.href = item.url)}>
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export default function Header() {
-  const headerRef = useRef(null);
-  const [spacerHeight, setSpacerHeight] = useState(null);
-  const [year, setYear] = useState(0);
-  const [semester, setSemester] = useState(0);
-
-  useEffect(() => {
-    if (headerRef.current) {
-      setSpacerHeight(headerRef.current.offsetHeight);
-    }
-  }, []);
-
-  useEffect(() => {
-    const loadGSCSC = async () => {
-      const res = await fetch(`/api/scsc/global/status`, {});
-      if (!res.ok) return;
-      const scscData = await res.json();
-      setYear(scscData.year);
-      setSemester(scscData.semester);
-    }
-    loadGSCSC();
-  }, []);
-
-  return (
-    <>
-      <div id="HeaderContainer" ref={headerRef}>
-        <div id="Header">
-          <div id="HeaderLeft">
-            <LogoIcon year={year} semester={semester}/>
-          </div>
-          <div id="HeaderCenter">
-            <HeaderNavigation />
-          </div>
-          <div id="HeaderRight">
-            <HeaderClientArea />
-          </div>
-        </div>
-      </div>
-      <div
-        id="HeaderSpacer"
-        style={
-          spacerHeight !== null ? { height: `${spacerHeight}px` } : undefined
-        }
-      />
-    </>
-  );
+  const scscData = await res.json();
+  return <MainHeader year={scscData.year} semester={scscData.semester} />;
 }
