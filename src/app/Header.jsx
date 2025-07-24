@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./header.css";
 import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";

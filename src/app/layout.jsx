@@ -1,6 +1,6 @@
 import { Noto_Sans_KR } from "next/font/google";
 import "./global.css";
-import Header from "./header";
+import HeaderWrapper from "./HeaderWrapper";
 import Footer from "./footer.jsx";
 import Head from "next/head";
 
@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
       </Head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
-          <Header />
+          <HeaderWrapper />
           <main id="MainContent">{children}</main>
           <Footer />
         </div>

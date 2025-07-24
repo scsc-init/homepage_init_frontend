@@ -1,9 +1,9 @@
 import "./header.css";
-import MainHeader from "./headerComponents";
+import Header from "./Header";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
-export default async function Header() {
+export default async function HeaderWrapper() {
   const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
@@ -15,5 +15,5 @@ export default async function Header() {
   }
 
   const scscData = await res.json();
-  return <MainHeader year={scscData.year} semester={scscData.semester} />;
+  return <Header year={scscData.year} semester={scscData.semester} />;
 }
