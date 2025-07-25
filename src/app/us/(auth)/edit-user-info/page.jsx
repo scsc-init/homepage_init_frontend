@@ -85,6 +85,26 @@ export default function EditUserInfoPage() {
     }
   };
 
+  const handleDelete = async () => {
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch("/api/user/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
+      },
+    });
+
+    if (res.status === 204) {
+      alert("휴회원으로 전환되었습니다.");
+      router.push("/about/my-page");
+    } else if (res.status === 403) {
+      alert(`잘못된 접근입니다: ${res.json()}`);
+    } else {
+      alert("수정에 실패했습니다. 다시 시도해주세요.");
+    }
+  }
+
   if (loading) return <div>로딩 중...</div>;
 
   return (
@@ -126,6 +146,9 @@ export default function EditUserInfoPage() {
           ))}
         </select>
       </div>
+      <button onClick={handleDelete} style={{ marginTop: "1rem" }}>
+        휴회원으로 전환
+      </button>
       <button onClick={handleSubmit} style={{ marginTop: "1rem" }}>
         저장하기
       </button>
