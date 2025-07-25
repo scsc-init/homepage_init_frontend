@@ -2,40 +2,41 @@ import { Noto_Sans_KR } from "next/font/google";
 import "./global.css";
 import HeaderWrapper from "./HeaderWrapper";
 import Footer from "./footer.jsx";
-import Head from "next/head";
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
-export default function RootLayout({ children }) {
+export const metadata = {
+  title: "SCSC - 서울대 컴퓨터 연구 동아리",
+  description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
+  openGraph: {
+    title: "SCSC - 서울대 컴퓨터 연구 동아리",
+    description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
+    url: "https://homepage-init-frontend-ixxt.vercel.app/",
+    siteName: "SCSC",
+    images: [
+      {
+        url: "/img4.jpg",
+        width: 1200,
+        height: 630,
+        alt: "SCSC Logo",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SCSC - 서울대 컴퓨터 연구 동아리",
+    description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
+    images: ["/img4.jpg"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
 
+export default function RootLayout({ children }) {
   return (
     <html lang="ko">
-      <Head>
-        <title>SCSC - 서울대 컴퓨터 연구 동아리</title>
-        <meta
-          name="description"
-          content="서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다."
-        />
-        <meta property="og:title" content="SCSC - 서울대 컴퓨터 연구 동아리" />
-        <meta
-          property="og:description"
-          content="서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다."
-        />
-        <meta property="og:url" content="https://scsc.oopy.io/" />
-        <meta property="og:site_name" content="SCSC" />
-        <meta property="og:image" content="../../public/img4.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="SCSC Logo" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="SCSC - 서울대 컴퓨터 연구 동아리" />
-        <meta
-          name="twitter:description"
-          content="서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다."
-        />
-        <meta name="twitter:image" content="../../public/img4.jpg" />
-      </Head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
           <HeaderWrapper />
