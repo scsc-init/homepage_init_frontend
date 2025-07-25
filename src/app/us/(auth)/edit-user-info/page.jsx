@@ -99,7 +99,7 @@ export default function EditUserInfoPage() {
       alert("휴회원으로 전환되었습니다.");
       router.push("/about/my-page");
     } else if (res.status === 403) {
-      alert(`잘못된 접근입니다: ${res.json()}`);
+      alert(`잘못된 접근입니다: ${(await res.json()).detail}`);
     } else {
       alert("수정에 실패했습니다. 다시 시도해주세요.");
     }

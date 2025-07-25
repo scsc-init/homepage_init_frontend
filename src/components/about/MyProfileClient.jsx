@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
+const USER_STATUS_MAP = {
+  "active": "활동 중(입금 확인 완료)",
+  "pending": "회비 미납부",
+  "standby": "회비 입금 확인 중",
+  "banned": "제명됨"
+}
+
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
   const [majors, setMajors] = useState(null);
@@ -38,6 +45,25 @@ export default function MyProfileClient() {
     signOut({ callbackUrl: "/" });
   };
 
+  const handleEnroll = async () => {
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch("/api/user/enroll", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
+      },
+    });
+
+    if (res.status === 204) {
+      alert("등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.");
+    } else if (res.status === 400) {
+      alert("이미 등록 처리되었거나 제명된 회원입니다.");
+    } else {
+      alert("등록에 실패하였습니다. 다시 시도해주세요.");
+    }
+  };
+
   if (!user) return <p className="p-6">불러오는 중...</p>;
 
   return (
@@ -48,6 +74,7 @@ export default function MyProfileClient() {
         <li>이름: {user.name}</li>
         <li>전화번호: {user.phone}</li>
         <li>학번: {user.student_id}</li>
+        <li>상태: {USER_STATUS_MAP[user.status]}</li>
         <li>
           전공:{" "}
           {majors ? `${majors.college} - ${majors.major_name}` : "로딩 중..."}
@@ -67,6 +94,12 @@ export default function MyProfileClient() {
           className="w-full bg-gray-300 text-black px-4 py-2 rounded"
         >
           로그아웃
+        </button>
+        <button
+          onClick={handleEnroll}
+          className="w-full bg-gray-300 text-black px-4 py-2 rounded"
+        >
+          입금 등록
         </button>
       </div>
     </div>
