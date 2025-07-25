@@ -1,13 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+'use client';
+
+import { useEffect, useRef, useState } from "react";
 import "./header.css";
 import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";
 
-const LogoIcon = () => (
-  <button className="unset" onClick={() => (window.location.href = "/")}>
-    <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
-  </button>
-);
+export const LogoIcon = ({year, semester}) => {return (
+  <>
+    <button className="unset" onClick={() => (window.location.href = "/")}>
+      <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
+    </button>
+    {(!year || !semester) ? <div></div> : <div>{year} - {SEMESTER_MAP[semester]}학기</div>}
+  </>
+);}
 
 const menuData = [
   {
@@ -43,9 +48,19 @@ const menuData = [
   },
 ];
 
-function HeaderNavigation() {
+const SEMESTER_MAP = {
+  1: "1",
+  2: "S",
+  3: "2",
+  4: "W",
+}
+
+export function HeaderNavigation() {
   const [openIndex, setOpenIndex] = useState(null);
+  
   const timeoutRef = useRef();
+
+  
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);
@@ -87,7 +102,7 @@ function HeaderNavigation() {
   );
 }
 
-export default function Header() {
+export default function Header({year, semester}) {
   const headerRef = useRef(null);
   const [spacerHeight, setSpacerHeight] = useState(null);
 
@@ -102,7 +117,7 @@ export default function Header() {
       <div id="HeaderContainer" ref={headerRef}>
         <div id="Header">
           <div id="HeaderLeft">
-            <LogoIcon />
+            <LogoIcon year={year} semester={semester}/>
           </div>
           <div id="HeaderCenter">
             <HeaderNavigation />

@@ -33,8 +33,9 @@ export default function CreateSigClient() {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
+    if (!jwt) { 
+      alert("로그인이 필요합니다.");
+      router.push("/us/login"); return;
     }
 
     const fetchProfile = async () => {
@@ -123,6 +124,7 @@ export default function CreateSigClient() {
         alert("SIG 생성 성공!");
         isFormSubmitted.current = true;
         router.push("/sig");
+        router.refresh();
       } else {
         const err = await res.json();
         alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));

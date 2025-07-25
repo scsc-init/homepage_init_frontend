@@ -1,10 +1,17 @@
+'use client';
+
 import MailLogo from "@@/vectors/mail.svg";
-import FacebookLogo from "@@/vectors/facebook.svg";
 import GithubLogo from "@@/vectors/github.svg";
 import InstagramLogo from "@@/vectors/instagram.svg";
 import "./footer.css";
+import { usePathname } from "next/navigation";
 
 function Footer() {
+  const pathname = usePathname();
+  const hideFooterRoutes = ["/us/login", "/signup", "/about/my-page"];
+
+  if (hideFooterRoutes.includes(pathname)) return null;
+  
   return (
     <div id="Footer">
       <div id="FooterInfoContainer">
