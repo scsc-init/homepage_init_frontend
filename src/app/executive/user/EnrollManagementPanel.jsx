@@ -37,7 +37,7 @@ export default function EnrollManageMentPanel() {
     if (res.status === 204) {
       alert("파일 업로드 및 처리 성공");
     } else {
-      alert("파일 처리 실패: " + res.status);
+      alert("파일 처리 실패: " + (await res.json()).detail);
     }
   };
 

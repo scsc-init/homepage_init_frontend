@@ -74,7 +74,7 @@ GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
 GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
 NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
 NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
-SNU_EMAIL_CHECK=TRUE
+NEXT_PUBLIC_SNU_EMAIL_CHECK=TRUE
 ```
 
 Google OAuth, NextAuth 설정에 관한 자세한 설명은 아래를 참고하세요.
