@@ -7,6 +7,7 @@ import MajorList from "./MajorList";
 import Link from "next/link";
 import WithAuthorization from "@/components/WithAuthorization";
 import ScscStatusPanel from "./ScscStatusPanel";
+import DiscordBotPanel from "./DiscordBotPanel"
 import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
@@ -17,6 +18,7 @@ export default async function AdminPanel() {
   const pigs = await fetchPigs();
   const scscGlobalStatus = await fetchScscGlobalStatus();
   const majors = await fetchMajors();
+  const discordBotStatus = await fetchDiscordBot();
 
   return (
     <WithAuthorization>
@@ -34,8 +36,14 @@ export default async function AdminPanel() {
 
         <h2>PIG 관리</h2>
         <PigList pigs={pigs} />
+
         <h2>Scsc status 관리</h2>
         <ScscStatusPanel scscGlobalStatus={scscGlobalStatus.status} semester={scscGlobalStatus.semester} year={scscGlobalStatus.year}/>
+
+        <h2>디스코드 봇 관리</h2>
+        <DiscordBotPanel is_logged_in={discordBotStatus.logged_in}/>
+        
+
         <h2>전공 관리</h2>
         <MajorList majors={majors} />
       </div>
@@ -135,6 +143,14 @@ async function fetchScscGlobalStatus() {
 
 async function fetchMajors() {
   const res = await fetch(`${getBaseUrl()}/api/majors`, {
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
+  if (res.ok) return await res.json();
+}
+
+async function fetchDiscordBot() {
+  const res = await fetch(`${getBaseUrl()}/api/bot/discord/status`, {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });

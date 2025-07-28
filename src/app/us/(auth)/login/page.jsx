@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import "./page.css";
 import * as validator from "./validator";
+import { isSkipEmailCheck } from "@/app/check/route.js"
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -135,8 +136,8 @@ export default function LoginPage() {
               이름: <strong>{form.name}</strong>
             </p>
             <button
-              onClick={() => {
-                if (process.env.NEXT_PUBLIC_SNU_EMAIL_CHECK==="FALSE") {setStage(2); return;}
+              onClick={async () => {
+                if (await isSkipEmailCheck()) {setStage(2); return;}
                 validator.email(form.email, (ok) =>
                   ok ? setStage(2) : alert("snu.ac.kr 이메일만 허용됩니다."),
                 );
