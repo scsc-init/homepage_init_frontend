@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import "./page.css";
 import * as validator from "./validator";
-import { isSkipEmailCheck } from "@/app/check/route.js"
+import { isSkipEmailCheck } from "@/app/env/check.js"
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);

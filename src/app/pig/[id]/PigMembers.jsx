@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PigMembers({ pigId }) {
-  const [memberNames, setMemberNames] = useState([]);
+  const [members, setMembers] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,17 +22,8 @@ export default function PigMembers({ pigId }) {
           alert("피그 인원 불러오기 실패");
           router.push('/pig');
         }
-        const members = await membersRes.json();
-
-        const namePromises = members.map(async (m) => {
-            const res = await fetch(`/api/user/${m.user_id}`);
-            if (!res.ok) throw new Error("Member fetch failed");
-            const user = await res.json();
-            return user.name;
-        });
-
-        const names = await Promise.all(namePromises);
-        setMemberNames(names);
+        const membersData = await membersRes.json();
+        setMembers(membersData.map((m) => m.user))
       } catch (e) {
         alert(`피그 인원 불러오기 중 오류: ${e}`);
         router.push('/pig');
@@ -40,14 +31,14 @@ export default function PigMembers({ pigId }) {
     };
     fetchMembers();
   }, [router, pigId]);
-
+  
   return (
     <div>
       <h2>피그 인원</h2>
-      {memberNames.length === 0 ? (
+      {members.length === 0 ? (
         <div>로딩 중...</div>
       ) : (
-        memberNames.map((name, i) => <div key={i}>{name}</div>)
+        members.map((m) => <div key={m.id}>{m.name}</div>)
       )}
     </div>
   );
