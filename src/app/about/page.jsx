@@ -10,9 +10,9 @@ export default function AboutPage() {
   const year = new Date().getFullYear() - 1984;
 
   return (
-    <div>
-      <div className="WallLogo" />
-      <div className="WallLogo2" />
+    <>
+      <div className="WallLogo"></div>
+      <div className="WallLogo2"></div>
       <div className="AboutWrapper">
         <aside className="AboutSidebar hide-on-mobile">
           <ul>
@@ -36,7 +36,6 @@ export default function AboutPage() {
             <section id="scsc" className="AboutIntroSection AnchorOffset">
               <div className="AboutInner">
                 <h1 className="AboutTitle">About us</h1>
-
                 <ScrollEffectWrapper>
                   <h1>SCSC</h1>
                 </ScrollEffectWrapper>
@@ -152,8 +151,8 @@ export default function AboutPage() {
                       image: "/img10.jpg",
                     },
                   ].map(({ title, description, image }, i) => (
-                    <ScrollEffectWrapper>
-                      <div key={i} className="ClubroomCard">
+                    <ScrollEffectWrapper key={title}>
+                      <div className="ClubroomCard">
                         <Image
                           src={image}
                           alt={title}
@@ -219,8 +218,8 @@ export default function AboutPage() {
                         image: "/img6.jpg",
                       },
                     ].map(({ title, description, image }, i) => (
-                      <ScrollEffectWrapper>
-                        <div key={i} className="ClubroomCard">
+                      <ScrollEffectWrapper key={title}>
+                        <div className="ClubroomCard">
                           <Image
                             src={image}
                             alt={title}
@@ -240,6 +239,6 @@ export default function AboutPage() {
           </ScrollEffectWrapper>
         </main>
       </div>
-    </div>
+    </>
   );
 }
