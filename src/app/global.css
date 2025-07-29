@@ -2,6 +2,7 @@
 @import "@radix-ui/colors/black-alpha.css";
 @import "@radix-ui/colors/indigo.css";
 @import "@radix-ui/colors/slate.css";
+@import "@/styles/theme.css";
 
 @media (max-width: 480px) {
   :root {
