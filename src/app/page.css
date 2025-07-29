@@ -65,7 +65,7 @@ img {
 /* Overlay 컨테이너 */
 .overlay-container {
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 60vw;
@@ -98,7 +98,7 @@ img {
 .school-logo img {
   width: 10vh;
   height: auto;
-  opacity: 0.85;
+  opacity: 0.3;
 }
 
 /* 미디어 쿼리 */
@@ -154,5 +154,48 @@ img {
   100% {
     opacity: 0.8;
     transform: scale(1);
+  }
+}
+.main-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  position: relative;
+}
+
+.main-subtitle {
+  margin-top: 1rem;
+  font-size: 1.15rem;
+  color: var(--color-text-subtle);
+  font-weight: 400;
+  line-height: 1.4;
+  animation: fadeIn 2s ease-out forwards;
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .main-subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+.main-subtitle {
+  position: relative;
+  z-index: 4;
+  margin-top: 1.2rem;
+  font-size: 1.15rem;
+  color: var(--color-text-subtle);
+  font-weight: 400;
+  text-align: center;
+  animation: fadeIn 2s ease-out forwards;
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .main-subtitle {
+    font-size: 0.95rem;
+    margin-top: 1rem;
   }
 }

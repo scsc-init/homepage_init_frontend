@@ -1,18 +1,29 @@
-'use client';
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import "./header.css";
 import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";
 
-export const LogoIcon = ({year, semester}) => {return (
+const SEMESTER_MAP = {
+  1: "1",
+  2: "S",
+  3: "2",
+  4: "W",
+};
+
+export const LogoIcon = ({ year, semester }) => (
   <>
     <button className="unset" onClick={() => (window.location.href = "/")}>
       <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
     </button>
-    {(!year || !semester) ? <div></div> : <div>{year} - {SEMESTER_MAP[semester]}학기</div>}
+    {!year || !semester ? null : (
+      <div>
+        {year} - {SEMESTER_MAP[semester]}학기
+      </div>
+    )}
   </>
-);}
+);
 
 const menuData = [
   {
@@ -48,19 +59,9 @@ const menuData = [
   },
 ];
 
-const SEMESTER_MAP = {
-  1: "1",
-  2: "S",
-  3: "2",
-  4: "W",
-}
-
 export function HeaderNavigation() {
   const [openIndex, setOpenIndex] = useState(null);
-  
   const timeoutRef = useRef();
-
-  
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);
@@ -102,11 +103,83 @@ export function HeaderNavigation() {
   );
 }
 
-export default function Header({year, semester}) {
-  const headerRef = useRef(null);
-  const [spacerHeight, setSpacerHeight] = useState(null);
+function useWindowWidth() {
+  const [width, setWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 0,
+  );
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return width;
+}
+
+function LoginOrMyPageButton() {
+  const [isClient, setIsClient] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    setIsClient(true);
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return;
+
+    fetch("/api/user/profile", {
+      headers: { "x-jwt": jwt },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setUser(data))
+      .catch(() => localStorage.removeItem("jwt"));
+  }, []);
+
+  if (!isClient) return <div style={{ width: "5rem" }} />;
+
+  if (!user) {
+    return (
+      <button
+        id="HeaderUserLogin"
+        className="unset"
+        onClick={() => (window.location.href = "/us/login")}
+      >
+        로그인
+      </button>
+    );
+  }
+
+  return (
+    <button
+      id="HeaderUser"
+      className="unset"
+      onClick={() => (window.location.href = "/about/my-page")}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.4rem",
+        fontSize: "0.95rem",
+      }}
+    >
+      {user.name}
+      <Image
+        src="/vectors/user.svg"
+        className="HeaderUserIcon"
+        alt="User Icon"
+        width={24}
+        height={24}
+      />
+    </button>
+  );
+}
+
+export default function Header({ year, semester }) {
+  const headerRef = useRef(null);
+  const [spacerHeight, setSpacerHeight] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
     if (headerRef.current) {
       setSpacerHeight(headerRef.current.offsetHeight);
     }
@@ -117,16 +190,37 @@ export default function Header({year, semester}) {
       <div id="HeaderContainer" ref={headerRef}>
         <div id="Header">
           <div id="HeaderLeft">
-            <LogoIcon year={year} semester={semester}/>
+            <LogoIcon year={year} semester={semester} />
           </div>
-          <div id="HeaderCenter">
-            <HeaderNavigation />
-          </div>
+
+          {isClient && !isMobile && (
+            <div id="HeaderCenter">
+              <HeaderNavigation />
+            </div>
+          )}
+
           <div id="HeaderRight">
-            <HeaderClientArea />
+            {isClient && isMobile && <LoginOrMyPageButton />}
+            {isClient && isMobile && (
+              <button
+                className="HamburgerButton"
+                onClick={() => setMenuOpen((prev) => !prev)}
+              >
+                ☰
+              </button>
+            )}
+            {isClient && !isMobile && <HeaderClientArea />}
           </div>
         </div>
+
+        {isClient && isMobile && menuOpen && (
+          <div className="MobileMenu">
+            <HeaderNavigation />
+            <HeaderClientArea />
+          </div>
+        )}
       </div>
+
       <div
         id="HeaderSpacer"
         style={

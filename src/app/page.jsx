@@ -18,12 +18,17 @@ export default function HomePage() {
       </div>
 
       {/* 메인 로고 */}
-      <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+      <div className="main-logo-wrapper">
+        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+        <div className="main-subtitle">
+          Seoul National University Computer Study Club
+        </div>
+      </div>
 
-      {/* 학교 로고 */}
+      {/* 학교 로고
       <div className="school-logo">
         <img src="/main/school.png" alt="SNU Logo" />
-      </div>
+      </div> */}
     </main>
   );
 }

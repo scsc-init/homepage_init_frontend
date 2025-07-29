@@ -8,6 +8,7 @@
   height: 15rem;
   background-color: var(--slate-8);
   gap: 1.25rem;
+  z-index: 10000;
 }
 
 @media (max-width: 1000px) {
