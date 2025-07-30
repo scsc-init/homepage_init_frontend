@@ -1,243 +1,138 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/slate.css";
+@import "@/styles/theme.css";
 
-/* ===== 애니메이션 추가 ===== */
-.TypingCode {
-  font-family: monospace;
-  font-size: 1.1rem;
-  white-space: nowrap;
-  border-right: 2px solid white;
-  overflow: hidden;
-  width: 18ch;
-  animation:
-    typing 3s steps(18, end) forwards,
-    blink 0.75s step-end infinite;
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 18ch;
-  }
-}
-
-@keyframes blink {
-  50% {
-    border-color: transparent;
-  }
-}
-
-.FadeInText {
-  opacity: 0;
-  animation: fadeIn 1.8s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-/* Scroll-triggered fade */
-.FadeOnScroll {
-  opacity: 0;
-  transform: translateY(30px);
-  transition:
-    opacity 0.8s ease-out,
-    transform 0.8s ease-out;
-}
-
-.FadeOnScroll.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ===== 기존 정의 유지 ===== */
-
-p {
-  margin: 0;
-}
-
-#Home {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+/* ===== 레이아웃 ===== */
+body,
+html {
   overflow-x: hidden;
 }
 
-#HomeContent {
+.AboutWrapper {
+  display: flex;
+  position: relative;
   width: 100%;
-  max-width: 60rem;
-  margin: 2rem auto 10rem auto;
 }
 
-#HomeImageContainer {
-  width: 100%;
-  height: calc(100vh - 12.5rem);
-  background-color: var(--slate-12);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  justify-content: end;
-  align-items: start;
-  padding: 5rem;
+.AboutSidebar {
+  position: fixed;
+  top: 3.5rem;
+  left: 0;
+  width: 180px;
+  height: calc(100vh - 3.5rem);
+  background-color: white;
+  padding: 2rem 1rem;
+  border-right: 1px solid var(--slate-6);
+  z-index: 5;
 }
 
-.TitleContainer {
+.AboutSidebar ul {
+  list-style: none;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-.TitleContainer > h1,
-.TitleContainer > h4 {
-  margin: 0;
+  gap: 1.2rem;
+  font-weight: bold;
+  color: var(--foreground-color);
 }
 
-#HomeDescriptionContainer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
+.AboutSidebar a {
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .AboutMain {
+    margin-left: 0;
+    padding: 2rem 1rem 6rem 1rem;
+  }
+
+  .ClubroomFacilityList {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== About Title Section ===== */
+.AboutTitleSection {
+  background-color: var(--slate-2);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.AboutTitle {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--foreground-color);
+  margin: 0 auto;
+}
+
+/* ===== Main 영역 ===== */
+.AboutMain {
+  margin-left: 180px;
+  padding: 4rem 3rem 6rem 3rem;
+  flex-grow: 1;
+  z-index: 1;
+}
+
+.AboutSection {
   margin-bottom: 5rem;
 }
 
-.ActivityBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: calc(100% - 4rem);
-  line-height: 1.5rem;
-  border: var(--slate-8) 2px dotted;
-  border-radius: 1rem;
-  padding: 2rem;
-}
-.ActivityBlock > h3 {
-  margin: 0;
+.AnchorOffset {
+  scroll-margin-top: 3.5rem;
+  margin-top: 2rem;
 }
 
-.HomeDescriptionTitle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 2rem 0;
-}
-.HomeDescriptionTitle > h2 {
-  margin: 0;
-}
-
-.HomeDescriptionActivityContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0;
-}
-
-.HomeLargeText {
-  font-size: 3rem;
-  font-weight: bolder;
-}
-
-#HomeAboutContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 5.5rem;
-  margin: 0 5rem 5rem 5rem;
-}
-
-#HomeAboutLinkList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.HomeAboutDescription {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-}
-.HomeAboutDescription > span {
-  font-size: 1rem;
-  line-height: 1rem;
-  height: 1rem;
-  vertical-align: text-top;
-}
-
-#HomeFQAContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-.HomeFQA {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  border: var(--slate-8) 2px dotted;
-  border-radius: 1rem;
-  padding: 2rem;
-  user-select: none;
-}
-
-.HomeFQAHidden {
-  display: none;
-}
-
-.HomeFQAQuestion {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-}
-.HomeFQAQuestion > h4 {
-  margin: 0;
-}
-
-/* ===== 시설 섹션 추가 디자인 ===== */
-#HomeClubroomContainer {
-  padding: 3rem 1rem;
+.AboutInner {
+  max-width: 960px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  background-color: var(--slate-2);
-  border-top: 2px solid var(--slate-6);
-  border-bottom: 2px solid var(--slate-6);
-  margin-top: 4rem;
-  word-break: keep-all;
 }
 
+/* 카드 공통 */
+.AboutCard {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  word-break: keep-all;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: var(--slate-12);
+  font-size: 1.3rem;
+}
+
+/* ===== 활동 및 시설 카드 레이아웃 ===== */
 .ClubroomFacilityList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
 }
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+
+@media (min-width: 1024px) {
+  #activities .ClubroomFacilityList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #activities .ClubroomCardImage {
+    height: 280px;
+  }
 }
 
-#Home {
-  width: 100%;
-  overflow-x: hidden;
-}
 .ClubroomCard {
   background-color: white;
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  text-align: center;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -249,12 +144,13 @@ body {
 }
 
 .ClubroomCard h3 {
-  margin-top: 1rem;
   margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--foreground-color);
 }
 
 .ClubroomCard p {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   color: var(--slate-11);
 }
 
@@ -265,14 +161,243 @@ body {
   height: 200px;
 }
 
+/* ===== 통계 ===== */
+.HomeDescriptionTitle {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.HomeDescriptionActivityContainer {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.HomeLargeText {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--slate-12);
+}
+
+/* ===== 시설 안내 구역 ===== */
+#HomeClubroomContainer {
+  background-color: var(--slate-2);
+  border: 1px solid var(--slate-6);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  margin-top: 3rem;
+}
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .AboutMain {
+    margin-left: 0 !important;
+    padding: 2rem 1rem 6rem 1rem;
+  }
+}
+
+.AboutTitleSection {
+  background-color: var(--slate-2);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.AboutTitle {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--foreground-color);
+  margin: 0 auto;
+}
+
+.AboutTitleSection {
+  background-color: var(--slate-2);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.AboutTitle {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--foreground-color);
+  margin: 0 auto;
+}
+
+#HomeFQAContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.HomeFQA {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 2px dotted var(--slate-8);
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+.HomeFQAQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.HomeFQAQuestion h4 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.HomeFQAHidden {
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--slate-11);
+}
+
 .HomeFQA > input {
   display: none;
-  visibility: collapse;
 }
 
 .HomeFQA > input:checked ~ .HomeFQAHidden {
-  display: unset;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  height: auto;
+  display: block;
+}
+
+.HomeFQAQuestion svg {
+  transition: transform 0.3s ease;
+}
+
+.HomeFQA > input:checked + .HomeFQAQuestion svg {
+  transform: rotate(180deg);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--background-color);
+}
+
+.WallLogo {
+  position: fixed;
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.WallLogo2 {
+  position: fixed;
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw; /* 고정 높이 지정 */
+  transform: translateY(-50%);
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 1; /* 보기 쉽게 높임 */
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .AboutTitle {
+    font-size: 3rem;
+  }
+
+  .AboutTitleSection {
+    padding: 4rem 1rem;
+  }
+  .WallLogo {
+    position: fixed;
+    top: 80%;
+    right: 2vw;
+    width: 10vh;
+    height: 30vh;
+    transform: translateY(-50%);
+    z-index: 0;
+    background-image: url("/wall-logo.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .WallLogo2 {
+    position: fixed;
+    margin-top: 1rem;
+    left: 0;
+    width: 10vh;
+    height: 30vh;
+    z-index: 0;
+    background-image: url("/wall-logo.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+    opacity: 1;
+    pointer-events: none;
+  }
+}
+
+body {
+  background-color: var(--background-color);
+}
+
+.AboutTitle {
+  position: relative;
+  z-index: 1;
+  font-size: 5rem;
+  font-weight: 900;
+  margin: 0 auto;
+  color: black;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.FadeOnScroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+}
+
+.FadeOnScroll.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
