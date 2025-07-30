@@ -11,7 +11,9 @@
   --footer-text-color: #f5f5f5;
   --footer-icon-bg: #3a3a3a;
   --footer-icon-hover: #555555;
-
+  --primary-color: #d0d3d8;
+  --primary-neon: #b0c4de;
+  --dot-bg: #8ba1b6;
   --executive-card-bg: white;
   --executive-overlay-bg: rgba(0, 0, 0, 0.55);
   --executive-name-color: #111;

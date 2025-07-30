@@ -263,7 +263,7 @@ body {
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;
-  opacity: 0.8;
+  opacity: 0.5;
   pointer-events: none;
 }
 .WallLogo2 {
@@ -278,7 +278,7 @@ body {
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;
-  opacity: 1; /* 보기 쉽게 높임 */
+  opacity: 0.5; /* 보기 쉽게 높임 */
   pointer-events: none;
 }
 #ExecutivePage,
@@ -287,4 +287,35 @@ body {
   -webkit-user-drag: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+}
+
+.ExecutiveDots {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 0.6rem;
+}
+
+.ExecutiveDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--dot-bg);
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.ExecutiveDot:hover {
+  transform: scale(1.2);
+  background-color: var(--dot-bg);
+}
+
+.ExecutiveDot.active {
+  background-color: var(--primary-color);
+  transform: scale(1.4);
+  box-shadow: 0 0 6px var(--primary-neon);
 }
