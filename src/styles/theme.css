@@ -7,6 +7,22 @@
   --color-surface-light: #cccccc; /* 표면 배경색 */
   --background-color: #b9c9d8; /* 메인 배경색 */
   --foreground-color: #777; /* 강조선, 장식용 선 등에 사용되는 색 */
+  --footer-background: #1f1f1f; /* 어두운 회색 계열 */
+  --footer-text-color: #f5f5f5;
+  --footer-icon-bg: #3a3a3a;
+  --footer-icon-hover: #555555;
+
+  --executive-card-bg: white;
+  --executive-overlay-bg: rgba(0, 0, 0, 0.55);
+  --executive-name-color: #111;
+  --executive-role-color: #444;
+  --executive-description-color: white;
+  --executive-arrow-color: var(--foreground-color);
+  --executive-arrow-bg: #e0e0e0;
+  --executive-arrow-hover: #ccc;
+  --executive-arrow-color: #333;
+  --executive-card-shadow: rgba(0, 0, 0, 0.06);
+
   /*버튼 쪽 색상은 디자인하다가 필요해보시면 변경해주시고, 혹시 여러가지 디자인 필요하시면 추가해서 사용해주세요*/
 
   --main-bg-gradient: radial-gradient(

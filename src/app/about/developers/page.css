@@ -1,3 +1,16 @@
+@import "@/styles/theme.css";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--background-color);
+}
+
 #ExecutivePage {
   padding: 4rem 2rem;
   max-width: 1200px;
@@ -10,200 +23,268 @@
   font-size: 2rem;
 }
 
-.ExecutiveGrid {
-  column-count: 4;
-  column-gap: 1.5rem;
-}
-
-.ExecutiveCard {
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  text-align: center;
-  cursor: pointer;
-  break-inside: avoid;
-  transition: transform 0.2s ease;
-}
-
-.ExecutiveCard:hover {
-  transform: translateY(-4px);
-}
-
-.ExecutiveImage {
-  border-radius: 0.75rem;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.ExecutiveRole {
-  font-weight: bold;
-  color: var(--slate-11);
-  margin: 0.5rem 0 0.5rem;
-}
-
-.ExecutiveDescription {
-  margin-top: 1rem;
-  font-size: 0.95rem;
-  color: var(--slate-12);
-  line-height: 1.5rem;
-  word-break: keep-all;
-}
-
-.ExecutiveDescriptionWrapper {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition:
-    max-height 0.4s ease,
-    opacity 0.4s ease;
-}
-
-.ExecutiveDescriptionWrapper.visible {
-  max-height: 200px; /* 필요에 따라 늘리기 */
-  opacity: 1;
-}
-
-.ExecutiveCard {
-  transition: all 0.3s ease;
-}
-
-.ExecutiveMasonry {
-  column-count: 4;
-  column-gap: 1.5rem;
-}
-
-.ExecutiveCard {
-  break-inside: avoid;
-  margin-bottom: 1.5rem;
-}
-
-.ExecutiveGridRows {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  justify-items: center;
-}
-.ExecutiveCard {
-  width: 100%;
-  max-width: 250px;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-}
-
-.ExecutiveGridColumns {
-  column-count: 4;
-  column-gap: 1.5rem;
-}
-
-.ExecutiveCard {
-  break-inside: avoid;
-  margin-bottom: 1.5rem;
-}
-
-#ExecutivePage::after {
-  content: "";
-  display: block;
-  height: 6rem;
-}
-.ExecutiveMasonry {
-  column-count: 4;
-  column-gap: 1.5rem;
-}
-
-.ExecutiveCard {
-  break-inside: avoid;
-  margin-bottom: 1.5rem;
-}
-
-.ExecutiveImageWrapper {
+.ExecutiveCarouselWrapper {
   position: relative;
-  width: 250px;
-  height: 250px;
-  overflow: hidden;
-  border-radius: 0.5rem;
+  padding: 2rem 0;
 }
 
-.ExecutiveOverlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  color: white;
+.ExecutiveCarouselCentered {
   display: flex;
-  align-items: center;
   justify-content: center;
-  opacity: 0;
-  padding: 1rem;
-  text-align: center;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.ExecutiveImageWrapper:hover .ExecutiveOverlay {
-  opacity: 1;
-}
-
-.ExecutiveDescription {
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.ExecutiveImageWrapper {
+  align-items: center;
+  gap: 2rem;
+  perspective: 1200px;
   position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border-radius: 0.75rem;
+  height: 360px;
 }
 
-.ExecutiveImage {
-  object-fit: cover;
-}
-
-.ExecutiveOverlay {
+.ExecutiveCard {
+  width: 200px;
+  background: var(--executive-bg, white);
+  border-radius: 1rem;
+  text-align: center;
+  padding: 1rem;
+  opacity: 0;
+  transform: scale(0.85);
   position: absolute;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform-origin: center center;
+  transition:
+    transform 0.6s ease,
+    opacity 0.6s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Position states */
+.ExecutiveCard.center {
+  transform: translateX(-50%) scale(1) rotateY(0deg);
+  opacity: 1;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.ExecutiveCard.left-1 {
+  transform: translateX(-160%) scale(0.9) rotateY(20deg);
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.ExecutiveCard.right-1 {
+  transform: translateX(60%) scale(0.9) rotateY(-20deg);
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.ExecutiveCard.left-2 {
+  transform: translateX(-270%) scale(0.85) rotateY(40deg);
+  opacity: 0.4;
+  z-index: 1;
+}
+
+.ExecutiveCard.right-2 {
+  transform: translateX(170%) scale(0.85) rotateY(-40deg);
+  opacity: 0.4;
+  z-index: 1;
+}
+
+.ExecutiveImageWrapper {
+  position: relative;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  color: white;
+  height: 200px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.ExecutiveImage {
+  object-fit: cover;
+}
+
+.ExecutiveRole,
+.ExecutivePhone {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.ExecutiveArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  /* 수정 사항 */
-  box-sizing: border-box;
-  padding: 0; /* 혹은 필요 시 padding-top만 소량 부여 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.3s ease;
+  z-index: 5;
 }
 
-.ExecutiveImageWrapper:hover .ExecutiveOverlay {
-  opacity: 1;
+.ExecutiveArrow:hover {
+  background: white;
 }
 
-.ExecutiveDescription {
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  line-height: 1.5;
-  margin: 0; /* 추가 */
+.ExecutiveArrow.left {
+  left: 1rem;
 }
 
-.ExecutiveMasonry {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  justify-items: center;
+.ExecutiveArrow.right {
+  right: 1rem;
 }
 
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
+.ExecutiveDots {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 0.4rem;
+}
+
+.ExecutiveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.ExecutiveDot.active {
+  background-color: #333;
+}
+
+/* Masonry fallback for mobile */
+@media (max-width: 768px) {
+  .ExecutiveCarouselWrapper {
+    display: none;
+  }
+
+  .ExecutiveMasonry {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
+  }
+
+  .ExecutiveCard {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    position: static;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto;
+  }
+
+  .ExecutiveImageWrapper {
+    aspect-ratio: 1 / 1;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ExecutiveOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .ExecutiveImageWrapper:hover .ExecutiveOverlay {
+    opacity: 1;
+  }
+
+  .ExecutiveDescription {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+  }
+
+  .ExecutiveRole,
+  .ExecutivePhone {
+    font-size: 0.9rem;
+    color: #444;
+  }
+  .WallLogo {
+    position: fixed;
+    top: 80%;
+    right: 2vw;
+    width: 10vh;
+    height: 30vh;
+    transform: translateY(-50%);
+    z-index: 0;
+    background-image: url("/wall-logo.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .WallLogo2 {
+    position: fixed;
+    margin-top: 1rem;
+    left: 0;
+    width: 10vh;
+    height: 30vh;
+    z-index: 0;
+    background-image: url("/wall-logo.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+    opacity: 1;
+    pointer-events: none;
+  }
+}
+.WallLogo {
+  position: fixed;
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.WallLogo2 {
+  position: fixed;
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw; /* 고정 높이 지정 */
+  transform: translateY(-50%);
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 1; /* 보기 쉽게 높임 */
+  pointer-events: none;
+}
+#ExecutivePage,
+#ExecutivePage * {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
