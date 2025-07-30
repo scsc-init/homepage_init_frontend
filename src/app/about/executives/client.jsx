@@ -9,14 +9,12 @@ const executives = [
     name: "한성재",
     role: "회장",
     image: "/img1.jpg",
-    phone: "010-5583-1811",
     description: "그는 신입니다.",
   },
   {
     name: "김지훈",
     role: "부회장",
     image: "/img2.jpg",
-    phone: "010-8245-0334",
     description: "그 역시 신입니다.",
   },
   {
