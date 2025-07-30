@@ -1,29 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import "./header.css";
-import HeaderClientArea from "./HeaderClientArea";
 import Image from "next/image";
+import HeaderClientArea from "./HeaderClientArea";
+import "./header.css";
 
-const SEMESTER_MAP = {
-  1: "1",
-  2: "S",
-  3: "2",
-  4: "W",
-};
-
-export const LogoIcon = ({ year, semester }) => (
-  <>
-    <button className="unset" onClick={() => (window.location.href = "/")}>
-      <Image src="/vectors/logo.svg" alt="SCSC Logo" width={100} height={40} />
-    </button>
-    {!year || !semester ? null : (
-      <div>
-        {year} - {SEMESTER_MAP[semester]}학기
-      </div>
-    )}
-  </>
-);
+const SEMESTER_MAP = { 1: "1", 2: "S", 3: "2", 4: "W" };
 
 const menuData = [
   {
@@ -59,9 +41,25 @@ const menuData = [
   },
 ];
 
-export function HeaderNavigation() {
+export default function Header({ year, semester }) {
+  const headerRef = useRef(null);
+  const [isMounted, setIsMounted] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
   const timeoutRef = useRef();
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (typeof window !== "undefined") {
+      const handleResize = () => setWindowWidth(window.innerWidth);
+      handleResize();
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
+  const isMobile = windowWidth !== null && windowWidth < 768;
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);
@@ -69,164 +67,123 @@ export function HeaderNavigation() {
   };
 
   const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setOpenIndex(null);
-    }, 200);
+    timeoutRef.current = setTimeout(() => setOpenIndex(null), 300);
   };
-
-  return (
-    <ul id="HeaderMenuList">
-      {menuData.map((menu, index) => (
-        <li
-          className="HeaderMenuItem"
-          key={menu.title}
-          onMouseEnter={() => handleMouseEnter(index)}
-          onMouseLeave={handleMouseLeave}
-        >
-          <button className="HeaderMenuTrigger">{menu.title}</button>
-          <div
-            className={`HeaderMenuContent ${openIndex === index ? "open" : ""}`}
-          >
-            <ul>
-              {menu.items.map((item) => (
-                <li key={item.label}>
-                  <button onClick={() => (window.location.href = item.url)}>
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function useWindowWidth() {
-  const [width, setWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 0,
-  );
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  return width;
-}
-
-function LoginOrMyPageButton() {
-  const [isClient, setIsClient] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    setIsClient(true);
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return;
-
-    fetch("/api/user/profile", {
-      headers: { "x-jwt": jwt },
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data))
-      .catch(() => localStorage.removeItem("jwt"));
-  }, []);
-
-  if (!isClient) return <div style={{ width: "5rem" }} />;
-
-  if (!user) {
-    return (
-      <button
-        id="HeaderUserLogin"
-        className="unset"
-        onClick={() => (window.location.href = "/us/login")}
-      >
-        로그인
-      </button>
-    );
-  }
-
-  return (
-    <button
-      id="HeaderUser"
-      className="unset"
-      onClick={() => (window.location.href = "/about/my-page")}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.4rem",
-        fontSize: "0.95rem",
-      }}
-    >
-      {user.name}
-      <Image
-        src="/vectors/user.svg"
-        className="HeaderUserIcon"
-        alt="User Icon"
-        width={24}
-        height={24}
-      />
-    </button>
-  );
-}
-
-export default function Header({ year, semester }) {
-  const headerRef = useRef(null);
-  const [spacerHeight, setSpacerHeight] = useState(null);
-  const [isClient, setIsClient] = useState(false);
-  const width = useWindowWidth();
-  const isMobile = width < 768;
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    if (headerRef.current) {
-      setSpacerHeight(headerRef.current.offsetHeight);
-    }
-  }, []);
 
   return (
     <>
       <div id="HeaderContainer" ref={headerRef}>
         <div id="Header">
           <div id="HeaderLeft">
-            <LogoIcon year={year} semester={semester} />
+            <button
+              className="unset"
+              onClick={() => (window.location.href = "/")}
+            >
+              <Image
+                src="/vectors/logo.svg"
+                alt="SCSC Logo"
+                width={100}
+                height={40}
+              />
+            </button>
+            {year && semester && (
+              <div>
+                {year} - {SEMESTER_MAP[semester]}학기
+              </div>
+            )}
           </div>
 
-          {isClient && !isMobile && (
+          {isMounted && !isMobile && (
             <div id="HeaderCenter">
-              <HeaderNavigation />
+              <ul id="HeaderMenuList">
+                {menuData.map((menu, index) => (
+                  <li
+                    className="HeaderMenuItem"
+                    key={menu.title}
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <button className="HeaderMenuTrigger">{menu.title}</button>
+                    <div
+                      className={`HeaderMenuContent ${openIndex === index ? "open" : ""}`}
+                    >
+                      <ul>
+                        {menu.items.map((item) => (
+                          <li key={item.label}>
+                            <button
+                              onClick={() => (window.location.href = item.url)}
+                            >
+                              {item.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
           <div id="HeaderRight">
-            {isClient && isMobile && <LoginOrMyPageButton />}
-            {isClient && isMobile && (
-              <button
-                className="HamburgerButton"
-                onClick={() => setMenuOpen((prev) => !prev)}
-              >
-                ☰
-              </button>
+            {isMounted && isMobile ? (
+              <>
+                <HeaderClientArea
+                  allowAnonymous={true}
+                  showMyPageInline={true}
+                />
+                <button
+                  className="HamburgerButton"
+                  onClick={() => setMenuOpen((prev) => !prev)}
+                >
+                  ☰
+                </button>
+              </>
+            ) : (
+              isMounted && <HeaderClientArea />
             )}
-            {isClient && !isMobile && <HeaderClientArea />}
           </div>
         </div>
 
-        {isClient && isMobile && menuOpen && (
-          <div className="MobileMenu">
-            <HeaderNavigation />
-            <HeaderClientArea />
+        {isMounted && isMobile && (
+          <div className={`MobileMenuWrapper ${menuOpen ? "open" : ""}`}>
+            <div className="MobileMenu">
+              <ul className="MobileMenuList">
+                {menuData.map((menu, index) => (
+                  <li className="MobileMenuItem" key={menu.title}>
+                    <button
+                      className="MobileMenuTrigger"
+                      onClick={() =>
+                        setOpenIndex((prev) => (prev === index ? null : index))
+                      }
+                    >
+                      {menu.title}
+                    </button>
+                    <div
+                      className={`MobileSubMenu ${openIndex === index ? "open" : ""}`}
+                    >
+                      <ul>
+                        {menu.items.map((item) => (
+                          <li key={item.label}>
+                            <button
+                              onClick={() => (window.location.href = item.url)}
+                            >
+                              {item.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <HeaderClientArea allowAnonymous={false} onlyExecutive={true} />
+            </div>
           </div>
         )}
       </div>
 
-      <div
-        id="HeaderSpacer"
-        style={
-          spacerHeight !== null ? { height: `${spacerHeight}px` } : undefined
-        }
-      />
+      <div id="HeaderSpacer" style={{ height: "3.5rem" }} />
     </>
   );
 }

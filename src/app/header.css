@@ -14,7 +14,6 @@
   justify-content: space-between;
   align-items: center;
   height: 3.5rem; /* 명확한 높이 설정 */
-  padding: 0 2rem; /* 수직 padding 제거 → 수직 정렬에 영향 X */
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -172,8 +171,163 @@
 .MobileMenu {
   display: flex;
   flex-direction: column;
+  background-color: white;
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--slate-6);
+}
+
+.MobileMenuWrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.MobileMenuWrapper.open {
+  max-height: 500px; /* 예상 최대 높이로 설정 */
+}
+
+.MobileMenu {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   background-color: white;
   padding: 1rem 2rem;
   border-top: 1px solid var(--slate-6);
+}
+
+.MobileMenuWrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.MobileMenuWrapper.open {
+  max-height: 500px; /* 적당한 값으로 애니메이션 구현 */
+}
+
+.MobileMenuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.MobileMenuItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.MobileMenuTrigger {
+  background: none;
+  border: none;
+  padding: 0.6rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--slate-12);
+  cursor: pointer;
+}
+
+.MobileSubMenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.MobileSubMenu.open {
+  max-height: 400px; /* 예상 최대 높이 */
+}
+
+.MobileSubMenu ul {
+  list-style: none;
+  margin: 0.5rem 0 0 0;
+  padding-left: 1rem;
+}
+
+.MobileSubMenu li {
+  margin-bottom: 0.25rem;
+}
+
+.MobileSubMenu button {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  color: var(--slate-12);
+  cursor: pointer;
+  text-align: left;
+  padding: 0.4rem 0;
+  width: 100%;
+}
+
+.MobileMenuWrapper {
+  position: absolute; /* 또는 fixed */
+  top: 3.5rem; /* 헤더 바로 아래 */
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.MobileMenuWrapper.open {
+  max-height: 1000px; /* 충분한 값 */
+}
+
+.MobileMenu {
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--slate-6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.HamburgerButton {
+  background-color: var(--slate-2); /* 연한 배경 */
+  border: 1px solid var(--slate-6); /* 테두리 추가 */
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--slate-12);
+  padding: 0.4rem 0.6rem;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.HamburgerButton:hover {
+  background-color: var(--slate-4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#HeaderMyPageMobile,
+.MobileMyPageButton {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--slate-6);
+  background-color: var(--slate-2);
+  color: var(--slate-12);
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+#HeaderMyPageMobile:hover,
+.MobileMyPageButton:hover {
+  background-color: var(--slate-4);
+}
+
+.MobileMyPageButton {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--slate-6);
+  background-color: var(--slate-2);
+  color: var(--slate-12);
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.MobileMyPageButton:hover {
+  background-color: var(--slate-4);
 }

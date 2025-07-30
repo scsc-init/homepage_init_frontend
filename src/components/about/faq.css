@@ -1,0 +1,32 @@
+.HomeFQA {
+  margin-bottom: 1rem;
+}
+
+/* 질문 레이블 */
+.HomeFQAQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--slate-6);
+}
+
+/* 드랍다운 영역 (기본 숨김) */
+.HomeFQAHidden {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.4s ease,
+    opacity 0.3s ease,
+    padding-top 0.3s ease;
+}
+
+/* 체크되었을 때 드러남 */
+.HomeFAQToggle:checked ~ .HomeFQAQuestion + .HomeFQAHidden {
+  max-height: 500px;
+  opacity: 1;
+  padding-top: 0.5rem;
+}
