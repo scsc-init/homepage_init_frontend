@@ -38,6 +38,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko">
       <body className={noto_sans_kr.className}>
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
         <div id="RootContainer">
           <HeaderWrapper />
           <main id="MainContent">{children}</main>

@@ -1,0 +1,143 @@
+@import "@/styles/theme.css";
+
+.main-logo {
+  position: relative;
+  width: 20vw;
+  max-width: 250px;
+  height: auto;
+}
+
+.main-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  margin-bottom: 3vh;
+  position: relative;
+}
+
+.main-logo-description {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.main-container {
+  display: flex;
+  height: 35vh;
+  gap: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.user-info-container {
+  flex: 1;
+  padding: 1rem;
+  background-color: var(--box-color);
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+.right-container {
+  width: 15vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-status-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--box-color);
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--box-color);
+  border-radius: 8px;
+  height: auto;
+}
+
+.user-info-description {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.user-status-description {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+.enroll-button {
+  background: #92A0B6;
+  box-shadow: 0px 1px 6px 3px rgba(0, 0, 0, 0.14);
+  border-radius: 25px;
+  height: 30px;
+  width: 60%;
+}
+
+.logout-button {
+  background: #92A0B6;
+  box-shadow: 0px 1px 6px 3px rgba(0, 0, 0, 0.14);
+  border-radius: 25px;
+  height: 30px;
+}
+
+.user-name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  margin-bottom: 3vh;
+  position: relative;
+}
+
+.user-name {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bolder;
+}
+
+@media (max-width: 1000px) {
+  .main-container {
+    flex-direction: column;
+    height: auto;
+    padding: 0;
+  }
+
+  .right-container {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .user-info-container,
+  .user-status-container,
+  .buttons-container {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .buttons-container {
+    height: auto;
+  }
+
+  .buttons-container button {
+    height: 40px;
+  }
+}
+
+
+
+
