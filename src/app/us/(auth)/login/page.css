@@ -1,5 +1,6 @@
 @import "@radix-ui/colors/red.css";
 @import "@radix-ui/colors/green.css";
+@import "@/styles/theme.css";
 
 #EmailNotice.error,
 #EmailCodeNotice.error,
@@ -32,6 +33,7 @@ body {
   overflow-x: hidden;
   max-height: 100%;
   overflow-y: hidden;
+  background-color: var(--background-color);
 }
 
 #SignupContainer {
@@ -92,7 +94,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background-color: var(--background-color);
   box-sizing: border-box;
 }
 
@@ -103,6 +105,7 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   width: 100%;
   max-width: 480px;
+  height: 40vh;
 }
 
 .GoogleSignupCard h2 {
@@ -150,4 +153,45 @@ body {
   font-size: 0.9rem;
   color: #475569;
   margin-top: 0.5rem;
+}
+
+.main-logo {
+  position: relative;
+  width: 40vw;
+  max-width: 300px;
+  height: auto;
+}
+
+.main-subtitle {
+  margin-top: .5rem;
+  font-size: 1rem;
+  color: var(--color-text-subtle);
+  font-weight: 400;
+  line-height: 1.4;
+  width: 40vw;
+  max-width: 200px;
+}
+
+.main-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  margin-top: 5vh;
+  margin-bottom: 8vh;
+  position: relative;
+}
+
+.google-signin-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  position: relative;
+}
+
+.g_id_signin {
+  width: 80%;
 }
