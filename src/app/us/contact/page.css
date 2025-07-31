@@ -1,105 +1,352 @@
 @import "@radix-ui/colors/indigo.css";
 @import "@radix-ui/colors/slate.css";
 
+html,
+body {
+  overflow-x: hidden;
+  background: var(--main-bg-gradient);
+}
+
+/* 공통 레이아웃 */
 #Home {
   display: flex;
   flex-direction: column;
-  width: 100%;
   overflow-x: hidden;
+  color: var(--color-text-body);
+  padding: 4rem 1rem;
 }
 
 #HomeContent {
   width: 100%;
   max-width: 60rem;
-  margin: 2rem auto 10rem auto;
+  margin: 0 auto;
+  z-index: 10;
 }
 
-#HomeDescriptionContainer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 5rem;
-}
-
+/* 카드 디자인 */
 .ActivityBlock {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: calc(100% - 4rem);
-  line-height: 1.5rem;
-  border: var(--slate-8) 2px dotted;
+  gap: 1.5rem;
+  max-width: 60rem;
+  margin: 0 auto 3rem auto;
+  padding: 2.5rem 2rem;
+  border: 2px solid var(--color-button-border);
   border-radius: 1rem;
-  padding: 2rem;
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
 }
 
-.FadeOnScroll {
-  opacity: 0;
-  transform: translateY(30px);
-  transition:
-    opacity 0.8s ease-out,
-    transform 0.8s ease-out;
+.ActivityBlock:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.FadeOnScroll.visible {
-  opacity: 1;
-  transform: translateY(0);
+/* 제목 */
+.SectionHeader {
+  font-size: 3rem;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--foreground-color);
+  text-transform: uppercase;
+  line-height: 1.1;
 }
 
-.HomeAboutDescription {
-  display: inline-block;
-  font-weight: bold;
-  margin-top: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.HomeAboutDescription:hover {
-  transform: translateX(5px);
+.ContactSubHeading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
 }
 
-.ContactList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+/* JOIN US */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
 }
 
-.ContactLink {
-  color: var(--indigo-11);
-  text-decoration: none;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: color 0.2s ease;
-}
-.ContactLink:hover {
-  color: var(--indigo-9);
-  text-decoration: underline;
-}
-
-.ContactIconLink {
-  display: flex;
-  align-items: center;
-}
-.ContactIconLink img {
-  vertical-align: middle;
+@keyframes ripple-expand {
+  to {
+    transform: scale(50);
+    opacity: 0;
+  }
 }
 
 .JoinButton {
+  position: relative;
+  overflow: hidden;
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--indigo-9);
-  color: white;
-  border-radius: 0.5rem;
-  font-weight: 600;
+  margin-top: 1.5rem;
+  padding: 0.9rem 2rem;
+  background-color: transparent;
+  color: var(--color-text-body);
+  border: 2px solid var(--color-button-border);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.1rem;
   text-decoration: none;
-  transition: background-color 0.2s ease;
+  cursor: pointer;
+  animation: pulse 3s infinite;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
+
 .JoinButton:hover {
-  background-color: var(--indigo-10);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.JoinButton {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  padding: 0.9rem 2rem;
+  background-color: transparent;
+  color: var(--color-text-body);
+  border: 2px solid var(--color-button-border);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  cursor: pointer;
+  animation: pulse 3s infinite;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* 확실히 보이는 ripple */
+.JoinButton .ripple {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--executive-arrow-hover, rgba(0, 136, 255, 0.4));
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple-expand 0.6s ease-out;
+  opacity: 0.6;
+}
+
+@keyframes ripple-expand {
+  to {
+    transform: scale(30);
+    opacity: 0;
+  }
+}
+
+/* 연락처 그리드 */
+#ContactWrapper {
+  display: flex;
+  justify-content: start;
+  gap: 3rem;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.ContactDivider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 68%;
+  width: 1px;
+  background-color: var(--color-button-border);
+}
+
+#ContactColumnLeft {
+  flex: none;
+  width: 18rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+#ContactColumnRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+/* 표 스타일 */
+.ContactTable {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  table-layout: fixed;
+}
+
+.ContactTable td {
+  padding: 0.4rem 0.5rem;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.ContactTable td.label {
+  font-weight: 700;
+  text-align: left;
+  width: 6rem;
+}
+
+.ContactTable td.name {
+  font-weight: 500;
+  text-align: left;
+  width: 8rem;
+}
+
+.ContactTable td.info {
+  font-weight: 500;
+  text-align: left;
+}
+
+/* SNS 링크 */
+.ContactIconLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+a.ContactLink {
+  all: unset;
+  color: var(--foreground-color);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+a.ContactLink:hover {
+  color: var(--color-text-body);
+  text-decoration: underline;
+}
+
+/* 오른쪽 로고 */
+.ContactLogo {
+  font-size: 2rem;
+  font-weight: 900;
+}
+.ContactSubLogo {
+  font-size: 1rem;
+  color: var(--color-text-body);
+  text-align: right;
+}
+.ContactSubLogo strong {
+  font-weight: 800;
+}
+
+/* 반응형 */
+@media screen and (max-width: 768px) {
+  #ContactWrapper {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .ContactDivider {
+    display: none;
+  }
+
+  #ContactColumnLeft {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  #ContactColumnRight {
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 0;
+  }
+
+  .ContactTable {
+    font-size: 0.9rem;
+  }
+
+  .ContactTable td {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .ContactTable td.label,
+  .ContactTable td.info {
+    text-align: left;
+  }
+
+  .ContactIconLink {
+    font-size: 0.9rem;
+  }
+
+  .ContactLogo {
+    font-size: 1.4rem;
+  }
+
+  .ContactSubLogo {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .SectionHeader {
+    font-size: 2rem;
+  }
+
+  .ContactSubHeading {
+    font-size: 0.95rem;
+  }
+}
+
+/* 배경 로고 */
+.WallLogo {
+  position: fixed;
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.WallLogo2 {
+  position: fixed;
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  opacity: 1;
+  pointer-events: none;
+}
+
+@keyframes fade-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.FadeInBlock {
+  animation: fade-slide-up 0.8s ease-out;
 }
