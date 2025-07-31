@@ -1,6 +1,5 @@
-export function email(email, then) {
-  then &&
-    then(email != undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email));
+export function email(email) {
+  return email != undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email);
 }
 
 export function emailCode(code, then) {

@@ -49,6 +49,13 @@ export default function LoginPage() {
         ?.trim();
       if (!email || !cleanName) return;
 
+      if (!(await isSkipEmailCheck()) && !validator.email(email)) {
+        console.log(email);
+        console.log(validator.email(email))
+        alert("snu.ac.kr 이메일만 허용됩니다.");
+        return;
+      }
+
       const res = await fetch(`/api/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -137,10 +144,7 @@ export default function LoginPage() {
             </p>
             <button
               onClick={async () => {
-                if (await isSkipEmailCheck()) {setStage(2); return;}
-                validator.email(form.email, (ok) =>
-                  ok ? setStage(2) : alert("snu.ac.kr 이메일만 허용됩니다."),
-                );
+                setStage(2);
               }}
             >
               다음
