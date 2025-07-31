@@ -124,6 +124,7 @@ export default function LoginPage() {
                 Seoul National University Computer Study Club
               </div>
             </div>
+            <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
             <div
               id="g_id_onload"
               data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"

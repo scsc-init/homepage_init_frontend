@@ -178,8 +178,14 @@ body {
   text-align: center;
   z-index: 4;
   margin-top: 5vh;
-  margin-bottom: 8vh;
+  margin-bottom: 6vh;
   position: relative;
+}
+
+.login-description {
+  margin-bottom: 3vh;
+  text-align: center;
+  font-weight: bold;
 }
 
 .google-signin-button-wrapper {

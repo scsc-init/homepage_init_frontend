@@ -101,13 +101,29 @@ export default function MyProfileClient() {
       <div class="main-container">
         <div class="user-info-container">
           <p className="user-info-description">User Info</p>
-          <p>이메일: {user.email}</p>
+          {/* <p>이메일: {user.email}</p>
           <p>전화번호: {user.phone}</p>
           <p>학번: {user.student_id}</p>
           <p>
             전공:{" "}
             {majors ? `${majors.college} - ${majors.major_name}` : "로딩 중..."}
-          </p>
+          </p> */}
+          <table class="user-info-table">
+            <tbody>
+              <tr>
+                <th>이메일</th>
+                <td>{user.email}</td>
+              </tr>
+              <tr>
+                <th>전화번호</th>
+                <td>{user.phone}</td>
+              </tr>
+              <tr>
+                <th>학번</th>
+                <td>{user.student_id}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="right-container">
           <div class="user-status-container">
