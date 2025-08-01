@@ -1,11 +1,13 @@
+/* Darkmode-ready header.css */
+
 #HeaderContainer {
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 1000;
-  background-color: var(--slate-1);
-  border-bottom: 1px solid var(--slate-6);
-  box-shadow: 0 1px 4px var(--slate-5);
+  background-color: var(--header-background-color);
+  border-bottom: 1px solid var(--header-border-color);
+  box-shadow: 0 1px 4px var(--header-shadow-color);
 }
 
 #Header {
@@ -54,16 +56,14 @@
   font-weight: 600;
   background: none;
   border: none;
-  color: var(--slate-12);
+  color: var(--header-foreground-color);
   cursor: pointer;
   padding: 0.4rem 0;
   transition: color 0.2s ease;
-  line-height: 1;
-  vertical-align: middle;
 }
 
 .HeaderMenuTrigger:hover {
-  color: var(--indigo-9);
+  color: var(--foreground-color);
 }
 
 .HeaderMenuContent {
@@ -71,10 +71,10 @@
   top: 100%;
   left: 0;
   margin-top: 0.3rem;
-  background: white;
-  border: 1px solid var(--slate-6);
+  background: var(--background-color);
+  border: 1px solid var(--header-border-color);
   border-radius: 0.5rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 20px var(--header-shadow-color);
   padding: 0.6rem 0.8rem;
   min-width: max-content;
   z-index: 100;
@@ -106,7 +106,7 @@
   background: none;
   border: none;
   font-size: 0.95rem;
-  color: var(--slate-12);
+  color: var(--header-foreground-color);
   cursor: pointer;
   width: 100%;
   text-align: left;
@@ -116,45 +116,27 @@
 }
 
 .HeaderMenuContent button:hover {
-  background-color: var(--indigo-4);
-  color: var(--indigo-11);
+  background-color: var(--foreground-color);
+  color: var(--background-color);
 }
 
-#HeaderUser {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  color: var(--slate-12);
-  cursor: pointer;
-}
-
-#HeaderUserLogin {
+#HeaderUser,
+#HeaderUserLogin,
+#HeaderUser button {
   font-weight: 500;
+  color: var(--header-foreground-color);
 }
 
-.HeaderUserIcon {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.HeaderUserFixed {
-  display: inline-block;
-  width: 4.5rem;
-  text-align: center;
-}
-
-#HeaderSpacer {
-  height: 3.5rem;
+#HeaderUser button:hover {
+  color: var(--foreground-color);
 }
 
 .HamburgerButton {
-  background-color: var(--slate-2);
-  border: 1px solid var(--slate-6);
+  background-color: var(--background-color);
+  border: 1px solid var(--header-border-color);
   border-radius: 0.5rem;
   font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--slate-12);
+  color: var(--header-foreground-color);
   padding: 0.4rem 0.6rem;
   transition:
     background-color 0.2s ease,
@@ -162,7 +144,8 @@
 }
 
 .HamburgerButton:hover {
-  background-color: var(--slate-4);
+  background-color: var(--foreground-color);
+  color: var(--background-color);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -172,7 +155,7 @@
   left: 0;
   width: 100%;
   z-index: 999;
-  background-color: white;
+  background-color: var(--background-color);
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
@@ -186,10 +169,10 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background-color: white;
+  background-color: var(--background-color);
   padding: 1rem 2rem;
-  border-top: 1px solid var(--slate-6);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-top: 1px solid var(--header-border-color);
+  box-shadow: 0 4px 12px var(--header-shadow-color);
 }
 
 .MobileMenuList {
@@ -203,14 +186,15 @@
   flex-direction: column;
 }
 
-.MobileMenuTrigger {
+.MobileMenuTrigger,
+.MobileSubMenu button {
   background: none;
   border: none;
   padding: 0.6rem 0;
   font-size: 1rem;
   font-weight: 600;
   text-align: left;
-  color: var(--slate-12);
+  color: var(--header-foreground-color);
   cursor: pointer;
 }
 
@@ -234,31 +218,11 @@
   margin-bottom: 0.25rem;
 }
 
-.MobileSubMenu button {
-  background: none;
-  border: none;
-  font-size: 0.95rem;
-  color: var(--slate-12);
-  cursor: pointer;
-  text-align: left;
-  padding: 0.4rem 0;
-  width: 100%;
+.MobileSubMenu button:hover {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
 }
 
-#HeaderMyPageMobile,
-.MobileMyPageButton {
-  font-size: 0.9rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--slate-6);
-  background-color: var(--slate-2);
-  color: var(--slate-12);
-  cursor: pointer;
-  margin-right: 0.5rem;
-  transition: background-color 0.2s ease;
-}
-
-#HeaderMyPageMobile:hover,
-.MobileMyPageButton:hover {
-  background-color: var(--slate-4);
+.toAdminPageButton {
+  color: var(--header-foreground-color);
 }

@@ -8,18 +8,22 @@ export default function HomePage() {
         <img
           src="/main/logo-overlay-left.png"
           alt="Overlay Left"
-          className="overlay-image left"
+          className="overlay-image left logo"
         />
         <img
           src="/main/logo-overlay-right.png"
           alt="Overlay Right"
-          className="overlay-image right"
+          className="overlay-image right logo"
         />
       </div>
 
       {/* 메인 로고 */}
       <div className="main-logo-wrapper">
-        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+        <img
+          src="/main/main-logo.png"
+          alt="Main Logo"
+          className="main-logo logo"
+        />
         <div className="main-subtitle">
           Seoul National University Computer Study Club
         </div>

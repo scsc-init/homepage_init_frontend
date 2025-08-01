@@ -13,6 +13,7 @@ html {
   scroll-behavior: smooth;
   user-select: none;
   -webkit-user-drag: none;
+  word-break: keep-all;
 }
 
 .AboutWrapper {
@@ -453,4 +454,82 @@ html {
     line-height: 1.8;
     padding: 0 1rem;
   }
+}
+
+.AboutSidebar {
+  background-color: var(--color-surface-light);
+  border-right: 1px solid var(--header-border-color);
+}
+
+.AboutSidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.AboutSidebar a {
+  color: var(--header-foreground-color);
+  text-decoration: none;
+  font-weight: 600;
+  display: block;
+  padding: 0.4rem 0;
+  transition: color 0.2s ease;
+}
+
+.AboutSidebar a:hover {
+  color: var(--foreground-color);
+}
+
+/* ===== 다크모드 대응 ===== */
+.dark .AboutCard,
+.dark .HomeFQA,
+.dark .ClubroomCard {
+  background-color: var(--color-surface-light);
+  color: var(--foreground-color);
+}
+
+.dark .ClubroomCard {
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+  border: 1px solid var(--header-border-color);
+}
+.dark .ClubroomCard p,
+.dark .HomeFQAHidden {
+  color: var(--color-text-subtle);
+}
+
+.dark .ClubroomCard h3,
+.dark .HomeFQAQuestion h4,
+.dark .HomeLargeText {
+  color: var(--foreground-color);
+}
+
+.dark .AboutSidebar {
+  background-color: var(--color-surface-light);
+  border-right: 1px solid var(--header-border-color);
+}
+
+.dark .MoreLink {
+  background-color: #1c1c1c;
+  border-color: var(--header-border-color);
+  color: var(--foreground-color);
+}
+
+.dark .MoreLink:hover {
+  background-color: #2a2a2a;
+}
+
+/* ===== 다크모드 대응: Clubroom, h2 등 ===== */
+.dark #HomeClubroomContainer {
+  background-color: var(--color-surface-light);
+  border: 1px solid var(--header-border-color);
+  color: var(--foreground-color);
+}
+
+.dark #HomeClubroomContainer h2,
+.dark .AboutInner h2,
+.dark .AboutSection h2,
+.dark .main-intro h2,
+.dark .MoreLinkList h2 {
+  color: var(--color-text-strong);
 }
