@@ -89,7 +89,7 @@ export default function EnrollManageMentPanel() {
         <>
           <div>처리 실패 요청 건수: {failedCnt}건</div>
           {results.map((r) => (
-            <div>
+            <div key={r.record.deposit_time}>
               <hr></hr>
               <div>{r.result_msg}</div>
               <TrxRecord record={r.record}/>
