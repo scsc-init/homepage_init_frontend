@@ -1,0 +1,29 @@
+@import "@radix-ui/colors/indigo.css";
+@import "@radix-ui/colors/slate.css";
+
+html,
+body {
+  overflow-x: hidden;
+  background: var(--main-bg-gradient);
+}
+
+#Home {
+  min-height: calc(100vh - 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--main-bg-gradient);
+  box-sizing: border-box;
+}
+
+#EditUserInfoContainer {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 30vw;
+  min-width: 300px;
+  min-height: 40vh;
+  height: auto;
+}
+

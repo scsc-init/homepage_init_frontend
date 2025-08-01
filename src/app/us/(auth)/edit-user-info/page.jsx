@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import * as validator from "../login/validator";
+import './page.css'
 
-export default function EditUserInfoPage() {
+function EditUserInfoClient() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
@@ -105,53 +106,82 @@ export default function EditUserInfoPage() {
     }
   }
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return;
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
-      <h2>내 정보 수정</h2>
-      <div>
-        <label>이름</label>
-        <input type="text" value={form.name} disabled />
+    <div style={{ maxWidth: "25vw", minWidth: "250px" ,margin: "0 auto", boxSizing: "border-box" }}>
+  <h2 style={{ marginBottom: "1.5rem" }}>내 정보 수정</h2>
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "100px 1fr",
+      rowGap: "1rem",
+      columnGap: "0.5rem",
+      alignItems: "center",
+    }}
+  >
+    <label style={{ whiteSpace: "nowrap" }}>이름</label>
+    <input
+      type="text"
+      value={form.name}
+      disabled
+      style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}
+    />
+
+    <label style={{ whiteSpace: "nowrap" }}>전화번호</label>
+    <input
+      type="text"
+      value={form.phone}
+      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+      placeholder="01012345678"
+      style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}
+    />
+
+    <label style={{ whiteSpace: "nowrap" }}>학번</label>
+    <input
+      type="text"
+      value={form.student_id}
+      onChange={(e) => setForm({ ...form, student_id: e.target.value })}
+      placeholder="202512345"
+      style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}
+    />
+
+    <label style={{ whiteSpace: "nowrap" }}>전공</label>
+    <select
+      value={form.major_id}
+      onChange={(e) => setForm({ ...form, major_id: e.target.value })}
+      style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}
+    >
+      <option value="">전공 선택</option>
+      {majors.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.college} - {m.major_name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div style={{ marginTop: "2rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+    <button onClick={handleDelete} style={{ flex: 1, minWidth: "120px" }}>
+      휴회원으로 전환
+    </button>
+    <button onClick={handleSubmit} style={{ flex: 1, minWidth: "120px" }}>
+      저장하기
+    </button>
+  </div>
+</div>
+
+
+  );
+}
+
+export default function EditUserInfoPage() {
+  return (
+    <div id="Home">
+      <div id="EditUserInfoContainer">
+        <EditUserInfoClient/>
       </div>
-      <div>
-        <label>전화번호</label>
-        <input
-          type="text"
-          value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-          placeholder="01012345678"
-        />
-      </div>
-      <div>
-        <label>학번</label>
-        <input
-          type="text"
-          value={form.student_id}
-          onChange={(e) => setForm({ ...form, student_id: e.target.value })}
-          placeholder="202512345"
-        />
-      </div>
-      <div>
-        <label>전공</label>
-        <select
-          value={form.major_id}
-          onChange={(e) => setForm({ ...form, major_id: e.target.value })}
-        >
-          <option value="">전공 선택</option>
-          {majors.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.college} - {m.major_name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button onClick={handleDelete} style={{ marginTop: "1rem" }}>
-        휴회원으로 전환
-      </button>
-      <button onClick={handleSubmit} style={{ marginTop: "1rem" }}>
-        저장하기
-      </button>
     </div>
   );
 }
