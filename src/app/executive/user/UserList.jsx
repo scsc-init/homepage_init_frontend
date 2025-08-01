@@ -213,6 +213,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 >
                   <option value="active">active</option>
                   <option value="pending">pending</option>
+                  <option value="standby">standby</option>
                   <option value="banned">banned</option>
                 </select>
               </td>

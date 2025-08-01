@@ -2,8 +2,21 @@
 
 import { useEffect, useState } from "react";
 
+function TrxRecord({ record }) {
+  return <div>
+    <hr></hr>
+    <div>입금자명: {record.deposit_name}</div>
+    <div>입금시각: {record.deposit_time}</div>
+    <div>입금금액: {record.amount}</div>
+    <hr></hr>
+  </div>
+}
+
 export default function EnrollManageMentPanel() {
   const [standbys, setStandbys] = useState([]);
+  const [results, setResults] = useState([]);
+  const [failedCnt, setFailedCnt] = useState(0);
+
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) return;
@@ -34,10 +47,13 @@ export default function EnrollManageMentPanel() {
       body: form,
     });
 
-    if (res.status === 204) {
-      alert("파일 업로드 및 처리 성공");
-    } else {
+    if (res.status !== 200) {
       alert("파일 처리 실패: " + (await res.json()).detail);
+    } else {
+      const enrollData = await res.json();
+      console.log(enrollData.results);
+      setFailedCnt(enrollData.cnt_failed_records);
+      setResults(enrollData.results);
     }
   };
 
@@ -69,6 +85,23 @@ export default function EnrollManageMentPanel() {
         <h3>CSV 파일 업로드</h3>
         <input type="file" accept=".csv" onChange={handleFileUpload} />
       </div>
+      {results.length !== 0 && (
+        <>
+          <div>처리 실패 요청 건수: {failedCnt}건</div>
+          {results.map((r) => (
+            <div>
+              <hr></hr>
+              <div>{r.result_msg}</div>
+              <TrxRecord record={r.record}/>
+              <div>오류 관련 사용자</div>
+              {r.users.map((u) => (
+                <div key={u.id}>{u.name+'('+u.email+')'}</div>
+              ))}
+              <hr></hr>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

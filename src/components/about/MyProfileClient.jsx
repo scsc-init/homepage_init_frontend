@@ -101,13 +101,6 @@ export default function MyProfileClient() {
       <div class="main-container">
         <div class="user-info-container">
           <p className="user-info-description">User Info</p>
-          {/* <p>이메일: {user.email}</p>
-          <p>전화번호: {user.phone}</p>
-          <p>학번: {user.student_id}</p>
-          <p>
-            전공:{" "}
-            {majors ? `${majors.college} - ${majors.major_name}` : "로딩 중..."}
-          </p> */}
           <table class="user-info-table">
             <tbody>
               <tr>
