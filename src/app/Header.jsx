@@ -125,7 +125,7 @@ export default function Header({ year, semester }) {
             </div>
           )}
 
-          <div id="HeaderRight">
+          <div id="HeaderRight" style={{ minWidth: "12rem" }}>
             {isMounted && isMobile ? (
               <>
                 <HeaderClientArea

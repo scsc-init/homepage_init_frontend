@@ -1,7 +1,7 @@
 :root {
   --color-primary: #bbbcbc; /* 기본 배경색 */
   --color-button-bg: #83e8f5; /* 버튼 배경색 */
-  --color-button-border: #999999; /* 버튼 테두리색 */
+  --color-button-border: #527a91; /* 버튼 테두리색 */
   --color-text-body: #2a2a2a; /* 본문 텍스트색 */
   --color-text-subtle: #6e6e6e; /* 부가 설명 텍스트색 */
   --color-surface-light: #cccccc; /* 표면 배경색 */
@@ -24,7 +24,8 @@
   --executive-arrow-hover: #ccc;
   --executive-arrow-color: #333;
   --executive-card-shadow: rgba(0, 0, 0, 0.06);
-  --box-color: #ebebeb;
+  --color-text-subtle: #888888;
+  --color-text-strong: #111111;
 
   /*버튼 쪽 색상은 디자인하다가 필요해보시면 변경해주시고, 혹시 여러가지 디자인 필요하시면 추가해서 사용해주세요*/
 
