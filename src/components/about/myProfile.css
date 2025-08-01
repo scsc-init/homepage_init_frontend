@@ -24,7 +24,6 @@
 
 .main-container {
   display: flex;
-  height: 35vh;
   gap: 1rem;
   padding: 1rem;
   box-sizing: border-box;
@@ -35,7 +34,6 @@
   padding: 1rem;
   background-color: var(--box-color);
   border-radius: 8px;
-  overflow-y: auto;
 }
 
 .right-container {
