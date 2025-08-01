@@ -49,6 +49,13 @@ export default function LoginPage() {
         ?.trim();
       if (!email || !cleanName) return;
 
+      if (!(await isSkipEmailCheck()) && !validator.email(email)) {
+        console.log(email);
+        console.log(validator.email(email))
+        alert("snu.ac.kr 이메일만 허용됩니다.");
+        return;
+      }
+
       const res = await fetch(`/api/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,45 +118,52 @@ export default function LoginPage() {
       <div className="GoogleSignupCard">
         {stage === 0 && (
           <div>
+            <div className="main-logo-wrapper">
+              <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+              <div className="main-subtitle">
+                Seoul National University Computer Study Club
+              </div>
+            </div>
+            <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
             <div
               id="g_id_onload"
               data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"
               data-callback="handleCredentialResponse"
               data-auto_prompt="false"
             ></div>
-            <div
-              className="g_id_signin"
-              data-type="standard"
-              data-size="large"
-              data-theme="outline"
-              data-text="sign_in_with"
-              data-shape="rectangular"
-              data-logo_alignment="left"
-            ></div>
+            <div className="google-signin-button-wrapper">
+              <div
+                className="g_id_signin"
+                data-type="standard"
+                data-size="large"
+                data-theme="outline"
+                data-text="sign_in_with"
+                data-shape="rectangular"
+                data-logo_alignment="left"
+              ></div>
+            </div>
           </div>
         )}
 
         {stage === 1 && (
-          <>
-            <input value={form.email} disabled />
+          <div style={{boxSizing: "border-box", marginTop: "10vh" }}>
+            <input value={form.email} disabled style={{width: "100%", boxSizing: "border-box"}}/>
             <p>
               이름: <strong>{form.name}</strong>
             </p>
             <button
               onClick={async () => {
-                if (await isSkipEmailCheck()) {setStage(2); return;}
-                validator.email(form.email, (ok) =>
-                  ok ? setStage(2) : alert("snu.ac.kr 이메일만 허용됩니다."),
-                );
+                setStage(2);
               }}
+              style={{width: "100%", boxSizing: "border-box"}}
             >
               다음
             </button>
-          </>
+          </div>
         )}
 
         {stage === 2 && (
-          <>
+          <div style={{ marginTop: "10vh" }}>
             <p>학번 입력</p>
             <div
               style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
@@ -185,11 +199,11 @@ export default function LoginPage() {
             >
               다음
             </button>
-          </>
+          </div>
         )}
 
         {stage === 3 && (
-          <>
+          <div style={{ marginTop: "10vh" }}>
             <p>전화번호 입력</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
@@ -233,11 +247,12 @@ export default function LoginPage() {
             >
               다음
             </button>
-          </>
+          </div>
         )}
 
         {stage === 4 && (
-          <>
+          <div style={{ marginTop: "10vh" }}>
+            <p>단과대학 소속 입력</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <select
                 onChange={(e) => setCollege(e.target.value)}
@@ -276,7 +291,7 @@ export default function LoginPage() {
             >
               가입하기
             </button>
-          </>
+          </div>
         )}
       </div>
     </div>

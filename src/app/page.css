@@ -155,6 +155,7 @@ img {
     transform: scale(1);
   }
 }
+
 .main-logo-wrapper {
   display: flex;
   flex-direction: column;
