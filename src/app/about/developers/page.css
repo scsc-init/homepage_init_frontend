@@ -25,6 +25,7 @@ body {
   text-align: center;
   margin-bottom: 3rem;
   font-size: 2rem;
+  color: var(--color-text-strong);
 }
 
 .ExecutiveCarouselWrapper {
@@ -44,7 +45,8 @@ body {
 
 .ExecutiveCard {
   width: 200px;
-  background: var(--executive-bg, white);
+  background: var(--executive-card-bg);
+  color: var(--executive-name-color);
   border-radius: 1rem;
   text-align: center;
   padding: 1rem;
@@ -59,6 +61,7 @@ body {
     opacity 0.6s ease;
   z-index: 1;
   pointer-events: none;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
 }
 
 .ExecutiveCard.center {
@@ -108,7 +111,7 @@ body {
 .ExecutiveRole,
 .ExecutivePhone {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--executive-role-color);
 }
 
 .ExecutiveDots {
@@ -142,6 +145,7 @@ body {
   box-shadow: 0 0 6px var(--primary-neon);
 }
 
+/* Masonry fallback for mobile */
 @media (max-width: 768px) {
   .ExecutiveCarouselWrapper {
     display: none;
@@ -178,7 +182,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.55);
-    color: white;
+    color: var(--executive-description-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -202,6 +206,18 @@ body {
   .ExecutivePhone {
     font-size: 0.9rem;
     color: #444;
+  }
+
+  .WallLogo {
+    width: 10vh;
+    height: 30vh;
+  }
+
+  .WallLogo2 {
+    margin-top: 1rem;
+    left: 0;
+    width: 10vh;
+    height: 30vh;
   }
 }
 
@@ -235,15 +251,66 @@ body {
 }
 
 @media (max-width: 768px) {
-  .WallLogo {
-    width: 10vh;
-    height: 30vh;
+  .ExecutiveCarouselWrapper {
+    display: none !important;
   }
 
-  .WallLogo2 {
-    margin-top: 1rem;
+  .ExecutiveMasonry {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
+    width: 100%;
+  }
+
+  .ExecutiveMasonry .ExecutiveCard {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    box-shadow: 0 3px 12px var(--executive-card-shadow);
+  }
+
+  .ExecutiveImageWrapper {
+    aspect-ratio: 1 / 1;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ExecutiveOverlay {
+    position: absolute;
+    top: 0;
     left: 0;
-    width: 10vh;
-    height: 30vh;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--executive-description-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .ExecutiveImageWrapper:hover .ExecutiveOverlay {
+    opacity: 1;
+  }
+
+  .ExecutiveDescription {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+  }
+
+  .ExecutiveRole,
+  .ExecutivePhone {
+    font-size: 0.9rem;
+    color: #444;
   }
 }

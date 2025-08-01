@@ -98,7 +98,7 @@ export default function HeaderClientArea({
   if (onlyExecutive && isExecutive) {
     return (
       <button
-        className="unset"
+        className="unset toAdminPageButton"
         onClick={() => (window.location.href = "/executive")}
         style={{
           fontSize: "0.875rem",
@@ -125,7 +125,7 @@ export default function HeaderClientArea({
     >
       {!isMobile && isExecutive && (
         <button
-          className="unset"
+          className="unset toAdminPageButton"
           onClick={() => (window.location.href = "/executive")}
           style={{ fontSize: "0.875rem" }}
         >

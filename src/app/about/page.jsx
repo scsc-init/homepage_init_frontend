@@ -22,12 +22,6 @@ export default function AboutPage() {
             <section id="scsc" className="AboutIntroSection AnchorOffset">
               <div className="AboutInner">
                 <h1 className="AboutTitle">About us</h1>
-                <ScrollEffectWrapper>
-                  <h1>SCSC</h1>
-                </ScrollEffectWrapper>
-                <ScrollEffectWrapper>
-                  <p>서울대학교 컴퓨터 연구회 SCSC를 소개합니다</p>
-                </ScrollEffectWrapper>
                 <div className="main-intro">
                   <ScrollEffectWrapper>
                     <p>
