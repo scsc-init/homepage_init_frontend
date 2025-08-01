@@ -1,6 +1,6 @@
 "use client";
 
-import { scrollToId } from "./ScrollToId.js";
+import { scrollToId } from "./ScrollToId";
 
 export default function ClientSidebar() {
   return (
