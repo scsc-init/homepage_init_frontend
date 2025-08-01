@@ -57,6 +57,7 @@ export default function Contact() {
                     alt="Instagram"
                     width={28}
                     height={28}
+                    className="ico"
                   />
                   <a
                     href="https://www.instagram.com/scsc_snu/?hl=ko"
@@ -74,6 +75,7 @@ export default function Contact() {
                     alt="GitHub"
                     width={28}
                     height={28}
+                    className="ico"
                   />
                   <a
                     href="https://github.com/SNU-SCSC"

@@ -84,10 +84,11 @@ export default function Header({ year, semester }) {
                 alt="SCSC Logo"
                 width={100}
                 height={40}
+                className="logo"
               />
             </button>
             {year && semester && (
-              <div>
+              <div className="toAdminPageButton">
                 {year} - {SEMESTER_MAP[semester]}학기
               </div>
             )}
@@ -125,7 +126,7 @@ export default function Header({ year, semester }) {
             </div>
           )}
 
-          <div id="HeaderRight">
+          <div id="HeaderRight" style={{ minWidth: "12rem" }}>
             {isMounted && isMobile ? (
               <>
                 <HeaderClientArea

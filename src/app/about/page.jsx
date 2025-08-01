@@ -5,6 +5,7 @@ import ScrollEffectWrapper from "@/components/about/ScrollEffectWrapper";
 import FaqList from "@/components/about/FaqList";
 import Arrow from "@/components/about/Arrow";
 import "./page.css";
+import Sidebar from "@/components/about/Sidebar.jsx";
 
 export default function AboutPage() {
   const year = new Date().getFullYear() - 1984;
@@ -14,98 +15,92 @@ export default function AboutPage() {
       <div className="WallLogo"></div>
       <div className="WallLogo2"></div>
       <div className="AboutWrapper">
-        <aside className="AboutSidebar hide-on-mobile">
-          <ul>
-            <li>
-              <a href="#scsc">SCSC</a>
-            </li>
-            <li>
-              <a href="#activities">활동</a>
-            </li>
-            <li>
-              <a href="#faq">자주 묻는 질문</a>
-            </li>
-            <li>
-              <a href="#clubroom">동아리 시설</a>
-            </li>
-          </ul>
-        </aside>
+        <Sidebar />
 
         <main className="AboutMain">
           <ScrollEffectWrapper>
             <section id="scsc" className="AboutIntroSection AnchorOffset">
               <div className="AboutInner">
                 <h1 className="AboutTitle">About us</h1>
-                <ScrollEffectWrapper>
-                  <h1>SCSC</h1>
-                </ScrollEffectWrapper>
-                <ScrollEffectWrapper>
-                  <p>서울대학교 컴퓨터 연구회 SCSC를 소개합니다</p>
-                </ScrollEffectWrapper>
-                <ScrollEffectWrapper>
-                  <div className="AboutCard">
-                    <ScrollEffectWrapper>
-                      <p>
-                        <strong>한글, 리니지, 리니지2, 아이온.</strong>
-                        <br />
-                        이들은 공통점은 무엇일까요?
-                      </p>
-                    </ScrollEffectWrapper>
-                    <ScrollEffectWrapper>
-                      <p>
-                        <strong>SCSC</strong>는{" "}
-                        <strong>SNU Computer Study Club</strong>의 약자로,{" "}
-                        <strong>
-                          1984년부터 이어져 온 서울대학교 컴퓨터 연구회
-                        </strong>
-                        입니다.
-                      </p>
-                    </ScrollEffectWrapper>
-                    <ScrollEffectWrapper>
-                      <p>
-                        세계 최초의 한글 워드프로세서인 한글 1.0 버전은 제3회
-                        SCSC 전시회에서 처음 공개되었습니다. 이때 개발을
-                        이끌었던 <strong>이찬진</strong>,{" "}
-                        <strong>김형집</strong>, <strong>우원식</strong>,{" "}
-                        <strong>김택진</strong> 선배님들은 우리나라 소프트웨어
-                        역사에서 빼놓을 수 없는 분들입니다.
-                      </p>
-                    </ScrollEffectWrapper>
-                    <ScrollEffectWrapper>
-                      <p>
-                        이찬진, 김형집, 우원식 선배님은 ‘한글과컴퓨터’ 사에서
-                        한글을 대중화시키셨습니다. 김택진 선배님은
-                        ‘한메소프트’를 창립해 &lt;한메 타자 교사&gt;, &lt;한메
-                        한글&gt;을 개발한 후, 1997년에는 ‘NC소프트’를
-                        창업하셨습니다.
-                      </p>
-                    </ScrollEffectWrapper>
-                    <ScrollEffectWrapper>
-                      <p>
-                        또한 우원식 선배님은 ‘한글과컴퓨터’에서 나온 후
-                        NC소프트의 다양한 게임 개발에 참여하였고, &lt;아이온&gt;
-                        개발을 총괄하셨습니다.
-                      </p>
-                    </ScrollEffectWrapper>
-                    <ScrollEffectWrapper>
-                      <p>
-                        이 외에도 수많은 SCSC 선배님들이 여러 회사를 창업하고,
-                        다양한 곳에서 핵심 직책을 맡고 계십니다.
-                      </p>
-                    </ScrollEffectWrapper>
-                    <ScrollEffectWrapper>
-                      <p>
-                        <strong>한글, 리니지, 리니지2, 아이온</strong>의
-                        공통점은 바로{" "}
-                        <strong>
-                          서울대학교 컴퓨터 동아리 SCSC가 없었다면 나오지 못했을
-                          것들
-                        </strong>
-                        이라는 점입니다.
-                      </p>
-                    </ScrollEffectWrapper>
-                  </div>
-                </ScrollEffectWrapper>
+                <div className="main-intro">
+                  <ScrollEffectWrapper>
+                    <p>
+                      <b>한글, 리니지, 리니지2, 아이온.</b>
+                      <br />
+                      이들의 공통점은 무엇일까요?
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      <b>SCSC</b>는 <b>서울대학교 컴퓨터 연구회</b>
+                      (SNU Computer Study Club)의 약자로,
+                      <br />
+                      <b>1984년부터 이어져 온 전통 있는 동아리</b>입니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      세계 최초의 한글 워드프로세서 <b>‘한글 1.0’</b>은
+                      <br />
+                      <b>제3회 SCSC 전시회</b>에서 처음 공개되었습니다.
+                      <br />
+                      <b>이찬진, 김형집, 우원식, 김택진</b> 선배님들은
+                      <br />
+                      우리나라 소프트웨어 역사의 주역이셨습니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      <b>‘한글과컴퓨터’</b>에서 <b>한글</b>을 대중화시키고,
+                      <br />
+                      <b>‘한메소프트’</b>와 <b>‘NC소프트’</b>를 창업하여
+                      <br />
+                      <b>한메 타자교사, 한메 한글, 리니지, 아이온</b> 등
+                      <br />
+                      수많은 명작 소프트웨어와 게임을 만들었습니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      그 외에도 수많은 SCSC 선배님들이
+                      <br />
+                      다양한 기업을 창업하고 IT 산업을 이끌고 있습니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      <b>한글, 리니지, 리니지2, 아이온</b>
+                      <br />이 모든 것은 <b>SCSC 없이는 불가능했을</b>{" "}
+                      이야기입니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      지금의 SCSC는 SKYST 해커톤 및 SCPC 알고리즘 대회를
+                      개최하거나 <br />
+                      현직 개발자분들을 초청해 세미나를 진행하는 등
+                      <br />
+                      다양한 행사를 기획 및 운영하고 있습니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <p>
+                      200여 명의 다양한 전공을 가진 동아리원이 활동하고 있으며,
+                      <br />
+                      그런 만큼 SCSC는 앱•웹•인공지능•알고리즘 등 여러 분야에
+                      걸쳐
+                      <br />
+                      자신만의 전문성을 가질 수 있도록 돕는 것을 주된 목표로
+                      삼고 있습니다.
+                    </p>
+                  </ScrollEffectWrapper>
+                  <ScrollEffectWrapper>
+                    <h2>
+                      <br />
+                      <b>SCSC는 계속해서 나아갑니다!</b>
+                    </h2>
+                  </ScrollEffectWrapper>
+                </div>
               </div>
             </section>
           </ScrollEffectWrapper>
@@ -232,6 +227,59 @@ export default function AboutPage() {
                         </div>
                       </ScrollEffectWrapper>
                     ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </ScrollEffectWrapper>
+
+          <ScrollEffectWrapper>
+            <section id="more" className="AboutSection AnchorOffset">
+              <div className="AboutInner">
+                <div className="AboutCard">
+                  <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
+                  <div className="MoreLinkList">
+                    {[
+                      { title: "리크루팅 정보 바로가기", url: "/us/contact" },
+                      { title: "시그 목록 바로가기", url: "/sig" },
+                      { title: "피그 목록 바로가기", url: "/pig" },
+                      {
+                        title: "공식 인스타그램",
+                        url: "https://www.instagram.com/scsc_snu/?hl=ko",
+                      },
+                      {
+                        title: "공식 깃허브",
+                        url: "https://github.com/SNU-SCSC",
+                      },
+                    ].map(({ title, url }, i) =>
+                      url.startsWith("http") ? (
+                        <a
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="MoreLink"
+                        >
+                          <span>{title}</span>
+                          <Arrow
+                            width="20px"
+                            height="20px"
+                            rotate="-90deg"
+                            color="#070707"
+                          />
+                        </a>
+                      ) : (
+                        <Link key={i} href={url} className="MoreLink">
+                          <span>{title}</span>
+                          <Arrow
+                            width="20px"
+                            height="20px"
+                            rotate="-90deg"
+                            color="#070707"
+                          />
+                        </Link>
+                      ),
+                    )}
                   </div>
                 </div>
               </div>

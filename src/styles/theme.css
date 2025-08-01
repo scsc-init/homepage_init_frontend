@@ -1,13 +1,17 @@
 :root {
-  --color-primary: #bbbcbc; /* 기본 배경색 */
-  --color-button-bg: #83e8f5; /* 버튼 배경색 */
-  --color-button-border: #999999; /* 버튼 테두리색 */
-  --color-text-body: #2a2a2a; /* 본문 텍스트색 */
-  --color-text-subtle: #6e6e6e; /* 부가 설명 텍스트색 */
-  --color-surface-light: #cccccc; /* 표면 배경색 */
-  --background-color: #b9c9d8; /* 메인 배경색 */
-  --foreground-color: #777; /* 강조선, 장식용 선 등에 사용되는 색 */
-  --footer-background: #1f1f1f; /* 어두운 회색 계열 */
+  --color-primary: #bbbcbc;
+  --color-button-bg: #83e8f5;
+  --color-button-border: #527a91;
+  --color-text-body: #2a2a2a;
+  --color-text-subtle: #6e6e6e;
+  --color-surface-light: #cccccc;
+  --background-color: #b9c9d8;
+  --foreground-color: #777;
+  --header-background-color: var(--slate-1);
+  --header-foreground-color: var(--slate-12);
+  --header-border-color: var(--slate-6);
+  --header-shadow-color: var(--slate-5);
+  --footer-background: #1f1f1f;
   --footer-text-color: #f5f5f5;
   --footer-icon-bg: #3a3a3a;
   --footer-icon-hover: #555555;
@@ -22,23 +26,73 @@
   --executive-arrow-color: var(--foreground-color);
   --executive-arrow-bg: #e0e0e0;
   --executive-arrow-hover: #ccc;
-  --executive-arrow-color: #333;
   --executive-card-shadow: rgba(0, 0, 0, 0.06);
-  --box-color: #ebebeb;
-
-  /*버튼 쪽 색상은 디자인하다가 필요해보시면 변경해주시고, 혹시 여러가지 디자인 필요하시면 추가해서 사용해주세요*/
+  --color-text-strong: #111111;
 
   --main-bg-gradient: radial-gradient(
     circle at center,
     rgba(255, 255, 255, 0.35) 0%,
     rgba(200, 220, 245, 0.4) 20%,
     rgba(185, 201, 216, 1) 60%,
-    #b9c9d8 100% /* 외곽: 보랏빛 도는 회색 */
-  ); /* 중심에 포커스하는 메인 배경 그라디언트 */
+    #b9c9d8 100%
+  );
 
   --main-focus-gradient: radial-gradient(
     circle at center,
     rgba(240, 240, 255, 0.35),
     transparent 70%
-  ); /* 중앙 강조용 투명 그라디언트 배경 */
+  );
+}
+
+.dark {
+  --color-primary: #1e1e1e;
+  --color-button-bg: #4bb0c9;
+  --color-button-border: #2f4f67;
+  --color-text-body: #f5f5f5;
+  --color-text-subtle: #aaaaaa;
+  --color-surface-light: #2c2c2c;
+  --background-color: #121212;
+  --foreground-color: #e0e0e0;
+  --header-background-color: #1a1a1a;
+  --header-foreground-color: #f5f5f5;
+  --header-border-color: #333;
+  --header-shadow-color: rgba(0, 0, 0, 0.4);
+  --footer-background: #111111;
+  --footer-text-color: #d0d0d0;
+  --footer-icon-bg: #222;
+  --footer-icon-hover: #444;
+  --primary-color: #1a1a1a;
+  --primary-neon: #667799;
+  --dot-bg: #555;
+  --executive-card-bg: #1f1f1f;
+  --executive-overlay-bg: rgba(255, 255, 255, 0.08);
+  --executive-name-color: #eee;
+  --executive-role-color: #aaa;
+  --executive-description-color: #ddd;
+  --executive-arrow-color: #ccc;
+  --executive-arrow-bg: #333;
+  --executive-arrow-hover: #444;
+  --executive-card-shadow: rgba(255, 255, 255, 0.06);
+  --color-text-strong: #ffffff;
+
+  --main-bg-gradient: radial-gradient(
+    circle at center,
+    #1e1e1e 0%,
+    #151515 40%,
+    #121212 100%
+  );
+
+  --main-focus-gradient: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.05),
+    transparent 70%
+  );
+}
+
+.dark .ico,
+.dark .logo,
+.dark .WallLogo,
+.dark .WallLogo2,
+.dark .HeaderUserIcon {
+  filter: invert(1) hue-rotate(180deg);
 }
