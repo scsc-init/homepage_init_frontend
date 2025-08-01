@@ -7,7 +7,7 @@ body {
   background: var(--main-bg-gradient);
 }
 
-/* 공통 레이아웃 */
+/* 레이아웃 */
 #Home {
   display: flex;
   flex-direction: column;
@@ -23,7 +23,36 @@ body {
   z-index: 10;
 }
 
-/* 카드 디자인 */
+#ContactWrapper {
+  display: flex;
+  justify-content: start;
+  gap: 3rem;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+#ContactColumnLeft {
+  flex: none;
+  width: 18rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+#ContactColumnRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+#JoinUsSection {
+  margin-top: 3rem;
+}
+
+/* 박스 */
 .ActivityBlock {
   display: flex;
   flex-direction: column;
@@ -42,7 +71,7 @@ body {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* 제목 */
+/* 타이포그래피 */
 .SectionHeader {
   font-size: 3rem;
   font-weight: 900;
@@ -59,24 +88,12 @@ body {
   margin-bottom: 1rem;
 }
 
-/* JOIN US */
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  }
+.JoinDescription {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-@keyframes ripple-expand {
-  to {
-    transform: scale(50);
-    opacity: 0;
-  }
-}
-
+/* 버튼 */
 .JoinButton {
   position: relative;
   overflow: hidden;
@@ -102,27 +119,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-.JoinButton {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-  padding: 0.9rem 2rem;
-  background-color: transparent;
-  color: var(--color-text-body);
-  border: 2px solid var(--color-button-border);
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-decoration: none;
-  cursor: pointer;
-  animation: pulse 3s infinite;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-/* 확실히 보이는 ripple */
 .JoinButton .ripple {
   position: absolute;
   width: 20px;
@@ -135,49 +131,7 @@ body {
   opacity: 0.6;
 }
 
-@keyframes ripple-expand {
-  to {
-    transform: scale(30);
-    opacity: 0;
-  }
-}
-
-/* 연락처 그리드 */
-#ContactWrapper {
-  display: flex;
-  justify-content: start;
-  gap: 3rem;
-  position: relative;
-  flex-wrap: wrap;
-}
-
-.ContactDivider {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 68%;
-  width: 1px;
-  background-color: var(--color-button-border);
-}
-
-#ContactColumnLeft {
-  flex: none;
-  width: 18rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  min-width: 0;
-}
-
-#ContactColumnRight {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-}
-
-/* 표 스타일 */
+/* 테이블 */
 .ContactTable {
   width: 100%;
   max-width: 100%;
@@ -198,18 +152,12 @@ body {
   width: 6rem;
 }
 
-.ContactTable td.name {
-  font-weight: 500;
-  text-align: left;
-  width: 8rem;
-}
-
 .ContactTable td.info {
   font-weight: 500;
   text-align: left;
 }
 
-/* SNS 링크 */
+/* SNS */
 .ContactIconLink {
   display: flex;
   align-items: center;
@@ -227,23 +175,99 @@ a.ContactLink {
   cursor: pointer;
   text-decoration: none;
 }
+
 a.ContactLink:hover {
   color: var(--color-text-body);
   text-decoration: underline;
 }
 
-/* 오른쪽 로고 */
+/* 로고 */
 .ContactLogo {
   font-size: 2rem;
   font-weight: 900;
 }
+
 .ContactSubLogo {
   font-size: 1rem;
   color: var(--color-text-body);
   text-align: right;
 }
+
 .ContactSubLogo strong {
   font-weight: 800;
+}
+
+/* Divider */
+.ContactDivider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 68%;
+  width: 1px;
+  background-color: var(--color-button-border);
+}
+
+/* 배경 로고 */
+.WallLogo,
+.WallLogo2 {
+  position: fixed;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.WallLogo {
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 0.8;
+}
+
+.WallLogo2 {
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 1;
+}
+
+/* 애니메이션 */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes ripple-expand {
+  to {
+    transform: scale(30);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.FadeInBlock {
+  animation: fade-slide-up 0.8s ease-out;
 }
 
 /* 반응형 */
@@ -276,11 +300,6 @@ a.ContactLink:hover {
     padding: 0.3rem 0.4rem;
   }
 
-  .ContactTable td.label,
-  .ContactTable td.info {
-    text-align: left;
-  }
-
   .ContactIconLink {
     font-size: 0.9rem;
   }
@@ -301,52 +320,4 @@ a.ContactLink:hover {
   .ContactSubHeading {
     font-size: 0.95rem;
   }
-}
-
-/* 배경 로고 */
-.WallLogo {
-  position: fixed;
-  top: 80%;
-  right: 2vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  z-index: 0;
-  background-image: url("/wall-logo.png");
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  opacity: 0.8;
-  pointer-events: none;
-}
-
-.WallLogo2 {
-  position: fixed;
-  top: 20%;
-  left: 5vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  z-index: 0;
-  background-image: url("/wall-logo.png");
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  opacity: 1;
-  pointer-events: none;
-}
-
-@keyframes fade-slide-up {
-  0% {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.FadeInBlock {
-  animation: fade-slide-up 0.8s ease-out;
 }

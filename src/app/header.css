@@ -8,12 +8,11 @@
   box-shadow: 0 1px 4px var(--slate-5);
 }
 
-/* 핵심 정렬 */
 #Header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 3.5rem; /* 명확한 높이 설정 */
+  height: 3.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -23,6 +22,11 @@
   flex: 0 0 auto;
   display: flex;
   align-items: center;
+}
+
+#HeaderRight {
+  justify-content: flex-end;
+  min-width: 8rem;
 }
 
 #HeaderCenter {
@@ -47,7 +51,7 @@
 
 .HeaderMenuTrigger {
   font-size: 1rem;
-  font-weight: 600; /* 기본 굵기 고정 */
+  font-weight: 600;
   background: none;
   border: none;
   color: var(--slate-12);
@@ -114,7 +118,6 @@
 .HeaderMenuContent button:hover {
   background-color: var(--indigo-4);
   color: var(--indigo-11);
-  /* font-weight 제거 or 동일하게 유지 */
 }
 
 #HeaderUser {
@@ -135,55 +138,48 @@
   height: 1.5rem;
 }
 
+.HeaderUserFixed {
+  display: inline-block;
+  width: 4.5rem;
+  text-align: center;
+}
+
 #HeaderSpacer {
-  height: 3.5rem; /* fallback for SSR */
-}
-
-.HeaderUserFixed {
-  display: inline-block;
-  width: 4.5rem;
-  text-align: center;
-}
-
-#HeaderRight {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 8rem;
-}
-
-.HeaderUserFixed {
-  display: inline-block;
-  width: 4.5rem;
-  text-align: center;
+  height: 3.5rem;
 }
 
 .HamburgerButton {
-  background: none;
-  border: none;
+  background-color: var(--slate-2);
+  border: 1px solid var(--slate-6);
+  border-radius: 0.5rem;
   font-size: 1.5rem;
   cursor: pointer;
   color: var(--slate-12);
-  padding: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.MobileMenu {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  padding: 1rem 2rem;
-  border-top: 1px solid var(--slate-6);
+.HamburgerButton:hover {
+  background-color: var(--slate-4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .MobileMenuWrapper {
+  position: absolute;
+  top: 3.5rem;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  background-color: white;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
 
 .MobileMenuWrapper.open {
-  max-height: 500px; /* 예상 최대 높이로 설정 */
+  max-height: 1000px;
 }
 
 .MobileMenu {
@@ -193,16 +189,7 @@
   background-color: white;
   padding: 1rem 2rem;
   border-top: 1px solid var(--slate-6);
-}
-
-.MobileMenuWrapper {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.MobileMenuWrapper.open {
-  max-height: 500px; /* 적당한 값으로 애니메이션 구현 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .MobileMenuList {
@@ -234,7 +221,7 @@
 }
 
 .MobileSubMenu.open {
-  max-height: 400px; /* 예상 최대 높이 */
+  max-height: 400px;
 }
 
 .MobileSubMenu ul {
@@ -258,46 +245,6 @@
   width: 100%;
 }
 
-.MobileMenuWrapper {
-  position: absolute; /* 또는 fixed */
-  top: 3.5rem; /* 헤더 바로 아래 */
-  left: 0;
-  width: 100%;
-  z-index: 999;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.MobileMenuWrapper.open {
-  max-height: 1000px; /* 충분한 값 */
-}
-
-.MobileMenu {
-  padding: 1rem 2rem;
-  border-top: 1px solid var(--slate-6);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.HamburgerButton {
-  background-color: var(--slate-2); /* 연한 배경 */
-  border: 1px solid var(--slate-6); /* 테두리 추가 */
-  border-radius: 0.5rem;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--slate-12);
-  padding: 0.4rem 0.6rem;
-  transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.HamburgerButton:hover {
-  background-color: var(--slate-4);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
 #HeaderMyPageMobile,
 .MobileMyPageButton {
   font-size: 0.9rem;
@@ -312,22 +259,6 @@
 }
 
 #HeaderMyPageMobile:hover,
-.MobileMyPageButton:hover {
-  background-color: var(--slate-4);
-}
-
-.MobileMyPageButton {
-  font-size: 0.9rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--slate-6);
-  background-color: var(--slate-2);
-  color: var(--slate-12);
-  cursor: pointer;
-  margin-right: 0.5rem;
-  transition: background-color 0.2s ease;
-}
-
 .MobileMyPageButton:hover {
   background-color: var(--slate-4);
 }

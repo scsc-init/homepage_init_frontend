@@ -30,3 +30,41 @@
   opacity: 1;
   padding-top: 0.5rem;
 }
+
+.HomeFQAHidden {
+  transform-origin: top;
+  transform: scaleY(0);
+  opacity: 0;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  overflow: hidden;
+}
+
+.HomeFAQToggle:checked ~ .HomeFQAQuestion + .HomeFQAHidden {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+.HomeFQA {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  font-size: 1.3rem;
+  color: var(--slate-12);
+}
+
+.HomeFQAQuestion {
+  all: unset;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.HomeFQAHiddenJS {
+  overflow: hidden;
+  transition: height 0.4s ease;
+}

@@ -1,166 +1,31 @@
-#RegulationContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin: 4rem 0;
-  padding: 2rem;
-  border-radius: 1rem;
-  background-color: var(--slate-2);
-}
-
-.RegulationIntro {
-  font-size: 1.1rem;
-  color: var(--slate-11);
-  margin-bottom: 1rem;
-}
-
-.RegulationItem {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid var(--indigo-8);
-}
-
-.RegulationItem h3 {
-  margin: 0 0 0.5rem 0;
-}
-
-.RegulationItem p {
-  margin: 0;
-  line-height: 1.6;
-  color: var(--slate-12);
-}
+@import "@/styles/theme.css";
 
 html,
 body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-#Home {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
-
-#HomeContent {
-  width: 100%;
-  max-width: 60rem;
-  margin: 2rem auto 10rem auto;
-  padding: 0 1rem;
-  box-sizing: border-box;
-}
-
-.ClubroomCardImage {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 0.75rem;
-}
-
-/* 마크다운 스타일 예시 */
-.RegulationItem h1,
-.RegulationItem h2,
-.RegulationItem h3 {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.RegulationItem ul {
-  padding-left: 1.5rem;
-  list-style-type: disc;
-}
-
-.RegulationItem p {
-  margin-bottom: 0.75rem;
-}
-
-.loading {
-  font-size: 1rem;
-  opacity: 1;
-  animation: blink 1.2s infinite;
-}
-
-@import "@/styles/theme.css";
-
-/* ===== 레이아웃 ===== */
-body,
-html {
-  overflow-x: hidden;
-}
-
-.AboutWrapper {
-  display: flex;
-  position: relative;
-  width: 100%;
-}
-
-.AboutSidebar {
-  position: fixed;
-  top: 3.5rem;
-  left: 0;
-  width: 180px;
-  height: calc(100vh - 3.5rem);
-  background-color: white;
-  padding: 2rem 1rem;
-  border-right: 1px solid var(--slate-6);
-  z-index: 5;
-}
-
-.AboutSidebar ul {
-  list-style: none;
+  margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  font-weight: bold;
-  color: var(--foreground-color);
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--background-color);
+  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
-.AboutSidebar a {
-  text-decoration: none;
-  color: inherit;
-}
-
-@media (max-width: 768px) {
-  .hide-on-mobile {
-    display: none;
-  }
-
-  .AboutMain {
-    margin-left: 0;
-    padding: 2rem 1rem 6rem 1rem;
-  }
-
-  .ClubroomFacilityList {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* ===== About Title Section ===== */
-.AboutTitleSection {
-  background-color: var(--slate-2);
-  padding: 6rem 2rem;
-  text-align: center;
-}
-
-.AboutTitle {
-  font-size: 5rem;
-  font-weight: 900;
-  color: var(--foreground-color);
-  margin: 0 auto;
-}
-
-/* ===== Main 영역 ===== */
-.AboutMain {
+main.AboutMain {
   width: 100%;
   display: flex;
   justify-content: center;
   padding: 4rem 1rem 6rem 1rem;
   z-index: 1;
+}
+
+@media (max-width: 768px) {
+  main.AboutMain {
+    padding: 2rem 1rem 4rem 1rem;
+    box-sizing: border-box;
+  }
 }
 
 .AboutSection {
@@ -180,346 +45,56 @@ html {
   gap: 2rem;
 }
 
-/* 카드 공통 */
-.AboutCard {
-  background-color: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-  word-break: keep-all;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  color: var(--slate-12);
-  font-size: 1.3rem;
-}
-
-/* ===== 활동 및 시설 카드 레이아웃 ===== */
-.ClubroomFacilityList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-@media (min-width: 1024px) {
-  #activities .ClubroomFacilityList {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  #activities .ClubroomCardImage {
-    height: 280px;
-  }
-}
-
-.ClubroomCard {
-  background-color: white;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  text-align: center;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.ClubroomCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-.ClubroomCard h3 {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--foreground-color);
-}
-
-.ClubroomCard p {
-  font-size: 1.2rem;
-  color: var(--slate-11);
-}
-
-.ClubroomCardImage {
-  border-radius: 0.75rem;
-  object-fit: cover;
-  width: 100%;
-  height: 200px;
-}
-
-/* ===== 통계 ===== */
-.HomeDescriptionTitle {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.HomeDescriptionActivityContainer {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.HomeLargeText {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--slate-12);
-}
-
-/* ===== 시설 안내 구역 ===== */
-#HomeClubroomContainer {
-  background-color: var(--slate-2);
-  border: 1px solid var(--slate-6);
-  border-radius: 1rem;
-  padding: 3rem 2rem;
-  margin-top: 3rem;
-}
-@media (max-width: 768px) {
-  .hide-on-mobile {
-    display: none !important;
-  }
-
-  .AboutMain {
-    margin-left: 0 !important;
-    padding: 2rem 1rem 6rem 1rem;
-  }
-}
-
-.AboutTitleSection {
-  background-color: var(--slate-2);
-  padding: 6rem 2rem;
-  text-align: center;
-}
-
 .AboutTitle {
-  font-size: 5rem;
-  font-weight: 900;
-  color: var(--foreground-color);
-  margin: 0 auto;
-}
-
-.AboutTitleSection {
-  background-color: var(--slate-2);
-  padding: 6rem 2rem;
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: var(--color-text-body);
+  padding-bottom: 0.5rem;
   text-align: center;
-}
-
-.AboutTitle {
-  font-size: 5rem;
-  font-weight: 900;
-  color: var(--foreground-color);
-  margin: 0 auto;
-}
-
-#HomeFQAContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.HomeFQA {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  border: 2px solid var(--slate-8);
-  border-radius: 1rem;
-  padding: 1.5rem 2rem;
-  background-color: white;
-  transition: background-color 0.3s ease;
-}
-
-.HomeFQAQuestion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.HomeFQAQuestion h4 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
-}
-
-.HomeFQAHidden {
-  display: none;
-  margin-top: 0.5rem;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: var(--slate-11);
-}
-
-.HomeFQA > input {
-  display: none;
-}
-
-.HomeFQA > input:checked ~ .HomeFQAHidden {
-  display: block;
-}
-
-.HomeFQAQuestion svg {
-  transition: transform 0.3s ease;
-}
-
-.HomeFQA > input:checked + .HomeFQAQuestion svg {
-  transform: rotate(180deg);
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background-color: var(--background-color);
-}
-
-.WallLogo {
-  position: fixed;
-  top: 80%;
-  right: 2vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  z-index: 0;
-  background-image: url("/wall-logo.png");
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  opacity: 0.8;
-  pointer-events: none;
-}
-.WallLogo2 {
-  position: fixed;
-  top: 20%;
-  left: 5vw;
-  width: 18vw;
-  height: 27vw; /* 고정 높이 지정 */
-  transform: translateY(-50%);
-  z-index: 0;
-  background-image: url("/wall-logo.png");
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  opacity: 1; /* 보기 쉽게 높임 */
-  pointer-events: none;
-}
-@media (max-width: 768px) {
-  .AboutTitle {
-    font-size: 3rem;
-  }
-
-  .AboutTitleSection {
-    padding: 4rem 1rem;
-  }
-  .WallLogo {
-    position: fixed;
-    top: 80%;
-    right: 2vw;
-    width: 10vh;
-    height: 30vh;
-    transform: translateY(-50%);
-    z-index: 0;
-    background-image: url("/wall-logo.png");
-    background-repeat: no-repeat;
-    background-position: right center;
-    background-size: contain;
-    opacity: 0.8;
-    pointer-events: none;
-  }
-  .WallLogo2 {
-    position: fixed;
-    margin-top: 1rem;
-    left: 0;
-    width: 10vh;
-    height: 30vh;
-    z-index: 0;
-    background-image: url("/wall-logo.png");
-    background-repeat: no-repeat;
-    background-position: right center;
-    background-size: contain;
-    opacity: 1;
-    pointer-events: none;
-  }
-}
-
-body {
-  background-color: var(--background-color);
-}
-
-.AboutTitle {
   position: relative;
   z-index: 1;
-  font-size: 5rem;
-  font-weight: 900;
-  margin: 0 auto;
-  color: black;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 모바일에서 전체 영역과 카드 스타일 조정 */
 @media (max-width: 768px) {
-  .AboutMain {
-    width: 100%;
-    padding: 2rem 1rem 4rem 1rem;
-    box-sizing: border-box;
-  }
-
-  .AboutInner {
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   .AboutTitle {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    padding-bottom: 0.4rem;
     word-break: keep-all;
   }
+}
 
+#RegulationContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 4rem 0;
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: var(--slate-2);
+}
+
+@media (max-width: 768px) {
   #RegulationContainer {
     width: 100%;
     padding: 1.5rem 1rem;
     margin: 2rem 0;
     box-sizing: border-box;
   }
-
-  .RegulationItem {
-    padding: 1rem;
-    font-size: 0.95rem;
-    word-break: break-word;
-  }
-
-  .RegulationIntro {
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
 }
 
-body,
-html {
-  width: 100%;
-  overflow-x: hidden;
-  box-sizing: border-box;
+.RegulationIntro {
+  font-size: 1.1rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .RegulationIntro {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
 }
 
 .RegulationItem {
@@ -533,22 +108,6 @@ html {
   line-height: 1.6;
 }
 
-.RegulationIntro {
-  font-size: 1.1rem;
-  color: var(--color-text-subtle);
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.AboutTitle {
-  font-size: 2.75rem;
-  font-weight: 800;
-  color: var(--color-text-body);
-  border-bottom: 2px solid var(--foreground-color);
-  padding-bottom: 0.5rem;
-  text-align: center;
-}
-
 @media (max-width: 768px) {
   .RegulationItem {
     padding: 1.25rem;
@@ -556,16 +115,63 @@ html {
     line-height: 1.6;
     border-radius: 0.75rem;
   }
+}
 
-  .AboutTitle {
-    font-size: 2rem;
-    padding-bottom: 0.4rem;
-    word-break: keep-all;
+.RegulationItem h1,
+.RegulationItem h2,
+.RegulationItem h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.RegulationItem ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.RegulationItem p {
+  margin-bottom: 0.75rem;
+}
+
+.WallLogo,
+.WallLogo2 {
+  position: fixed;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.WallLogo {
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 0.8;
+}
+
+.WallLogo2 {
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .WallLogo {
+    width: 10vh;
+    height: 30vh;
   }
 
-  .RegulationIntro {
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
+  .WallLogo2 {
+    margin-top: 1rem;
+    left: 0;
+    width: 10vh;
+    height: 30vh;
   }
 }
