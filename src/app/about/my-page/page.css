@@ -1,5 +1,6 @@
 @import "@radix-ui/colors/indigo.css";
 @import "@radix-ui/colors/slate.css";
+@import "@/styles/theme.css";
 
 html,
 body {
@@ -20,7 +21,7 @@ body {
   background-color: white;
   padding: 1rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
   width: 40vw;
   min-width: 300px;
   min-height: 40vh;
