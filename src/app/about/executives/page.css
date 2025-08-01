@@ -289,3 +289,68 @@ body {
   background-color: var(--primary-color);
   box-shadow: 0 0 6px var(--primary-neon);
 }
+
+@media (max-width: 768px) {
+  .ExecutiveCarouselWrapper {
+    display: none !important;
+  }
+
+  .ExecutiveMasonry {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
+    width: 100%;
+  }
+
+  .ExecutiveMasonry .ExecutiveCard {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    box-shadow: 0 3px 12px var(--executive-card-shadow);
+  }
+
+  .ExecutiveImageWrapper {
+    aspect-ratio: 1 / 1;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ExecutiveOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--executive-description-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .ExecutiveImageWrapper:hover .ExecutiveOverlay {
+    opacity: 1;
+  }
+
+  .ExecutiveDescription {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+  }
+
+  .ExecutiveRole,
+  .ExecutivePhone {
+    font-size: 0.9rem;
+    color: #444;
+  }
+}
