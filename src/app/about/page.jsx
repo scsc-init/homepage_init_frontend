@@ -8,6 +8,7 @@ import "./page.css";
 import Sidebar from "@/components/about/Sidebar.jsx";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
+import { DISCORD_INVITE_LINK } from "@/util/constants";
 
 async function fetchDiscordInviteLink() {
   const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
@@ -23,7 +24,7 @@ async function fetchDiscordInviteLink() {
 export default async function AboutPage() {
   const year = new Date().getFullYear() - 1984;
 
-  const discordInviteLink = await fetchDiscordInviteLink();
+  // const discordInviteLink = await fetchDiscordInviteLink();
 
   return (
     <>
@@ -260,7 +261,7 @@ export default async function AboutPage() {
                       { title: "피그 목록 바로가기", url: "/pig" },
                       {
                         title: "공식 디스코드 서버",
-                        url: discordInviteLink,
+                        url: DISCORD_INVITE_LINK,
                       },
                       {
                         title: "공식 인스타그램",

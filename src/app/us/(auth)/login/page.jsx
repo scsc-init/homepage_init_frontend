@@ -29,17 +29,8 @@ export default function LoginPage() {
   useEffect(() => {
     const checkProfile = async () => {
       const jwt = localStorage.getItem("jwt");
-      if (!jwt) return;
-
-      try {
-        const resUser = await fetch("/api/user/profile", {
-          headers: { "x-jwt": jwt },
-        });
-
-        if (resUser.status === 200) {
-          router.push("/about/welcome");
-        }
-      } catch (e) {
+      if (jwt) {
+        router.push("/about/welcome");
         return;
       }
     };

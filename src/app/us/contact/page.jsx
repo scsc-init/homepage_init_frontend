@@ -3,6 +3,7 @@ import "./page.css";
 import JoinButton from "./JoinButton.jsx";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
+import { DISCORD_INVITE_LINK } from "@/util/constants";
 
 async function fetchDiscordInviteLink() {
   const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
@@ -18,7 +19,7 @@ async function fetchDiscordInviteLink() {
 export default async function Contact() {
   const thisYear = new Date().getFullYear();
 
-  const discordInviteLink = await fetchDiscordInviteLink();
+  // const discordInviteLink = await fetchDiscordInviteLink();
 
   return (
     <>
@@ -110,7 +111,7 @@ export default async function Contact() {
                     className="ico"
                   />
                   <a
-                    href={discordInviteLink}
+                    href={DISCORD_INVITE_LINK}
                     className="ContactLink"
                     target="_blank"
                     rel="noopener noreferrer"

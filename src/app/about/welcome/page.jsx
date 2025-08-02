@@ -1,7 +1,7 @@
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
-import { DEPOSIT_ACC } from "@/util/constants";
+import { DEPOSIT_ACC, DISCORD_INVITE_LINK } from "@/util/constants";
 import EnrollButton from "./EnrollButton"
 
 async function fetchDiscordInviteLink() {
@@ -16,7 +16,7 @@ async function fetchDiscordInviteLink() {
 }
 
 export default async function Contact() {
-  const discordInviteLink = await fetchDiscordInviteLink();
+  // const discordInviteLink = await fetchDiscordInviteLink();
 
   return (
     <>
@@ -35,7 +35,7 @@ export default async function Contact() {
             <p>자세한 설명은 <a href={discordInviteLink} target="_blank" rel="noopener noreferrer">디스코드 서버</a>에서 확인할 수 있습니다.</p>
             <hr></hr>
             수고하셨습니다. 가입이 완료되었습니다. SCSC에 온 걸 진심으로 환영합니다! */}
-            <h3><a href={discordInviteLink} target="_blank" rel="noopener noreferrer">디스코드 서버 링크</a></h3>
+            <h3><a href={DISCORD_INVITE_LINK} target="_blank" rel="noopener noreferrer">디스코드 서버 링크</a></h3>
             <h3>{DEPOSIT_ACC}</h3>
             <div className="deposit-container">
               <h3>회비: 2.5만원</h3>

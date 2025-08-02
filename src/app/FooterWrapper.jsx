@@ -2,6 +2,7 @@ import "./footer.css";
 import Footer from "./Footer";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
+import { DISCORD_INVITE_LINK } from "@/util/constants";
 
 async function fetchDiscordInviteLink() {
   const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
@@ -15,7 +16,7 @@ async function fetchDiscordInviteLink() {
 }
 
 export default async function FooterWrapper() {
-  const discordInviteLink = await fetchDiscordInviteLink();
+  // const discordInviteLink = await fetchDiscordInviteLink();
 
-  return <Footer discordInviteLink={discordInviteLink}/>;
+  return <Footer discordInviteLink={DISCORD_INVITE_LINK}/>;
 }
