@@ -6,9 +6,25 @@ import FaqList from "@/components/about/FaqList";
 import Arrow from "@/components/about/Arrow";
 import "./page.css";
 import Sidebar from "@/components/about/Sidebar.jsx";
+import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
+import { DISCORD_INVITE_LINK } from "@/util/constants";
 
-export default function AboutPage() {
+async function fetchDiscordInviteLink() {
+  const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
+  if (res.ok) {
+    const resData = await res.json();
+    return resData.result.invite_url;
+  }
+}
+
+export default async function AboutPage() {
   const year = new Date().getFullYear() - 1984;
+
+  // const discordInviteLink = await fetchDiscordInviteLink();
 
   return (
     <>
@@ -243,6 +259,10 @@ export default function AboutPage() {
                       { title: "리크루팅 정보 바로가기", url: "/us/contact" },
                       { title: "시그 목록 바로가기", url: "/sig" },
                       { title: "피그 목록 바로가기", url: "/pig" },
+                      {
+                        title: "공식 디스코드 서버",
+                        url: DISCORD_INVITE_LINK,
+                      },
                       {
                         title: "공식 인스타그램",
                         url: "https://www.instagram.com/scsc_snu/?hl=ko",

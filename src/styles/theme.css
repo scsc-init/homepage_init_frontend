@@ -28,6 +28,7 @@
   --executive-arrow-hover: #ccc;
   --executive-card-shadow: rgba(0, 0, 0, 0.06);
   --color-text-strong: #111111;
+  --box-color: rgb(235, 235, 235);
 
   --main-bg-gradient: radial-gradient(
     circle at center,
