@@ -36,6 +36,7 @@ const menuData = [
     title: "Contact",
     items: [
       { label: "Contact Us!", url: "/us/contact" },
+      { label: "Fund Apply", url: "/us/fund-apply/create" },
       { label: "Join Us!", url: "/us/login" },
     ],
   },
