@@ -1,10 +1,24 @@
 import Image from "next/image";
-import ScrollEffectWrapper from "@/components/about/ScrollEffectWrapper";
 import "./page.css";
 import JoinButton from "./JoinButton.jsx";
+import { getBaseUrl } from "@/util/getBaseUrl";
+import { getApiSecret } from "@/util/getApiSecret";
 
-export default function Contact() {
+async function fetchDiscordInviteLink() {
+  const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
+  if (res.ok) {
+    const resData = await res.json();
+    return resData.result.invite_url;
+  }
+}
+
+export default async function Contact() {
   const thisYear = new Date().getFullYear();
+
+  const discordInviteLink = await fetchDiscordInviteLink();
 
   return (
     <>
@@ -84,6 +98,24 @@ export default function Contact() {
                     rel="noopener noreferrer"
                   >
                     github.com/SNU-SCSC
+                  </a>
+                </div>
+
+                <div className="ContactIconLink">
+                  <Image
+                    src="/vectors/discord.svg"
+                    alt="Discord"
+                    width={28}
+                    height={28}
+                    className="ico"
+                  />
+                  <a
+                    href={discordInviteLink}
+                    className="ContactLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Discord Server
                   </a>
                 </div>
               </div>

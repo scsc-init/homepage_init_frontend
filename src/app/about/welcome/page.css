@@ -1,0 +1,84 @@
+@import "@radix-ui/colors/indigo.css";
+@import "@radix-ui/colors/slate.css";
+
+html,
+body {
+  overflow-x: hidden;
+  background: var(--main-bg-gradient);
+}
+
+/* 레이아웃 */
+#Home {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  color: var(--color-text-body);
+  padding: 4rem 1rem;
+}
+
+#HomeContent {
+  width: 100%;
+  max-width: 60rem;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+/* 박스 */
+.ContentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 30rem;
+  margin: 0 auto 3rem auto;
+  padding: 2.5rem 2rem;
+  border: 2px solid var(--color-button-border);
+  border-radius: 1rem;
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.ContentBlock:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* 배경 로고 */
+.WallLogo,
+.WallLogo2 {
+  position: fixed;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.WallLogo {
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 0.8;
+}
+
+.WallLogo2 {
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 1;
+}
+
+.deposit-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+/* 반응형 */
+@media screen and (max-width: 768px) {
+
+}

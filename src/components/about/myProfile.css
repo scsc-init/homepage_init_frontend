@@ -20,10 +20,12 @@
 .main-logo-description {
   font-weight: bold;
   font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
 .main-container {
   display: flex;
+  min-height: 35vh;
   gap: 1rem;
   padding: 1rem;
   box-sizing: border-box;
@@ -34,6 +36,7 @@
   padding: 1rem;
   background-color: var(--box-color);
   border-radius: 8px;
+  overflow-y: auto;
 }
 
 .right-container {
@@ -133,7 +136,7 @@
   color: #333;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .main-container {
     flex-direction: column;
     height: auto;
@@ -152,6 +155,11 @@
     box-sizing: border-box;
   }
 
+  .user-status-container,
+  .user-info-container {
+    min-height: 120px;
+  }
+
   .buttons-container {
     height: auto;
   }
@@ -160,7 +168,3 @@
     height: 40px;
   }
 }
-
-
-
-

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js"
@@ -22,6 +23,29 @@ export default function LoginPage() {
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkProfile = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
+
+      try {
+        const resUser = await fetch("/api/user/profile", {
+          headers: { "x-jwt": jwt },
+        });
+
+        if (resUser.status === 200) {
+          router.push("/about/welcome");
+        }
+      } catch (e) {
+        return;
+      }
+    };
+
+    checkProfile();
+  }, [router]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -110,7 +134,7 @@ export default function LoginPage() {
 
     const { jwt } = await loginRes.json();
     localStorage.setItem("jwt", jwt);
-    window.location.replace("/");
+    window.location.replace("/about/welcome");
   };
 
   return (
@@ -146,7 +170,7 @@ export default function LoginPage() {
         )}
 
         {stage === 1 && (
-          <div style={{boxSizing: "border-box", marginTop: "10vh" }}>
+          <div style={{boxSizing: "border-box", marginTop: "0vh" }}>
             <input value={form.email} disabled style={{width: "100%", boxSizing: "border-box"}}/>
             <p>
               이름: <strong>{form.name}</strong>
@@ -163,7 +187,7 @@ export default function LoginPage() {
         )}
 
         {stage === 2 && (
-          <div style={{ marginTop: "10vh" }}>
+          <div style={{ marginTop: "0vh" }}>
             <p>학번 입력</p>
             <div
               style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
@@ -203,7 +227,7 @@ export default function LoginPage() {
         )}
 
         {stage === 3 && (
-          <div style={{ marginTop: "10vh" }}>
+          <div style={{ marginTop: "0vh" }}>
             <p>전화번호 입력</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
@@ -251,7 +275,7 @@ export default function LoginPage() {
         )}
 
         {stage === 4 && (
-          <div style={{ marginTop: "10vh" }}>
+          <div style={{ marginTop: "0vh" }}>
             <p>단과대학 소속 입력</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <select

@@ -13,3 +13,5 @@ export const COLORS = {
   surfaceLight: "var(--color-surface-light)",
 };
 // 전체적인 색들입니다. @/styles/theme.css와 함께 수정해주세요.
+
+export const DEPOSIT_ACC = '국민 923801-00-058488';
