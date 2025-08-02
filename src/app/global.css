@@ -33,7 +33,7 @@ button {
 }
 
 :root {
-  color: var(--slate-12);
+  color: var(--color-text-subtle);
 }
 
 *::selection {
