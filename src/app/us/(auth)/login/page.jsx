@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js"
+import { create } from "domain";
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -17,6 +18,7 @@ export default function LoginPage() {
     phone2: "",
     phone3: "",
     major_id: "",
+    profile_picture_url: "",
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState("");
@@ -57,7 +59,9 @@ export default function LoginPage() {
         ),
       );
 
-      const { email, name: rawName } = payload;
+      const { email, name: rawName, picture: profilePictureUrl } = payload;
+      setForm((prev) => ({ ...prev, email, name: cleanName, profile_picture_url: profilePictureUrl }));
+
       const cleanName = rawName
         ?.replace(/^[-\s\u00AD\u2010-\u2015]+/, "")
         .split("/")[0]
@@ -104,7 +108,7 @@ export default function LoginPage() {
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
 
-    await fetch(`/api/user/create`, {
+    const createRes = await fetch(`/api/user/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -114,8 +118,18 @@ export default function LoginPage() {
         phone,
         major_id: Number(form.major_id),
         status: "pending",
+        profile_picture: form.profile_picture_url,
+        profile_picture_is_url: true,
       }),
     });
+
+    if (createRes.status !== 201) {
+      const createData = await createRes.json();
+      alert(`유저 생성 실패: ${createData.detail}`);
+      console.log(createData);
+      router.push('/')
+      return;
+    }
 
     const loginRes = await fetch(`/api/user/login`, {
       method: "POST",
