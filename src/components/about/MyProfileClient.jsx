@@ -52,10 +52,6 @@ export default function MyProfileClient() {
     fetchProfile();
   }, [router]);
 
-  useEffect(() => {
-    console.log(user)
-  }, [user])
-
   const handleLogout = () => {
     localStorage.removeItem("jwt");
     sessionStorage.clear();
