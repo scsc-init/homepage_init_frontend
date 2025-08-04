@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ArticleList({
   boards: boardsDefault,
@@ -9,6 +9,28 @@ export default function ArticleList({
   const [boards, setBoards] = useState(boardsDefault ?? []);
   const [articles, setArticles] = useState(articlesDefault ?? {});
   const [saving, setSaving] = useState({});
+
+  useEffect(() => {
+    const targetBoardIds = [3, 4, 5];
+    async function fetchArticles() {
+      const all = {};
+      for (const boardId of targetBoardIds) {
+        const res = await fetch(`/api/articles/${boardId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-jwt": localStorage.getItem("jwt"),
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          all[boardId] = data;
+        }
+      }
+      return setArticles(all);
+    }
+    fetchArticles();
+  },[])
 
   const handleBoardChange = (id, value) => {
     setBoards((prev) =>

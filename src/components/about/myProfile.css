@@ -57,6 +57,10 @@
   overflow-y: auto;
 }
 
+.user-status-content {
+  margin-bottom: 0.5rem;
+}
+
 .buttons-container {
   display: flex;
   flex-direction: row;
@@ -78,6 +82,7 @@
   font-weight: bold;
   font-size: 1rem;
   margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 .enroll-button {
@@ -100,7 +105,7 @@
   padding: 0;
 }
 
-.user-name-container {
+/* .user-name-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -108,12 +113,36 @@
   z-index: 4;
   margin-bottom: 3vh;
   position: relative;
-}
+} */
 
 .user-name {
   text-align: center;
   font-size: 1.2rem;
   font-weight: bolder;
+}
+
+.user-profile-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3vh;
+  position: relative;
+}
+
+.user-profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Update this to align left instead of center */
+.user-name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* align name to the left */
+  text-align: left;
 }
 
 
@@ -131,7 +160,7 @@
 }
 
 .user-info-table th {
-  width: 30%;
+  width: 5rem;
   font-weight: 600;
   color: #333;
 }

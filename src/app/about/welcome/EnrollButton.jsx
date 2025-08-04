@@ -22,7 +22,7 @@ export default function EnrollButton() {
         const resUser = await fetch(`/api/user/profile`, {
           headers: { "x-jwt": jwt },
         });
-        if (resUser.status != 200) {alert("로그인이 필요합니다."); router.push("/us/login"); return;}
+        if (resUser.status != 200) {localStorage.removeItem('jwt'); alert("로그인이 필요합니다."); router.push("/us/login"); return;}
         const userData = await resUser.json();
         setUser(userData);
       } catch (e) {

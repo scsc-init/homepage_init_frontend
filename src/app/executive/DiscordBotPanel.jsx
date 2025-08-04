@@ -17,7 +17,7 @@ export default function DiscordBotPanel({is_logged_in}) {
   
   return (
     <>
-      <div>{is_logged_in ? "Bot is logged in" : "Bot is not logged in"}</div>
+      <div>{is_logged_in === 'error' ? "Server Error, failed to fetch bot status" : ( is_logged_in ? "Bot is logged in" : "Bot is not logged in")}</div>
       <button onClick={discordLogin}>login discord bot</button>
     </>
   );
