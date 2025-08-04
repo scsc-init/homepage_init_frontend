@@ -7,7 +7,7 @@ import MajorList from "./MajorList";
 import Link from "next/link";
 import WithAuthorization from "@/components/WithAuthorization";
 import ScscStatusPanel from "./ScscStatusPanel";
-import DiscordBotPanel from "./DiscordBotPanel"
+import DiscordBotPanel from "./DiscordBotPanel";
 import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
@@ -27,6 +27,10 @@ export default async function AdminPanel() {
           <Link href="/executive/user">유저 관리 페이지로 이동</Link>
         </p>
 
+        <h2>지원금 요청</h2>
+        <p>
+          <Link href="/board/6">지원금 요청 게시판으로 이동</Link>
+        </p>
         <h2>게시글 관리</h2>
         <ArticleList boards={boards} />
 
@@ -37,11 +41,15 @@ export default async function AdminPanel() {
         <PigList pigs={pigs} />
 
         <h2>Scsc status 관리</h2>
-        <ScscStatusPanel scscGlobalStatus={scscGlobalStatus.status} semester={scscGlobalStatus.semester} year={scscGlobalStatus.year}/>
+        <ScscStatusPanel
+          scscGlobalStatus={scscGlobalStatus.status}
+          semester={scscGlobalStatus.semester}
+          year={scscGlobalStatus.year}
+        />
 
         <h2>디스코드 봇 관리</h2>
         <DiscordBotPanel is_logged_in={discordBotStatus ? discordBotStatus.logged_in : false}/>
-        
+  
 
         <h2>전공 관리</h2>
         <MajorList majors={majors} />
@@ -123,7 +131,7 @@ async function fetchScscGlobalStatus() {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-  return res.ok ? (await res.json()) : "";
+  return res.ok ? await res.json() : "";
 }
 
 async function fetchMajors() {
