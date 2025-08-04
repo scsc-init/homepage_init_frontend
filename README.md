@@ -2,9 +2,9 @@
 
 Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성, 게시판 등 다양한 기능을 지원합니다.
 
-> 최신개정일 : 2025-08-04
+> 최신개정일 : 2025-08-05
 > 작성자 : 이한경 윤영우 강명석 박성현
-> 최신개정자 : 강명석
+> 최신개정자 : 윤영우
 
 ---
 
@@ -48,6 +48,18 @@ src/
 ```
 
 ---
+
+## 환경 변수 설명
+
+| Key Name             | Description                                                      |
+|----------------------|------------------------------------------------------------------|
+| `BACKEND_URL`                  | 연결된 BE 서버의 외부 URL  |
+| `API_SECRET`                   | BE 서버에서 처리되는 API KEY   |
+| `GOOGLE_CLIENT_ID`             | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)    |
+| `GOOGLE_CLIENT_SECRET`         | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)  |
+| `NEXTAUTH_SECRET`              | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조) |
+| `NEXTAUTH_URL`                 | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
+| `SNU_EMAIL_CHECK`              | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부 |
 
 ## 설치 및 실행 방법
 
