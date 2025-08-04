@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ExportUsersButton from "./ExportUsersButton"
 
 export default function UserList({ users: usersDefault, majors = [] }) {
   const [users, setUsers] = useState(usersDefault ?? []);
@@ -102,8 +103,15 @@ export default function UserList({ users: usersDefault, majors = [] }) {
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
 
+  useEffect(() => {
+    console.log(filteredUsers)
+  }, [filteredUsers])
+
   return (
     <div style={{ marginTop: "2rem" }}>
+      <h2>유저 csv 다운로드</h2>
+      아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.
+      <ExportUsersButton filteredUsers={filteredUsers}/>
       <h2>관리자 권한 편집</h2>
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
