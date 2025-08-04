@@ -40,7 +40,7 @@ export default async function AdminPanel() {
         <ScscStatusPanel scscGlobalStatus={scscGlobalStatus.status} semester={scscGlobalStatus.semester} year={scscGlobalStatus.year}/>
 
         <h2>디스코드 봇 관리</h2>
-        <DiscordBotPanel is_logged_in={discordBotStatus ? discordBotStatus.logged_in : false}/>
+        <DiscordBotPanel is_logged_in={discordBotStatus ? discordBotStatus.logged_in : 'error'}/>
         
 
         <h2>전공 관리</h2>
