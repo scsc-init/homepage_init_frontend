@@ -48,6 +48,7 @@ export default async function AdminPanel() {
         />
 
         <h2>디스코드 봇 관리</h2>
+
         <DiscordBotPanel is_logged_in={discordBotStatus ? discordBotStatus.logged_in : 'error'}/>
         
 
