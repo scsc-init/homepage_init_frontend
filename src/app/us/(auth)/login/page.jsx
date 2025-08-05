@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js"
-import { create } from "domain";
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -32,8 +31,15 @@ export default function LoginPage() {
     const checkProfile = async () => {
       const jwt = localStorage.getItem("jwt");
       if (jwt) {
-        router.push("/about/welcome");
-        return;
+        try {
+          const resUser = await fetch(`/api/user/profile`, {
+            headers: { "x-jwt": jwt },
+          });
+          if (resUser.status != 200) {localStorage.removeItem('jwt'); return;}
+          router.push('/about/welcome')
+        } catch (e) {
+          return;
+        }
       }
     };
 
