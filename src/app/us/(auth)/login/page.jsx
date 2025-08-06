@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js"
@@ -16,12 +17,34 @@ export default function LoginPage() {
     phone2: "",
     phone3: "",
     major_id: "",
+    profile_picture_url: "",
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState("");
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkProfile = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        try {
+          const resUser = await fetch(`/api/user/profile`, {
+            headers: { "x-jwt": jwt },
+          });
+          if (resUser.status != 200) {localStorage.removeItem('jwt'); return;}
+          router.push('/about/welcome')
+        } catch (e) {
+          return;
+        }
+      }
+    };
+
+    checkProfile();
+  }, [router]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -42,7 +65,9 @@ export default function LoginPage() {
         ),
       );
 
-      const { email, name: rawName } = payload;
+      const { email, name: rawName, picture: profilePictureUrl } = payload;
+      setForm((prev) => ({ ...prev, email, name: cleanName, profile_picture_url: profilePictureUrl }));
+
       const cleanName = rawName
         ?.replace(/^[-\s\u00AD\u2010-\u2015]+/, "")
         .split("/")[0]
@@ -89,7 +114,7 @@ export default function LoginPage() {
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
 
-    await fetch(`/api/user/create`, {
+    const createRes = await fetch(`/api/user/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -99,8 +124,18 @@ export default function LoginPage() {
         phone,
         major_id: Number(form.major_id),
         status: "pending",
+        profile_picture: form.profile_picture_url,
+        profile_picture_is_url: true,
       }),
     });
+
+    if (createRes.status !== 201) {
+      const createData = await createRes.json();
+      alert(`유저 생성 실패: ${createData.detail}`);
+      console.log(createData);
+      router.push('/')
+      return;
+    }
 
     const loginRes = await fetch(`/api/user/login`, {
       method: "POST",
@@ -110,7 +145,7 @@ export default function LoginPage() {
 
     const { jwt } = await loginRes.json();
     localStorage.setItem("jwt", jwt);
-    window.location.replace("/");
+    window.location.replace("/about/welcome");
   };
 
   return (
@@ -146,7 +181,7 @@ export default function LoginPage() {
         )}
 
         {stage === 1 && (
-          <div style={{boxSizing: "border-box", marginTop: "10vh" }}>
+          <div style={{boxSizing: "border-box", marginTop: "0vh" }}>
             <input value={form.email} disabled style={{width: "100%", boxSizing: "border-box"}}/>
             <p>
               이름: <strong>{form.name}</strong>
@@ -163,7 +198,7 @@ export default function LoginPage() {
         )}
 
         {stage === 2 && (
-          <div style={{ marginTop: "10vh" }}>
+          <div style={{ marginTop: "0vh" }}>
             <p>학번 입력</p>
             <div
               style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
@@ -203,7 +238,7 @@ export default function LoginPage() {
         )}
 
         {stage === 3 && (
-          <div style={{ marginTop: "10vh" }}>
+          <div style={{ marginTop: "0vh" }}>
             <p>전화번호 입력</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
@@ -251,7 +286,7 @@ export default function LoginPage() {
         )}
 
         {stage === 4 && (
-          <div style={{ marginTop: "10vh" }}>
+          <div style={{ marginTop: "0vh" }}>
             <p>단과대학 소속 입력</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <select
