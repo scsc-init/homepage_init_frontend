@@ -1,0 +1,169 @@
+#SigList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sigLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.sigCard {
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: var(--executive-card-bg);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.sigCard:hover {
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
+}
+
+.sigTopbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sigTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-body);
+}
+
+.sigUserCount {
+  font-size: 0.9rem;
+  color: var(--color-text-subtle);
+}
+
+.sigDescription {
+  font-size: 0.95rem;
+  color: var(--color-text-subtle);
+  line-height: 1.4;
+  white-space: normal;
+}
+
+#SigCreateButton {
+  all: unset;
+}
+
+.SigCreateBtn {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.SigCreateBtn:hover {
+  background-color: var(--color-button-hover-bg);
+}
+
+.SigSortDropdown {
+  position: relative;
+}
+
+.SigSortBtn {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.SigSortBtn:hover {
+  background-color: var(--color-button-hover-bg);
+}
+
+.SigSortMenu {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.SigSortMenu.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.SigSortMenu button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: var(--color-text-body);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.SigSortMenu button:hover {
+  background-color: var(--color-hover-bg);
+}
+
+.fixed-width {
+  width: 7.5rem;
+  text-align: center;
+}
+
+.SigActions {
+  display: flex;
+  justify-content: space-between; /* 좌우 끝 정렬 */
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .SigActions {
+    flex-direction: row; /* 세로 말고 가로 유지 */
+    justify-content: space-between; /* 좌우 끝 */
+    width: 100%;
+  }
+  .SigActions > * {
+    width: auto; /* 버튼이 가득 차지하지 않게 */
+  }
+}
+
+.SigActions {
+  display: flex;
+  justify-content: space-between; /* 왼쪽과 오른쪽 끝 */
+  align-items: center;
+  width: 100%; /* 전체 폭 */
+  margin-bottom: 1.5rem; /* 목록과 간격 */
+}
+
+.left-action {
+  display: flex;
+  align-items: center;
+}
+
+.right-action {
+  display: flex;
+  align-items: center;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .SigActions {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+}

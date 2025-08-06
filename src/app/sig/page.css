@@ -94,3 +94,18 @@ html,
 body {
   background-color: var(--background-color);
 }
+
+.SigHeader {
+  width: 100%;
+  max-width: 60rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.SigHeaderActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
