@@ -1,8 +1,11 @@
 /* 페이지 전체 컨테이너 */
 .SigDetailContainer {
   max-width: 60vw;
-  margin: 0 auto;
-  padding: 2.5rem 1rem;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  background-color: var(--executive-card-bg);
 }
 
 html,
