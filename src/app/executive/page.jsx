@@ -13,7 +13,6 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function AdminPanel() {
   const boards = await fetchBoards();
-  const articles = await fetchArticles();
   const sigs = await fetchSigs();
   const pigs = await fetchPigs();
   const scscGlobalStatus = await fetchScscGlobalStatus();
@@ -33,7 +32,7 @@ export default async function AdminPanel() {
           <Link href="/board/6">지원금 요청 게시판으로 이동</Link>
         </p>
         <h2>게시글 관리</h2>
-        <ArticleList boards={boards} articles={articles} />
+        <ArticleList boards={boards} />
 
         <h2>SIG 관리</h2>
         <SigList sigs={sigs} />
@@ -49,7 +48,9 @@ export default async function AdminPanel() {
         />
 
         <h2>디스코드 봇 관리</h2>
-        <DiscordBotPanel is_logged_in={discordBotStatus.logged_in} />
+
+        <DiscordBotPanel is_logged_in={discordBotStatus ? discordBotStatus.logged_in : 'error'}/>
+        
 
         <h2>전공 관리</h2>
         <MajorList majors={majors} />
@@ -70,20 +71,6 @@ async function fetchBoards() {
     }),
   );
   return boardResults.filter(Boolean);
-}
-async function fetchArticles() {
-  const all = {};
-  for (const boardId of targetBoardIds) {
-    const res = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
-      headers: { "x-api-secret": getApiSecret() },
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const data = await res.json();
-      all[boardId] = data;
-    }
-  }
-  return all;
 }
 
 async function fetchSigs() {

@@ -103,8 +103,8 @@ body {
   border-radius: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 480px;
-  height: 40vh;
+  max-width: min(480px, 80vw);
+  box-sizing: border-box;
 }
 
 .GoogleSignupCard h2 {

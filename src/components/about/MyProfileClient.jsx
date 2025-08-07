@@ -108,9 +108,16 @@ export default function MyProfileClient() {
           className="main-logo logo"
         />
       </div>
-      <div className="user-name-container">
-        <div className="user-name">
-          {user.name} {"[" + USER_ROLE_MAP[user.role] + "]"}
+      <div className="user-profile-wrapper">
+        <img
+          src={user.profile_picture ? user.profile_picture : "/main/default-pfp.png"}
+          alt="Profile" 
+          className="user-profile-picture"
+        />
+        <div className="user-name-container">
+          <div className="user-name">
+            {user.name} {"[" + USER_ROLE_MAP[user.role] + "]"}
+          </div>
         </div>
       </div>
       <div class="main-container">

@@ -1,8 +1,10 @@
 import { Noto_Sans_KR } from "next/font/google";
 import "./global.css";
 import HeaderWrapper from "./HeaderWrapper";
-import Footer from "./footer.jsx";
 import ThemeToggle from "@/components/ThemeToggle";
+import dynamic from "next/dynamic";
+
+const FooterWrapper = dynamic(() => import("@/app/FooterWrapper"), { ssr: false });
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
@@ -63,7 +65,7 @@ export default function RootLayout({ children }) {
           <HeaderWrapper />
           <main id="MainContent">{children}</main>
           <ThemeToggle />
-          <Footer />
+          <FooterWrapper />
         </div>
       </body>
     </html>
