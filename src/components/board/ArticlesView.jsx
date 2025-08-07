@@ -11,17 +11,11 @@ export default function ArticlesView({ board, sortOrder }) {
   const [articles, setArticles] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
 
-  if (!board) {
-    return (
-      <div className="text-center text-red-600 mt-10">
-        게시판 정보가 없습니다.
-      </div>
-    );
-  }
-
-  const boardId = board.id;
+  const boardId = board?.id; // board가 없으면 undefined
 
   useEffect(() => {
+    if (!boardId) return; // board 없을 경우 실행하지 않음
+
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.push("/us/login");
@@ -53,6 +47,14 @@ export default function ArticlesView({ board, sortOrder }) {
 
     fetchContents();
   }, [router, boardId]);
+
+  if (!board) {
+    return (
+      <div className="text-center text-red-600 mt-10">
+        게시판 정보가 없습니다.
+      </div>
+    );
+  }
 
   if (unauthorized) {
     return (
