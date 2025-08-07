@@ -44,15 +44,15 @@ export default function LoadingSpinner() {
       });
     }, 30);
 
+    return () => clearInterval(typing);
+  }, [sampleCode]);
+
+  useEffect(() => {
     const cursorBlink = setInterval(() => {
       setShowCursor((prev) => !prev);
     }, 500);
-
-    return () => {
-      clearInterval(typing);
-      clearInterval(cursorBlink);
-    };
-  }, [sampleCode]);
+    return () => clearInterval(cursorBlink);
+  }, []);
 
   return (
     <div className="LoadingCodeWrapper">
@@ -60,7 +60,7 @@ export default function LoadingSpinner() {
         {displayed}
         <span className="Cursor">{showCursor ? "|" : " "}</span>
       </pre>
-      <p className="LoadingText">코드 컴파일 중...</p>
+      <p className="LoadingText">Compiling...</p>
     </div>
   );
 }
