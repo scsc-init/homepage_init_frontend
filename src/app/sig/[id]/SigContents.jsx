@@ -17,10 +17,6 @@ export default function SigContents({ sigContentId }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-      return;
-    }
 
     const fetchContents = async () => {
       try {
@@ -39,6 +35,13 @@ export default function SigContents({ sigContentId }) {
         setLoading(false);
       }
     };
+
+    if (!jwt) {
+      router.push("/us/login");
+      setLoading(false);
+      return;
+    }
+
     fetchContents();
   }, [router, sigContentId]);
 

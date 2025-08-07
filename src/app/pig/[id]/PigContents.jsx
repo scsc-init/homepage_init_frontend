@@ -17,10 +17,6 @@ export default function PigContents({ pigContentId }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-      return;
-    }
 
     const fetchContents = async () => {
       try {
@@ -40,11 +36,17 @@ export default function PigContents({ pigContentId }) {
       }
     };
 
+    if (!jwt) {
+      router.push("/us/login");
+      setLoading(false);
+      return;
+    }
+
     fetchContents();
   }, [router, pigContentId]);
 
   return (
-    <div className="SigContent">
+    <div className="PigContent">
       {loading ? (
         <LoadingSpinner />
       ) : (
