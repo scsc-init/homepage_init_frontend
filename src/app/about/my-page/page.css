@@ -28,3 +28,13 @@ body {
   height: auto;
 }
 
+/* 다크모드 대응 */
+.dark #MyPageContainer {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  color: var(--color-text-body);
+}
+
+.dark #Home {
+  background: var(--main-bg-gradient);
+}

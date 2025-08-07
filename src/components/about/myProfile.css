@@ -80,7 +80,7 @@
 }
 
 .enroll-button {
-  background: #92A0B6;
+  background: #92a0b6;
   box-shadow: 0px 1px 6px 3px rgba(0, 0, 0, 0.14);
   border-radius: 25px;
   height: 35px;
@@ -88,7 +88,7 @@
 }
 
 .logout-button {
-  background: #92A0B6;
+  background: #92a0b6;
   box-shadow: 0px 1px 6px 3px rgba(0, 0, 0, 0.14);
   border-radius: 20px;
   height: 35px;
@@ -114,7 +114,6 @@
   font-size: 1.2rem;
   font-weight: bolder;
 }
-
 
 .user-info-table {
   width: 100%;
@@ -163,6 +162,37 @@
   }
 }
 
+/* 다크모드 대응 */
+.dark .main-logo-description,
+.dark .user-name,
+.dark .user-info-description,
+.dark .user-status-description {
+  color: var(--color-text-body);
+}
 
+.dark .user-info-container,
+.dark .user-status-container,
+.dark .buttons-container {
+  background-color: var(--executive-card-bg);
+  color: var(--color-text-body);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+}
 
+.dark .user-info-table th {
+  color: var(--color-text-subtle);
+}
 
+.dark .user-info-table td {
+  color: var(--color-text-body);
+}
+
+.dark .enroll-button,
+.dark .logout-button {
+  background: var(--color-button-bg);
+  color: white;
+}
+
+.dark .enroll-button:hover,
+.dark .logout-button:hover {
+  background: #368aa0;
+}
