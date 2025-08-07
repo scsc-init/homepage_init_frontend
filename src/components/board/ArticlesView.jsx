@@ -7,36 +7,53 @@ import { useEffect, useState } from "react";
 
 export default function ArticlesView({ board, sortOrder }) {
   const router = useRouter();
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState(null);
+  const [unauthorized, setUnauthorized] = useState(false);
 
   const boardId = board.id;
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
       router.push("/us/login");
+      return;
+    }
+
+    if (boardId === 1 || boardId === 2) {
+      setUnauthorized(true); // 상태로 표시
       return;
     }
 
     const fetchContents = async () => {
       try {
-        const contentRes = await fetch(`/api/articles/${boardId}`, {
+        const res = await fetch(`/api/articles/${boardId}`, {
           headers: { "x-jwt": jwt },
         });
-        if (!contentRes.ok) {
-          alert("게시글 로딩 실패");
-          router.push("/");
+
+        if (!res.ok) {
+          router.push("/us/login");
+          return;
         }
-        const data = await contentRes.json();
+
+        const data = await res.json();
         setArticles(data);
-      } catch (e) {
-        alert(`게시글 불러오기 중 오류: ${e}`);
-        router.push("/");
+      } catch (_) {
+        router.push("/us/login");
       }
     };
+
     fetchContents();
-  }, [router]);
+  }, [router, boardId]);
+
+  // 권한 없음
+  if (unauthorized) {
+    return (
+      <div className="text-center text-red-600 mt-10">권한이 부족합니다.</div>
+    );
+  }
+
+  // 로딩 중
+  if (!Array.isArray(articles)) return null;
 
   const sortedArticles = [...articles].sort((a, b) => {
     if (sortOrder === "latest")
