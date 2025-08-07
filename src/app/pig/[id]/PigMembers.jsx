@@ -11,12 +11,14 @@ export default function PigMembers({ pigId }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-      return;
-    }
 
     const fetchMembers = async () => {
+      if (!jwt) {
+        setLoading(false);
+        router.push("/us/login");
+        return;
+      }
+
       try {
         const membersRes = await fetch(`/api/pig/${pigId}/members`, {
           headers: { "x-jwt": jwt },
