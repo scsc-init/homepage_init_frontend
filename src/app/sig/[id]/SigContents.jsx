@@ -17,6 +17,11 @@ export default function SigContents({ sigContentId }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      setLoading(false);
+      router.push("/us/login");
+      return;
+    }
 
     const fetchContents = async () => {
       try {
@@ -36,37 +41,29 @@ export default function SigContents({ sigContentId }) {
       }
     };
 
-    if (!jwt) {
-      router.push("/us/login");
-      setLoading(false);
-      return;
-    }
-
     fetchContents();
   }, [router, sigContentId]);
 
+  if (loading) return <LoadingSpinner />;
+
   return (
     <div className="SigContent">
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeHighlight]}
-          components={{
-            h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
-            h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
-            p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
-            li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
-            code: ({ node, ...props }) => (
-              <code className="mdx-inline-code" {...props} />
-            ),
-            pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
-          }}
-        >
-          {article?.content}
-        </ReactMarkdown>
-      )}
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw, rehypeHighlight]}
+        components={{
+          h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
+          h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
+          p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
+          li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
+          code: ({ node, ...props }) => (
+            <code className="mdx-inline-code" {...props} />
+          ),
+          pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
+        }}
+      >
+        {article?.content}
+      </ReactMarkdown>
     </div>
   );
 }
