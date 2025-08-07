@@ -13,6 +13,7 @@ export default function SigMembers({ sigId }) {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.push("/us/login");
+      return;
     }
 
     const fetchMembers = async () => {
@@ -23,6 +24,7 @@ export default function SigMembers({ sigId }) {
         if (!membersRes.ok) {
           alert("시그 인원 불러오기 실패");
           router.push("/sig");
+          return;
         }
         const membersData = await membersRes.json();
         setMembers(membersData.map((m) => m.user));
@@ -43,7 +45,7 @@ export default function SigMembers({ sigId }) {
       {loading ? (
         <LoadingSpinner />
       ) : members.length === 0 ? (
-        <div>구성원이 없습니다.</div>
+        <div>가입한 인원이 없습니다.</div>
       ) : (
         members.map((m) => <div key={m.id}>{m.name}</div>)
       )}

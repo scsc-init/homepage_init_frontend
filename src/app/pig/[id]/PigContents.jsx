@@ -18,7 +18,6 @@ export default function PigContents({ pigContentId }) {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
       router.push("/us/login");
       return;
     }
@@ -29,23 +28,23 @@ export default function PigContents({ pigContentId }) {
           headers: { "x-jwt": jwt },
         });
         if (!contentRes.ok) {
-          alert("게시글 로딩 실패");
           router.push("/pig");
+          return;
         }
         const article = await contentRes.json();
         setArticle(article);
       } catch (e) {
-        alert(`피그 불러오기 중 오류: ${e}`);
         router.push("/pig");
       } finally {
         setLoading(false);
       }
     };
+
     fetchContents();
   }, [router, pigContentId]);
 
   return (
-    <div className="PigContent">
+    <div className="SigContent">
       {loading ? (
         <LoadingSpinner />
       ) : (
@@ -63,7 +62,7 @@ export default function PigContents({ pigContentId }) {
             pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
           }}
         >
-          {article.content}
+          {article?.content}
         </ReactMarkdown>
       )}
     </div>

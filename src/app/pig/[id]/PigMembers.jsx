@@ -13,6 +13,7 @@ export default function PigMembers({ pigId }) {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.push("/us/login");
+      return;
     }
 
     const fetchMembers = async () => {
@@ -21,28 +22,30 @@ export default function PigMembers({ pigId }) {
           headers: { "x-jwt": jwt },
         });
         if (!membersRes.ok) {
-          alert("피그 인원 불러오기 실패");
+          alert("시그 인원 불러오기 실패");
           router.push("/pig");
+          return;
         }
         const membersData = await membersRes.json();
         setMembers(membersData.map((m) => m.user));
       } catch (e) {
-        alert(`피그 인원 불러오기 중 오류: ${e}`);
+        alert(`시그 인원 불러오기 중 오류: ${e}`);
         router.push("/pig");
       } finally {
         setLoading(false);
       }
     };
+
     fetchMembers();
   }, [router, pigId]);
 
   return (
     <div>
-      <h2>피그 인원</h2>
+      <h2>시그 인원</h2>
       {loading ? (
         <LoadingSpinner />
       ) : members.length === 0 ? (
-        <div>구성원이 없습니다.</div>
+        <div>가입한 인원이 없습니다.</div>
       ) : (
         members.map((m) => <div key={m.id}>{m.name}</div>)
       )}
