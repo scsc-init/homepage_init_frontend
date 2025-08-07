@@ -5,29 +5,32 @@ import { useEffect, useState } from "react";
 const codes = [
   `#include <stdio.h>
 int main(void){
-	print("Hello, world!")
+  print("Hello, world!")
 }`,
   `#include <iostream>
 int main(void){
-	std::out << "Hello, world!";
+  std::out << "Hello, world!";
 }`,
   `using System;
 class Hello
 {
-	static void Main()
-    {
-    	Console.Write("Hello, world!");
-    }
+  static void Main()
+  {
+    Console.Write("Hello, world!");
+  }
 }`,
   `print("Hello, world!")
 print("Hello, SCSC!")
 name = input("이름을 입력하세요: ")
 print(f"안녕하세요, {name}님!")`,
 ];
-const random_index = Math.floor(Math.random() * codes.length);
-const sampleCode = codes[random_index];
 
 export default function LoadingSpinner() {
+  const [sampleCode] = useState(() => {
+    const random_index = Math.floor(Math.random() * codes.length);
+    return codes[random_index];
+  });
+
   const [displayed, setDisplayed] = useState("");
   const [showCursor, setShowCursor] = useState(true);
 
@@ -49,7 +52,7 @@ export default function LoadingSpinner() {
       clearInterval(typing);
       clearInterval(cursorBlink);
     };
-  }, []);
+  }, [sampleCode]);
 
   return (
     <div className="LoadingCodeWrapper">
