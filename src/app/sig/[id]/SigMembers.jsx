@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function SigMembers({ sigId }) {
   const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,23 +22,28 @@ export default function SigMembers({ sigId }) {
         });
         if (!membersRes.ok) {
           alert("시그 인원 불러오기 실패");
-          router.push('/sig');
+          router.push("/sig");
         }
         const membersData = await membersRes.json();
-        setMembers(membersData.map((m) => m.user))
+        setMembers(membersData.map((m) => m.user));
       } catch (e) {
         alert(`시그 인원 불러오기 중 오류: ${e}`);
-        router.push('/sig');
+        router.push("/sig");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchMembers();
   }, [router, sigId]);
-  
+
   return (
     <div>
       <h2>시그 인원</h2>
-      {members.length === 0 ? (
-        <div>로딩 중...</div>
+      {loading ? (
+        <LoadingSpinner />
+      ) : members.length === 0 ? (
+        <div>구성원이 없습니다.</div>
       ) : (
         members.map((m) => <div key={m.id}>{m.name}</div>)
       )}

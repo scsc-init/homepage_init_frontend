@@ -1,14 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import "./board.css";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import "./board.css";
 
 export default function ArticlesView({ board, sortOrder }) {
   const router = useRouter();
   const [articles, setArticles] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
+
+  if (!board) {
+    return (
+      <div className="text-center text-red-600 mt-10">
+        게시판 정보가 없습니다.
+      </div>
+    );
+  }
 
   const boardId = board.id;
 
@@ -20,7 +29,7 @@ export default function ArticlesView({ board, sortOrder }) {
     }
 
     if (boardId === 1 || boardId === 2) {
-      setUnauthorized(true); // 상태로 표시
+      setUnauthorized(true);
       return;
     }
 
@@ -45,15 +54,13 @@ export default function ArticlesView({ board, sortOrder }) {
     fetchContents();
   }, [router, boardId]);
 
-  // 권한 없음
   if (unauthorized) {
     return (
       <div className="text-center text-red-600 mt-10">권한이 부족합니다.</div>
     );
   }
 
-  // 로딩 중
-  if (!Array.isArray(articles)) return null;
+  if (!Array.isArray(articles)) return <LoadingSpinner />;
 
   const sortedArticles = [...articles].sort((a, b) => {
     if (sortOrder === "latest")

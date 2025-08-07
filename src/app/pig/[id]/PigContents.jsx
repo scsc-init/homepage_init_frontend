@@ -8,16 +8,19 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function PigContents({ pigContentId }) {
   const router = useRouter();
   const [article, setArticle] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+      router.push("/us/login");
+      return;
     }
 
     const fetchContents = async () => {
@@ -27,13 +30,15 @@ export default function PigContents({ pigContentId }) {
         });
         if (!contentRes.ok) {
           alert("게시글 로딩 실패");
-          router.push('/pig');
+          router.push("/pig");
         }
         const article = await contentRes.json();
         setArticle(article);
       } catch (e) {
         alert(`피그 불러오기 중 오류: ${e}`);
-        router.push('/pig');
+        router.push("/pig");
+      } finally {
+        setLoading(false);
       }
     };
     fetchContents();
@@ -41,24 +46,26 @@ export default function PigContents({ pigContentId }) {
 
   return (
     <div className="PigContent">
-      {!article ? (
-        <div>로딩중...</div>
-      ) : (<ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw, rehypeHighlight]}
-        components={{
-          h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
-          h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
-          p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
-          li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
-          code: ({ node, ...props }) => (
-            <code className="mdx-inline-code" {...props} />
-          ),
-          pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
-        }}
-      >
-        {article.content}
-      </ReactMarkdown>)}
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw, rehypeHighlight]}
+          components={{
+            h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
+            h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
+            p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
+            li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
+            code: ({ node, ...props }) => (
+              <code className="mdx-inline-code" {...props} />
+            ),
+            pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
+          }}
+        >
+          {article.content}
+        </ReactMarkdown>
+      )}
     </div>
   );
 }

@@ -8,7 +8,8 @@ import "highlight.js/styles/github.css";
 import "./page.css";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Comments from "@/components/board/Comments.jsx"
+import Comments from "@/components/board/Comments.jsx";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
@@ -20,9 +21,9 @@ export default function ArticleDetail({ params }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) { 
-      alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+    if (!jwt) {
+      router.push("/us/login");
+      return;
     }
 
     const fetchContents = async () => {
@@ -32,29 +33,24 @@ export default function ArticleDetail({ params }) {
         });
         if (!contentRes.ok) {
           setIsError(true);
-          alert("게시글 로딩 실패");
+          return;
         }
         const article = await contentRes.json();
         setArticle(article);
       } catch (e) {
         setIsError(true);
-        alert(`게시글 불러오기 중 오류: ${e}`);
       } finally {
         setIsLoading(false);
       }
     };
     fetchContents();
-  }, [router]);
+  }, [router, id]);
 
   if (isLoading) {
-    return (
-      <div className="p-6 text-center text-red-600">
-        로딩중...
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
-  if (isError) {
+  if (isError || !article) {
     return (
       <div className="p-6 text-center text-red-600">
         게시글을 찾을 수 없습니다.
@@ -89,7 +85,7 @@ export default function ArticleDetail({ params }) {
           {markdown}
         </ReactMarkdown>
       </div>
-      <Comments articleId={id}/>
+      <Comments articleId={id} />
     </div>
   );
 }
