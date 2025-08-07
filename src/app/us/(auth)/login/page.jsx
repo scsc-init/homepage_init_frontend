@@ -187,7 +187,6 @@ export default function LoginPage() {
         )}
 
         {stage === 1 && (
-          funddesign
           <div style={{ boxSizing: "border-box", marginTop: "10vh" }}>
             <input
               value={form.email}
