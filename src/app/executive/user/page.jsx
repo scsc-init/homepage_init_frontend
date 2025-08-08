@@ -7,8 +7,10 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function ExecutiveUserPage() {
-  const users = await fetchUsersByRoles();
-  const majors = await fetchMajors();
+  const [users, majors] = await Promise.all([
+    fetchUsersByRoles(),
+    fetchMajors(),
+  ]);
 
   return (
     <WithAuthorization>
