@@ -12,12 +12,15 @@ import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function AdminPanel() {
-  const boards = await fetchBoards();
-  const sigs = await fetchSigs();
-  const pigs = await fetchPigs();
-  const scscGlobalStatus = await fetchScscGlobalStatus();
-  const majors = await fetchMajors();
-  const discordBotStatus = await fetchDiscordBot();
+  const [boards, sigs, pigs, scscGlobalStatus, majors, discordBotStatus] =
+    await Promise.all([
+      fetchBoards(),
+      fetchSigs(),
+      fetchPigs(),
+      fetchScscGlobalStatus(),
+      fetchMajors(),
+      fetchDiscordBot(),
+    ]);
 
   return (
     <WithAuthorization>
@@ -49,8 +52,9 @@ export default async function AdminPanel() {
 
         <h2>디스코드 봇 관리</h2>
 
-        <DiscordBotPanel is_logged_in={discordBotStatus ? discordBotStatus.logged_in : 'error'}/>
-        
+        <DiscordBotPanel
+          is_logged_in={discordBotStatus ? discordBotStatus.logged_in : "error"}
+        />
 
         <h2>전공 관리</h2>
         <MajorList majors={majors} />
