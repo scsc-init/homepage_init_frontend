@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import "./page.css";
 import * as validator from "./validator";
-import { isSkipEmailCheck } from "@/app/env/check.js"
+import { isSkipEmailCheck } from "@/app/env/check.js";
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -76,7 +76,7 @@ export default function LoginPage() {
 
       if (!(await isSkipEmailCheck()) && !validator.email(email)) {
         console.log(email);
-        console.log(validator.email(email))
+        console.log(validator.email(email));
         alert("snu.ac.kr 이메일만 허용됩니다.");
         return;
       }
@@ -154,12 +154,18 @@ export default function LoginPage() {
         {stage === 0 && (
           <div>
             <div className="main-logo-wrapper">
-              <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+              <img
+                src="/main/main-logo.png"
+                alt="Main Logo"
+                className="main-logo logo"
+              />
               <div className="main-subtitle">
                 Seoul National University Computer Study Club
               </div>
             </div>
-            <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
+            <p className="login-description">
+              SNU 구글 계정으로 로그인/회원가입
+            </p>
             <div
               id="g_id_onload"
               data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"
@@ -181,8 +187,12 @@ export default function LoginPage() {
         )}
 
         {stage === 1 && (
-          <div style={{boxSizing: "border-box", marginTop: "0vh" }}>
-            <input value={form.email} disabled style={{width: "100%", boxSizing: "border-box"}}/>
+          <div style={{ boxSizing: "border-box", marginTop: "10vh" }}>
+            <input
+              value={form.email}
+              disabled
+              style={{ width: "100%", boxSizing: "border-box" }}
+            />
             <p>
               이름: <strong>{form.name}</strong>
             </p>
@@ -190,7 +200,7 @@ export default function LoginPage() {
               onClick={async () => {
                 setStage(2);
               }}
-              style={{width: "100%", boxSizing: "border-box"}}
+              style={{ width: "100%", boxSizing: "border-box" }}
             >
               다음
             </button>
@@ -294,7 +304,7 @@ export default function LoginPage() {
                 value={college}
               >
                 <option value="">단과대학 선택</option>
-                {[...new Set(majors.map((m) => (m.college)))].map((c) => (
+                {[...new Set(majors.map((m) => m.college))].map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -305,11 +315,13 @@ export default function LoginPage() {
                 value={form.major_id}
               >
                 <option value="">학과/학부 선택</option>
-                {majors.filter((m) => (m.college == college)).map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.major_name}
-                  </option>
-                ))}
+                {majors
+                  .filter((m) => m.college == college)
+                  .map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.major_name}
+                    </option>
+                  ))}
               </select>
             </div>
             <button

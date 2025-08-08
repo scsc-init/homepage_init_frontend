@@ -39,28 +39,28 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
-          (function() {
-            try {
-              const theme = localStorage.getItem("theme");
-              if (theme === "dark") {
-                document.documentElement.classList.add("dark");
-              }
-            } catch (_) {}
-          })();
-        `,
+              (function() {
+                try {
+                  const theme = localStorage.getItem("theme");
+                  if (theme === "dark") {
+                    document.documentElement.classList.add("dark");
+                  }
+                } catch (_) {}
+              })();
+            `,
           }}
         />
-      </head>
-      <body className={noto_sans_kr.className}>
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
         />
+      </head>
+      <body className={noto_sans_kr.className}>
         <div id="RootContainer">
           <HeaderWrapper />
           <main id="MainContent">{children}</main>

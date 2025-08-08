@@ -32,10 +32,11 @@
   flex-direction: column;
   gap: 0.4rem;
   transition: box-shadow 0.2s ease;
+  background-color: var(--executive-card-bg);
 }
 
 .pigCard:hover {
-  box-shadow: 0 2px 6px var(--slate-5);
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
 }
 
 .pigTopbar {
@@ -47,7 +48,7 @@
 .pigTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--indigo-11);
+  color: var(--color-text-body);
 }
 
 .pigUserCount {
@@ -57,7 +58,7 @@
 
 .pigDescription {
   font-size: 0.95rem;
-  color: var(--slate-12);
+  color: var(--color-text-subtle);
   line-height: 1.4;
   white-space: pre-wrap;
 }
@@ -67,7 +68,7 @@
 }
 
 .PigCreateBtn {
-  background-color: var(--indigo-9);
+  background-color: var(--color-button-bg);
   color: white;
   padding: 0.6rem 1.2rem;
   border-radius: 0.5rem;
@@ -87,4 +88,24 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+html,
+body {
+  background-color: var(--background-color);
+}
+
+.PigHeader {
+  width: 100%;
+  max-width: 60rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.PigHeaderActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }

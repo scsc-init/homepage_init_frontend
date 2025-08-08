@@ -4,24 +4,24 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
-import './myProfile.css'
+import "./myProfile.css";
 
 const USER_STATUS_MAP = {
-  "active": "활동 중(입금 확인 완료)",
-  "pending": "회비 미납부",
-  "standby": "회비 입금 확인 중",
-  "banned": "제명됨"
-}
+  active: "활동 중(입금 확인 완료)",
+  pending: "회비 미납부",
+  standby: "회비 입금 확인 중",
+  banned: "제명됨",
+};
 
 const USER_ROLE_MAP = {
-  "0": "최저권한",
-  "100": "휴회원",
-  "200": "준회원",
-  "300": "정회원",
-  "400": "졸업생",
-  "500": "운영진",
-  "1000": "회장"
-}
+  0: "최저권한",
+  100: "휴회원",
+  200: "준회원",
+  300: "정회원",
+  400: "졸업생",
+  500: "운영진",
+  1000: "회장",
+};
 
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
@@ -40,7 +40,11 @@ export default function MyProfileClient() {
         const resUser = await fetch(`/api/user/profile`, {
           headers: { "x-jwt": jwt },
         });
-        if (resUser.status != 200) {alert("로그인이 필요합니다."); router.push("/us/login"); return;}
+        if (resUser.status != 200) {
+          alert("로그인이 필요합니다.");
+          router.push("/us/login");
+          return;
+        }
         const userData = await resUser.json();
         setUser(userData);
         const resMajor = await fetch(`/api/major/${userData.major_id}`);
@@ -77,23 +81,32 @@ export default function MyProfileClient() {
     }
   };
 
-  if (!user) return (
-    <div>
-      <div className="main-logo-wrapper">
-        <p className="main-logo-description">My Page</p>
-        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+  if (!user)
+    return (
+      <div>
+        <div className="main-logo-wrapper">
+          <p className="main-logo-description">My Page</p>
+          <img
+            src="/main/main-logo.png"
+            alt="Main Logo"
+            className="main-logo logo"
+          />
+        </div>
+        <div className="user-name-container">
+          <div className="user-name">로딩 중...</div>
+        </div>
       </div>
-      <div className="user-name-container">
-        <div className="user-name">로딩 중...</div>
-      </div>
-    </div>
-  );
+    );
 
   return (
     <div>
       <div className="main-logo-wrapper">
         <p className="main-logo-description">My Page</p>
-        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo" />
+        <img
+          src="/main/main-logo.png"
+          alt="Main Logo"
+          className="main-logo logo"
+        />
       </div>
       <div className="user-profile-wrapper">
         <img
@@ -133,10 +146,7 @@ export default function MyProfileClient() {
               <p className="user-status-description">User Status</p>
               <p>{USER_STATUS_MAP[user.status]}</p>
             </div>
-            <button
-              onClick={handleEnroll}
-              className="enroll-button"
-            >
+            <button onClick={handleEnroll} className="enroll-button">
               입금 등록
             </button>
           </div>
@@ -147,7 +157,9 @@ export default function MyProfileClient() {
             >
               정보 수정
             </button>
-            <button onClick={handleLogout} className="logout-button"><span class="material-icons">logout</span></button>
+            <button onClick={handleLogout} className="logout-button">
+              <span class="material-icons">logout</span>
+            </button>
           </div>
         </div>
       </div>

@@ -33,9 +33,10 @@ export default function CreatePigClient() {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) { 
+    if (!jwt) {
       alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+      router.push("/us/login");
+      return;
     }
 
     const fetchProfile = async () => {
@@ -123,6 +124,8 @@ export default function CreatePigClient() {
       if (res.status === 201) {
         alert("PIG 생성 성공!");
         isFormSubmitted.current = true;
+
+        sessionStorage.removeItem("pigForm");
         router.push("/pig");
         router.refresh();
       } else {

@@ -27,5 +27,9 @@ async function fetchTargets(type) {
   });
   if (!res.ok) return [];
   const data = await res.json();
-  return Array.isArray(data) ? data : [];
+
+  console.log(`[SERVER] ${type.toUpperCase()} 응답 데이터:`, data);
+  return Array.isArray(data)
+    ? data.filter((item) => item.status === "active")
+    : [];
 }
