@@ -16,7 +16,7 @@ export default async function PigDetailPage({ params }) {
   if (!pigRes.ok) {
     return (
       <div className="p-6 text-center text-red-600">
-        존재하지 않는 SIG입니다.
+        존재하지 않는 PIG입니다.
       </div>
     );
   }
