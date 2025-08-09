@@ -50,7 +50,6 @@ body {
 
 .CreateSigHeader {
   text-align: center;
-  margin-bottom: 2.5rem;
 }
 
 .CreateSigTitle {
@@ -95,10 +94,183 @@ input::placeholder {
 .mdxeditor {
   background-color: rgb(202, 202, 202);
   border-radius: 0.5rem;
-  min-height: 10rem;
+  min-height: 20rem;
+  margin-top: 1rem;
 }
 
 label {
   margin-top: 0.3rem;
   margin-bottom: 0.3rem;
+}
+
+/* ============================= */
+/* 글 작성 페이지: 다크모드 및 스타일 개선 */
+/* ============================= */
+.dark .CreateSigCard {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  color: var(--color-text-body);
+}
+
+.dark .CreateSigTitle {
+  color: var(--color-text-body);
+}
+
+.dark .CreateSigSubtitle {
+  color: var(--color-text-subtle);
+}
+
+form input[type="text"] {
+  background-color: white;
+  color: var(--color-text-body);
+  border: 2px solid var(--color-text-subtle);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  transition: border 0.2s ease;
+}
+
+form input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-button-bg);
+}
+
+.dark form input[type="text"] {
+  background-color: var(--color-surface-light);
+  color: var(--color-text-body);
+  border: 2px solid var(--color-text-subtle);
+}
+
+.dark form input[type="text"]::placeholder {
+  color: var(--color-text-subtle);
+}
+
+/* 작성 버튼 스타일 */
+.SigCreateBtn {
+  background-color: var(--color-button-bg);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  font-size: 1rem;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.SigCreateBtn:hover:not(:disabled) {
+  background-color: #2da6bd;
+  transform: translateY(-2px);
+}
+
+.SigCreateBtn:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.dark .SigCreateBtn {
+  background-color: var(--color-button-bg);
+  color: white;
+}
+
+.CreateSigContainer {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+}
+
+.CreateSigCard {
+  background-color: var(--executive-card-bg);
+  padding: 2.5rem;
+  box-shadow: 0 6px 20px var(--executive-card-shadow);
+  border-radius: 1.25rem;
+}
+
+.CreateSigHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.CreateSigTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+  margin-bottom: 0.75rem;
+}
+
+.CreateSigSubtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-subtle);
+}
+
+/* 제목 입력창 디자인 (일관성 있게 적용) */
+label {
+  display: block;
+  font-weight: bold;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid var(--color-text-body);
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--color-text-body);
+  transition: border-color 0.2s ease;
+}
+
+input[type="text"]::placeholder {
+  color: var(--color-text-subtle);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-button-bg);
+}
+
+/* 다크모드 입력창 */
+.dark input[type="text"] {
+  background-color: transparent;
+  color: var(--color-text-body);
+  border-bottom: 3px solid var(--color-text-body);
+}
+
+.dark input[type="text"]::placeholder {
+  color: var(--color-text-subtle);
+}
+
+/* 작성 완료 버튼 */
+.SigCreateBtn {
+  background-color: var(--color-button-bg);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  font-size: 1rem;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.SigCreateBtn:hover:not(:disabled) {
+  background-color: #2da6bd;
+  transform: translateY(-2px);
+}
+
+.SigCreateBtn:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.dark .SigCreateBtn {
+  background-color: var(--color-button-bg);
+  color: white;
 }

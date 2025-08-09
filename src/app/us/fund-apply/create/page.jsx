@@ -4,10 +4,11 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 
 export default async function FundApplyPage() {
-  const boardInfo = await fetchBoardInfo("6");
-  const sigs = await fetchTargets("sig");
-  const pigs = await fetchTargets("pig");
-
+  const [boardInfo, sigs, pigs] = await Promise.all([
+    fetchBoardInfo("6"),
+    fetchTargets("sig"),
+    fetchTargets("pig"),
+  ]);
   return <FundApplyClient boardInfo={boardInfo} sigs={sigs} pigs={pigs} />;
 }
 

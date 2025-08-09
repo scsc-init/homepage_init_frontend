@@ -162,7 +162,7 @@ body {
 }
 
 .main-subtitle {
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   font-size: 1rem;
   color: var(--color-text-subtle);
   font-weight: 400;
@@ -199,4 +199,47 @@ body {
 
 .g_id_signin {
   width: 80%;
+}
+
+/* 다크모드 대응 */
+.dark .GoogleSignupCard {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+}
+
+.dark .GoogleSignupCard h2 {
+  color: var(--color-text-body);
+}
+
+.dark .GoogleSignupCard input,
+.dark .GoogleSignupCard select {
+  background-color: var(--color-surface-light);
+  color: var(--color-text-body);
+  border: 1px solid var(--color-button-border);
+}
+
+.dark .GoogleSignupCard input:disabled {
+  background-color: #3a3a3a;
+  color: var(--color-text-subtle);
+}
+
+.dark .GoogleSignupCard button {
+  background-color: var(--color-button-bg);
+  color: white;
+}
+
+.dark .GoogleSignupCard button:hover {
+  background-color: #368aa0;
+}
+
+.dark .GoogleSignupCard p {
+  color: var(--color-text-subtle);
+}
+
+.dark .main-subtitle {
+  color: var(--color-text-subtle);
+}
+
+.dark .login-description {
+  color: var(--color-text-body);
 }

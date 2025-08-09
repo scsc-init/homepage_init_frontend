@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import * as validator from "../login/validator";
-import PfpUpdate from "./PfpUpdate"
-import './page.css'
+import PfpUpdate from "./PfpUpdate";
+import "./page.css";
 
 function EditUserInfoClient() {
   const router = useRouter();
@@ -21,12 +21,18 @@ function EditUserInfoClient() {
   useEffect(() => {
     const fetchData = async () => {
       const jwt = localStorage.getItem("jwt");
-      const resUser = await fetch("/api/user/profile", {
-        headers: {
-          "Content-Type": "application/json",
-          "x-jwt": jwt,
-        },
-      });
+      const fetchs = [];
+      fetchs.push(
+        fetch("/api/user/profile", {
+          headers: {
+            "Content-Type": "application/json",
+            "x-jwt": jwt,
+          },
+        }),
+      );
+      fetchs.push(fetch("/api/majors"));
+      const [resUser, resMajors] = await Promise.all(fetchs);
+
       if (!resUser.ok) {
         alert("로그인이 필요합니다.");
         router.push("/us/login");
@@ -41,7 +47,6 @@ function EditUserInfoClient() {
         profile_picture: user.profile_picture || "",
       });
 
-      const resMajors = await fetch("/api/majors");
       const majorList = await resMajors.json();
       setMajors(majorList);
       setLoading(false);
@@ -109,19 +114,30 @@ function EditUserInfoClient() {
     } else {
       alert("수정에 실패했습니다. 다시 시도해주세요.");
     }
-  }
+  };
 
   if (loading) return;
 
   return (
-    <div style={{ maxWidth: "25vw", minWidth: "250px" ,margin: "0 auto", boxSizing: "border-box" }}>
-      <h2 style={{ marginBottom: "1.5rem", marginTop: "1rem" }}>내 정보 수정</h2>
+    <div
+      style={{
+        maxWidth: "25vw",
+        minWidth: "250px",
+        margin: "0 auto",
+        boxSizing: "border-box",
+      }}
+    >
+      <h2 style={{ marginBottom: "1.5rem", marginTop: "1rem" }}>
+        내 정보 수정
+      </h2>
       <img
-        src={form.profile_picture ? form.profile_picture : "/main/default-pfp.png"}
+        src={
+          form.profile_picture ? form.profile_picture : "/main/default-pfp.png"
+        }
         alt="Profile"
         className="user-profile-picture"
       />
-      <PfpUpdate/>
+      <PfpUpdate />
       <div
         style={{
           display: "grid",
@@ -172,7 +188,15 @@ function EditUserInfoClient() {
         </select>
       </div>
 
-      <div style={{ marginTop: "2rem", display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+      <div
+        style={{
+          marginTop: "2rem",
+          display: "flex",
+          gap: "1rem",
+          flexWrap: "wrap",
+          marginBottom: "1rem",
+        }}
+      >
         <button onClick={handleDelete} style={{ flex: 1, minWidth: "120px" }}>
           휴회원으로 전환
         </button>
@@ -188,7 +212,7 @@ export default function EditUserInfoPage() {
   return (
     <div id="Home">
       <div id="EditUserInfoContainer">
-        <EditUserInfoClient/>
+        <EditUserInfoClient />
       </div>
     </div>
   );

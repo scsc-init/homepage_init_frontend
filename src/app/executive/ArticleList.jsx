@@ -2,35 +2,33 @@
 
 import React, { useEffect, useState } from "react";
 
-export default function ArticleList({
-  boards: boardsDefault,
-  articles: articlesDefault,
-}) {
+export default function ArticleList({ boards: boardsDefault }) {
   const [boards, setBoards] = useState(boardsDefault ?? []);
-  const [articles, setArticles] = useState(articlesDefault ?? {});
+  const [articles, setArticles] = useState({});
   const [saving, setSaving] = useState({});
 
   useEffect(() => {
     const targetBoardIds = [3, 4, 5];
+    async function fetchBoardArticles(boardId) {
+      const res = await fetch(`/api/articles/${boardId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-jwt": localStorage.getItem("jwt"),
+        },
+      });
+      if (res.ok) return { boardId: await res.json() };
+      return {};
+    }
     async function fetchArticles() {
-      const all = {};
-      for (const boardId of targetBoardIds) {
-        const res = await fetch(`/api/articles/${boardId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-jwt": localStorage.getItem("jwt"),
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          all[boardId] = data;
-        }
-      }
-      return setArticles(all);
+      const res = await Promise.all(targetBoardIds.map(fetchBoardArticles));
+      const all = res.reduce((acc, cur) => {
+        return { ...acc, ...cur };
+      }, {});
+      setArticles(all);
     }
     fetchArticles();
-  },[])
+  }, []);
 
   const handleBoardChange = (id, value) => {
     setBoards((prev) =>

@@ -93,9 +93,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 신청 시그 : ${data.target} \n
 신청 금액 : ${data.amount} 원 \n
 신청자 : ${user.student_id} ${user.name} (${user.email}) \n
-신청 사유 :
-${data.editor}
-`.trim();
+신청 사유 :\n${data.editor}`.trim();
 
     try {
       const res = await fetch("/api/article/create", {
@@ -138,40 +136,42 @@ ${data.editor}
         <p className="CreateSigSubtitle">{boardInfo?.description ?? ""}</p>
       </div>
 
-      <div className="CreateSigCard space-y-4">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <select
-            {...register("category")}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">SIG/PIG 선택</option>
-            <option value="sig">SIG</option>
-            <option value="pig">PIG</option>
-          </select>
+      <div className="CreateSigCard">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <select
+              {...register("category")}
+              className="C_Input w-full p-2 rounded"
+              required
+            >
+              <option value="">SIG/PIG 선택</option>
+              <option value="sig">SIG</option>
+              <option value="pig">PIG</option>
+            </select>
 
-          <select
-            {...register("target")}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">대상 선택</option>
-            {targetList.length === 0 ? (
-              <option disabled>목록이 없습니다</option>
-            ) : (
-              targetList.map((item) => (
-                <option key={item.id} value={item.title}>
-                  {item.title}
-                </option>
-              ))
-            )}
-          </select>
+            <select
+              {...register("target")}
+              className="C_Input w-full p-2 rounded"
+              required
+            >
+              <option value="">대상 선택</option>
+              {targetList.length === 0 ? (
+                <option disabled>목록이 없습니다</option>
+              ) : (
+                targetList.map((item) => (
+                  <option key={item.id} value={item.title}>
+                    {item.title}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
 
           <input
             type="number"
             {...register("amount", { required: true, min: 1 })}
             placeholder="신청 금액 (숫자만)"
-            className="w-full border p-2 rounded"
+            className="C_Input w-full p-2 rounded"
           />
 
           <Editor
@@ -179,12 +179,15 @@ ${data.editor}
             onChange={(value) => setValue("editor", value)}
           />
 
-          <label className="flex items-center space-x-2">
+          <label className="flex items-start gap-2">
             <input
               type="checkbox"
               {...register("checked", { required: true })}
+              className="mt-1"
             />
-            <span>SCSC 지원 가이드라인을 확인했습니다.</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              SCSC 지원 가이드라인을 확인했습니다.
+            </span>
           </label>
 
           <button
