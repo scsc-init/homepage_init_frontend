@@ -1,56 +1,30 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import LoadingSpinner from "@/components/LoadingSpinner";
-
-export default function PigMembers({ pigId }) {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-
-    const fetchMembers = async () => {
-      if (!jwt) {
-        setLoading(false);
-        router.push("/us/login");
-        return;
-      }
-
-      try {
-        const membersRes = await fetch(`/api/pig/${pigId}/members`, {
-          headers: { "x-jwt": jwt },
-        });
-        if (!membersRes.ok) {
-          alert("시그 인원 불러오기 실패");
-          router.push("/pig");
-          return;
-        }
-        const membersData = await membersRes.json();
-        setMembers(membersData.map((m) => m.user));
-      } catch (e) {
-        alert(`시그 인원 불러오기 중 오류: ${e}`);
-        router.push("/pig");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMembers();
-  }, [router, pigId]);
+export default function PigMembers({ members }) {
+  const list = Array.isArray(members) ? members : [];
+  const count = list.length;
 
   return (
-    <div>
-      <h2>시그 인원</h2>
-      {loading ? (
-        <LoadingSpinner />
-      ) : members.length === 0 ? (
-        <div>가입한 인원이 없습니다.</div>
+    <section
+      className="PigMembersSection"
+      aria-labelledby="pig-members-heading"
+    >
+      <div className="PigMembersHeader">
+        <h2 id="pig-members-heading" className="PigMembersTitle">
+          시그 인원
+        </h2>
+        <span className="PigMembersCount">{count}명</span>
+      </div>
+
+      {count === 0 ? (
+        <div className="PigMembersEmpty">가입한 인원이 없습니다.</div>
       ) : (
-        members.map((m) => <div key={m.id}>{m.name}</div>)
+        <ul className="PigMemberList">
+          {list.map((m) => (
+            <li key={m.id} className="PigMemberChip">
+              {m.name}
+            </li>
+          ))}
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

@@ -3,6 +3,8 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 import SigListClient from "./SigListClient";
 
+export const metadata = { title: "SIG" };
+
 export default async function SigListPage() {
   const res = await fetch(`${getBaseUrl()}/api/sigs`, {
     headers: { "x-api-secret": getApiSecret() },
@@ -22,3 +24,4 @@ export default async function SigListPage() {
     </div>
   );
 }
+9;
