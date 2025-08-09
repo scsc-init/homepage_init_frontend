@@ -1,46 +1,330 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/slate.css";
+@import "@/styles/theme.css";
 
-/* ===== 애니메이션 추가 ===== */
-.TypingCode {
-  font-family: monospace;
-  font-size: 1.1rem;
-  white-space: nowrap;
-  border-right: 2px solid white;
+/* ===== 레이아웃 ===== */
+body,
+html {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  background-color: var(--background-color);
+  scroll-behavior: smooth;
+  user-select: none;
+  -webkit-user-drag: none;
+  word-break: keep-all;
+}
+
+.AboutWrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.AboutSidebar {
+  position: fixed;
+  top: 3.5rem;
+  left: 0;
+  width: 180px;
+  height: calc(100vh - 3.5rem);
+  background-color: white;
+  padding: 2rem 1rem;
+  border-right: 1px solid var(--slate-6);
+  z-index: 5;
+}
+
+.AboutSidebar ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  font-weight: bold;
+  color: var(--foreground-color);
+}
+
+.AboutSidebar a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== About Title Section ===== */
+.AboutTitleSection {
+  background-color: var(--slate-2);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.AboutTitle {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--color-text-strong);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Main 영역 ===== */
+.AboutMain {
+  margin-left: 180px;
+  padding: 4rem 3rem 6rem 3rem;
+  flex-grow: 1;
+  z-index: 1;
+}
+
+.AboutSection {
+  margin-bottom: 5rem;
+}
+
+.AnchorOffset {
+  scroll-margin-top: 3.5rem;
+  margin-top: 2rem;
+}
+
+.AboutInner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 카드 공통 */
+.AboutCard {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  word-break: keep-all;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: var(--slate-12);
+  font-size: 1.3rem;
+}
+
+/* 활동 및 시설 카드 레이아웃 */
+.ClubroomFacilityList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.ClubroomCard {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  width: 18ch;
-  animation:
-    typing 3s steps(18, end) forwards,
-    blink 0.75s step-end infinite;
 }
 
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 18ch;
-  }
+.ClubroomCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-@keyframes blink {
-  50% {
-    border-color: transparent;
-  }
+.ClubroomCard h3 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--foreground-color);
 }
 
-.FadeInText {
+.ClubroomCard p {
+  font-size: 1.2rem;
+  color: var(--slate-11);
+}
+
+.ClubroomCardImage {
+  border-radius: 0.75rem;
+  object-fit: cover;
+  width: 100%;
+  height: 200px;
+}
+
+/* ===== 통계 영역 ===== */
+.HomeDescriptionTitle {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.HomeDescriptionActivityContainer {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.HomeLargeText {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--slate-12);
+}
+
+/* ===== 시설 안내 영역 ===== */
+#HomeClubroomContainer {
+  background-color: var(--slate-2);
+  border: 1px solid var(--slate-6);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  margin-top: 3rem;
+}
+
+/* ===== FAQ ===== */
+#HomeFQAContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.HomeFQA {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  word-break: keep-all;
+  color: var(--slate-12);
+  font-size: 1.3rem;
+  transition: background-color 0.3s ease;
+}
+
+.HomeFQAQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.HomeFQAQuestion h4 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.HomeFQAHidden {
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--slate-11);
+}
+
+.HomeFQA > input {
+  display: none;
+}
+
+.HomeFQA > input:checked ~ .HomeFQAHidden {
+  display: block;
+}
+
+.HomeFQAQuestion svg {
+  transition: transform 0.3s ease;
+}
+
+.HomeFQA > input:checked + .HomeFQAQuestion svg {
+  transform: rotate(180deg);
+}
+
+/* ===== 링크 ===== */
+.MoreLinkList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.MoreLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--slate-6);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: var(--foreground-color);
+  background-color: var(--slate-1);
+  transition: background-color 0.2s ease;
+}
+
+.MoreLink:hover {
+  background-color: var(--slate-2);
+}
+
+/* ===== 소개문구 영역 ===== */
+.main-intro {
+  max-width: 640px;
+  margin-top: 2.5rem;
+  padding: 0 1rem;
+  font-size: 1.05rem;
+  color: var(--color-text-subtle);
+  text-align: center;
+  line-height: 1.7;
+  animation: fadeIn 2.5s ease-out forwards;
   opacity: 0;
-  animation: fadeIn 1.8s ease-in-out forwards;
+  z-index: 4;
+  position: relative;
 }
 
+.main-intro p {
+  margin-bottom: 1.5rem;
+}
+
+.main-intro b {
+  color: var(--color-text-strong);
+  font-weight: 600;
+}
+
+/* ===== 배경 로고 ===== */
+.WallLogo,
+.WallLogo2 {
+  position: fixed;
+  z-index: 0;
+  background-image: url("/wall-logo.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+}
+
+.WallLogo {
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 0.8;
+}
+
+.WallLogo2 {
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 1;
+}
+
+/* ===== 애니메이션 ===== */
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Scroll-triggered fade */
 .FadeOnScroll {
   opacity: 0;
   transform: translateY(30px);
@@ -54,225 +338,198 @@
   transform: translateY(0);
 }
 
-/* ===== 기존 정의 유지 ===== */
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
 
-p {
-  margin: 0;
-}
+  .AboutMain {
+    margin-left: 0 !important;
+    padding: 2rem 1rem 6rem 1rem;
+  }
 
-#Home {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  overflow-x: hidden;
-}
+  .AboutTitle {
+    font-size: 3rem;
+  }
 
-#HomeContent {
-  width: 100%;
-  max-width: 60rem;
-  margin: 2rem auto 10rem auto;
-}
+  .AboutTitleSection {
+    padding: 4rem 1rem;
+  }
 
-#HomeImageContainer {
-  width: 100%;
-  height: calc(100vh - 12.5rem);
-  background-color: var(--slate-12);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  justify-content: end;
-  align-items: start;
-  padding: 5rem;
-}
+  .ClubroomFacilityList {
+    grid-template-columns: 1fr !important;
+  }
 
-.TitleContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.TitleContainer > h1,
-.TitleContainer > h4 {
-  margin: 0;
-}
+  .main-intro {
+    font-size: 0.95rem;
+    margin-top: 2rem;
+  }
 
-#HomeDescriptionContainer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 5rem;
+  .WallLogo {
+    top: 80%;
+    right: 2vw;
+    width: 10vh;
+    height: 30vh;
+  }
+
+  .WallLogo2 {
+    margin-top: 1rem;
+    left: 0;
+    width: 10vh;
+    height: 30vh;
+  }
 }
 
-.ActivityBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: calc(100% - 4rem);
-  line-height: 1.5rem;
-  border: var(--slate-8) 2px dotted;
-  border-radius: 1rem;
-  padding: 2rem;
-}
-.ActivityBlock > h3 {
-  margin: 0;
-}
-
-.HomeDescriptionTitle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 2rem 0;
-}
-.HomeDescriptionTitle > h2 {
-  margin: 0;
+.main-intro {
+  max-width: 800px;
+  margin-top: 3rem;
+  padding: 0 1rem;
+  font-size: 1.3rem;
+  color: var(--foreground-color); /* 더 선명한 색상 */
+  text-align: center;
+  line-height: 2;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
 }
 
-.HomeDescriptionActivityContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0;
+.main-intro.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.HomeLargeText {
-  font-size: 3rem;
-  font-weight: bolder;
+.main-intro p {
+  margin-bottom: 2rem;
 }
 
-#HomeAboutContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 5.5rem;
-  margin: 0 5rem 5rem 5rem;
+.main-intro b {
+  font-weight: 700;
+  color: var(--foreground-color);
 }
 
-#HomeAboutLinkList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+@media (max-width: 768px) {
+  .main-intro {
+    font-size: 1.1rem;
+    margin-top: 2rem;
+    line-height: 1.8;
+  }
 }
-
-.HomeAboutDescription {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-}
-.HomeAboutDescription > span {
-  font-size: 1rem;
-  line-height: 1rem;
-  height: 1rem;
-  vertical-align: text-top;
-}
-
-#HomeFQAContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-.HomeFQA {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  border: var(--slate-8) 2px dotted;
-  border-radius: 1rem;
-  padding: 2rem;
-  user-select: none;
-}
-
-.HomeFQAHidden {
-  display: none;
-}
-
-.HomeFQAQuestion {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-}
-.HomeFQAQuestion > h4 {
-  margin: 0;
-}
-
-/* ===== 시설 섹션 추가 디자인 ===== */
-#HomeClubroomContainer {
-  padding: 3rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  background-color: var(--slate-2);
-  border-top: 2px solid var(--slate-6);
-  border-bottom: 2px solid var(--slate-6);
-  margin-top: 4rem;
+.main-intro {
+  max-width: 800px;
+  margin: 4rem auto 5rem auto;
+  padding: 0 2rem;
+  font-size: 1.45rem;
+  color: var(--color-text-strong); /* 진한 글자색 */
+  text-align: center;
+  line-height: 2;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
   word-break: keep-all;
 }
 
-.ClubroomFacilityList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+.main-intro.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
-body {
-  margin: 0;
+
+.main-intro p {
+  margin-bottom: 2.5rem;
+}
+
+.main-intro b {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .main-intro {
+    font-size: 1.15rem;
+    margin: 3rem auto;
+    line-height: 1.8;
+    padding: 0 1rem;
+  }
+}
+
+.AboutSidebar {
+  background-color: var(--color-surface-light);
+  border-right: 1px solid var(--header-border-color);
+}
+
+.AboutSidebar ul {
+  list-style: none;
   padding: 0;
-  overflow-x: hidden;
+  margin: 0;
 }
 
-#Home {
-  width: 100%;
-  overflow-x: hidden;
-}
-.ClubroomCard {
-  background-color: white;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.AboutSidebar a {
+  color: var(--header-foreground-color);
+  text-decoration: none;
+  font-weight: 600;
+  display: block;
+  padding: 0.4rem 0;
+  transition: color 0.2s ease;
 }
 
-.ClubroomCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+.AboutSidebar a:hover {
+  color: var(--foreground-color);
 }
 
-.ClubroomCard h3 {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+/* ===== 다크모드 대응 ===== */
+.dark .AboutCard,
+.dark .HomeFQA,
+.dark .ClubroomCard {
+  background-color: var(--color-surface-light);
+  color: var(--foreground-color);
 }
 
-.ClubroomCard p {
-  font-size: 0.95rem;
-  color: var(--slate-11);
+.dark .ClubroomCard {
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+  border: 1px solid var(--header-border-color);
+}
+.dark .ClubroomCard p,
+.dark .HomeFQAHidden {
+  color: var(--color-text-subtle);
 }
 
-.ClubroomCardImage {
-  border-radius: 0.75rem;
-  object-fit: cover;
-  width: 100%;
-  height: 200px;
+.dark .ClubroomCard h3,
+.dark .HomeFQAQuestion h4,
+.dark .HomeLargeText {
+  color: var(--foreground-color);
 }
 
-.HomeFQA > input {
-  display: none;
-  visibility: collapse;
+.dark .AboutSidebar {
+  background-color: var(--color-surface-light);
+  border-right: 1px solid var(--header-border-color);
 }
 
-.HomeFQA > input:checked ~ .HomeFQAHidden {
-  display: unset;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  height: auto;
+.dark .MoreLink {
+  background-color: #1c1c1c;
+  border-color: var(--header-border-color);
+  color: var(--foreground-color);
+}
+
+.dark .MoreLink:hover {
+  background-color: #2a2a2a;
+}
+
+/* ===== 다크모드 대응: Clubroom, h2 등 ===== */
+.dark #HomeClubroomContainer {
+  background-color: var(--color-surface-light);
+  border: 1px solid var(--header-border-color);
+  color: var(--foreground-color);
+}
+
+.dark #HomeClubroomContainer h2,
+.dark .AboutInner h2,
+.dark .AboutSection h2,
+.dark .main-intro h2,
+.dark .MoreLinkList h2 {
+  color: var(--color-text-strong);
 }

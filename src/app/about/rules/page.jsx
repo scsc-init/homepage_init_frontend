@@ -2,12 +2,12 @@ import ScrollEffectWrapper from "@/components/about/ScrollEffectWrapper";
 import ReactMarkdown from "react-markdown";
 import "./page.css";
 
-export const dynamic = "force-dynamic"; // 회칙 내용은 업데이트될 수 있으므로 동적 처리
+export const dynamic = "force-dynamic";
 
 async function fetchMarkdown() {
   const url =
     "https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md";
-  const res = await fetch(url, { cache: "no-store" }); // 최신 내용 항상 불러오기
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) {
     throw new Error("Failed to fetch regulation markdown.");
   }
@@ -15,23 +15,23 @@ async function fetchMarkdown() {
 }
 
 export default async function RegulationPage() {
-  const markdown = await fetchMarkdown();
+  const markdow = await fetchMarkdown();
+  const markdown = markdow.replace("<!-- SCSC 회칙 -->", "");
 
   return (
-    <div id="Home">
-      <div id="HomeContent">
-        <ScrollEffectWrapper>
-          <div id="RegulationContainer">
-            <h2>SCSC 회칙</h2>
-            <p className="RegulationIntro">
-              SCSC 동아리의 운영과 규칙을 안내합니다.
-            </p>
+    <>
+      <div className="WallLogo"></div>
+      <div className="WallLogo2"></div>
+      <main className="AboutMain">
+        <section id="rules" className="AboutSection AnchorOffset">
+          <div className="AboutInner">
+            <h1 className="AboutTitle">회칙</h1>
             <div className="RegulationItem">
               <ReactMarkdown>{markdown}</ReactMarkdown>
             </div>
           </div>
-        </ScrollEffectWrapper>
-      </div>
-    </div>
+        </section>
+      </main>
+    </>
   );
 }

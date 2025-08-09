@@ -2,6 +2,7 @@
 @import "@radix-ui/colors/black-alpha.css";
 @import "@radix-ui/colors/indigo.css";
 @import "@radix-ui/colors/slate.css";
+@import "@/styles/theme.css";
 
 @media (max-width: 480px) {
   :root {
@@ -32,7 +33,7 @@ button {
 }
 
 :root {
-  color: var(--slate-12);
+  color: var(--color-text-subtle);
 }
 
 *::selection {
@@ -54,4 +55,123 @@ body {
 
 #MainContent {
   flex: 1;
+}
+
+.ThemeToggle {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 999900;
+  background: var(--foreground-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ThemeToggle:hover {
+  background: var(--color-text-subtle);
+  color: var(--color-text-body);
+  transform: scale(1.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease;
+}
+img {
+  transition:
+    filter 0.5s ease,
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.LoadingWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+  color: var(--color-text-subtle);
+}
+
+.Spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dark .Spinner {
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--color-primary);
+}
+
+.LoadingCodeWrapper {
+  background-color: var(--executive-card-bg);
+  color: var(--color-text-strong);
+  padding: 2rem;
+  border-radius: 1rem;
+  font-family: "Fira Code", monospace;
+  width: 92%;
+  max-width: 700px;
+  margin: 4rem auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-surface-light);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dark .LoadingCodeWrapper {
+  background-color: var(--color-surface-light);
+  color: var(--color-text-body);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.LoadingCodeBlock {
+  white-space: pre-wrap;
+  font-size: 1.05rem; /* 🔹 더 크게 */
+  font-weight: 600; /* 🔹 더 두껍게 */
+  line-height: 1.7;
+  animation: flicker 1.2s ease-in-out infinite alternate;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.dark .LoadingCodeBlock {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.LoadingText {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-subtle);
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.9;
+  }
 }

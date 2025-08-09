@@ -1,5 +1,6 @@
 @import "@radix-ui/colors/red.css";
 @import "@radix-ui/colors/green.css";
+@import "@/styles/theme.css";
 
 #EmailNotice.error,
 #EmailCodeNotice.error,
@@ -92,7 +93,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background: var(--main-bg-gradient);
   box-sizing: border-box;
 }
 
@@ -102,7 +103,8 @@ body {
   border-radius: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 480px;
+  max-width: min(480px, 80vw);
+  box-sizing: border-box;
 }
 
 .GoogleSignupCard h2 {
@@ -150,4 +152,94 @@ body {
   font-size: 0.9rem;
   color: #475569;
   margin-top: 0.5rem;
+}
+
+.main-logo {
+  position: relative;
+  width: 40vw;
+  max-width: 300px;
+  height: auto;
+}
+
+.main-subtitle {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: var(--color-text-subtle);
+  font-weight: 400;
+  line-height: 1.4;
+  width: 40vw;
+  max-width: 200px;
+}
+
+.main-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  margin-top: 5vh;
+  margin-bottom: 6vh;
+  position: relative;
+}
+
+.login-description {
+  margin-bottom: 3vh;
+  text-align: center;
+  font-weight: bold;
+}
+
+.google-signin-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  position: relative;
+}
+
+.g_id_signin {
+  width: 80%;
+}
+
+/* 다크모드 대응 */
+.dark .GoogleSignupCard {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+}
+
+.dark .GoogleSignupCard h2 {
+  color: var(--color-text-body);
+}
+
+.dark .GoogleSignupCard input,
+.dark .GoogleSignupCard select {
+  background-color: var(--color-surface-light);
+  color: var(--color-text-body);
+  border: 1px solid var(--color-button-border);
+}
+
+.dark .GoogleSignupCard input:disabled {
+  background-color: #3a3a3a;
+  color: var(--color-text-subtle);
+}
+
+.dark .GoogleSignupCard button {
+  background-color: var(--color-button-bg);
+  color: white;
+}
+
+.dark .GoogleSignupCard button:hover {
+  background-color: #368aa0;
+}
+
+.dark .GoogleSignupCard p {
+  color: var(--color-text-subtle);
+}
+
+.dark .main-subtitle {
+  color: var(--color-text-subtle);
+}
+
+.dark .login-description {
+  color: var(--color-text-body);
 }

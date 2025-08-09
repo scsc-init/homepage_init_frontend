@@ -1,28 +1,35 @@
 /* 페이지 전체 컨테이너 */
 .PigDetailContainer {
   max-width: 60vw;
-  margin: 0 auto;
-  padding: 2.5rem 1rem;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  background-color: var(--executive-card-bg);
 }
 
+html,
+body {
+  background-color: var(--background-color);
+}
 /* 제목 */
 .PigTitle {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #111;
+  color: var(--color-text-body);
 }
 
 /* 학기 + 상태 */
 .PigInfo {
-  color: #555;
+  color: var(--color-text-subtle);
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
 }
 
 /* 설명 */
 .PigDescription {
-  color: #333;
+  color: var(--color-text-subtle);
   font-size: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -30,7 +37,7 @@
 /* 구분선 */
 .PigDivider {
   border: none;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--executive-card-shadow);
   margin: 2rem 0;
 }
 
@@ -38,7 +45,7 @@
 .PigContent {
   line-height: 1.75;
   font-size: 1rem;
-  color: #222;
+  color: var(--color-text-subtle);
   word-break: break-word;
 }
 
@@ -66,14 +73,14 @@
 }
 
 .mdx-inline-code {
-  background: #f1f1f1;
+  background: var(--color-primary);
   padding: 0.1rem 0.3rem;
   border-radius: 4px;
   font-size: 0.95rem;
 }
 
 .mdx-pre {
-  background: #f9f9f9;
+  background: var(--executive-card-bg);
   padding: 1rem;
   overflow-x: auto;
   border-radius: 0.5rem;

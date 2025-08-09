@@ -1,0 +1,101 @@
+:root {
+  --color-primary: #bbbcbc;
+  --color-button-bg: #128e9f;
+  --color-button-border: #527a91;
+  --color-button-text: white;
+  --color-text-body: #2a2a2a;
+  --color-text-subtle: #1b1b1b;
+  --color-surface-light: #cccccc;
+  --background-color: #b9c9d8;
+  --foreground-color: #777;
+  --header-background-color: var(--slate-1);
+  --header-foreground-color: var(--slate-12);
+  --header-border-color: var(--slate-6);
+  --header-shadow-color: var(--slate-5);
+  --footer-background: #1f1f1f;
+  --footer-text-color: #f5f5f5;
+  --footer-icon-bg: #3a3a3a;
+  --footer-icon-hover: #555555;
+  --primary-color: #d0d3d8;
+  --primary-neon: #b0c4de;
+  --dot-bg: #8ba1b6;
+  --executive-card-bg: white;
+  --executive-overlay-bg: rgba(0, 0, 0, 0.55);
+  --executive-name-color: #111;
+  --executive-role-color: #444;
+  --executive-description-color: white;
+  --executive-arrow-color: var(--foreground-color);
+  --executive-arrow-bg: #e0e0e0;
+  --executive-arrow-hover: #ccc;
+  --executive-card-shadow: rgba(0, 0, 0, 0.06);
+  --color-text-strong: #111111;
+  --box-color: rgb(235, 235, 235);
+
+  --main-bg-gradient: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(200, 220, 245, 0.4) 20%,
+    rgba(185, 201, 216, 1) 60%,
+    #b9c9d8 100%
+  );
+
+  --main-focus-gradient: radial-gradient(
+    circle at center,
+    rgba(240, 240, 255, 0.35),
+    transparent 70%
+  );
+}
+
+.dark {
+  --color-primary: #1e1e1e;
+  --color-button-bg: #4bb0c9;
+  --color-button-border: #2f4f67;
+  --color-button-text: white;
+  --color-text-body: #f5f5f5;
+  --color-text-subtle: #aaaaaa;
+  --color-surface-light: #2c2c2c;
+  --background-color: #121212;
+  --foreground-color: #e0e0e0;
+  --header-background-color: #1a1a1a;
+  --header-foreground-color: #f5f5f5;
+  --header-border-color: #333;
+  --header-shadow-color: rgba(0, 0, 0, 0.4);
+  --footer-background: #111111;
+  --footer-text-color: #d0d0d0;
+  --footer-icon-bg: #222;
+  --footer-icon-hover: #444;
+  --primary-color: #1a1a1a;
+  --primary-neon: #667799;
+  --dot-bg: #555;
+  --executive-card-bg: #1f1f1f;
+  --executive-overlay-bg: rgba(255, 255, 255, 0.08);
+  --executive-name-color: #eee;
+  --executive-role-color: #aaa;
+  --executive-description-color: #ddd;
+  --executive-arrow-color: #ccc;
+  --executive-arrow-bg: #333;
+  --executive-arrow-hover: #444;
+  --executive-card-shadow: rgba(255, 255, 255, 0.06);
+  --color-text-strong: #ffffff;
+
+  --main-bg-gradient: radial-gradient(
+    circle at center,
+    #1e1e1e 0%,
+    #151515 40%,
+    #121212 100%
+  );
+
+  --main-focus-gradient: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.05),
+    transparent 70%
+  );
+}
+
+.dark .ico,
+.dark .logo,
+.dark .WallLogo,
+.dark .WallLogo2,
+.dark .HeaderUserIcon {
+  filter: invert(1) hue-rotate(180deg);
+}

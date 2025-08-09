@@ -1,32 +1,38 @@
 import Image from "next/image";
 import "./page.css";
-
-export default function Home() {
-  const year = new Date().getFullYear() - 1984;
-
+export default function HomePage() {
   return (
-    <div id="Home">
-      <div id="HomeImageContainer">
-        {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
-        <h3
-          className="TypingCode"
-          style={{
-            width: "20ch",
-            animation:
-              "typing 3s steps(20, end) forwards, blink 0.75s step-end infinite",
-          }}
-        >
-          {"// Welcome to SCSC"}
-        </h3>
-        <div className="TitleContainer">
-          <h1>Seoul National University</h1>
-          <h1>Computer Study Club</h1>
-        </div>
-        <div className="TitleContainer">
-          <h4>개발자로 가는 가장 빠른 첫 걸음,</h4>
-          <h4>SCSC는 여러분을 기다리고 있습니다.</h4>
+    <main className="main-wrapper">
+      {/* Overlay 로고 (배경) */}
+      <div className="overlay-container">
+        <img
+          src="/main/logo-overlay-left.png"
+          alt="Overlay Left"
+          className="overlay-image left logo"
+        />
+        <img
+          src="/main/logo-overlay-right.png"
+          alt="Overlay Right"
+          className="overlay-image right logo"
+        />
+      </div>
+
+      {/* 메인 로고 */}
+      <div className="main-logo-wrapper">
+        <img
+          src="/main/main-logo.png"
+          alt="Main Logo"
+          className="main-logo logo"
+        />
+        <div className="main-subtitle">
+          Seoul National University Computer Study Club
         </div>
       </div>
-    </div>
+
+      {/* 학교 로고
+      <div className="school-logo">
+        <img src="/main/school.png" alt="SNU Logo" />
+      </div> */}
+    </main>
   );
 }

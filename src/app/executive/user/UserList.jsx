@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ExportUsersButton from "./ExportUsersButton"
 
 export default function UserList({ users: usersDefault, majors = [] }) {
   const [users, setUsers] = useState(usersDefault ?? []);
@@ -83,8 +84,34 @@ export default function UserList({ users: usersDefault, majors = [] }) {
     console.log("PAYLOAD SENT TO SERVER", updated);
   };
 
+  const manualEnroll = async (user) => {
+    const jwt = localStorage.getItem("jwt");
+    setSaving((prev) => ({ ...prev, [user.id]: true }));
+
+    const res = await fetch(`/api/executive/user/standby/process/manual`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
+      },
+      body: JSON.stringify({ id: user.id }),
+    });
+
+    if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
+    else alert(`${user.name} 입금 확인 실패: ${res.status}`);
+
+    setSaving((prev) => ({ ...prev, [user.id]: false }));
+  };
+
+  useEffect(() => {
+    console.log(filteredUsers)
+  }, [filteredUsers])
+
   return (
     <div style={{ marginTop: "2rem" }}>
+      <h2>유저 csv 다운로드</h2>
+      아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.
+      <ExportUsersButton filteredUsers={filteredUsers}/>
       <h2>관리자 권한 편집</h2>
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
@@ -96,6 +123,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
             <th style={thStyle}>권한</th>
             <th style={thStyle}>상태</th>
             <th style={thStyle}>저장</th>
+            <th style={thStyle}>입금 확인</th>
           </tr>
           <tr>
             <td style={tdStyle}>
@@ -143,6 +171,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 onChange={(e) => updateFilterCriteria("status", e.target.value)}
               />
             </td>
+            <td style={tdStyle}></td>
             <td style={tdStyle}></td>
           </tr>
         </thead>
@@ -213,6 +242,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 >
                   <option value="active">active</option>
                   <option value="pending">pending</option>
+                  <option value="standby">standby</option>
                   <option value="banned">banned</option>
                 </select>
               </td>
@@ -222,6 +252,14 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   disabled={saving[user.id]}
                 >
                   저장
+                </button>
+              </td>
+              <td style={tdStyle}>
+                <button
+                  onClick={() => manualEnroll(user)}
+                  disabled={saving[user.id]}
+                >
+                  입금 확인
                 </button>
               </td>
             </tr>

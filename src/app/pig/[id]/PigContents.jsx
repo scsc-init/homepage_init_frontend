@@ -8,16 +8,19 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function PigContents({ pigContentId }) {
   const router = useRouter();
   const [article, setArticle] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+      setLoading(false);
+      router.push("/us/login");
+      return;
     }
 
     const fetchContents = async () => {
@@ -26,24 +29,26 @@ export default function PigContents({ pigContentId }) {
           headers: { "x-jwt": jwt },
         });
         if (!contentRes.ok) {
-          alert("게시글 로딩 실패");
-          router.push('/pig');
+          router.push("/pig");
+          return;
         }
         const article = await contentRes.json();
         setArticle(article);
       } catch (e) {
-        alert(`피그 불러오기 중 오류: ${e}`);
-        router.push('/pig');
+        router.push("/pig");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchContents();
   }, [router, pigContentId]);
 
+  if (loading) return <LoadingSpinner />;
+
   return (
     <div className="PigContent">
-      {!article ? (
-        <div>로딩중...</div>
-      ) : (<ReactMarkdown
+      <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
         components={{
@@ -57,8 +62,8 @@ export default function PigContents({ pigContentId }) {
           pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
         }}
       >
-        {article.content}
-      </ReactMarkdown>)}
+        {article?.content}
+      </ReactMarkdown>
     </div>
   );
 }

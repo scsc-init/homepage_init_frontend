@@ -1,3 +1,7 @@
+html,
+body {
+  background-color: var(--background-color);
+}
 #DetailsContainer {
   display: flex;
   flex-direction: column;
@@ -32,7 +36,12 @@
   gap: 0.5rem;
   margin-top: 1rem;
 }
-
+.CreatePigCard {
+  background-color: var(--executive-card-bg);
+  padding: 2rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  border-radius: 1rem;
+}
 .CreatePigContainer {
   max-width: 60rem;
   margin: 0 auto;
@@ -47,11 +56,49 @@
 .CreatePigTitle {
   font-size: 2.25rem; /* text-3xl */
   font-weight: 700;
-  color: var(--indigo-11);
+  color: var(--color-text-body);
   margin-bottom: 0.5rem;
 }
 
 .CreatePigSubtitle {
   font-size: 1.1rem;
-  color: var(--slate-10);
+  color: var(--color-text-subtle);
+}
+
+.C_InputLabel {
+  color: var(--color-text-subtle);
+}
+
+.C_Input {
+  color: var(--color-text-subtle);
+  border-bottom: 3px solid var(--color-text-body);
+}
+
+.C_InputRoot {
+  color: var(--color-text-subtle);
+}
+
+::placeholder {
+  color: var(--color-text-subtle);
+}
+
+input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.editorSection {
+  margin-top: 0.5rem;
+  margin-bottom: 1em;
+  border-radius: 1rem;
+}
+
+.mdxeditor {
+  background-color: rgb(202, 202, 202);
+  border-radius: 0.5rem;
+  min-height: 10rem;
+}
+
+label {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
 }

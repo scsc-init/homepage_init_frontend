@@ -1,7 +1,10 @@
 import { Noto_Sans_KR } from "next/font/google";
 import "./global.css";
 import HeaderWrapper from "./HeaderWrapper";
-import Footer from "./footer.jsx";
+import ThemeToggle from "@/components/ThemeToggle";
+import dynamic from "next/dynamic";
+
+const FooterWrapper = dynamic(() => import("@/app/FooterWrapper"), { ssr: false });
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
@@ -36,12 +39,33 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem("theme");
+                  if (theme === "dark") {
+                    document.documentElement.classList.add("dark");
+                  }
+                } catch (_) {}
+              })();
+            `,
+          }}
+        />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
+      </head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
           <HeaderWrapper />
           <main id="MainContent">{children}</main>
-          <Footer />
+          <ThemeToggle />
+          <FooterWrapper />
         </div>
       </body>
     </html>

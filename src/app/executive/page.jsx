@@ -7,16 +7,20 @@ import MajorList from "./MajorList";
 import Link from "next/link";
 import WithAuthorization from "@/components/WithAuthorization";
 import ScscStatusPanel from "./ScscStatusPanel";
+import DiscordBotPanel from "./DiscordBotPanel";
 import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 
 export default async function AdminPanel() {
-  const boards = await fetchBoards();
-  const articles = await fetchArticles();
-  const sigs = await fetchSigs();
-  const pigs = await fetchPigs();
-  const scscGlobalStatus = await fetchScscGlobalStatus();
-  const majors = await fetchMajors();
+  const [boards, sigs, pigs, scscGlobalStatus, majors, discordBotStatus] =
+    await Promise.all([
+      fetchBoards(),
+      fetchSigs(),
+      fetchPigs(),
+      fetchScscGlobalStatus(),
+      fetchMajors(),
+      fetchDiscordBot(),
+    ]);
 
   return (
     <WithAuthorization>
@@ -26,16 +30,32 @@ export default async function AdminPanel() {
           <Link href="/executive/user">유저 관리 페이지로 이동</Link>
         </p>
 
+        <h2>지원금 요청</h2>
+        <p>
+          <Link href="/board/6">지원금 요청 게시판으로 이동</Link>
+        </p>
         <h2>게시글 관리</h2>
-        <ArticleList boards={boards} articles={articles} />
+        <ArticleList boards={boards} />
 
         <h2>SIG 관리</h2>
         <SigList sigs={sigs} />
 
         <h2>PIG 관리</h2>
         <PigList pigs={pigs} />
+
         <h2>Scsc status 관리</h2>
-        <ScscStatusPanel scscGlobalStatus={scscGlobalStatus.status} semester={scscGlobalStatus.semester} year={scscGlobalStatus.year}/>
+        <ScscStatusPanel
+          scscGlobalStatus={scscGlobalStatus.status}
+          semester={scscGlobalStatus.semester}
+          year={scscGlobalStatus.year}
+        />
+
+        <h2>디스코드 봇 관리</h2>
+
+        <DiscordBotPanel
+          is_logged_in={discordBotStatus ? discordBotStatus.logged_in : "error"}
+        />
+
         <h2>전공 관리</h2>
         <MajorList majors={majors} />
       </div>
@@ -55,20 +75,6 @@ async function fetchBoards() {
     }),
   );
   return boardResults.filter(Boolean);
-}
-async function fetchArticles() {
-  const all = {};
-  for (const boardId of targetBoardIds) {
-    const res = await fetch(`${getBaseUrl()}/api/articles/${boardId}`, {
-      headers: { "x-api-secret": getApiSecret() },
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const data = await res.json();
-      all[boardId] = data;
-    }
-  }
-  return all;
 }
 
 async function fetchSigs() {
@@ -130,11 +136,19 @@ async function fetchScscGlobalStatus() {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-  return res.ok ? (await res.json()) : "";
+  return res.ok ? await res.json() : "";
 }
 
 async function fetchMajors() {
   const res = await fetch(`${getBaseUrl()}/api/majors`, {
+    headers: { "x-api-secret": getApiSecret() },
+    cache: "no-store",
+  });
+  if (res.ok) return await res.json();
+}
+
+async function fetchDiscordBot() {
+  const res = await fetch(`${getBaseUrl()}/api/bot/discord/status`, {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
