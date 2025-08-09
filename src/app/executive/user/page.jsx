@@ -4,7 +4,7 @@ import UserList from "./UserList";
 import EnrollManagementPanel from "./EnrollManagementPanel";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
-import "../page.css"; // 다크모드/관리자 공용 스타일 재사용
+import "../page.css";
 
 export default async function ExecutiveUserPage() {
   const [users, majors] = await Promise.all([
