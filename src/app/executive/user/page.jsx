@@ -1,10 +1,10 @@
-// src/app/executive/user/page.jsx (SSR)
+// src/app/executive/user/page.jsx
 import WithAuthorization from "@/components/WithAuthorization";
 import UserList from "./UserList";
 import EnrollManagementPanel from "./EnrollManagementPanel";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
-import "./page.css";
+import "../page.css"; // 다크모드/관리자 공용 스타일 재사용
 
 export default async function ExecutiveUserPage() {
   const [users, majors] = await Promise.all([
@@ -33,6 +33,7 @@ async function fetchUsersByRoles() {
     cache: "no-store",
   });
   if (!res.ok) return;
+
   const result = await res.json();
   const resultUnique = Array.from(
     new Map(result.map((user) => [user.id, user])).values(),

@@ -1,35 +1,28 @@
-// src/app/executive/ArticleList.jsx (CLIENT)
 "use client";
 import React, { useEffect, useState } from "react";
 
-export default function ArticleList({
-  boards: boardsDefault,
-  articles: articlesDefault,
-}) {
+export default function ArticleList({ boards: boardsDefault }) {
   const [boards, setBoards] = useState(boardsDefault ?? []);
-  const [articles, setArticles] = useState(articlesDefault ?? {});
+  const [articles, setArticles] = useState({});
   const [saving, setSaving] = useState({});
 
   useEffect(() => {
     const targetBoardIds = [3, 4, 5];
-    async function fetchArticles() {
-      const all = {};
-      for (const boardId of targetBoardIds) {
-        const res = await fetch(`/api/articles/${boardId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-jwt": localStorage.getItem("jwt"),
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          all[boardId] = data;
-        }
-      }
-      setArticles(all);
+    async function fetchBoardArticles(boardId) {
+      const res = await fetch(`/api/articles/${boardId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-jwt": localStorage.getItem("jwt"),
+        },
+      });
+      if (res.ok) return { [boardId]: await res.json() };
+      return {};
     }
-    fetchArticles();
+    Promise.all(targetBoardIds.map(fetchBoardArticles)).then((resArray) => {
+      const all = resArray.reduce((acc, cur) => ({ ...acc, ...cur }), {});
+      setArticles(all);
+    });
   }, []);
 
   const handleBoardChange = (id, value) => {
@@ -124,8 +117,9 @@ export default function ArticleList({
   return (
     <div className="adm-section">
       {boards.map((board) => (
-        <div key={board.id} style={{ marginBottom: "3rem" }}>
+        <div key={board.id} className="adm-section">
           <h3>게시판 ID {board.id}</h3>
+
           <div className="adm-actions">
             <input
               className="adm-input"

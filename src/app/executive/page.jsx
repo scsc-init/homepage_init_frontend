@@ -1,3 +1,4 @@
+// src/app/executive/page.jsx
 import ArticleList from "./ArticleList";
 import SigList from "./SigList";
 import PigList from "./PigList";
@@ -11,12 +12,15 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import "./page.css";
 
 export default async function AdminPanel() {
-  const boards = await fetchBoards();
-  const sigs = await fetchSigs();
-  const pigs = await fetchPigs();
-  const scscGlobalStatus = await fetchScscGlobalStatus();
-  const majors = await fetchMajors();
-  const discordBotStatus = await fetchDiscordBot();
+  const [boards, sigs, pigs, scscGlobalStatus, majors, discordBotStatus] =
+    await Promise.all([
+      fetchBoards(),
+      fetchSigs(),
+      fetchPigs(),
+      fetchScscGlobalStatus(),
+      fetchMajors(),
+      fetchDiscordBot(),
+    ]);
 
   return (
     <WithAuthorization>
