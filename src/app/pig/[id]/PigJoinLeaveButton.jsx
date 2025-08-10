@@ -1,94 +1,88 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
-export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
+export default function PigJoinLeaveButton({ pigId }) {
+  const [isMember, setIsMember] = useState(false);
+  const [user, setUser] = useState();
+  const [members, setMembers] = useState([]);
   const router = useRouter();
-  const [isMember, setIsMember] = useState(!!initialIsMember);
-  const [pending, setPending] = useState(false);
 
-  const ensureJwt = () => {
+  useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.replace("/us/login");
+      router.push("/us/login");
     }
-    return jwt;
-  };
 
-  const readError = async (res) => {
-    const base = `HTTP ${res.status}`;
-    const ct = res.headers.get("content-type") || "";
-    try {
-      if (ct.includes("application/json")) {
-        const body = await res.json();
-        const detail = body?.detail ?? body?.message ?? body?.error;
-        return detail
-          ? `${base} - ${detail}`
-          : `${base} - ${JSON.stringify(body)}`;
-      } else {
-        const text = await res.text();
-        return text ? `${base} - ${text}` : base;
-      }
-    } catch {
-      return base;
-    }
-  };
+    const fetchProfile = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) return;
 
-  const join = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
-    try {
-      setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/member/join`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      const res = await fetch(`/api/user/profile`, {
+        headers: { "x-jwt": jwt },
       });
-      if (res.ok) {
-        setIsMember(true);
-        router.refresh();
-      } else {
-        alert("SIG 가입 실패: " + (await readError(res)));
-      }
-    } catch (e) {
-      alert("SIG 가입 실패: " + (e?.message || "네트워크 오류"));
-    } finally {
-      setPending(false);
+      if (res.ok) setUser(await res.json());
+    };
+    fetchProfile();
+  }, [router]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const res = await fetch(`/api/pig/${pigId}/members`);
+      if (res.ok) setMembers(await res.json());
+    };
+    fetchMembers();
+  }, []);
+
+  useEffect(() => {
+    if (!user || !members) return;
+    setIsMember(members.some((m) => m.user_id === user.id));
+  }, [user, members]);
+
+  const onClickJoinBtn = async () => {
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch(`/api/pig/${pigId}/member/join`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
+      },
+    });
+
+    if (res.ok) {
+      window.location.reload();
+      alert("가입 성공");
+    } else {
+      const err = await res.json();
+      alert("PIG 가입 실패: " + (err.detail ?? JSON.stringify(err)));
     }
   };
 
-  const leave = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
-    try {
-      setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/member/leave`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
-      });
-      if (res.ok) {
-        setIsMember(false);
-        router.refresh();
-      } else {
-        alert("SIG 탈퇴 실패: " + (await readError(res)));
-      }
-    } catch (e) {
-      alert("SIG 탈퇴 실패: " + (e?.message || "네트워크 오류"));
-    } finally {
-      setPending(false);
+  const onClickLeaveBtn = async () => {
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch(`/api/pig/${pigId}/member/leave`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-jwt": jwt,
+      },
+    });
+
+    if (res.ok) {
+      window.location.reload();
+      alert("탈퇴 성공");
+    } else {
+      const err = await res.json();
+      alert("PIG 탈퇴 실패: " + (err.detail ?? JSON.stringify(err)));
     }
   };
 
-  return (
-    <button
-      type="button"
-      className={`PigButton ${isMember ? "is-leave" : "is-join"}`}
-      onClick={isMember ? leave : join}
-      disabled={pending}
-      aria-busy={pending}
-    >
-      {isMember ? "시그 탈퇴하기" : "시그 가입하기"}
-    </button>
+  return !user || !members ? (
+    ""
+  ) : isMember === false ? (
+    <button onClick={onClickJoinBtn}>시그 가입하기</button>
+  ) : (
+    <button onClick={onClickLeaveBtn}>시그 탈퇴하기</button>
   );
 }

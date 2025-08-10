@@ -1,11 +1,51 @@
-import "highlight.js/styles/github.css";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import "./page.css";
+import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-export default function SigContents({ content }) {
+export default function SigContents({ sigContentId }) {
+  const router = useRouter();
+  const [article, setArticle] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      setLoading(false);
+      router.push("/us/login");
+      return;
+    }
+
+    const fetchContents = async () => {
+      try {
+        const contentRes = await fetch(`/api/article/${sigContentId}`, {
+          headers: { "x-jwt": jwt },
+        });
+        if (!contentRes.ok) {
+          router.push("/sig");
+          return;
+        }
+        const article = await contentRes.json();
+        setArticle(article);
+      } catch (e) {
+        router.push("/sig");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContents();
+  }, [router, sigContentId]);
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <div className="SigContent">
       <ReactMarkdown
@@ -22,7 +62,7 @@ export default function SigContents({ content }) {
           pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
         }}
       >
-        {content || ""}
+        {article?.content}
       </ReactMarkdown>
     </div>
   );

@@ -13,11 +13,10 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
-  const [article, setArticle] = useState(null);
-  const [comments, setComments] = useState(null);
-  const [user, setUser] = useState(null);
+  const [article, setArticle] = useState();
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
   const { id } = params;
 
   useEffect(() => {
@@ -26,35 +25,30 @@ export default function ArticleDetail({ params }) {
       router.push("/us/login");
       return;
     }
-    const loadAll = async () => {
+
+    const fetchContents = async () => {
       try {
-        const [contentRes, commentsRes, userRes] = await Promise.all([
-          fetch(`/api/article/${id}`, { headers: { "x-jwt": jwt } }),
-          fetch(`/api/comments/${id}`, { headers: { "x-jwt": jwt } }),
-          fetch(`/api/user/profile`, { headers: { "x-jwt": jwt } }),
-        ]);
-        if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
+        const contentRes = await fetch(`/api/article/${id}`, {
+          headers: { "x-jwt": jwt },
+        });
+        if (!contentRes.ok) {
           setIsError(true);
           return;
         }
-        const [articleJson, commentsJson, userJson] = await Promise.all([
-          contentRes.json(),
-          commentsRes.json(),
-          userRes.json(),
-        ]);
-        setArticle(articleJson);
-        setComments(commentsJson);
-        setUser(userJson);
-      } catch (_) {
+        const article = await contentRes.json();
+        setArticle(article);
+      } catch (e) {
         setIsError(true);
       } finally {
         setIsLoading(false);
       }
     };
-    loadAll();
+    fetchContents();
   }, [router, id]);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (isError || !article) {
     return (
@@ -91,7 +85,7 @@ export default function ArticleDetail({ params }) {
           {markdown}
         </ReactMarkdown>
       </div>
-      <Comments articleId={id} initialComments={comments} user={user} />
+      <Comments articleId={id} />
     </div>
   );
 }

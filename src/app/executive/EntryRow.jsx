@@ -1,4 +1,3 @@
-// src/app/executive/EntryRow.jsx (CLIENT)
 import React from "react";
 
 export default function EntryRow({
@@ -8,33 +7,34 @@ export default function EntryRow({
   onDelete,
   saving,
 }) {
+  const tdStyle = {
+    border: "1px solid #ccc",
+    padding: "8px",
+  };
+
   return (
     <tr key={entry.id}>
-      <td className="adm-td">{entry.id}</td>
-      <td className="adm-td">
+      <td style={tdStyle}>{entry.id}</td>
+      <td style={tdStyle}>
         <input
-          className="adm-input"
           value={entry.title}
           onChange={(e) => onChange(entry.id, "title", e.target.value)}
         />
       </td>
-      <td className="adm-td">
+      <td style={tdStyle}>
         <input
-          className="adm-input"
           value={entry.description}
           onChange={(e) => onChange(entry.id, "description", e.target.value)}
         />
       </td>
-      <td className="adm-td">
+      <td style={tdStyle}>
         <textarea
-          className="adm-textarea"
           value={entry.content ?? ""}
           onChange={(e) => onChange(entry.id, "content", e.target.value)}
         />
       </td>
-      <td className="adm-td">
+      <td style={tdStyle}>
         <select
-          className="adm-select"
           value={entry.status}
           onChange={(e) => onChange(entry.id, "status", e.target.value)}
         >
@@ -44,17 +44,15 @@ export default function EntryRow({
           <option value="inactive">비활성</option>
         </select>
       </td>
-      <td className="adm-td">
+      <td style={tdStyle}>
         <input
-          className="adm-input"
           type="number"
           value={entry.year}
           onChange={(e) => onChange(entry.id, "year", parseInt(e.target.value))}
         />
       </td>
-      <td className="adm-td">
+      <td style={tdStyle}>
         <select
-          className="adm-select"
           value={entry.semester}
           onChange={(e) =>
             onChange(entry.id, "semester", parseInt(e.target.value))
@@ -64,22 +62,16 @@ export default function EntryRow({
           <option value={2}>2학기</option>
         </select>
       </td>
-      <td className="adm-td">
-        <div className="adm-flex">
-          <button
-            className="adm-button"
-            onClick={() => onSave(entry)}
-            disabled={saving[entry.id]}
-          >
-            저장
-          </button>
-          <button
-            className="adm-button outline"
-            onClick={() => onDelete(entry.id)}
-          >
-            삭제
-          </button>
-        </div>
+      <td style={tdStyle}>
+        <button onClick={() => onSave(entry)} disabled={saving[entry.id]}>
+          저장
+        </button>
+        <button
+          onClick={() => onDelete(entry.id)}
+          style={{ marginLeft: "0.5rem" }}
+        >
+          삭제
+        </button>
       </td>
     </tr>
   );

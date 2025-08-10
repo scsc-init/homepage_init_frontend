@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 
 export default function ArticleList({ boards: boardsDefault }) {
@@ -16,13 +17,17 @@ export default function ArticleList({ boards: boardsDefault }) {
           "x-jwt": localStorage.getItem("jwt"),
         },
       });
-      if (res.ok) return { [boardId]: await res.json() };
+      if (res.ok) return { boardId: await res.json() };
       return {};
     }
-    Promise.all(targetBoardIds.map(fetchBoardArticles)).then((resArray) => {
-      const all = resArray.reduce((acc, cur) => ({ ...acc, ...cur }), {});
+    async function fetchArticles() {
+      const res = await Promise.all(targetBoardIds.map(fetchBoardArticles));
+      const all = res.reduce((acc, cur) => {
+        return { ...acc, ...cur };
+      }, {});
       setArticles(all);
-    });
+    }
+    fetchArticles();
   }, []);
 
   const handleBoardChange = (id, value) => {
@@ -49,17 +54,23 @@ export default function ArticleList({ boards: boardsDefault }) {
       },
       body: JSON.stringify({ name: board.name }),
     });
-    if (res.status === 204) alert("게시판 이름 수정 완료");
-    else alert("게시판 이름 수정 실패: " + res.status);
+
+    if (res.status === 204) {
+      alert("게시판 이름 수정 완료");
+    } else {
+      alert("게시판 이름 수정 실패: " + res.status);
+    }
   };
 
   const deleteBoard = async (id) => {
     const ok = confirm("게시판을 삭제하시겠습니까?");
     if (!ok) return;
+
     const res = await fetch(`/api/executive/board/delete/${id}`, {
       method: "POST",
       headers: { "x-jwt": localStorage.getItem("jwt") },
     });
+
     if (res.status === 204) {
       alert("삭제 완료");
       setBoards((prev) => prev.filter((b) => b.id !== id));
@@ -69,15 +80,20 @@ export default function ArticleList({ boards: boardsDefault }) {
   };
 
   const saveArticle = async (article) => {
+    // 필드 검증
     if (!article.title || !article.content || !article.board_id) {
       alert("제목, 내용, 게시판 ID는 필수입니다.");
       return;
     }
+
     const payload = {
       title: article.title.trim(),
       content: article.content.trim(),
       board_id: Number(article.board_id),
     };
+
+    console.log("🚀 최종 전송 payload", payload);
+
     try {
       const res = await fetch(`/api/executive/article/update/${article.id}`, {
         method: "POST",
@@ -87,12 +103,16 @@ export default function ArticleList({ boards: boardsDefault }) {
         },
         body: JSON.stringify(payload),
       });
-      if (res.status === 204) alert("✅ 게시글 수정 완료");
-      else {
+
+      if (res.status === 204) {
+        alert("✅ 게시글 수정 완료");
+      } else {
         const error = await res.text();
+        console.error("❌ 수정 실패 응답:", error);
         alert("수정 실패: " + (error || res.status));
       }
     } catch (err) {
+      console.error("💥 네트워크 또는 JSON 오류", err);
       alert("요청 실패: " + err.message);
     }
   };
@@ -100,10 +120,12 @@ export default function ArticleList({ boards: boardsDefault }) {
   const deleteArticle = async (id, boardId) => {
     const ok = confirm("정말 삭제하시겠습니까?");
     if (!ok) return;
+
     const res = await fetch(`/api/executive/article/delete/${id}`, {
       method: "POST",
       headers: { "x-jwt": localStorage.getItem("jwt") },
     });
+
     if (res.status === 204) {
       setArticles((prev) => ({
         ...prev,
@@ -115,102 +137,99 @@ export default function ArticleList({ boards: boardsDefault }) {
   };
 
   return (
-    <div className="adm-section">
+    <div style={{ marginTop: "2rem" }}>
       {boards.map((board) => (
-        <div key={board.id} className="adm-section">
+        <div key={board.id} style={{ marginBottom: "3rem" }}>
           <h3>게시판 ID {board.id}</h3>
-
-          <div className="adm-actions">
+          <div style={{ marginBottom: "1rem" }}>
             <input
-              className="adm-input"
               value={board.name}
               onChange={(e) => handleBoardChange(board.id, e.target.value)}
             />
-            <button className="adm-button" onClick={() => saveBoard(board)}>
+            <button
+              onClick={() => saveBoard(board)}
+              style={{ marginLeft: "0.5rem" }}
+            >
               이름 저장
             </button>
             <button
-              className="adm-button outline"
               onClick={() => deleteBoard(board.id)}
+              style={{ marginLeft: "0.5rem" }}
             >
               게시판 삭제
             </button>
           </div>
 
-          <div className="adm-table-wrap">
-            <table className="adm-table">
-              <thead>
-                <tr>
-                  <th className="adm-th" style={{ width: "10%" }}>
-                    ID
-                  </th>
-                  <th className="adm-th" style={{ width: "30%" }}>
-                    제목
-                  </th>
-                  <th className="adm-th" style={{ width: "45%" }}>
-                    내용
-                  </th>
-                  <th className="adm-th" style={{ width: "15%" }}>
-                    작업
-                  </th>
+          <table style={{ borderCollapse: "collapse", width: "100%" }}>
+            <thead>
+              <tr>
+                <th style={thStyle}>ID</th>
+                <th style={thStyle}>제목</th>
+                <th style={thStyle}>내용</th>
+                <th style={thStyle}>작업</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(articles[board.id] || []).map((article) => (
+                <tr key={article.id}>
+                  <td style={tdStyle}>{article.id}</td>
+                  <td style={tdStyle}>
+                    <input
+                      value={article.title}
+                      onChange={(e) =>
+                        handleArticleChange(
+                          board.id,
+                          article.id,
+                          "title",
+                          e.target.value,
+                        )
+                      }
+                    />
+                  </td>
+                  <td style={tdStyle}>
+                    <input
+                      value={article.content}
+                      onChange={(e) =>
+                        handleArticleChange(
+                          board.id,
+                          article.id,
+                          "content",
+                          e.target.value,
+                        )
+                      }
+                    />
+                  </td>
+                  <td style={tdStyle}>
+                    <button
+                      onClick={() => saveArticle(article)}
+                      disabled={saving[article.id]}
+                    >
+                      저장
+                    </button>
+                    <button
+                      onClick={() => deleteArticle(article.id, board.id)}
+                      style={{ marginLeft: "0.5rem" }}
+                    >
+                      삭제
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {(articles[board.id] || []).map((article) => (
-                  <tr key={article.id}>
-                    <td className="adm-td">{article.id}</td>
-                    <td className="adm-td">
-                      <input
-                        className="adm-input"
-                        value={article.title}
-                        onChange={(e) =>
-                          handleArticleChange(
-                            board.id,
-                            article.id,
-                            "title",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="adm-td">
-                      <input
-                        className="adm-input"
-                        value={article.content}
-                        onChange={(e) =>
-                          handleArticleChange(
-                            board.id,
-                            article.id,
-                            "content",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="adm-td">
-                      <div className="adm-flex">
-                        <button
-                          className="adm-button"
-                          onClick={() => saveArticle(article)}
-                          disabled={saving[article.id]}
-                        >
-                          저장
-                        </button>
-                        <button
-                          className="adm-button outline"
-                          onClick={() => deleteArticle(article.id, board.id)}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       ))}
     </div>
   );
 }
+
+const thStyle = {
+  border: "1px solid #ccc",
+  padding: "8px",
+  background: "#f9f9f9",
+};
+
+const tdStyle = {
+  border: "1px solid #ccc",
+  padding: "8px",
+};

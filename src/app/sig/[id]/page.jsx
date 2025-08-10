@@ -1,42 +1,44 @@
+// /app/sig/[id]/page.jsx
 import "highlight.js/styles/github.css";
 import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import "./page.css";
-import SigClient from "./SigClient";
-
-export const metadata = { title: "SIG" };
+import SigJoinLeaveButton from "./SigJoinLeaveButton";
+import EditSigButton from "./EditSigButton";
+import SigMembers from "./SigMembers";
+import SigContents from "./SigContents";
 
 export default async function SigDetailPage({ params }) {
   const { id } = params;
 
-  const sigRes = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
+  const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-  if (!sigRes.ok) {
+
+  if (!res.ok) {
     return (
       <div className="p-6 text-center text-red-600">
         존재하지 않는 SIG입니다.
       </div>
     );
   }
-  const sig = await sigRes.json();
 
-  const membersRes = await fetch(`${getBaseUrl()}/api/sig/${id}/members`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
-  const rawMembers = membersRes.ok ? await membersRes.json() : [];
-  const members = Array.isArray(rawMembers)
-    ? rawMembers.map((m) => m.user ?? m)
-    : [];
+  const sig = await res.json();
 
   return (
-    <SigClient
-      sig={sig}
-      members={members}
-      articleId={sig.content_id}
-      sigId={id}
-    />
+    <div className="SigDetailContainer">
+      <h1 className="SigTitle">{sig.title}</h1>
+      <p className="SigInfo">
+        {sig.year}학년도 {sig.semester}학기 · 상태: {sig.status}
+      </p>
+      <p className="SigDescription">{sig.description}</p>
+      <SigJoinLeaveButton sigId={id} />
+      <EditSigButton sigId={id} />
+      <hr className="SigDivider" />
+      <SigContents sigContentId={sig.content_id} />
+      <hr></hr>
+      <SigMembers sigId={id} />
+    </div>
   );
 }

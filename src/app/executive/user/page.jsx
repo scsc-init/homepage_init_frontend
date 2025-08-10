@@ -1,10 +1,10 @@
 // src/app/executive/user/page.jsx
+
 import WithAuthorization from "@/components/WithAuthorization";
 import UserList from "./UserList";
 import EnrollManagementPanel from "./EnrollManagementPanel";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
-import "../page.css";
 
 export default async function ExecutiveUserPage() {
   const [users, majors] = await Promise.all([
@@ -14,14 +14,10 @@ export default async function ExecutiveUserPage() {
 
   return (
     <WithAuthorization>
-      <div className="admin-panel">
+      <div style={{ padding: "2rem" }}>
         <h2>유저 관리</h2>
-        <div className="adm-section">
-          <UserList users={users} majors={majors} />
-        </div>
-        <div className="adm-section">
-          <EnrollManagementPanel />
-        </div>
+        <UserList users={users} majors={majors} />
+        <EnrollManagementPanel />
       </div>
     </WithAuthorization>
   );
