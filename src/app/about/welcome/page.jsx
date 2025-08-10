@@ -1,7 +1,7 @@
 import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
-import { DEPOSIT_ACC, DISCORD_INVITE_LINK } from "@/util/constants";
+import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from "@/util/constants";
 import EnrollButton from "./EnrollButton"
 
 async function fetchDiscordInviteLink() {
@@ -36,6 +36,7 @@ export default async function Contact() {
             <hr></hr>
             수고하셨습니다. 가입이 완료되었습니다. SCSC에 온 걸 진심으로 환영합니다! */}
             <h3><a href={DISCORD_INVITE_LINK} target="_blank" rel="noopener noreferrer">디스코드 서버 링크</a></h3>
+            <h3><a href={KAKAO_INVITE_LINK} target="_blank" rel="noopener noreferrer">카카오톡 팀 채팅방</a></h3>
             <h3>{DEPOSIT_ACC}</h3>
             <div className="deposit-container">
               <h3>회비: 2.5만원</h3>

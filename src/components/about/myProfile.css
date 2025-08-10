@@ -37,6 +37,7 @@
   background-color: var(--box-color);
   border-radius: 8px;
   overflow-y: auto;
+  min-width: 300px;
 }
 
 .right-container {
@@ -105,16 +106,6 @@
   padding: 0;
 }
 
-/* .user-name-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  z-index: 4;
-  margin-bottom: 3vh;
-  position: relative;
-} */
-
 .user-name {
   text-align: center;
   font-size: 1.2rem;
@@ -137,12 +128,23 @@
   object-fit: cover;
 }
 
-/* Update this to align left instead of center */
+
 .user-name-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* align name to the left */
+  align-items: flex-start;
   text-align: left;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.loading-description {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bolder;
 }
 
 

@@ -7,37 +7,37 @@ const executives = [
   {
     name: "강명석",
     role: "대장",
-    image: "/img1.jpg",
+    image: "/devs/kms.jpg",
     description: "init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아",
   },
   {
     name: "이한경",
     role: "백엔드",
-    image: "/img2.jpg",
+    image: "/devs/lhk.jpg",
     description: "한경님의 백엔드 너무 좋아앗",
   },
   {
     name: "박성현",
     role: "프론트",
-    image: "/img3.jpg",
+    image: "/devs/psh.jpg",
     description: "카와이한 여고생쨩",
   },
   {
     name: "황민기",
     role: "봇이지뭐",
-    image: "/img4.jpg",
+    image: "/devs/hmk.jpg",
     description: "커밋주작은뭐야",
   },
   {
     name: "김재희",
     role: "백엔드?",
-    image: "/img5.jpg",
+    image: "/devs/kjh.jpg",
     description: "분명 프론트 대신 해줄줄 알았는데",
   },
   {
     name: "윤영우",
     role: "백엔드",
-    image: "/img6.jpg",
+    image: "/devs/yyw.jpg",
     description: "고능",
   },
 ];

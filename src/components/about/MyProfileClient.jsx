@@ -81,22 +81,22 @@ export default function MyProfileClient() {
     }
   };
 
-  if (!user)
-    return (
-      <div>
-        <div className="main-logo-wrapper">
-          <p className="main-logo-description">My Page</p>
-          <img
-            src="/main/main-logo.png"
-            alt="Main Logo"
-            className="main-logo logo"
-          />
-        </div>
-        <div className="user-name-container">
-          <div className="user-name">로딩 중...</div>
-        </div>
-      </div>
-    );
+  // if (!user)
+  //   return (
+  //     <div>
+  //       <div className="main-logo-wrapper">
+  //         <p className="main-logo-description">My Page</p>
+  //         <img
+  //           src="/main/main-logo.png"
+  //           alt="Main Logo"
+  //           className="main-logo logo"
+  //         />
+  //       </div>
+  //       <div className="loading-container">
+  //         <div className="loading-description">로딩 중...</div>
+  //       </div>
+  //     </div>
+  //   );
 
   return (
     <div>
@@ -109,14 +109,14 @@ export default function MyProfileClient() {
         />
       </div>
       <div className="user-profile-wrapper">
-        <img
+        {user ? <img
           src={user.profile_picture ? user.profile_picture : "/main/default-pfp.png"}
           alt="Profile" 
           className="user-profile-picture"
-        />
+        /> : <img alt="" height={"50px"} src="//:0"></img>}
         <div className="user-name-container">
           <div className="user-name">
-            {user.name} {"[" + USER_ROLE_MAP[user.role] + "]"}
+            {user ? user.name : ''} {user ? ("[" + USER_ROLE_MAP[user.role] + "]") : ''}
           </div>
         </div>
       </div>
@@ -127,15 +127,15 @@ export default function MyProfileClient() {
             <tbody>
               <tr>
                 <th>이메일</th>
-                <td>{user.email}</td>
+                <td>{user ? user.email : ''}</td>
               </tr>
               <tr>
                 <th>전화번호</th>
-                <td>{user.phone}</td>
+                <td>{user ? user.phone : ''}</td>
               </tr>
               <tr>
                 <th>학번</th>
-                <td>{user.student_id}</td>
+                <td>{user ? user.student_id : ''}</td>
               </tr>
             </tbody>
           </table>
@@ -144,7 +144,7 @@ export default function MyProfileClient() {
           <div class="user-status-container">
             <div class="user-status-content">
               <p className="user-status-description">User Status</p>
-              <p>{USER_STATUS_MAP[user.status]}</p>
+              <p>{user ? USER_STATUS_MAP[user.status] : ''}</p>
             </div>
             <button onClick={handleEnroll} className="enroll-button">
               입금 등록
