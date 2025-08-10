@@ -35,8 +35,11 @@ export default function LoginPage() {
           const resUser = await fetch(`/api/user/profile`, {
             headers: { "x-jwt": jwt },
           });
-          if (resUser.status != 200) {localStorage.removeItem('jwt'); return;}
-          router.push('/about/welcome')
+          if (resUser.status != 200) {
+            localStorage.removeItem("jwt");
+            return;
+          }
+          router.push("/about/welcome");
         } catch (e) {
           return;
         }
@@ -66,7 +69,12 @@ export default function LoginPage() {
       );
 
       const { email, name: rawName, picture: profilePictureUrl } = payload;
-      setForm((prev) => ({ ...prev, email, name: cleanName, profile_picture_url: profilePictureUrl }));
+      setForm((prev) => ({
+        ...prev,
+        email,
+        name: cleanName,
+        profile_picture_url: profilePictureUrl,
+      }));
 
       const cleanName = rawName
         ?.replace(/^[-\s\u00AD\u2010-\u2015]+/, "")
@@ -133,7 +141,7 @@ export default function LoginPage() {
       const createData = await createRes.json();
       alert(`유저 생성 실패: ${createData.detail}`);
       console.log(createData);
-      router.push('/')
+      router.push("/");
       return;
     }
 

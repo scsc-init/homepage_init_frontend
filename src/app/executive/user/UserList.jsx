@@ -1,7 +1,7 @@
+// src/app/executive/user/UserList.jsx (CLIENT)
 "use client";
-
 import { useEffect, useState } from "react";
-import ExportUsersButton from "./ExportUsersButton"
+import ExportUsersButton from "./ExportUsersButton";
 
 export default function UserList({ users: usersDefault, majors = [] }) {
   const [users, setUsers] = useState(usersDefault ?? []);
@@ -38,7 +38,6 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       (!newFilter.status ||
         lower(u.status).includes(lower(newFilter.status))) &&
       (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
-
     setFilteredUsers(users.filter(matches));
   };
 
@@ -58,7 +57,6 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   const sendUserData = async (user) => {
     const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [user.id]: true }));
-
     const updated = {
       name: user.name?.trim() || "이름없음",
       phone: user.phone?.trim() || "01000000000",
@@ -67,133 +65,72 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       role: roleNumberToString(user.role),
       status: user.status || "active",
     };
-
     const res = await fetch(`/api/executive/user/${user.id}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-jwt": jwt,
-      },
+      headers: { "Content-Type": "application/json", "x-jwt": jwt },
       body: JSON.stringify(updated),
     });
-
     if (res.status === 204) alert(`${user.name} 저장 완료`);
     else alert(`${user.name} 저장 실패: ${res.status}`);
-
     setSaving((prev) => ({ ...prev, [user.id]: false }));
-    console.log("PAYLOAD SENT TO SERVER", updated);
   };
 
   const manualEnroll = async (user) => {
     const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [user.id]: true }));
-
     const res = await fetch(`/api/executive/user/standby/process/manual`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-jwt": jwt,
-      },
+      headers: { "Content-Type": "application/json", "x-jwt": jwt },
       body: JSON.stringify({ id: user.id }),
     });
-
     if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
     else alert(`${user.name} 입금 확인 실패: ${res.status}`);
-
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
 
   useEffect(() => {
-    console.log(filteredUsers)
-  }, [filteredUsers])
+    /* debug */ console.log(filteredUsers);
+  }, [filteredUsers]);
 
   return (
-    <div style={{ marginTop: "2rem" }}>
+    <div>
       <h2>유저 csv 다운로드</h2>
-      아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.
-      <ExportUsersButton filteredUsers={filteredUsers}/>
+      <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
+      <div className="adm-actions">
+        <ExportUsersButton filteredUsers={filteredUsers} />
+      </div>
+
       <h2>관리자 권한 편집</h2>
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr>
-            <th style={thStyle}>이름</th>
-            <th style={thStyle}>학과</th>
-            <th style={thStyle}>전화번호</th>
-            <th style={thStyle}>학번</th>
-            <th style={thStyle}>권한</th>
-            <th style={thStyle}>상태</th>
-            <th style={thStyle}>저장</th>
-            <th style={thStyle}>입금 확인</th>
-          </tr>
-          <tr>
-            <td style={tdStyle}>
-              <input
-                value={filter.name}
-                onChange={(e) => updateFilterCriteria("name", e.target.value)}
-              />
-            </td>
-            <td style={tdStyle}>
-              <select
-                value={filter.major}
-                onChange={(e) => updateFilterCriteria("major", e.target.value)}
-              >
-                <option value="">전공 전체</option>
-                {majors.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.college} - {m.major_name}
-                  </option>
-                ))}
-              </select>
-            </td>
-            <td style={tdStyle}>
-              <input
-                value={filter.phone}
-                onChange={(e) => updateFilterCriteria("phone", e.target.value)}
-              />
-            </td>
-            <td style={tdStyle}>
-              <input
-                value={filter.student_id}
-                onChange={(e) =>
-                  updateFilterCriteria("student_id", e.target.value)
-                }
-              />
-            </td>
-            <td style={tdStyle}>
-              <input
-                value={filter.role}
-                onChange={(e) => updateFilterCriteria("role", e.target.value)}
-              />
-            </td>
-            <td style={tdStyle}>
-              <input
-                value={filter.status}
-                onChange={(e) => updateFilterCriteria("status", e.target.value)}
-              />
-            </td>
-            <td style={tdStyle}></td>
-            <td style={tdStyle}></td>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user.id}>
-              <td style={tdStyle}>
+      <div className="adm-table-wrap">
+        <table className="adm-table">
+          <thead>
+            <tr>
+              <th className="adm-th">이름</th>
+              <th className="adm-th">학과</th>
+              <th className="adm-th">전화번호</th>
+              <th className="adm-th">학번</th>
+              <th className="adm-th">권한</th>
+              <th className="adm-th">상태</th>
+              <th className="adm-th">저장</th>
+              <th className="adm-th">입금 확인</th>
+            </tr>
+            <tr>
+              <td className="adm-td">
                 <input
-                  value={user.name}
-                  onChange={(e) =>
-                    updateUserField(user.id, "name", e.target.value)
-                  }
+                  className="adm-input"
+                  value={filter.name}
+                  onChange={(e) => updateFilterCriteria("name", e.target.value)}
                 />
               </td>
-              <td style={tdStyle}>
+              <td className="adm-td">
                 <select
-                  value={user.major_id}
+                  className="adm-select"
+                  value={filter.major}
                   onChange={(e) =>
-                    updateUserField(user.id, "major_id", Number(e.target.value))
+                    updateFilterCriteria("major", e.target.value)
                   }
                 >
-                  <option value="">전공 선택</option>
+                  <option value="">전공 전체</option>
                   {majors.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.college} - {m.major_name}
@@ -201,78 +138,148 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   ))}
                 </select>
               </td>
-              <td style={tdStyle}>
+              <td className="adm-td">
                 <input
-                  value={user.phone || ""}
+                  className="adm-input"
+                  value={filter.phone}
                   onChange={(e) =>
-                    updateUserField(user.id, "phone", e.target.value)
+                    updateFilterCriteria("phone", e.target.value)
                   }
                 />
               </td>
-              <td style={tdStyle}>
+              <td className="adm-td">
                 <input
-                  value={user.student_id || ""}
+                  className="adm-input"
+                  value={filter.student_id}
                   onChange={(e) =>
-                    updateUserField(user.id, "student_id", e.target.value)
+                    updateFilterCriteria("student_id", e.target.value)
                   }
                 />
               </td>
-              <td style={tdStyle}>
-                <select
-                  value={roleNumberToString(user.role)}
+              <td className="adm-td">
+                <input
+                  className="adm-input"
+                  value={filter.role}
+                  onChange={(e) => updateFilterCriteria("role", e.target.value)}
+                />
+              </td>
+              <td className="adm-td">
+                <input
+                  className="adm-input"
+                  value={filter.status}
                   onChange={(e) =>
-                    updateUserField(user.id, "role", e.target.value)
+                    updateFilterCriteria("status", e.target.value)
                   }
-                >
-                  <option value="president">회장</option>
-                  <option value="executive">운영진</option>
-                  <option value="member">정회원</option>
-                  <option value="oldboy">졸업생</option>
-                  <option value="newcomer">준회원</option>
-                  <option value="dormant">휴회원</option>
-                  <option value="lowest">최저권한</option>
-                </select>
+                />
               </td>
-              <td style={tdStyle}>
-                <select
-                  value={user.status}
-                  onChange={(e) =>
-                    updateUserField(user.id, "status", e.target.value)
-                  }
-                >
-                  <option value="active">active</option>
-                  <option value="pending">pending</option>
-                  <option value="standby">standby</option>
-                  <option value="banned">banned</option>
-                </select>
-              </td>
-              <td style={tdStyle}>
-                <button
-                  onClick={() => sendUserData(user)}
-                  disabled={saving[user.id]}
-                >
-                  저장
-                </button>
-              </td>
-              <td style={tdStyle}>
-                <button
-                  onClick={() => manualEnroll(user)}
-                  disabled={saving[user.id]}
-                >
-                  입금 확인
-                </button>
-              </td>
+              <td className="adm-td"></td>
+              <td className="adm-td"></td>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user) => (
+              <tr key={user.id}>
+                <td className="adm-td">
+                  <input
+                    className="adm-input"
+                    value={user.name}
+                    onChange={(e) =>
+                      updateUserField(user.id, "name", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="adm-td">
+                  <select
+                    className="adm-select"
+                    value={user.major_id}
+                    onChange={(e) =>
+                      updateUserField(
+                        user.id,
+                        "major_id",
+                        Number(e.target.value),
+                      )
+                    }
+                  >
+                    <option value="">전공 선택</option>
+                    {majors.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.college} - {m.major_name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td className="adm-td">
+                  <input
+                    className="adm-input"
+                    value={user.phone || ""}
+                    onChange={(e) =>
+                      updateUserField(user.id, "phone", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="adm-td">
+                  <input
+                    className="adm-input"
+                    value={user.student_id || ""}
+                    onChange={(e) =>
+                      updateUserField(user.id, "student_id", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="adm-td">
+                  <select
+                    className="adm-select"
+                    value={roleNumberToString(user.role)}
+                    onChange={(e) =>
+                      updateUserField(user.id, "role", e.target.value)
+                    }
+                  >
+                    <option value="president">회장</option>
+                    <option value="executive">운영진</option>
+                    <option value="member">정회원</option>
+                    <option value="oldboy">졸업생</option>
+                    <option value="newcomer">준회원</option>
+                    <option value="dormant">휴회원</option>
+                    <option value="lowest">최저권한</option>
+                  </select>
+                </td>
+                <td className="adm-td">
+                  <select
+                    className="adm-select"
+                    value={user.status}
+                    onChange={(e) =>
+                      updateUserField(user.id, "status", e.target.value)
+                    }
+                  >
+                    <option value="active">active</option>
+                    <option value="pending">pending</option>
+                    <option value="standby">standby</option>
+                    <option value="banned">banned</option>
+                  </select>
+                </td>
+                <td className="adm-td">
+                  <button
+                    className="adm-button"
+                    onClick={() => sendUserData(user)}
+                    disabled={saving[user.id]}
+                  >
+                    저장
+                  </button>
+                </td>
+                <td className="adm-td">
+                  <button
+                    className="adm-button outline"
+                    onClick={() => manualEnroll(user)}
+                    disabled={saving[user.id]}
+                  >
+                    입금 확인
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-const thStyle = {
-  border: "1px solid #ccc",
-  padding: "8px",
-  background: "#f5f5f5",
-};
-const tdStyle = { border: "1px solid #ccc", padding: "8px" };

@@ -3,6 +3,8 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 import PigListClient from "./PigListClient";
 
+export const metadata = { title: "PIG" };
+
 export default async function PigListPage() {
   const res = await fetch(`${getBaseUrl()}/api/pigs`, {
     headers: { "x-api-secret": getApiSecret() },
