@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js";
+import GoogleLoginButton from "./GoogleLoginButton"
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -174,7 +175,7 @@ export default function LoginPage() {
             <p className="login-description">
               SNU 구글 계정으로 로그인/회원가입
             </p>
-            <div
+            {/* <div
               id="g_id_onload"
               data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"
               data-callback="handleCredentialResponse"
@@ -190,7 +191,8 @@ export default function LoginPage() {
                 data-shape="rectangular"
                 data-logo_alignment="left"
               ></div>
-            </div>
+            </div> */}
+            <GoogleLoginButton/>
           </div>
         )}
 
