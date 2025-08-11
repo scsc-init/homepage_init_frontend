@@ -10,9 +10,16 @@ const IN_APP_BROWSER_NAMES = {
 }
 
 
-function InAppBrowserOutButton({ inAppBrowserName }) {
+function InAppBrowserOutButton() {
+  const [isInAppBrowser, setIsInAppBrowser] = useState(false);
+  const [inAppBrowserKey, setInAppBrowserKey] = useState('');
+  useEffect(() => {
+    for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
+      if (navigator.userAgent.toLowerCase().match(key)) {setIsInAppBrowser(true); setInAppBrowserKey(key.toLowerCase());}
+    }
+  },[])
   const onClick = () => {
-    if (inAppBrowserName==='kakaotalk') {
+    if (inAppBrowserKey==='kakaotalk') {
       var target_url = 'https://homepage-init-frontend-ixxt.vercel.app/';
       location.href = 'kakaotalk://web/openExternal?url='+encodeURIComponent(target_url);
     }
@@ -26,7 +33,7 @@ export const MainLogo = () => {
   const [inAppBrowserName, setInAppBrowserName] = useState('');
   useEffect(() => {
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
-      if (navigator.userAgent.toLowerCase().match(key)) {setIsInAppBrowser(true); setInAppBrowserName(name); }
+      if (navigator.userAgent.toLowerCase().match(key)) {setIsInAppBrowser(true); setInAppBrowserName(name);}
     }
   },[])
   
@@ -35,7 +42,7 @@ export const MainLogo = () => {
       <div className="main-logo-wrapper">
         <h1><strong>{inAppBrowserName}</strong> 브라우저에서는 <strong>로그인</strong>이 실패할 수 있습니다</h1>
         <p>인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong>등의 외부 브라우저를 이용하면 더 안전합니다.</p>
-        <InAppBrowserOutButton inAppBrowserName={inAppBrowserName}/>
+        <InAppBrowserOutButton/>
       </div>
     ) : (
       <div className="main-logo-wrapper">
