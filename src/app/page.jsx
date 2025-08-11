@@ -1,5 +1,6 @@
-import Image from "next/image";
 import "./page.css";
+import { MainLogo } from "./checkInAppBrowser"
+
 export default function HomePage() {
   return (
     <main className="main-wrapper">
@@ -18,7 +19,7 @@ export default function HomePage() {
       </div>
 
       {/* 메인 로고 */}
-      <div className="main-logo-wrapper">
+      {/* <div className="main-logo-wrapper">
         <img
           src="/main/main-logo.png"
           alt="Main Logo"
@@ -27,7 +28,8 @@ export default function HomePage() {
         <div className="main-subtitle">
           Seoul National University Computer Study Club
         </div>
-      </div>
+      </div> */}
+      <MainLogo/>
 
       {/* 학교 로고
       <div className="school-logo">
