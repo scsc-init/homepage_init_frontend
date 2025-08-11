@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState, useRef as _r } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js";
+
+const GOOGLE_CLIENT_ID =
+  "876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com";
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -21,102 +25,102 @@ export default function LoginPage() {
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState("");
+  const tokenClientRef = useRef(null);
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
-
   const router = useRouter();
 
   useEffect(() => {
-    const checkProfile = async () => {
+    const check = async () => {
       const jwt = localStorage.getItem("jwt");
-      if (jwt) {
-        try {
-          const resUser = await fetch(`/api/user/profile`, {
-            headers: { "x-jwt": jwt },
-          });
-          if (resUser.status != 200) {
-            localStorage.removeItem("jwt");
-            return;
-          }
-          router.push("/about/welcome");
-        } catch (e) {
-          return;
-        }
-      }
+      if (!jwt) return;
+      const r = await fetch(`/api/user/profile`, { headers: { "x-jwt": jwt } });
+      if (r.ok) router.push("/about/welcome");
+      else localStorage.removeItem("jwt");
     };
-
-    checkProfile();
+    check();
   }, [router]);
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+    const s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client";
+    s.async = true;
+    s.defer = true;
+    s.onload = () => {
+      tokenClientRef.current = window.google?.accounts?.oauth2?.initTokenClient(
+        {
+          client_id: GOOGLE_CLIENT_ID,
+          scope: "openid email profile",
+          prompt: "select_account",
+          callback: async (resp) => {
+            if (!resp || resp.error || !resp.access_token) {
+              await signIn("google", { callbackUrl: "/", redirect: true });
+              return;
+            }
+            const u = await fetch(
+              "https://www.googleapis.com/oauth2/v3/userinfo",
+              {
+                headers: { Authorization: `Bearer ${resp.access_token}` },
+              },
+            ).then((r) => r.json());
 
-    window.handleCredentialResponse = async (response) => {
-      const { credential } = response;
-      const payload = JSON.parse(
-        decodeURIComponent(
-          escape(
-            window.atob(
-              credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
-            ),
-          ),
-        ),
+            const email = u.email || "";
+            const name = (u.name || "").trim();
+            const picture = u.picture || "";
+
+            setForm((p) => ({
+              ...p,
+              email,
+              name,
+              profile_picture_url: picture,
+            }));
+
+            if (!(await isSkipEmailCheck()) && !validator.email(email)) {
+              alert("snu.ac.kr 이메일만 허용됩니다.");
+              return;
+            }
+
+            const loginRes = await fetch(`/api/user/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
+
+            if (loginRes.ok) {
+              const { jwt } = await loginRes.json();
+              localStorage.setItem("jwt", jwt);
+              window.location.href = "/";
+            } else if (loginRes.status === 404) {
+              setStage(1);
+            } else {
+              alert("로그인 중 오류 발생");
+            }
+          },
+        },
       );
-
-      const { email, name: rawName, picture: profilePictureUrl } = payload;
-      setForm((prev) => ({
-        ...prev,
-        email,
-        name: cleanName,
-        profile_picture_url: profilePictureUrl,
-      }));
-
-      const cleanName = rawName
-        ?.replace(/^[-\s\u00AD\u2010-\u2015]+/, "")
-        .split("/")[0]
-        ?.trim();
-      if (!email || !cleanName) return;
-
-      if (!(await isSkipEmailCheck()) && !validator.email(email)) {
-        console.log(email);
-        console.log(validator.email(email));
-        alert("snu.ac.kr 이메일만 허용됩니다.");
-        return;
-      }
-
-      const res = await fetch(`/api/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (res.ok) {
-        const { jwt } = await res.json();
-        localStorage.setItem("jwt", jwt);
-        window.location.href = "/";
-      } else {
-        if (res.status === 404) {
-          setForm((prev) => ({ ...prev, email, name: cleanName }));
-          setStage(1);
-        } else {
-          alert("로그인 중 오류 발생");
-        }
-      }
     };
+    document.body.appendChild(s);
   }, []);
 
   useEffect(() => {
     if (stage !== 4) return;
-    const fetchMajors = async () => {
-      const res = await fetch(`/api/majors`);
-      setMajors(await res.json());
+    const f = async () => {
+      const r = await fetch(`/api/majors`);
+      setMajors(await r.json());
     };
-    fetchMajors();
+    f();
   }, [stage]);
+
+  const openPopup = async () => {
+    try {
+      if (tokenClientRef.current)
+        tokenClientRef.current.requestAccessToken({ prompt: "select_account" });
+      else await signIn("google", { callbackUrl: "/", redirect: true });
+    } catch {
+      await signIn("google", { callbackUrl: "/", redirect: true });
+    }
+  };
 
   const handleSubmit = async () => {
     const student_id = `${form.student_id_year}${form.student_id_number}`;
@@ -138,9 +142,8 @@ export default function LoginPage() {
     });
 
     if (createRes.status !== 201) {
-      const createData = await createRes.json();
-      alert(`유저 생성 실패: ${createData.detail}`);
-      console.log(createData);
+      const data = await createRes.json();
+      alert(`유저 생성 실패: ${data.detail}`);
       router.push("/");
       return;
     }
@@ -174,22 +177,22 @@ export default function LoginPage() {
             <p className="login-description">
               SNU 구글 계정으로 로그인/회원가입
             </p>
-            <div
-              id="g_id_onload"
-              data-client_id="876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com"
-              data-callback="handleCredentialResponse"
-              data-auto_prompt="false"
-            ></div>
             <div className="google-signin-button-wrapper">
-              <div
-                className="g_id_signin"
-                data-type="standard"
-                data-size="large"
-                data-theme="outline"
-                data-text="sign_in_with"
-                data-shape="rectangular"
-                data-logo_alignment="left"
-              ></div>
+              <button
+                type="button"
+                className="GoogleLoginBtn"
+                onClick={openPopup}
+              >
+                <span className="GoogleIcon" aria-hidden="true">
+                  <svg viewBox="0 0 48 48">
+                    <path d="M24 9.5c3.7 0 7 1.3 9.6 3.8l6.4-6.4C36.3 3 30.6 1 24 1 14.7 1 6.7 6.3 2.9 14.1l7.9 6.1C12.4 14.9 17.7 9.5 24 9.5z" />
+                    <path d="M46.5 24c0-1.6-.2-3.1-.5-4.5H24v9h12.6c-.5 2.7-2.1 5-4.5 6.5l7.1 5.5C43.9 36.9 46.5 30.9 46.5 24z" />
+                    <path d="M10.8 28.2c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C1.1 15.6 0 19.6 0 23.5 0 27.4 1.1 31.4 2.9 34.3l7.9-6.1z" />
+                    <path d="M24 47c6.5 0 12.1-2.1 16.1-5.8l-7.1-5.5c-2 1.3-4.6 2.1-9 2.1-6.3 0-11.6-5.4-13.2-10.2l-7.9 6.1C6.7 41.7 14.7 47 24 47z" />
+                  </svg>
+                </span>
+                <span className="GoogleLoginText">Google 계정으로 로그인</span>
+              </button>
             </div>
           </div>
         )}
@@ -205,9 +208,7 @@ export default function LoginPage() {
               이름: <strong>{form.name}</strong>
             </p>
             <button
-              onClick={async () => {
-                setStage(2);
-              }}
+              onClick={() => setStage(2)}
               style={{ width: "100%", boxSizing: "border-box" }}
             >
               다음
@@ -224,9 +225,9 @@ export default function LoginPage() {
               <input
                 value={form.student_id_year}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  setForm({ ...form, student_id_year: val });
-                  if (val.length === 4) studentIdNumberRef.current.focus();
+                  const v = e.target.value;
+                  setForm({ ...form, student_id_year: v });
+                  if (v.length === 4) studentIdNumberRef.current.focus();
                 }}
                 maxLength={4}
                 placeholder="2025"
@@ -262,9 +263,9 @@ export default function LoginPage() {
               <input
                 value={form.phone1}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  setForm({ ...form, phone1: val });
-                  if (val.length === 3) phone2Ref.current.focus();
+                  const v = e.target.value;
+                  setForm({ ...form, phone1: v });
+                  if (v.length === 3) phone2Ref.current.focus();
                 }}
                 maxLength={3}
                 placeholder="010"
@@ -273,9 +274,9 @@ export default function LoginPage() {
                 ref={phone2Ref}
                 value={form.phone2}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  setForm({ ...form, phone2: val });
-                  if (val.length === 4) phone3Ref.current.focus();
+                  const v = e.target.value;
+                  setForm({ ...form, phone2: v });
+                  if (v.length === 4) phone3Ref.current.focus();
                 }}
                 maxLength={4}
                 placeholder="1234"
@@ -337,7 +338,8 @@ export default function LoginPage() {
                 if (!college) {
                   alert("단과대학을 선택하세요.");
                   return;
-                } else if (!form.major_id) {
+                }
+                if (!form.major_id) {
                   alert("학과/학부를 선택하세요.");
                   return;
                 }
