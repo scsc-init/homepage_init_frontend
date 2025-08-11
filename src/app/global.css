@@ -175,3 +175,12 @@ img {
     opacity: 0.9;
   }
 }
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+}
+::-moz-selection {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+}

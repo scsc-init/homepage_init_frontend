@@ -30,6 +30,8 @@
   --executive-card-shadow: rgba(0, 0, 0, 0.06);
   --color-text-strong: #111111;
   --box-color: rgb(235, 235, 235);
+  --selection-bg: #128e9f;
+  --selection-text: #1d1236;
 
   --main-bg-gradient: radial-gradient(
     circle at center,
@@ -77,6 +79,10 @@
   --executive-arrow-hover: #444;
   --executive-card-shadow: rgba(255, 255, 255, 0.06);
   --color-text-strong: #ffffff;
+  --selection-bg: rgba(75, 176, 201, 0.35);
+  --selection-text: #111111;
+  --selection-bg: #4bb0c9;
+  --selection-text: #ffffff;
 
   --main-bg-gradient: radial-gradient(
     circle at center,

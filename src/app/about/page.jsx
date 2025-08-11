@@ -11,10 +11,13 @@ import { getApiSecret } from "@/util/getApiSecret";
 import { DISCORD_INVITE_LINK } from "@/util/constants";
 
 async function fetchDiscordInviteLink() {
-  const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${getBaseUrl()}/api/bot/discord/general/get_invite`,
+    {
+      headers: { "x-api-secret": getApiSecret() },
+      cache: "no-store",
+    },
+  );
   if (res.ok) {
     const resData = await res.json();
     return resData.result.invite_url;
@@ -24,15 +27,12 @@ async function fetchDiscordInviteLink() {
 export default async function AboutPage() {
   const year = new Date().getFullYear() - 1984;
 
-  // const discordInviteLink = await fetchDiscordInviteLink();
-
   return (
     <>
       <div className="WallLogo"></div>
       <div className="WallLogo2"></div>
       <div className="AboutWrapper">
         <Sidebar />
-
         <main className="AboutMain">
           <ScrollEffectWrapper>
             <section id="scsc" className="AboutIntroSection AnchorOffset">
@@ -161,7 +161,7 @@ export default async function AboutPage() {
                         "MT, 번개 등 다양한 친목 도모 활동이 있습니다.",
                       image: "/about/activities/mt.jpg",
                     },
-                  ].map(({ title, description, image }, i) => (
+                  ].map(({ title, description, image }) => (
                     <ScrollEffectWrapper key={title}>
                       <div className="ClubroomCard">
                         <Image
@@ -228,7 +228,7 @@ export default async function AboutPage() {
                           "닌텐도, PS4 등 게임기로 여가도 즐길 수 있습니다",
                         image: "/about/club-room/games.jpg",
                       },
-                    ].map(({ title, description, image }, i) => (
+                    ].map(({ title, description, image }) => (
                       <ScrollEffectWrapper key={title}>
                         <div className="ClubroomCard">
                           <Image
@@ -259,10 +259,7 @@ export default async function AboutPage() {
                       { title: "리크루팅 정보 바로가기", url: "/us/contact" },
                       { title: "시그 목록 바로가기", url: "/sig" },
                       { title: "피그 목록 바로가기", url: "/pig" },
-                      {
-                        title: "공식 디스코드 서버",
-                        url: DISCORD_INVITE_LINK,
-                      },
+                      { title: "공식 디스코드 서버", url: DISCORD_INVITE_LINK },
                       {
                         title: "공식 인스타그램",
                         url: "https://www.instagram.com/scsc_snu/?hl=ko",
@@ -285,7 +282,7 @@ export default async function AboutPage() {
                             width="20px"
                             height="20px"
                             rotate="-90deg"
-                            color="#070707"
+                            color="var(--foreground-color)"
                           />
                         </a>
                       ) : (
@@ -295,7 +292,7 @@ export default async function AboutPage() {
                             width="20px"
                             height="20px"
                             rotate="-90deg"
-                            color="#070707"
+                            color="var(--foreground-color)"
                           />
                         </Link>
                       ),

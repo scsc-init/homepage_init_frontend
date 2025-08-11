@@ -52,17 +52,17 @@ export default function FaqList() {
         <div className="HomeFQA" key={idx}>
           <button
             className="HomeFQAQuestion"
-            onClick={() => toggle(idx)}
-            aria-expanded={openIdx === idx}
+            onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
           >
             <h4>{faq.question}</h4>
             <Arrow
               width="20px"
               height="20px"
-              color="#070707"
+              color="var(--foreground-color)"
               rotate={openIdx === idx ? "180deg" : "0deg"}
             />
           </button>
+
           <div
             className="HomeFQAHiddenJS"
             ref={(el) => (contentRefs.current[idx] = el)}
