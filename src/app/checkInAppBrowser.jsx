@@ -17,7 +17,7 @@ function InAppBrowserOutButton() {
 	const target_url = location.href;
   
   useEffect(() => {
-    if (useragt.match(/kakaotalk|line|everytimeapp/i)) {
+    if (useragt.match(/kakaotalk|line/i)) {
       setIsRedirectPossible(true);
     }
   }, [])
@@ -31,11 +31,12 @@ function InAppBrowserOutButton() {
 			}else{
 				location.href = target_url+'?openExternalBrowser=1';
 			}
-    } else if (useragt.match('everytimeapp')) {
-      location.href = 'kakaotalk://web/openExternal?url='+encodeURIComponent(target_url);
     }
   }
-  if (!isRedirectPossible) return;
+  if (!isRedirectPossible) {
+    if (!useragt.match('everytimeapp')) return;
+    return <p>상단의 점 세 개 또는 화살표 아이콘(<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>) 클릭해서 외부 브라우저로 열기</p>
+  }
   return <button onClick={onClick}>외부 브라우저로 이동</button>
 };
 
@@ -53,7 +54,7 @@ export const MainLogo = () => {
     isInAppBrowser ? (
       <div className="main-logo-wrapper">
         <h1><strong>{inAppBrowserName}</strong> 브라우저에서는 <strong>로그인</strong>이 실패할 수 있습니다</h1>
-        <p>인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부 브라우저를 이용하면 더 안전합니다.</p>
+        <p style={{"marginBottom": "20px"}}>인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부 브라우저를 이용하면 더 안전합니다.</p>
         <InAppBrowserOutButton/>
       </div>
     ) : (
