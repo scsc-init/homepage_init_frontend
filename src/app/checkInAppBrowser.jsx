@@ -15,20 +15,23 @@ function InAppBrowserOutButton() {
   const [isRedirectPossible, setIsRedirectPossible] = useState(false);
   const useragt = navigator.userAgent.toLowerCase();
 	const target_url = location.href;
+  
+  useEffect(() => {
+    if (useragt.match(/kakaotalk|line|everytimeapp/i)) {
+      setIsRedirectPossible(true);
+    }
+  }, [])
 
   const onClick = () => {
     if (useragt.match('kakaotalk')) {
-      setIsRedirectPossible(true);
       location.href = 'kakaotalk://web/openExternal?url='+encodeURIComponent(target_url);
     } else if (useragt.match('line')) {
-      setIsRedirectPossible(true);
       if(target_url.indexOf('?') !== -1){
 				location.href = target_url+'&openExternalBrowser=1';
 			}else{
 				location.href = target_url+'?openExternalBrowser=1';
 			}
     } else if (useragt.match('everytimeapp')) {
-      setIsRedirectPossible(true);
       location.href = 'kakaotalk://web/openExternal?url='+encodeURIComponent(target_url);
     }
   }
