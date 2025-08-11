@@ -26,6 +26,7 @@
   font-size: 0.95rem;
   min-width: 240px;
   color: var(--footer-text-color);
+  user-select: text;
 }
 
 #FooterLogoList {
