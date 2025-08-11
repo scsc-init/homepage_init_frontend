@@ -17,17 +17,17 @@ function InAppBrowserOutButton() {
 	const target_url = location.href;
 
   const onClick = () => {
-    if (useragt.match(/kakaotalk/i)) {
+    if (useragt.match('kakaotalk')) {
       setIsRedirectPossible(true);
       location.href = 'kakaotalk://web/openExternal?url='+encodeURIComponent(target_url);
-    } else if (useragt.match(/line/i)) {
+    } else if (useragt.match('line')) {
       setIsRedirectPossible(true);
       if(target_url.indexOf('?') !== -1){
 				location.href = target_url+'&openExternalBrowser=1';
 			}else{
 				location.href = target_url+'?openExternalBrowser=1';
 			}
-    } else if (useragt.match(/everytimeapp/i)) {
+    } else if (useragt.match('everytimeapp')) {
       setIsRedirectPossible(true);
       location.href = 'kakaotalk://web/openExternal?url='+encodeURIComponent(target_url);
     }
@@ -35,6 +35,7 @@ function InAppBrowserOutButton() {
   if (!isRedirectPossible) return;
   return <button onClick={onClick}>외부 브라우저로 이동</button>
 };
+
 
 export const MainLogo = () => {
   const [isInAppBrowser, setIsInAppBrowser] = useState(false);
