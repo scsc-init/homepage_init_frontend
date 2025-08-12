@@ -6,6 +6,13 @@ import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js";
 
+const IN_APP_BROWSER_NAMES = {
+  "kakaotalk": "카카오톡",
+  "everytimeapp": "에브리타임",
+  "instagram": "인스타그램",
+  "line": "라인"
+}
+
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
   const [form, setForm] = useState({
@@ -26,6 +33,15 @@ export default function LoginPage() {
   const phone3Ref = useRef(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    var isInAppBrowser = false;
+    var inAppBrowserName = '';
+    for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
+      if (navigator.userAgent.toLowerCase().match(key)) {isInAppBrowser = true; inAppBrowserName = name; break;}
+    }
+    if (isInAppBrowser) {alert(`${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`); window.location.href('/');}
+  }, [])
 
   useEffect(() => {
     const checkProfile = async () => {
