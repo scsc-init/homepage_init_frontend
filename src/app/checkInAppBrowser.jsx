@@ -35,7 +35,11 @@ function InAppBrowserOutButton() {
   }
   if (!isRedirectPossible) {
     if (!useragt.match('everytimeapp')) return;
-    return <p>상단의 점 세 개 또는 화살표 아이콘(<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>) 클릭해서 외부 브라우저로 열기</p>
+    if (useragt.match(/ios|ipad|ipod/i)) {
+      return <p>상단의 화살표 아이콘(<img src="/vectors/open-external-link-icon.svg" width="1rem" height="1rem" className="ico"></img>) 클릭 &rarr; 외부 브라우저로 열기</p>
+    } else {
+      return <p>상단의 점 세 개(⋮) 클릭 &rarr; 외부 브라우저로 열기</p>
+    }
   }
   return <button onClick={onClick}>외부 브라우저로 이동</button>
 };
