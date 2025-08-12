@@ -59,7 +59,8 @@ export const MainLogo = () => {
   return (
     isInAppBrowser ? (
       <div className="warning-wrapper">
-        <h1><strong>{inAppBrowserName}</strong> 브라우저에서는 <strong>로그인</strong>이 실패할 수 있습니다</h1>
+        <h1><strong>{inAppBrowserName}</strong> 브라우저에서는</h1>
+        <h1><strong>로그인</strong>이 실패할 수 있습니다</h1>
         <p style={{"marginBottom": "20px"}}>인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부 브라우저를 이용하면 더 안전합니다.</p>
         <InAppBrowserOutButton/>
       </div>
