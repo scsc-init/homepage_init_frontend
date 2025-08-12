@@ -40,7 +40,7 @@ export default function LoginPage() {
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
       if (navigator.userAgent.toLowerCase().match(key)) {isInAppBrowser = true; inAppBrowserName = name; break;}
     }
-    if (isInAppBrowser) {alert(`${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`); window.location.href('/');}
+    if (isInAppBrowser) {alert(`${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`); window.location.href = '/';}
   }, [])
 
   useEffect(() => {
