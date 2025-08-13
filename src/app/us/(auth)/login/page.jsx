@@ -1,14 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState, useRef as _r } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js";
 
-const GOOGLE_CLIENT_ID =
-  "876662086445-m79pj1qjg0v7m7efqhqtboe7h0ra4avm.apps.googleusercontent.com";
+const IN_APP_BROWSER_NAMES = {
+  kakaotalk: "카카오톡",
+  everytimeapp: "에브리타임",
+  instagram: "인스타그램",
+  line: "라인",
+};
+
+function cleanName(raw) {
+  if (!raw) return "";
+  return raw
+    .normalize("NFC")
+    .replace(/^[\s\-\u00AD\u2010-\u2015]+/u, "")
+    .split("/")[0]
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export default function LoginPage() {
   const [stage, setStage] = useState(0);
@@ -25,107 +38,147 @@ export default function LoginPage() {
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState("");
-  const tokenClientRef = useRef(null);
+  const hiddenBtnRef = useRef(null);
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
-    const check = async () => {
+    var isInAppBrowser = false;
+    var inAppBrowserName = "";
+    for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
+      if (navigator.userAgent.toLowerCase().match(key)) {
+        isInAppBrowser = true;
+        inAppBrowserName = name;
+        break;
+      }
+    }
+    if (isInAppBrowser) {
+      alert(
+        `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
+      );
+      window.location.href = "/";
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkProfile = async () => {
       const jwt = localStorage.getItem("jwt");
-      if (!jwt) return;
-      const r = await fetch(`/api/user/profile`, { headers: { "x-jwt": jwt } });
-      if (r.ok) router.push("/about/welcome");
-      else localStorage.removeItem("jwt");
+      if (jwt) {
+        try {
+          const resUser = await fetch(`/api/user/profile`, {
+            headers: { "x-jwt": jwt },
+          });
+          if (resUser.status != 200) {
+            localStorage.removeItem("jwt");
+            return;
+          }
+          router.push("/about/welcome");
+        } catch {
+          return;
+        }
+      }
     };
-    check();
+    checkProfile();
   }, [router]);
 
   useEffect(() => {
-    const s = document.createElement("script");
-    s.src = "https://accounts.google.com/gsi/client";
-    s.async = true;
-    s.defer = true;
-    s.onload = () => {
-      tokenClientRef.current = window.google?.accounts?.oauth2?.initTokenClient(
-        {
-          client_id: GOOGLE_CLIENT_ID,
-          scope: "openid email profile",
-          prompt: "select_account",
-          callback: async (resp) => {
-            if (!resp || resp.error || !resp.access_token) {
-              await signIn("google", { callbackUrl: "/", redirect: true });
-              return;
-            }
-            const u = await fetch(
-              "https://www.googleapis.com/oauth2/v3/userinfo",
-              {
-                headers: { Authorization: `Bearer ${resp.access_token}` },
-              },
-            ).then((r) => r.json());
-
-            const email = u.email || "";
-            const name = (u.name || "").trim();
-            const picture = u.picture || "";
-
-            setForm((p) => ({
-              ...p,
-              email,
-              name,
-              profile_picture_url: picture,
-            }));
-
-            if (!(await isSkipEmailCheck()) && !validator.email(email)) {
-              alert("snu.ac.kr 이메일만 허용됩니다.");
-              return;
-            }
-
-            const loginRes = await fetch(`/api/user/login`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email }),
-            });
-
-            if (loginRes.ok) {
-              const { jwt } = await loginRes.json();
-              localStorage.setItem("jwt", jwt);
-              window.location.href = "/";
-            } else if (loginRes.status === 404) {
-              setStage(1);
-            } else {
-              alert("로그인 중 오류 발생");
-            }
-          },
-        },
+    window.handleCredentialResponse = async (response) => {
+      const { credential } = response;
+      const payload = JSON.parse(
+        decodeURIComponent(
+          escape(
+            window.atob(
+              credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
+            ),
+          ),
+        ),
       );
+      const email = payload.email || "";
+      const cName = cleanName(payload.name || "");
+      const profilePictureUrl = payload.picture || "";
+      setForm((prev) => ({
+        ...prev,
+        email,
+        name: cName,
+        profile_picture_url: profilePictureUrl,
+      }));
+      if (!email || !cName) return;
+      if (!(await isSkipEmailCheck()) && !validator.email(email)) {
+        alert("snu.ac.kr 이메일만 허용됩니다.");
+        return;
+      }
+      const res = await fetch(`/api/user/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        const { jwt } = await res.json();
+        localStorage.setItem("jwt", jwt);
+        window.location.href = "/";
+      } else if (res.status === 404) {
+        setForm((prev) => ({ ...prev, email, name: cName }));
+        setStage(1);
+      } else {
+        alert("로그인 중 오류 발생");
+      }
     };
-    document.body.appendChild(s);
+
+    const init = () => {
+      const cid =
+        document
+          .querySelector('meta[name="google-signin-client_id"]')
+          ?.getAttribute("content") ||
+        window.__GSI_CID ||
+        "";
+      if (!cid) return;
+      window.google?.accounts?.id?.initialize({
+        client_id: cid,
+        callback: window.handleCredentialResponse,
+        ux_mode: "popup",
+      });
+      if (hiddenBtnRef.current) {
+        window.google?.accounts?.id?.renderButton(hiddenBtnRef.current, {
+          type: "standard",
+          size: "large",
+          theme: "outline",
+          text: "sign_in_with",
+          shape: "rectangular",
+          logo_alignment: "left",
+        });
+      }
+    };
+
+    if (window.google?.accounts?.id) init();
+    else {
+      const s = document.createElement("script");
+      s.src = "https://accounts.google.com/gsi/client";
+      s.async = true;
+      s.defer = true;
+      s.onload = init;
+      document.body.appendChild(s);
+    }
   }, []);
 
   useEffect(() => {
     if (stage !== 4) return;
-    const f = async () => {
-      const r = await fetch(`/api/majors`);
-      setMajors(await r.json());
+    const fetchMajors = async () => {
+      const res = await fetch(`/api/majors`);
+      setMajors(await res.json());
     };
-    f();
+    fetchMajors();
   }, [stage]);
 
-  const openPopup = async () => {
-    try {
-      if (tokenClientRef.current)
-        tokenClientRef.current.requestAccessToken({ prompt: "select_account" });
-      else await signIn("google", { callbackUrl: "/", redirect: true });
-    } catch {
-      await signIn("google", { callbackUrl: "/", redirect: true });
-    }
+  const openGooglePopup = () => {
+    const el = hiddenBtnRef.current?.querySelector('div[role="button"]');
+    if (el) el.click();
   };
 
   const handleSubmit = async () => {
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-
     const createRes = await fetch(`/api/user/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -140,20 +193,17 @@ export default function LoginPage() {
         profile_picture_is_url: true,
       }),
     });
-
     if (createRes.status !== 201) {
-      const data = await createRes.json();
-      alert(`유저 생성 실패: ${data.detail}`);
+      const createData = await createRes.json();
+      alert(`유저 생성 실패: ${createData.detail}`);
       router.push("/");
       return;
     }
-
     const loginRes = await fetch(`/api/user/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.email }),
     });
-
     const { jwt } = await loginRes.json();
     localStorage.setItem("jwt", jwt);
     window.location.replace("/about/welcome");
@@ -181,7 +231,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 className="GoogleLoginBtn"
-                onClick={openPopup}
+                onClick={openGooglePopup}
               >
                 <span className="GoogleIcon" aria-hidden="true">
                   <svg viewBox="0 0 48 48">
@@ -193,6 +243,16 @@ export default function LoginPage() {
                 </span>
                 <span className="GoogleLoginText">Google 계정으로 로그인</span>
               </button>
+              <div
+                ref={hiddenBtnRef}
+                style={{
+                  position: "absolute",
+                  left: "-9999px",
+                  width: 0,
+                  height: 0,
+                  overflow: "hidden",
+                }}
+              />
             </div>
           </div>
         )}
@@ -208,7 +268,9 @@ export default function LoginPage() {
               이름: <strong>{form.name}</strong>
             </p>
             <button
-              onClick={() => setStage(2)}
+              onClick={() => {
+                setStage(2);
+              }}
               style={{ width: "100%", boxSizing: "border-box" }}
             >
               다음
@@ -225,9 +287,9 @@ export default function LoginPage() {
               <input
                 value={form.student_id_year}
                 onChange={(e) => {
-                  const v = e.target.value;
-                  setForm({ ...form, student_id_year: v });
-                  if (v.length === 4) studentIdNumberRef.current.focus();
+                  const val = e.target.value;
+                  setForm({ ...form, student_id_year: val });
+                  if (val.length === 4) studentIdNumberRef.current?.focus();
                 }}
                 maxLength={4}
                 placeholder="2025"
@@ -263,9 +325,9 @@ export default function LoginPage() {
               <input
                 value={form.phone1}
                 onChange={(e) => {
-                  const v = e.target.value;
-                  setForm({ ...form, phone1: v });
-                  if (v.length === 3) phone2Ref.current.focus();
+                  const val = e.target.value;
+                  setForm({ ...form, phone1: val });
+                  if (val.length === 3) phone2Ref.current?.focus();
                 }}
                 maxLength={3}
                 placeholder="010"
@@ -274,9 +336,9 @@ export default function LoginPage() {
                 ref={phone2Ref}
                 value={form.phone2}
                 onChange={(e) => {
-                  const v = e.target.value;
-                  setForm({ ...form, phone2: v });
-                  if (v.length === 4) phone3Ref.current.focus();
+                  const val = e.target.value;
+                  setForm({ ...form, phone2: val });
+                  if (val.length === 4) phone3Ref.current?.focus();
                 }}
                 maxLength={4}
                 placeholder="1234"
