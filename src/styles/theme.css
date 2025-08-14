@@ -2,7 +2,7 @@
   --theme-anim-duration: 0s;
 }
 html.theme-animating {
-  --theme-anim-duration: 100ms;
+  --theme-anim-duration: 400ms;
 }
 @media (prefers-reduced-motion: reduce) {
   html.theme-animating {
