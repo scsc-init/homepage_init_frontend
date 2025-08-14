@@ -1,4 +1,3 @@
-// /app/fund-apply/page.jsx
 import FundApplyClient from "./FundApplyClient";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
@@ -17,20 +16,50 @@ async function fetchBoardInfo(id) {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-  if (!res.ok) return null;
-  return res.json();
+  if (!res.ok) return { id, description: "" };
+  try {
+    return await res.json();
+  } catch {
+    return { id, description: "" };
+  }
 }
 
-async function fetchTargets(type) {
-  const res = await fetch(`${getBaseUrl()}/api/${type}s`, {
+function normalizeTargets(arr) {
+  if (!Array.isArray(arr)) return [];
+  return arr.map((x, i) => ({
+    id: x.id ?? x.ig_id ?? x.code ?? x.slug ?? `${i}`,
+    title:
+      x.title ??
+      x.name ??
+      x.sig_name ??
+      x.pig_name ??
+      x.displayName ??
+      x.label ??
+      String(x),
+  }));
+}
+
+async function tryFetch(url) {
+  const res = await fetch(url, {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-  if (!res.ok) return [];
-  const data = await res.json();
-
-  console.log(`[SERVER] ${type.toUpperCase()} 응답 데이터:`, data);
-  return Array.isArray(data)
-    ? data.filter((item) => item.status === "active")
-    : [];
+  if (!res.ok) return null;
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
 }
+
+async function fetchTargets(type) {
+  const base = getBaseUrl();
+  const data = await tryFetch(`${base}/api/${type}s`);
+  const arr = Array.isArray(data)
+    ? data
+    : (data.items ?? data.data ?? data.results ?? []);
+  const norm = normalizeTargets(arr);
+  if (norm.length) return norm;
+  return [];
+}
+
