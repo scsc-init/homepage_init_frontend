@@ -69,6 +69,11 @@ export default function RootLayout({ children }) {
 `,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `!function(){try{var d=document.documentElement;var m=localStorage.getItem('theme');var dark=m?m==='dark':true;d.classList.toggle('dark',dark)}catch(e){}}()`,
+          }}
+        />
       </head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
