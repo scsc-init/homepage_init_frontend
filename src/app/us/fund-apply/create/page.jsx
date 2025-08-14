@@ -54,20 +54,13 @@ async function tryFetch(url) {
 
 async function fetchTargets(type) {
   const base = getBaseUrl();
-  const urls = [
-    `${base}/api/${type}s`,
-    `${base}/api/${type}/list`,
-    `${base}/api/${type}`,
-    `${base}/api/${type}s/all`,
-  ];
-  for (const u of urls) {
-    const data = await tryFetch(u);
-    if (!data) continue;
-    const arr = Array.isArray(data)
-      ? data
-      : (data.items ?? data.data ?? data.results ?? []);
-    const norm = normalizeTargets(arr);
-    if (norm.length) return norm;
-  }
+  const u = [`${base}/api/${type}s`];
+  const data = await tryFetch(u);
+  const arr = Array.isArray(data)
+    ? data
+    : (data.items ?? data.data ?? data.results ?? []);
+  const norm = normalizeTargets(arr);
+  if (norm.length) return norm;
   return [];
 }
+
