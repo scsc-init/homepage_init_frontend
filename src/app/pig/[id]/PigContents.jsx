@@ -1,51 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import "./page.css";
 import "highlight.js/styles/github.css";
+import "./page.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
-export default function PigContents({ pigContentId }) {
-  const router = useRouter();
-  const [article, setArticle] = useState();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      setLoading(false);
-      router.push("/us/login");
-      return;
-    }
-
-    const fetchContents = async () => {
-      try {
-        const contentRes = await fetch(`/api/article/${pigContentId}`, {
-          headers: { "x-jwt": jwt },
-        });
-        if (!contentRes.ok) {
-          router.push("/pig");
-          return;
-        }
-        const article = await contentRes.json();
-        setArticle(article);
-      } catch (e) {
-        router.push("/pig");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchContents();
-  }, [router, pigContentId]);
-
-  if (loading) return <LoadingSpinner />;
-
+export default function PigContents({ content }) {
   return (
     <div className="PigContent">
       <ReactMarkdown
@@ -62,7 +22,7 @@ export default function PigContents({ pigContentId }) {
           pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
         }}
       >
-        {article?.content}
+        {content || ""}
       </ReactMarkdown>
     </div>
   );

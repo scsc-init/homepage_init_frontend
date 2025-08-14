@@ -1,5 +1,4 @@
 .SigDetailContainer {
-  /* 페이지 전체 컨테이너 */
   max-width: 60vw;
   margin: 1.5rem auto;
   padding: 1.5rem;
@@ -12,7 +11,7 @@ html,
 body {
   background-color: var(--background-color);
 }
-/* 제목 */
+
 .SigTitle {
   font-size: 2rem;
   font-weight: 700;
@@ -20,28 +19,24 @@ body {
   color: var(--color-text-body);
 }
 
-/* 학기 + 상태 */
 .SigInfo {
   color: var(--color-text-subtle);
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
 }
 
-/* 설명 */
 .SigDescription {
   color: var(--color-text-subtle);
   font-size: 1rem;
   margin-bottom: 1.5rem;
 }
 
-/* 구분선 */
 .SigDivider {
   border: none;
   border-top: 1px solid var(--executive-card-shadow);
   margin: 2rem 0;
 }
 
-/* 본문 */
 .SigContent {
   line-height: 1.75;
   font-size: 1rem;
@@ -49,7 +44,6 @@ body {
   word-break: break-word;
 }
 
-/* 마크다운 스타일 */
 .mdx-h1 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -85,4 +79,223 @@ body {
   overflow-x: auto;
   border-radius: 0.5rem;
   margin-bottom: 1.5rem;
+}
+
+.SigActionRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0 0.75rem;
+}
+
+.SigButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.625rem;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: 1px solid var(--color-button-border);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  min-width: 0;
+}
+
+.SigButton:hover {
+  background: var(--color-button-bg-hover);
+  transform: translateY(-1px);
+}
+
+.SigButton:active {
+  transform: translateY(0);
+}
+
+.SigButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.SigButton.is-join {
+  border-color: var(--color-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-primary),
+    0 2px 6px var(--executive-card-shadow);
+}
+
+.SigButton.is-leave {
+  border-style: dashed;
+}
+
+.SigButton.is-edit {
+}
+
+@media (max-width: 560px) {
+  .SigActionRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .SigButton {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.CompillingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: var(--color-bg);
+}
+
+.compilling-text {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 1.125rem;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+.compilling-text .dots::after {
+  content: "";
+  display: inline-block;
+  width: 1.5ch;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: CompillingDots 1.4s steps(4, end) infinite;
+}
+
+@keyframes CompillingDots {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
+}
+
+/* ===== Comments area ===== */
+.SigContent + div {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--executive-card-shadow);
+}
+
+.SigContent + div > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.6rem;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: 1px solid var(--color-button-border);
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  margin-bottom: 0.75rem;
+}
+
+.SigContent + div > button:hover {
+  background: var(--color-button-bg-hover);
+  transform: translateY(-1px);
+}
+
+.SigContent + div > button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.SigContent + div > div {
+  background: var(--executive-card-bg);
+  border: 1px solid var(--color-button-border);
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  color: var(--color-text-subtle);
+  line-height: 1.6;
+}
+
+.SigContent + div > div > div:first-child {
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.SigContent + div textarea {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--executive-card-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-button-border);
+  box-shadow: inset 0 0 0 1px var(--executive-card-shadow);
+  margin: 0.5rem 0;
+}
+
+.SigContent + div textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.SigContent + div button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.6rem;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: 1px solid var(--color-button-border);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  margin-right: 0.4rem;
+}
+
+.SigContent + div button:hover {
+  background: var(--color-button-bg-hover);
+  transform: translateY(-1px);
+}
+
+.SigContent + div button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .SigDetailContainer {
+    max-width: 92vw;
+    padding: 1.25rem;
+  }
+  .SigTitle {
+    font-size: 1.75rem;
+  }
 }

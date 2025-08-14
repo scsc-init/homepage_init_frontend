@@ -17,3 +17,5 @@ export const COLORS = {
 export const DEPOSIT_ACC = '국민 923801-00-058488';
 
 export const DISCORD_INVITE_LINK = 'https://discord.gg/d9McArjXq5'
+
+export const KAKAO_INVITE_LINK = 'https://invite.kakao.com/tc/Nfp743zYME'

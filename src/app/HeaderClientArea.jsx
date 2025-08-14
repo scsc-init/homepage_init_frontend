@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { minExecutiveLevel } from "@/util/constants";
+import "./header.css"
+
 export default function HeaderClientArea({
   allowAnonymous = true,
   onlyExecutive = false,
@@ -73,6 +75,11 @@ export default function HeaderClientArea({
           overflow: "hidden",
         }}
       >
+        <img
+          src={user.profile_picture ? user.profile_picture : "/main/default-pfp.png"}
+          alt="Profile" 
+          className="user-profile-picture"
+        />
         <span
           id="HeaderUserName"
           style={{
@@ -84,13 +91,6 @@ export default function HeaderClientArea({
         >
           {user.name}
         </span>
-        <Image
-          src="/vectors/user.svg"
-          className="HeaderUserIcon"
-          alt="User Icon"
-          width={24}
-          height={24}
-        />
       </button>
     );
   }
@@ -145,6 +145,11 @@ export default function HeaderClientArea({
             overflow: "hidden",
           }}
         >
+          <img
+            src={user.profile_picture ? user.profile_picture : "/main/default-pfp.png"}
+            alt="Profile" 
+            className="user-profile-picture"
+          />
           <span
             id="HeaderUserName"
             style={{
@@ -156,13 +161,6 @@ export default function HeaderClientArea({
           >
             {user.name}
           </span>
-          <Image
-            src="/vectors/user.svg"
-            className="HeaderUserIcon"
-            alt="User Icon"
-            width={24}
-            height={24}
-          />
         </button>
       )}
     </div>

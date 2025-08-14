@@ -1,70 +1,49 @@
-.HomeFQA {
-  margin-bottom: 1rem;
+.FaqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-/* 질문 레이블 */
+.HomeFQA {
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+}
+
 .HomeFQAQuestion {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--slate-6);
-}
-
-/* 드랍다운 영역 (기본 숨김) */
-.HomeFQAHidden {
-  max-height: 0;
-  opacity: 0;
-  padding-top: 0;
-  overflow: hidden;
-  transition:
-    max-height 0.4s ease,
-    opacity 0.3s ease,
-    padding-top 0.3s ease;
-}
-
-/* 체크되었을 때 드러남 */
-.HomeFAQToggle:checked ~ .HomeFQAQuestion + .HomeFQAHidden {
-  max-height: 500px;
-  opacity: 1;
-  padding-top: 0.5rem;
-}
-
-.HomeFQAHidden {
-  transform-origin: top;
-  transform: scaleY(0);
-  opacity: 0;
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
-  overflow: hidden;
-}
-
-.HomeFAQToggle:checked ~ .HomeFQAQuestion + .HomeFQAHidden {
-  transform: scaleY(1);
-  opacity: 1;
-}
-
-.HomeFQA {
-  background-color: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-  font-size: 1.3rem;
-  color: var(--slate-12);
-}
-
-.HomeFQAQuestion {
-  all: unset;
-  cursor: pointer;
+  justify-content: space-between;
+  gap: 1rem;
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.HomeFQAQuestion h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--foreground-color);
 }
 
 .HomeFQAHiddenJS {
   overflow: hidden;
-  transition: height 0.4s ease;
+  transition: height 0.35s ease;
+}
+
+.HomeFQAHiddenJS p {
+  margin: 0.75rem 0 0 0;
+  line-height: 1.7;
+  color: var(--color-text-subtle);
+}
+
+.dark .HomeFQA {
+  background-color: var(--executive-card-bg);
+  border-color: var(--header-border-color);
 }

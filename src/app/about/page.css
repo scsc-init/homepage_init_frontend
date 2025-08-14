@@ -1,8 +1,7 @@
 @import "@/styles/theme.css";
 
-/* ===== 레이아웃 ===== */
-body,
-html {
+html,
+body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
@@ -28,30 +27,33 @@ html {
   left: 0;
   width: 180px;
   height: calc(100vh - 3.5rem);
-  background-color: white;
+  background-color: var(--color-surface-light);
   padding: 2rem 1rem;
-  border-right: 1px solid var(--slate-6);
+  border-right: 1px solid var(--header-border-color);
   z-index: 5;
 }
 
 .AboutSidebar ul {
   list-style: none;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  font-weight: bold;
-  color: var(--foreground-color);
+  margin: 0;
 }
 
 .AboutSidebar a {
+  color: var(--header-foreground-color);
   text-decoration: none;
-  color: inherit;
+  font-weight: 600;
+  display: block;
+  padding: 0.4rem 0;
+  transition: color 0.2s ease;
 }
 
-/* ===== About Title Section ===== */
+.AboutSidebar a:hover {
+  color: var(--foreground-color);
+}
+
 .AboutTitleSection {
-  background-color: var(--slate-2);
+  background: var(--main-bg-gradient);
   padding: 6rem 2rem;
   text-align: center;
 }
@@ -65,7 +67,6 @@ html {
   z-index: 1;
 }
 
-/* ===== Main 영역 ===== */
 .AboutMain {
   margin-left: 180px;
   padding: 4rem 3rem 6rem 3rem;
@@ -74,7 +75,7 @@ html {
 }
 
 .AboutSection {
-  margin-bottom: 5rem;
+  margin-bottom: 6rem;
 }
 
 .AnchorOffset {
@@ -83,61 +84,76 @@ html {
 }
 
 .AboutInner {
-  max-width: 960px;
+  max-width: 1040px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
 }
 
-/* 카드 공통 */
+.AboutInner h2 {
+  margin: 0 0 1.25rem 0;
+  color: var(--color-text-strong);
+}
+
 .AboutCard {
-  background-color: white;
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
   border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-  word-break: keep-all;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  color: var(--slate-12);
-  font-size: 1.3rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  color: var(--foreground-color);
+  font-size: 1.2rem;
 }
 
-/* 활동 및 시설 카드 레이아웃 */
 .ClubroomFacilityList {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
+  margin-top: 0.25rem;
+  align-items: stretch;
+}
+
+.ClubroomFacilityList > * {
+  height: 100%;
+}
+
+.ClubroomFacilityList > * > .ClubroomCard {
+  height: 100%;
 }
 
 .ClubroomCard {
-  background-color: white;
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--executive-card-shadow);
   text-align: center;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
   overflow: hidden;
+  color: var(--foreground-color);
 }
 
 .ClubroomCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px var(--executive-card-shadow);
 }
 
 .ClubroomCard h3 {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  margin: 0.25rem 0 0.25rem 0;
+  font-weight: 700;
   color: var(--foreground-color);
 }
 
 .ClubroomCard p {
-  font-size: 1.2rem;
-  color: var(--slate-11);
+  font-size: 1.05rem;
+  color: var(--color-text-subtle);
+  margin: 0 0 0.25rem 0;
 }
 
 .ClubroomCardImage {
@@ -147,7 +163,6 @@ html {
   height: 200px;
 }
 
-/* ===== 통계 영역 ===== */
 .HomeDescriptionTitle {
   text-align: center;
   display: flex;
@@ -162,60 +177,33 @@ html {
 }
 
 .HomeLargeText {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--slate-12);
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--foreground-color);
 }
 
-/* ===== 시설 안내 영역 ===== */
 #HomeClubroomContainer {
-  background-color: var(--slate-2);
-  border: 1px solid var(--slate-6);
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
   border-radius: 1rem;
   padding: 3rem 2rem;
   margin-top: 3rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  color: var(--foreground-color);
 }
 
-/* ===== FAQ ===== */
 #HomeFQAContainer {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
   margin-top: 2rem;
-}
-
-.HomeFQA {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-  word-break: keep-all;
-  color: var(--slate-12);
-  font-size: 1.3rem;
-  transition: background-color 0.3s ease;
-}
-
-.HomeFQAQuestion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
 }
 
 .HomeFQAQuestion h4 {
   margin: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
-}
-
-.HomeFQAHidden {
-  display: none;
-  margin-top: 0.5rem;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: var(--slate-11);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--foreground-color);
 }
 
 .HomeFQA > input {
@@ -234,11 +222,10 @@ html {
   transform: rotate(180deg);
 }
 
-/* ===== 링크 ===== */
 .MoreLinkList {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 1rem;
 }
 
@@ -247,43 +234,40 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.2rem;
-  border: 1px solid var(--slate-6);
+  border: 1px solid var(--header-border-color);
   border-radius: 0.75rem;
   text-decoration: none;
   color: var(--foreground-color);
-  background-color: var(--slate-1);
-  transition: background-color 0.2s ease;
+  background-color: var(--executive-card-bg);
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .MoreLink:hover {
-  background-color: var(--slate-2);
+  background-color: var(--color-surface-light);
 }
 
-/* ===== 소개문구 영역 ===== */
 .main-intro {
-  max-width: 640px;
-  margin-top: 2.5rem;
-  padding: 0 1rem;
-  font-size: 1.05rem;
-  color: var(--color-text-subtle);
+  max-width: 800px;
+  margin: 4rem auto 5rem auto;
+  padding: 0 2rem;
+  font-size: 1.3rem;
+  color: var(--color-text-strong);
   text-align: center;
-  line-height: 1.7;
-  animation: fadeIn 2.5s ease-out forwards;
-  opacity: 0;
-  z-index: 4;
-  position: relative;
+  line-height: 2;
+  word-break: keep-all;
 }
 
 .main-intro p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .main-intro b {
   color: var(--color-text-strong);
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* ===== 배경 로고 ===== */
 .WallLogo,
 .WallLogo2 {
   position: fixed;
@@ -313,7 +297,6 @@ html {
   opacity: 1;
 }
 
-/* ===== 애니메이션 ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -338,41 +321,35 @@ html {
   transform: translateY(0);
 }
 
-/* ===== 반응형 ===== */
 @media (max-width: 768px) {
   .hide-on-mobile {
     display: none !important;
   }
-
   .AboutMain {
     margin-left: 0 !important;
     padding: 2rem 1rem 6rem 1rem;
   }
-
   .AboutTitle {
     font-size: 3rem;
   }
-
   .AboutTitleSection {
     padding: 4rem 1rem;
   }
-
   .ClubroomFacilityList {
     grid-template-columns: 1fr !important;
   }
-
   .main-intro {
-    font-size: 0.95rem;
-    margin-top: 2rem;
+    font-size: 1.1rem;
+    margin: 3rem auto;
+    line-height: 1.8;
+    padding: 0 1rem;
   }
-
   .WallLogo {
     top: 80%;
     right: 2vw;
     width: 10vh;
     height: 30vh;
   }
-
   .WallLogo2 {
     margin-top: 1rem;
     left: 0;
@@ -381,155 +358,16 @@ html {
   }
 }
 
-.main-intro {
-  max-width: 800px;
-  margin-top: 3rem;
-  padding: 0 1rem;
-  font-size: 1.3rem;
-  color: var(--foreground-color); /* 더 선명한 색상 */
-  text-align: center;
-  line-height: 2;
-  opacity: 0;
-  transform: translateY(30px);
-  transition:
-    opacity 0.8s ease-out,
-    transform 0.8s ease-out;
+.ClubroomFacilityList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  align-items: stretch;
 }
-
-.main-intro.visible {
-  opacity: 1;
-  transform: translateY(0);
+.AboutInner h2 {
+  margin: 0 0 1.75rem 0;
 }
-
-.main-intro p {
-  margin-bottom: 2rem;
-}
-
-.main-intro b {
-  font-weight: 700;
-  color: var(--foreground-color);
-}
-
-@media (max-width: 768px) {
-  .main-intro {
-    font-size: 1.1rem;
-    margin-top: 2rem;
-    line-height: 1.8;
-  }
-}
-.main-intro {
-  max-width: 800px;
-  margin: 4rem auto 5rem auto;
-  padding: 0 2rem;
-  font-size: 1.45rem;
-  color: var(--color-text-strong); /* 진한 글자색 */
-  text-align: center;
-  line-height: 2;
-  opacity: 0;
-  transform: translateY(30px);
-  transition:
-    opacity 0.8s ease-out,
-    transform 0.8s ease-out;
-  word-break: keep-all;
-}
-
-.main-intro.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.main-intro p {
-  margin-bottom: 2.5rem;
-}
-
-.main-intro b {
-  color: var(--color-text-strong);
-  font-weight: 700;
-}
-
-@media (max-width: 768px) {
-  .main-intro {
-    font-size: 1.15rem;
-    margin: 3rem auto;
-    line-height: 1.8;
-    padding: 0 1rem;
-  }
-}
-
-.AboutSidebar {
-  background-color: var(--color-surface-light);
-  border-right: 1px solid var(--header-border-color);
-}
-
-.AboutSidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.AboutSidebar a {
-  color: var(--header-foreground-color);
-  text-decoration: none;
-  font-weight: 600;
-  display: block;
-  padding: 0.4rem 0;
-  transition: color 0.2s ease;
-}
-
-.AboutSidebar a:hover {
-  color: var(--foreground-color);
-}
-
-/* ===== 다크모드 대응 ===== */
-.dark .AboutCard,
-.dark .HomeFQA,
-.dark .ClubroomCard {
-  background-color: var(--color-surface-light);
-  color: var(--foreground-color);
-}
-
-.dark .ClubroomCard {
-  background-color: var(--background-color);
-  color: var(--foreground-color);
-  border: 1px solid var(--header-border-color);
-}
-.dark .ClubroomCard p,
-.dark .HomeFQAHidden {
-  color: var(--color-text-subtle);
-}
-
-.dark .ClubroomCard h3,
-.dark .HomeFQAQuestion h4,
-.dark .HomeLargeText {
-  color: var(--foreground-color);
-}
-
-.dark .AboutSidebar {
-  background-color: var(--color-surface-light);
-  border-right: 1px solid var(--header-border-color);
-}
-
-.dark .MoreLink {
-  background-color: #1c1c1c;
-  border-color: var(--header-border-color);
-  color: var(--foreground-color);
-}
-
-.dark .MoreLink:hover {
-  background-color: #2a2a2a;
-}
-
-/* ===== 다크모드 대응: Clubroom, h2 등 ===== */
-.dark #HomeClubroomContainer {
-  background-color: var(--color-surface-light);
-  border: 1px solid var(--header-border-color);
-  color: var(--foreground-color);
-}
-
-.dark #HomeClubroomContainer h2,
-.dark .AboutInner h2,
-.dark .AboutSection h2,
-.dark .main-intro h2,
-.dark .MoreLinkList h2 {
-  color: var(--color-text-strong);
+.AboutInner h2 + .ClubroomFacilityList {
+  margin-top: 1rem;
 }

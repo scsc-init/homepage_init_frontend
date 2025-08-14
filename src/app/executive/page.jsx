@@ -1,5 +1,4 @@
 // src/app/executive/page.jsx
-
 import ArticleList from "./ArticleList";
 import SigList from "./SigList";
 import PigList from "./PigList";
@@ -10,6 +9,7 @@ import ScscStatusPanel from "./ScscStatusPanel";
 import DiscordBotPanel from "./DiscordBotPanel";
 import { getApiSecret } from "@/util/getApiSecret";
 import { getBaseUrl } from "@/util/getBaseUrl";
+import "./page.css";
 
 export default async function AdminPanel() {
   const [boards, sigs, pigs, scscGlobalStatus, majors, discordBotStatus] =
@@ -24,7 +24,7 @@ export default async function AdminPanel() {
 
   return (
     <WithAuthorization>
-      <div className="admin-panel" style={{ padding: "2rem" }}>
+      <div className="admin-panel">
         <h2>유저 관리</h2>
         <p>
           <Link href="/executive/user">유저 관리 페이지로 이동</Link>
@@ -34,30 +34,44 @@ export default async function AdminPanel() {
         <p>
           <Link href="/board/6">지원금 요청 게시판으로 이동</Link>
         </p>
+
         <h2>게시글 관리</h2>
-        <ArticleList boards={boards} />
+        <div className="adm-section">
+          <ArticleList boards={boards} />
+        </div>
 
         <h2>SIG 관리</h2>
-        <SigList sigs={sigs} />
+        <div className="adm-section">
+          <SigList sigs={sigs} />
+        </div>
 
         <h2>PIG 관리</h2>
-        <PigList pigs={pigs} />
+        <div className="adm-section">
+          <PigList pigs={pigs} />
+        </div>
 
         <h2>Scsc status 관리</h2>
-        <ScscStatusPanel
-          scscGlobalStatus={scscGlobalStatus.status}
-          semester={scscGlobalStatus.semester}
-          year={scscGlobalStatus.year}
-        />
+        <div className="adm-section">
+          <ScscStatusPanel
+            scscGlobalStatus={scscGlobalStatus.status}
+            semester={scscGlobalStatus.semester}
+            year={scscGlobalStatus.year}
+          />
+        </div>
 
         <h2>디스코드 봇 관리</h2>
-
-        <DiscordBotPanel
-          is_logged_in={discordBotStatus ? discordBotStatus.logged_in : "error"}
-        />
+        <div className="adm-section">
+          <DiscordBotPanel
+            is_logged_in={
+              discordBotStatus ? discordBotStatus.logged_in : "error"
+            }
+          />
+        </div>
 
         <h2>전공 관리</h2>
-        <MajorList majors={majors} />
+        <div className="adm-section">
+          <MajorList majors={majors} />
+        </div>
       </div>
     </WithAuthorization>
   );
@@ -82,11 +96,8 @@ async function fetchSigs() {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-
   if (!res.ok) return;
-
   const sigsRaw = await res.json();
-
   const sigsWithContent = await Promise.all(
     sigsRaw.map(async (sig) => {
       const articleRes = await fetch(
@@ -100,7 +111,6 @@ async function fetchSigs() {
       return { ...sig, content: article.content };
     }),
   );
-
   return sigsWithContent;
 }
 
@@ -109,11 +119,8 @@ async function fetchPigs() {
     headers: { "x-api-secret": getApiSecret() },
     cache: "no-store",
   });
-
   if (!res.ok) return;
-
   const pigsRaw = await res.json();
-
   const pigsWithContent = await Promise.all(
     pigsRaw.map(async (pig) => {
       const articleRes = await fetch(
@@ -127,7 +134,6 @@ async function fetchPigs() {
       return { ...pig, content: article.content };
     }),
   );
-
   return pigsWithContent;
 }
 

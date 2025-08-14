@@ -75,7 +75,7 @@ body {
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
-  flex-shrink: 0; /* Why though? */
+  flex-shrink: 0;
 }
 
 #SignupButtonsContainer {
@@ -83,9 +83,9 @@ body {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-  & > * {
-    flex: 1;
-  }
+}
+#SignupButtonsContainer > * {
+  flex: 1;
 }
 
 #GoogleSignupContainer {
@@ -197,8 +197,74 @@ body {
   position: relative;
 }
 
-.g_id_signin {
-  width: 80%;
+/* 커스텀 구글 로그인 버튼 */
+.GoogleLoginBtn {
+  width: 100%;
+  max-width: 360px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-button-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--color-text-body);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.GoogleLoginBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.GoogleLoginBtn:active {
+  transform: translateY(1px);
+}
+.GoogleLoginBtn:hover {
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.12);
+  background: var(--color-surface-light);
+}
+.GoogleIcon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+}
+.GoogleIcon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.GoogleIcon svg path:nth-child(1) {
+  fill: #ea4335;
+}
+.GoogleIcon svg path:nth-child(2) {
+  fill: #4285f4;
+}
+.GoogleIcon svg path:nth-child(3) {
+  fill: #fbbc05;
+}
+.GoogleIcon svg path:nth-child(4) {
+  fill: #34a853;
+}
+.GoogleLoginText {
+  line-height: 1;
+  font-size: 15px;
+}
+
+.GoogleBtnHint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+}
+
+.InAppWarning {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--red-10);
 }
 
 /* 다크모드 대응 */
@@ -242,4 +308,13 @@ body {
 
 .dark .login-description {
   color: var(--color-text-body);
+}
+
+.dark .GoogleLoginBtn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-button-border);
+  color: var(--color-text-body);
+}
+.dark .GoogleLoginBtn:hover {
+  background: var(--color-surface-light);
 }

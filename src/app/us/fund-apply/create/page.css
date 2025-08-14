@@ -3,44 +3,60 @@ body {
   background-color: var(--background-color);
 }
 
-/* 컨테이너 */
 .CreateSigContainer {
   max-width: 60rem;
   margin: 0 auto;
   padding: 3rem 1rem;
 }
-
-/* 헤더 */
 .CreateSigHeader {
   text-align: center;
   margin-bottom: 2.5rem;
 }
-
 .CreateSigTitle {
   font-size: 2.25rem;
   font-weight: 700;
   color: var(--color-text-body);
   margin-bottom: 0.5rem;
 }
-
 .CreateSigSubtitle {
   font-size: 1.1rem;
   color: var(--color-text-subtle);
 }
 
-/* 카드 */
 .CreateSigCard {
   background-color: var(--executive-card-bg);
   padding: 2rem;
   box-shadow: 0 3px 12px var(--executive-card-shadow);
   border-radius: 1rem;
 }
+.Step {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-in {
+  animation: fadeInUp 220ms ease-out;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-/* 공통 인풋 필드 및 드롭다운 */
+.C_Label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-body);
+  margin-bottom: 0.5rem;
+}
 .C_Input {
   color: var(--color-text-body);
-  background-color: var(--input-bg, #fff);
-  border: 1px solid var(--color-border, #ccc);
+  background-color: var(--color-surface-light);
+  border: 1px solid var(--color-button-border);
   padding: 0.6rem 0.75rem;
   border-radius: 0.5rem;
   width: 100%;
@@ -48,108 +64,118 @@ body {
   margin-bottom: 0.75rem;
   transition:
     background-color 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    opacity 0.2s ease;
   appearance: none;
 }
-
 .C_Input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px
-    var(--color-primary-transparent, rgba(59, 130, 246, 0.3));
+  border-color: var(--color-button-bg);
+  box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.28);
 }
-
-/* 드롭다운 옵션 */
 select.C_Input option {
   background-color: var(--executive-card-bg);
   color: var(--color-text-body);
 }
-
-/* 다크모드 인풋 대응 */
-.dark .C_Input {
-  background-color: var(--color-surface-light);
-  color: var(--color-text-body);
-  border-color: #444;
+.is-disabled,
+.C_Input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.dark select.C_Input option {
-  background-color: #1f1f1f;
-  color: #f5f5f5;
+.C_CheckRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
-
-/* 체크박스 */
-input[type="checkbox"] {
+.C_Checkbox {
   width: 1.1rem;
   height: 1.1rem;
-  accent-color: var(--color-primary);
+  accent-color: var(--color-button-bg);
   flex-shrink: 0;
+  margin-top: 0.2rem;
 }
-
-/* 에디터 */
-.mdxeditor {
-  background-color: rgb(245, 245, 245);
+.C_CheckText {
+  font-size: 0.9rem;
   color: var(--color-text-body);
+}
+.C_Link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-button-bg);
+}
+
+.EditorWrapper {
+  --editor-toolbar-h: 44px;
+  --editor-min-height: 12rem;
+  position: relative;
+  min-height: var(--editor-min-height);
+}
+.mdxeditor {
+  position: relative;
+  z-index: 1;
+  min-height: var(--editor-min-height);
+  background-color: var(--box-color);
   border-radius: 0.5rem;
-  min-height: 10rem;
+  border: 1px solid var(--color-button-border);
+}
+.mdxeditor [contenteditable="true"] {
+  position: relative;
+  z-index: 1;
+  min-height: calc(var(--editor-min-height) - var(--editor-toolbar-h));
   padding: 1rem;
-  font-size: 1rem;
+  background: var(--box-color);
+  color: #111;
+}
+
+.EditorPlaceholder {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: calc(1rem + var(--editor-toolbar-h));
+  bottom: 1rem;
+  z-index: 2;
+  pointer-events: none;
+  color: #4b5563;
+  opacity: 0.95;
+  overflow: auto;
+}
+.EditorPlaceholderText {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   line-height: 1.5;
-  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+.EditorWrapper.has-content .EditorPlaceholder {
+  display: none;
 }
 
-/* 라벨 및 체크박스 */
-label {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-/* 버튼 */
 .SigCreateBtn {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: var(--color-primary, #3b82f6);
-  color: white;
-  font-weight: 600;
-  border: none;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 700;
+  border: 1px solid var(--color-button-border);
   border-radius: 0.5rem;
   cursor: pointer;
   transition:
-    background-color 0.3s ease,
-    opacity 0.3s ease;
+    filter 0.15s ease,
+    opacity 0.15s ease;
   margin-top: 0.5rem;
 }
-
 .SigCreateBtn:hover:enabled {
-  background-color: var(--color-primary-hover, #2563eb);
+  filter: brightness(0.95);
 }
-
 .SigCreateBtn:disabled {
-  background-color: var(--color-disabled, #a3a3a3);
-  cursor: not-allowed;
   opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* 반응형 */
 @media (max-width: 640px) {
   .CreateSigContainer {
     padding: 2rem 1rem;
   }
-
   .CreateSigTitle {
     font-size: 1.75rem;
   }
-
-  .mdxeditor {
-    min-height: 8rem;
-  }
-}
-.mdxeditor {
-  background-color: white;
-  border-radius: 0.5rem;
-  min-height: 10rem;
-  padding: 1rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  border: 1px solid var(--color-border, #ccc);
 }

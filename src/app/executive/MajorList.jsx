@@ -1,5 +1,5 @@
+// src/app/executive/MajorList.jsx (CLIENT)
 "use client";
-
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -50,7 +50,6 @@ export default function MajorList({ majors: majorsDefault }) {
     });
     if (res.status === 201) {
       setNewMajor({ college: "", major_name: "" });
-      // router.refresh(); // 데이터를 새로 불러와야 하는데 잘 안 되네요
       alert("추가 완료");
     } else alert("추가 실패: " + res.status);
   };
@@ -58,77 +57,101 @@ export default function MajorList({ majors: majorsDefault }) {
   return (
     <div>
       <h2>전공 목록</h2>
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr>
-            <th style={thStyle}>ID</th>
-            <th style={thStyle}>대학</th>
-            <th style={thStyle}>전공명</th>
-            <th style={thStyle}>작업</th>
-          </tr>
-        </thead>
-        <tbody>
-          {majors.map((major) => (
-            <tr key={major.id}>
-              <td style={tdStyle}>{major.id}</td>
-              <td style={tdStyle}>
+      <div className="adm-table-wrap">
+        <table className="adm-table">
+          <thead>
+            <tr>
+              <th className="adm-th" style={{ width: "10%" }}>
+                ID
+              </th>
+              <th className="adm-th" style={{ width: "30%" }}>
+                대학
+              </th>
+              <th className="adm-th" style={{ width: "45%" }}>
+                전공명
+              </th>
+              <th className="adm-th" style={{ width: "15%" }}>
+                작업
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {majors.map((major) => (
+              <tr key={major.id}>
+                <td className="adm-td">{major.id}</td>
+                <td className="adm-td">
+                  <input
+                    className="adm-input"
+                    value={major.college}
+                    onChange={(e) =>
+                      updateMajorField(major.id, "college", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="adm-td">
+                  <input
+                    className="adm-input"
+                    value={major.major_name}
+                    onChange={(e) =>
+                      updateMajorField(major.id, "major_name", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="adm-td">
+                  <div className="adm-flex">
+                    <button
+                      className="adm-button"
+                      onClick={() => saveMajor(major)}
+                    >
+                      저장
+                    </button>
+                    <button
+                      className="adm-button outline"
+                      onClick={() => deleteMajor(major.id)}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td className="adm-td"></td>
+              <td className="adm-td">
                 <input
-                  value={major.college}
+                  className="adm-input"
+                  placeholder="대학명"
+                  value={newMajor.college}
                   onChange={(e) =>
-                    updateMajorField(major.id, "college", e.target.value)
+                    setNewMajor((prev) => ({
+                      ...prev,
+                      college: e.target.value,
+                    }))
                   }
                 />
               </td>
-              <td style={tdStyle}>
+              <td className="adm-td">
                 <input
-                  value={major.major_name}
+                  className="adm-input"
+                  placeholder="전공명"
+                  value={newMajor.major_name}
                   onChange={(e) =>
-                    updateMajorField(major.id, "major_name", e.target.value)
+                    setNewMajor((prev) => ({
+                      ...prev,
+                      major_name: e.target.value,
+                    }))
                   }
                 />
               </td>
-              <td style={tdStyle}>
-                <button onClick={() => saveMajor(major)}>저장</button>
-                <button onClick={() => deleteMajor(major.id)}>삭제</button>
+              <td className="adm-td">
+                <button className="adm-button" onClick={createMajor}>
+                  추가
+                </button>
               </td>
             </tr>
-          ))}
-          <tr>
-            <td></td>
-            <td>
-              <input
-                placeholder="대학명"
-                value={newMajor.college}
-                onChange={(e) =>
-                  setNewMajor((prev) => ({ ...prev, college: e.target.value }))
-                }
-              />
-            </td>
-            <td>
-              <input
-                placeholder="전공명"
-                value={newMajor.major_name}
-                onChange={(e) =>
-                  setNewMajor((prev) => ({
-                    ...prev,
-                    major_name: e.target.value,
-                  }))
-                }
-              />
-            </td>
-            <td>
-              <button onClick={createMajor}>추가</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-const thStyle = {
-  border: "1px solid #ccc",
-  padding: "8px",
-  background: "#f5f5f5",
-};
-const tdStyle = { border: "1px solid #ccc", padding: "8px" };

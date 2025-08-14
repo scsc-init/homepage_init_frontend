@@ -11,10 +11,13 @@ import { getApiSecret } from "@/util/getApiSecret";
 import { DISCORD_INVITE_LINK } from "@/util/constants";
 
 async function fetchDiscordInviteLink() {
-  const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${getBaseUrl()}/api/bot/discord/general/get_invite`,
+    {
+      headers: { "x-api-secret": getApiSecret() },
+      cache: "no-store",
+    },
+  );
   if (res.ok) {
     const resData = await res.json();
     return resData.result.invite_url;
@@ -24,15 +27,12 @@ async function fetchDiscordInviteLink() {
 export default async function AboutPage() {
   const year = new Date().getFullYear() - 1984;
 
-  // const discordInviteLink = await fetchDiscordInviteLink();
-
   return (
     <>
       <div className="WallLogo"></div>
       <div className="WallLogo2"></div>
       <div className="AboutWrapper">
         <Sidebar />
-
         <main className="AboutMain">
           <ScrollEffectWrapper>
             <section id="scsc" className="AboutIntroSection AnchorOffset">
@@ -131,37 +131,37 @@ export default async function AboutPage() {
                       title: "세미나",
                       description:
                         "외부 기업인 또는 동아리원이 컴퓨터와 관련된 주제로 세미나를 개최합니다.",
-                      image: "/img7.jpg",
+                      image: "/about/activities/seminar.jpg",
                     },
                     {
                       title: "SIG",
                       description:
                         "특정 주제에 관심이 있는 동아리원이 모여 함께 공부하는 모임입니다.",
-                      image: "/img8.jpg",
+                      image: "/about/activities/sig.jpg",
                     },
                     {
                       title: "PIG",
                       description:
                         "프로젝트 중심의 팀 활동입니다. INIT 등이 있습니다.",
-                      image: "/img9.jpg",
+                      image: "/about/activities/pig.jpg",
                     },
                     {
                       title: "SCPC",
                       description: "알고리즘 대회입니다.",
-                      image: "/img11.jpg",
+                      image: "/about/activities/scpc.jpg",
                     },
                     {
                       title: "SKYST",
                       description: "타 동아리와 연합한 해커톤 대회입니다.",
-                      image: "/img12.jpg",
+                      image: "/about/activities/skyst.jpg",
                     },
                     {
                       title: "친목 활동",
                       description:
                         "MT, 번개 등 다양한 친목 도모 활동이 있습니다.",
-                      image: "/img10.jpg",
+                      image: "/about/activities/mt.jpg",
                     },
-                  ].map(({ title, description, image }, i) => (
+                  ].map(({ title, description, image }) => (
                     <ScrollEffectWrapper key={title}>
                       <div className="ClubroomCard">
                         <Image
@@ -199,36 +199,36 @@ export default async function AboutPage() {
                       {
                         title: "고성능 컴퓨터",
                         description: "딥러닝과 개발용 워크스테이션을 갖춘 환경",
-                        image: "/img1.jpg",
+                        image: "/about/club-room/pc.jpg",
                       },
                       {
                         title: "소파 & 회의 공간",
                         description: "편하게 앉아 쉴 수 있는 공간",
-                        image: "/img2.jpg",
+                        image: "/about/club-room/sofa.jpg",
                       },
                       {
                         title: "음료 및 간식",
                         description:
                           "대형 냉장고와 간식이 항상 구비되어 있습니다",
-                        image: "/img3.jpg",
+                        image: "/about/club-room/refreshments.jpg",
                       },
                       {
                         title: "책과 자료들",
                         description: "프로그래밍 서적과 다양한 공부 자료 보유",
-                        image: "/img4.jpg",
+                        image: "/about/club-room/books.jpg",
                       },
                       {
                         title: "프린터기",
                         description: "컬러 출력이 가능한 고성능 프린터",
-                        image: "/img5.jpg",
+                        image: "/about/club-room/printer.jpg",
                       },
                       {
                         title: "게임기",
                         description:
                           "닌텐도, PS4 등 게임기로 여가도 즐길 수 있습니다",
-                        image: "/img6.jpg",
+                        image: "/about/club-room/games.jpg",
                       },
-                    ].map(({ title, description, image }, i) => (
+                    ].map(({ title, description, image }) => (
                       <ScrollEffectWrapper key={title}>
                         <div className="ClubroomCard">
                           <Image
@@ -259,10 +259,7 @@ export default async function AboutPage() {
                       { title: "리크루팅 정보 바로가기", url: "/us/contact" },
                       { title: "시그 목록 바로가기", url: "/sig" },
                       { title: "피그 목록 바로가기", url: "/pig" },
-                      {
-                        title: "공식 디스코드 서버",
-                        url: DISCORD_INVITE_LINK,
-                      },
+                      { title: "공식 디스코드 서버", url: DISCORD_INVITE_LINK },
                       {
                         title: "공식 인스타그램",
                         url: "https://www.instagram.com/scsc_snu/?hl=ko",
@@ -285,7 +282,7 @@ export default async function AboutPage() {
                             width="20px"
                             height="20px"
                             rotate="-90deg"
-                            color="#070707"
+                            color="var(--foreground-color)"
                           />
                         </a>
                       ) : (
@@ -295,7 +292,7 @@ export default async function AboutPage() {
                             width="20px"
                             height="20px"
                             rotate="-90deg"
-                            color="#070707"
+                            color="var(--foreground-color)"
                           />
                         </Link>
                       ),
