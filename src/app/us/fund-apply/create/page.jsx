@@ -54,8 +54,7 @@ async function tryFetch(url) {
 
 async function fetchTargets(type) {
   const base = getBaseUrl();
-  const u = [`${base}/api/${type}s`];
-  const data = await tryFetch(u);
+  const data = await tryFetch(`${base}/api/${type}s`);
   const arr = Array.isArray(data)
     ? data
     : (data.items ?? data.data ?? data.results ?? []);
