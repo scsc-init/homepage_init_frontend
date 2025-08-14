@@ -7,18 +7,31 @@ export default function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
-      document.documentElement.classList.add("dark");
-      setDark(true);
-    }
+    const saved =
+      typeof window !== "undefined" ? localStorage.getItem("theme") : null;
+    const shouldDark = saved
+      ? saved === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", shouldDark);
+    setDark(shouldDark);
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = dark ? "light" : "dark";
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", !dark);
-    setDark(!dark);
+    const next = !dark;
+    localStorage.setItem("theme", next ? "dark" : "light");
+    const html = document.documentElement;
+    html.classList.add("theme-animating");
+    requestAnimationFrame(() => {
+      html.classList.toggle("dark", next);
+      setDark(next);
+      const dur =
+        getComputedStyle(html).getPropertyValue("--theme-anim-duration") ||
+        "180ms";
+      const ms = parseFloat(dur) || 180;
+      setTimeout(() => {
+        html.classList.remove("theme-animating");
+      }, ms + 50);
+    });
   };
 
   return (

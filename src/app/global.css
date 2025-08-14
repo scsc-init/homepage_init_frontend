@@ -184,3 +184,14 @@ img {
   background: var(--selection-bg);
   color: var(--selection-text);
 }
+
+html.theme-animating,
+html.theme-animating *:not(svg *):not(.no-theme-anim):not(.no-theme-anim *) {
+  transition:
+    color var(--theme-anim-duration) ease,
+    background-color var(--theme-anim-duration) ease,
+    border-color var(--theme-anim-duration) ease,
+    box-shadow var(--theme-anim-duration) ease,
+    fill var(--theme-anim-duration) ease,
+    stroke var(--theme-anim-duration) ease !important;
+}
