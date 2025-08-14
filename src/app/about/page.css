@@ -371,3 +371,22 @@ body {
 .AboutInner h2 + .ClubroomFacilityList {
   margin-top: 1rem;
 }
+
+/* 테마 토글 동안: 배경만 전환, 나머지는 모두 즉시 */
+html.theme-animating,
+html.theme-animating *:not(svg *):not(.no-theme-anim):not(.no-theme-anim *) {
+  transition: background-color var(--theme-anim-duration) ease !important;
+}
+
+/* 가상 요소 배경도 동일 처리 */
+html.theme-animating *::before,
+html.theme-animating *::after {
+  transition: background-color var(--theme-anim-duration) ease !important;
+}
+
+/* 혹시 각 컴포넌트가 transition을 따로 줬어도 배경 이외는 막기 */
+html.theme-animating * {
+  transition-property: background-color !important;
+  transition-duration: var(--theme-anim-duration) !important;
+  transition-timing-function: ease !important;
+}
