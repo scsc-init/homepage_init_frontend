@@ -1,4 +1,16 @@
 :root {
+  --theme-anim-duration: 0s;
+}
+html.theme-animating {
+  --theme-anim-duration: 400ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-animating {
+    --theme-anim-duration: 0s;
+  }
+}
+
+:root {
   --color-primary: #bbbcbc;
   --color-button-bg: #128e9f;
   --color-button-border: #527a91;
