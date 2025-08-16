@@ -1,10 +1,10 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import Google from "next-auth/providers/google";
 
-const handler = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   providers: [
-    GoogleProvider({
+    Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
@@ -12,7 +12,6 @@ const handler = NextAuth({
   pages: { signIn: "/us/login" },
   callbacks: {
     async jwt({ token, account }) {
-      // 구글로 막 로그인해서 콜백에 들어온 최초 시점
       if (account?.provider === "google" && token?.email) {
         try {
           const res = await fetch(
@@ -23,31 +22,21 @@ const handler = NextAuth({
               body: JSON.stringify({ email: token.email }),
             },
           );
-
           if (res.status === 200) {
             const data = await res.json();
-            token.appJwt = data.jwt; // 우리 백엔드 JWT
-            token.signupRequired = false; // 기존 회원
+            token.appJwt = data.jwt;
+            token.signupRequired = false;
           } else if (res.status === 404) {
-            token.signupRequired = true; // 미가입 → 가입 단계로
-          } else {
-            token.loginError = true; // 기타 에러
+            token.signupRequired = true;
           }
-        } catch {
-          token.loginError = true;
-        }
+        } catch {}
       }
       return token;
     },
-
     async session({ session, token }) {
       if (token?.appJwt) session.appJwt = token.appJwt;
       session.signupRequired = Boolean(token?.signupRequired);
-      session.loginError = Boolean(token?.loginError);
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
 });
-
-export { handler as GET, handler as POST };

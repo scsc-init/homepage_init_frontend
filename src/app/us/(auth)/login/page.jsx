@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
 import "./page.css";
 import * as validator from "./validator";
 import { isSkipEmailCheck } from "@/app/env/check.js";
@@ -24,6 +25,7 @@ function cleanName(raw) {
 }
 
 export default function LoginPage() {
+  const { data: session, status } = useSession();
   const [stage, setStage] = useState(0);
   const [form, setForm] = useState({
     email: "",
@@ -46,12 +48,21 @@ export default function LoginPage() {
 
   useEffect(() => {
     var isInAppBrowser = false;
-    var inAppBrowserName = '';
+    var inAppBrowserName = "";
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
-      if (navigator.userAgent.toLowerCase().match(key)) {isInAppBrowser = true; inAppBrowserName = name; break;}
+      if (navigator.userAgent.toLowerCase().match(key)) {
+        isInAppBrowser = true;
+        inAppBrowserName = name;
+        break;
+      }
     }
-    if (isInAppBrowser) {alert(`${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`); window.location.href = '/';}
-  }, [])
+    if (isInAppBrowser) {
+      alert(
+        `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
+      );
+      window.location.href = "/";
+    }
+  }, []);
 
   useEffect(() => {
     const checkProfile = async () => {
@@ -73,6 +84,33 @@ export default function LoginPage() {
     };
     checkProfile();
   }, [router]);
+
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    if (session?.loginError) {
+      alert("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+      return;
+    }
+    if (session?.signupRequired) {
+      const email = session?.user?.email || "";
+      const cName = cleanName(session?.user?.name || "");
+      const image = session?.user?.image || "";
+      setForm((prev) => ({
+        ...prev,
+        email,
+        name: cName,
+        profile_picture_url: image,
+      }));
+      setStage(1);
+      return;
+    }
+    if (session?.appJwt) {
+      try {
+        localStorage.setItem("jwt", session.appJwt);
+      } catch {}
+      window.location.replace("/");
+    }
+  }, [status, session]);
 
   useEffect(() => {
     window.handleCredentialResponse = async (response) => {
@@ -222,7 +260,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 className="GoogleLoginBtn"
-                onClick={openGooglePopup}
+                onClick={() => signIn("google", { callbackUrl: "/us/login" })}
               >
                 <span className="GoogleIcon" aria-hidden="true">
                   <svg viewBox="0 0 48 48">
