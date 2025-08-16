@@ -248,7 +248,11 @@ export default function LoginPage() {
                     log("auth_intent_set");
                   } catch {}
                   log("click_login_button", { provider: "google" });
-                  signIn("google", { callbackUrl: "/us/login?auth=1" });
+                  signIn(
+                    "google",
+                    { callbackUrl: "/us/login?auth=1" },
+                    { prompt: "select_account" },
+                  );
                 }}
                 disabled={inAppWarning}
               >
