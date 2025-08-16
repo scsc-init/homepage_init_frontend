@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import "./page.css";
 import * as validator from "./validator";
@@ -43,8 +43,6 @@ function log(event, data = {}) {
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
-  const searchParams = useSearchParams();
-  const [authIntent, setAuthIntent] = useState(false);
   const [stage, setStage] = useState(0);
   const [inAppWarning, setInAppWarning] = useState(false);
   const [form, setForm] = useState({
@@ -71,13 +69,6 @@ export default function LoginPage() {
       search: typeof window !== "undefined" ? window.location.search : "",
     });
   }, []);
-
-  useEffect(() => {
-    const flag =
-      searchParams.get("auth") === "1" ||
-      localStorage.getItem("auth_intent") === "1";
-    if (flag) setAuthIntent(true);
-  }, [searchParams]);
 
   useEffect(() => {
     let isInAppBrowser = false;
@@ -113,8 +104,8 @@ export default function LoginPage() {
           localStorage.removeItem("jwt");
           return;
         }
-        log("auto_login_redirect", { to: "/about/welcome" });
-        router.push("/about/welcome");
+        log("auto_login_redirect", { to: "/" });
+        router.push("/");
       } catch (e) {
         log("auto_login_profile_check_error", { error: String(e) });
       }
@@ -123,7 +114,7 @@ export default function LoginPage() {
   }, [router]);
 
   useEffect(() => {
-    if (status !== "authenticated" || !authIntent) return;
+    if (status !== "authenticated") return;
     if (session?.loginError) {
       log("login_error", { source: "session_flag" });
       return;
@@ -139,9 +130,6 @@ export default function LoginPage() {
         profile_picture_url: image,
       }));
       setStage(1);
-      try {
-        localStorage.removeItem("auth_intent");
-      } catch {}
       log("signup_required", { email });
       return;
     }
@@ -152,13 +140,10 @@ export default function LoginPage() {
       } catch {
         log("store_jwt_failed");
       }
-      try {
-        localStorage.removeItem("auth_intent");
-      } catch {}
-      log("redirect", { to: "/about/welcome" });
-      window.location.replace("/about/welcome");
+      log("redirect", { to: "/" });
+      window.location.replace("/");
     }
-  }, [status, session, authIntent]);
+  }, [status, session]);
 
   useEffect(() => {
     if (stage !== 4) return;
@@ -243,12 +228,12 @@ export default function LoginPage() {
                 type="button"
                 className="GoogleLoginBtn"
                 onClick={() => {
-                  try {
-                    localStorage.setItem("auth_intent", "1");
-                    log("auth_intent_set");
-                  } catch {}
                   log("click_login_button", { provider: "google" });
-                  signIn("google", { callbackUrl: "/us/login?auth=1" });
+                  signIn(
+                    "google",
+                    { callbackUrl: "/us/login" },
+                    { prompt: "select_account" },
+                  );
                 }}
                 disabled={inAppWarning}
               >
