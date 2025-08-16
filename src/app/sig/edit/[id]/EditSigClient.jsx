@@ -6,18 +6,30 @@ import SigForm from "@/components/board/SigForm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { minExecutiveLevel } from "@/util/constants";
+
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
 
 export default function EditSigClient({ sigId }) {
   const router = useRouter();
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
+  const [sig, setSig] = useState(null);
+  const [article, setArticle] = useState(null);
+  const mounted = useMounted();
+  const [editorKey, setEditorKey] = useState(0);
 
   const {
     register,
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -60,6 +72,8 @@ export default function EditSigClient({ sigId }) {
       }
 
       const sig = await res.json();
+      setSig(sig);
+
       const articleRes = await fetch(`/api/article/${sig.content_id}`, {
         headers: { "x-jwt": jwt },
       });
@@ -69,12 +83,8 @@ export default function EditSigClient({ sigId }) {
         router.push("/sig");
       }
       const article = await articleRes.json();
-      console.log(article);
-      reset({
-        title: sig.title ?? "",
-        description: sig.description ?? "",
-        editor: article.content ?? "",
-      });
+      setArticle(article);
+      
     };
     fetchSigData();
   }, [router]);
@@ -133,7 +143,7 @@ export default function EditSigClient({ sigId }) {
         description: data.description,
         content: data.editor,
       });
-      const res = await fetch(`/api/sig/${sigId}/update`, {
+      const res = await fetch((user.role >= minExecutiveLevel) ? `/api/sig/${sigId}/update/executive` : `/api/sig/${sigId}/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -148,7 +158,8 @@ export default function EditSigClient({ sigId }) {
 
       if (res.status === 204) {
         alert("SIG 수정 성공!");
-        router.push("/sig");
+        router.push(`/sig/${sigId}`);
+        router.refresh();
       } else {
         const err = await res.json();
         console.log(err);
@@ -162,6 +173,17 @@ export default function EditSigClient({ sigId }) {
     }
   };
 
+  useEffect(() => {
+    if (sig && article && mounted) {
+      reset({
+        title: sig.title ?? "",
+        description: sig.description ?? "",
+        editor: article.content ?? "",
+      });
+      setEditorKey(k => k + 1);
+    }
+  }, [sig, article, mounted, reset]);
+
   return (
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
@@ -174,6 +196,8 @@ export default function EditSigClient({ sigId }) {
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           Editor={Editor}
+          editorKey={editorKey}
+          isCreate={false}
         />
       </div>
     </div>

@@ -8,7 +8,9 @@ export default function PigForm({
   control,
   handleSubmit,
   onSubmit,
-  Editor, // forwardRef 없어도 됨
+  Editor,
+  editorKey,
+  isCreate
 }) {
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -32,6 +34,7 @@ export default function PigForm({
           control={control}
           render={({ field }) => (
             <Editor
+              key={editorKey}
               markdown={typeof field.value === "string" ? field.value : ""}
               onChange={field.onChange}
             />
@@ -39,7 +42,7 @@ export default function PigForm({
         />
       </div>
 
-      <Button.Root type="submit">PIG 생성</Button.Root>
+      <Button.Root type="submit">{isCreate ? 'PIG 생성' : 'PIG 수정'}</Button.Root>
     </form>
   );
 }
