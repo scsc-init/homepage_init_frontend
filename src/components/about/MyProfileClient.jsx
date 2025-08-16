@@ -35,6 +35,18 @@ async function onAuthFail() {
   } catch {}
 }
 
+async function onAuthFail() {
+  try {
+    localStorage.removeItem("jwt");
+  } catch {}
+  try {
+    sessionStorage.clear();
+  } catch {}
+  try {
+    await signOut({ redirect: false });
+  } catch {}
+}
+
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
   const [majors, setMajors] = useState(null);
@@ -43,6 +55,7 @@ export default function MyProfileClient() {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
+      onAuthFail().finally(() => router.push("/us/login"));
       onAuthFail().finally(() => router.push("/us/login"));
       return;
     }
@@ -54,6 +67,7 @@ export default function MyProfileClient() {
         });
         if (resUser.status != 200) {
           await onAuthFail();
+          await onAuthFail();
           router.push("/us/login");
           return;
         }
@@ -62,6 +76,7 @@ export default function MyProfileClient() {
         const resMajor = await fetch(`/api/major/${userData.major_id}`);
         setMajors(await resMajor.json());
       } catch (e) {
+        await onAuthFail();
         await onAuthFail();
         router.push("/us/login");
       }
@@ -76,7 +91,7 @@ export default function MyProfileClient() {
     try {
       sessionStorage.clear();
     } catch {}
-    signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: "/us/login" });
   };
 
   const handleEnroll = async () => {
@@ -93,6 +108,9 @@ export default function MyProfileClient() {
       alert("등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.");
     } else if (res.status === 400) {
       alert("이미 등록 처리되었거나 제명된 회원입니다.");
+    } else if (res.status === 401) {
+      await onAuthFail();
+      router.push("/us/login");
     } else if (res.status === 401) {
       await onAuthFail();
       router.push("/us/login");
@@ -125,8 +143,23 @@ export default function MyProfileClient() {
         ) : (
           <img alt="" height={"50px"} src="//:0"></img>
         )}
+        {user ? (
+          <img
+            src={
+              user.profile_picture
+                ? user.profile_picture
+                : "/main/default-pfp.png"
+            }
+            alt="Profile"
+            className="user-profile-picture"
+          />
+        ) : (
+          <img alt="" height={"50px"} src="//:0"></img>
+        )}
         <div className="user-name-container">
           <div className="user-name">
+            {user ? user.name : ""}{" "}
+            {user ? "[" + USER_ROLE_MAP[user.role] + "]" : ""}
             {user ? user.name : ""}{" "}
             {user ? "[" + USER_ROLE_MAP[user.role] + "]" : ""}
           </div>
@@ -140,9 +173,11 @@ export default function MyProfileClient() {
               <tr>
                 <th>이메일</th>
                 <td>{user ? user.email : ""}</td>
+                <td>{user ? user.email : ""}</td>
               </tr>
               <tr>
                 <th>전화번호</th>
+                <td>{user ? user.phone : ""}</td>
                 <td>{user ? user.phone : ""}</td>
               </tr>
               <tr>
@@ -156,6 +191,7 @@ export default function MyProfileClient() {
           <div class="user-status-container">
             <div class="user-status-content">
               <p className="user-status-description">User Status</p>
+              <p>{user ? USER_STATUS_MAP[user.status] : ""}</p>
               <p>{user ? USER_STATUS_MAP[user.status] : ""}</p>
             </div>
             <button onClick={handleEnroll} className="enroll-button">
