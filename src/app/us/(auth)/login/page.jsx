@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import "./page.css";
 import * as validator from "./validator";
-import { isSkipEmailCheck } from "@/app/env/check.js";
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: "카카오톡",
@@ -24,9 +23,30 @@ function cleanName(raw) {
     .trim();
 }
 
+function log(event, data = {}) {
+  try {
+    const body = JSON.stringify({ event, data, ts: new Date().toISOString() });
+    const url = "/api/log";
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+      const blob = new Blob([body], { type: "application/json" });
+      navigator.sendBeacon(url, blob);
+      return;
+    }
+    fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+      keepalive: true,
+    });
+  } catch {}
+}
+
 export default function LoginPage() {
   const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
+  const [authIntent, setAuthIntent] = useState(false);
   const [stage, setStage] = useState(0);
+  const [inAppWarning, setInAppWarning] = useState(false);
   const [form, setForm] = useState({
     email: "",
     name: "",
@@ -40,55 +60,72 @@ export default function LoginPage() {
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState("");
-  const hiddenBtnRef = useRef(null);
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
-    var isInAppBrowser = false;
-    var inAppBrowserName = "";
+    log("page_view", {
+      path: typeof window !== "undefined" ? window.location.pathname : "",
+      search: typeof window !== "undefined" ? window.location.search : "",
+    });
+  }, []);
+
+  useEffect(() => {
+    const flag =
+      searchParams.get("auth") === "1" ||
+      localStorage.getItem("auth_intent") === "1";
+    if (flag) setAuthIntent(true);
+  }, [searchParams]);
+
+  useEffect(() => {
+    let isInAppBrowser = false;
+    let inAppBrowserName = "";
+    const ua = navigator.userAgent.toLowerCase();
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
-      if (navigator.userAgent.toLowerCase().match(key)) {
+      const re = new RegExp(`\\b${key}\\b`);
+      if (re.test(ua)) {
         isInAppBrowser = true;
         inAppBrowserName = name;
         break;
       }
     }
     if (isInAppBrowser) {
+      log("inapp_warning_shown", { name: inAppBrowserName });
       alert(
         `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
       );
-      window.location.href = "/";
+      setInAppWarning(true);
     }
   }, []);
 
   useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return;
     const checkProfile = async () => {
-      const jwt = localStorage.getItem("jwt");
-      if (jwt) {
-        try {
-          const resUser = await fetch(`/api/user/profile`, {
-            headers: { "x-jwt": jwt },
-          });
-          if (resUser.status != 200) {
-            localStorage.removeItem("jwt");
-            return;
-          }
-          router.push("/about/welcome");
-        } catch {
+      try {
+        const resUser = await fetch(`/api/user/profile`, {
+          headers: { "x-jwt": jwt },
+        });
+        if (resUser.status !== 200) {
+          log("auto_login_profile_check_failed", { status: resUser.status });
+          localStorage.removeItem("jwt");
           return;
         }
+        log("auto_login_redirect", { to: "/about/welcome" });
+        router.push("/about/welcome");
+      } catch (e) {
+        log("auto_login_profile_check_error", { error: String(e) });
       }
     };
     checkProfile();
   }, [router]);
 
   useEffect(() => {
-    if (status !== "authenticated") return;
+    if (status !== "authenticated" || !authIntent) return;
     if (session?.loginError) {
-      alert("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+      log("login_error", { source: "session_flag" });
       return;
     }
     if (session?.signupRequired) {
@@ -102,110 +139,44 @@ export default function LoginPage() {
         profile_picture_url: image,
       }));
       setStage(1);
+      try {
+        localStorage.removeItem("auth_intent");
+      } catch {}
+      log("signup_required", { email });
       return;
     }
     if (session?.appJwt) {
       try {
         localStorage.setItem("jwt", session.appJwt);
+        log("stored_app_jwt");
+      } catch {
+        log("store_jwt_failed");
+      }
+      try {
+        localStorage.removeItem("auth_intent");
       } catch {}
-      window.location.replace("/");
+      log("redirect", { to: "/about/welcome" });
+      window.location.replace("/about/welcome");
     }
-  }, [status, session]);
-
-  useEffect(() => {
-    window.handleCredentialResponse = async (response) => {
-      const { credential } = response;
-      const payload = JSON.parse(
-        decodeURIComponent(
-          escape(
-            window.atob(
-              credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
-            ),
-          ),
-        ),
-      );
-      const email = payload.email || "";
-      const cName = cleanName(payload.name || "");
-      const profilePictureUrl = payload.picture || "";
-      setForm((prev) => ({
-        ...prev,
-        email,
-        name: cName,
-        profile_picture_url: profilePictureUrl,
-      }));
-      if (!email || !cName) return;
-      if (!(await isSkipEmailCheck()) && !validator.email(email)) {
-        alert("snu.ac.kr 이메일만 허용됩니다.");
-        return;
-      }
-      const res = await fetch(`/api/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (res.ok) {
-        const { jwt } = await res.json();
-        localStorage.setItem("jwt", jwt);
-        window.location.href = "/";
-      } else if (res.status === 404) {
-        setForm((prev) => ({ ...prev, email, name: cName }));
-        setStage(1);
-      } else {
-        alert("로그인 중 오류 발생");
-      }
-    };
-
-    const init = () => {
-      const cid =
-        document
-          .querySelector('meta[name="google-signin-client_id"]')
-          ?.getAttribute("content") ||
-        window.__GSI_CID ||
-        "";
-      if (!cid) return;
-      window.google?.accounts?.id?.initialize({
-        client_id: cid,
-        callback: window.handleCredentialResponse,
-        ux_mode: "popup",
-      });
-      if (hiddenBtnRef.current) {
-        window.google?.accounts?.id?.renderButton(hiddenBtnRef.current, {
-          type: "standard",
-          size: "large",
-          theme: "outline",
-          text: "sign_in_with",
-          shape: "rectangular",
-          logo_alignment: "left",
-        });
-      }
-    };
-
-    if (window.google?.accounts?.id) init();
-    else {
-      const s = document.createElement("script");
-      s.src = "https://accounts.google.com/gsi/client";
-      s.async = true;
-      s.defer = true;
-      s.onload = init;
-      document.body.appendChild(s);
-    }
-  }, []);
+  }, [status, session, authIntent]);
 
   useEffect(() => {
     if (stage !== 4) return;
     const fetchMajors = async () => {
-      const res = await fetch(`/api/majors`);
-      setMajors(await res.json());
+      try {
+        const res = await fetch(`/api/majors`);
+        const data = await res.json();
+        setMajors(data);
+        log("majors_loaded", { count: Array.isArray(data) ? data.length : 0 });
+      } catch (e) {
+        log("majors_load_failed", { error: String(e) });
+      }
     };
     fetchMajors();
   }, [stage]);
 
-  const openGooglePopup = () => {
-    const el = hiddenBtnRef.current?.querySelector('div[role="button"]');
-    if (el) el.click();
-  };
-
   const handleSubmit = async () => {
+    log("signup_submit_start");
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const createRes = await fetch(`/api/user/create`, {
@@ -224,17 +195,28 @@ export default function LoginPage() {
     });
     if (createRes.status !== 201) {
       const createData = await createRes.json();
+      log("signup_create_failed", {
+        status: createRes.status,
+        detail: createData?.detail || null,
+      });
       alert(`유저 생성 실패: ${createData.detail}`);
       router.push("/");
       return;
     }
+    log("signup_create_success");
     const loginRes = await fetch(`/api/user/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.email }),
     });
     const { jwt } = await loginRes.json();
-    localStorage.setItem("jwt", jwt);
+    try {
+      localStorage.setItem("jwt", jwt);
+      log("stored_app_jwt_after_signup");
+    } catch {
+      log("store_jwt_failed_after_signup");
+    }
+    log("redirect", { to: "/about/welcome" });
     window.location.replace("/about/welcome");
   };
 
@@ -260,7 +242,15 @@ export default function LoginPage() {
               <button
                 type="button"
                 className="GoogleLoginBtn"
-                onClick={() => signIn("google", { callbackUrl: "/us/login" })}
+                onClick={() => {
+                  try {
+                    localStorage.setItem("auth_intent", "1");
+                    log("auth_intent_set");
+                  } catch {}
+                  log("click_login_button", { provider: "google" });
+                  signIn("google", { callbackUrl: "/us/login?auth=1" });
+                }}
+                disabled={inAppWarning}
               >
                 <span className="GoogleIcon" aria-hidden="true">
                   <svg viewBox="0 0 48 48">
@@ -272,16 +262,12 @@ export default function LoginPage() {
                 </span>
                 <span className="GoogleLoginText">Google 계정으로 로그인</span>
               </button>
-              <div
-                ref={hiddenBtnRef}
-                style={{
-                  position: "absolute",
-                  left: "-9999px",
-                  width: 0,
-                  height: 0,
-                  overflow: "hidden",
-                }}
-              />
+              {inAppWarning && (
+                <p className="InAppWarning">
+                  인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로
+                  다시 열어주세요.
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -298,6 +284,7 @@ export default function LoginPage() {
             </p>
             <button
               onClick={() => {
+                log("click_stage1_next");
                 setStage(2);
               }}
               style={{ width: "100%", boxSizing: "border-box" }}
@@ -337,9 +324,16 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const sid = `${form.student_id_year}${form.student_id_number}`;
-                validator.studentID(sid, (ok) =>
-                  ok ? setStage(3) : alert("올바른 학번 형식이 아닙니다."),
-                );
+                log("click_stage2_next_attempt", { sid_length: sid.length });
+                validator.studentID(sid, (ok) => {
+                  if (ok) {
+                    log("stage2_valid");
+                    setStage(3);
+                  } else {
+                    log("stage2_invalid");
+                    alert("올바른 학번 형식이 아닙니다.");
+                  }
+                });
               }}
             >
               다음
@@ -383,11 +377,18 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-                validator.phoneNumber(phone, (ok) =>
-                  ok
-                    ? setStage(4)
-                    : alert("전화번호 형식이 올바르지 않습니다."),
-                );
+                log("click_stage3_next_attempt", {
+                  phone_length: phone.length,
+                });
+                validator.phoneNumber(phone, (ok) => {
+                  if (ok) {
+                    log("stage3_valid");
+                    setStage(4);
+                  } else {
+                    log("stage3_invalid");
+                    alert("전화번호 형식이 올바르지 않습니다.");
+                  }
+                });
               }}
             >
               다음
@@ -427,13 +428,19 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 if (!college) {
+                  log("stage4_missing_college");
                   alert("단과대학을 선택하세요.");
                   return;
                 }
                 if (!form.major_id) {
+                  log("stage4_missing_major");
                   alert("학과/학부를 선택하세요.");
                   return;
                 }
+                log("click_signup_button", {
+                  college,
+                  major_id: form.major_id,
+                });
                 handleSubmit();
               }}
             >

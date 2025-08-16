@@ -12,8 +12,16 @@ const handler = NextAuth({
   pages: { signIn: "/us/login" },
   callbacks: {
     async jwt({ token, account }) {
-      // 구글로 막 로그인해서 콜백에 들어온 최초 시점
       if (account?.provider === "google" && token?.email) {
+        console.log(
+          JSON.stringify({
+            type: "auth_flow",
+            step: "jwt_start",
+            email: token.email,
+            provider: account.provider,
+            ts: new Date().toISOString(),
+          }),
+        );
         try {
           const res = await fetch(
             `${process.env.NEXTAUTH_URL}/api/user/login`,
@@ -26,15 +34,51 @@ const handler = NextAuth({
 
           if (res.status === 200) {
             const data = await res.json();
-            token.appJwt = data.jwt; // 우리 백엔드 JWT
-            token.signupRequired = false; // 기존 회원
+            token.appJwt = data.jwt;
+            token.signupRequired = false;
+            console.log(
+              JSON.stringify({
+                type: "auth_flow",
+                step: "jwt_existing_user",
+                email: token.email,
+                status: 200,
+                ts: new Date().toISOString(),
+              }),
+            );
           } else if (res.status === 404) {
-            token.signupRequired = true; // 미가입 → 가입 단계로
+            token.signupRequired = true;
+            console.log(
+              JSON.stringify({
+                type: "auth_flow",
+                step: "jwt_need_signup",
+                email: token.email,
+                status: 404,
+                ts: new Date().toISOString(),
+              }),
+            );
           } else {
-            token.loginError = true; // 기타 에러
+            token.loginError = true;
+            console.log(
+              JSON.stringify({
+                type: "auth_flow",
+                step: "jwt_backend_error",
+                email: token.email,
+                status: res.status,
+                ts: new Date().toISOString(),
+              }),
+            );
           }
-        } catch {
+        } catch (e) {
           token.loginError = true;
+          console.error(
+            JSON.stringify({
+              type: "auth_flow",
+              step: "jwt_fetch_failed",
+              email: token.email,
+              error: String(e),
+              ts: new Date().toISOString(),
+            }),
+          );
         }
       }
       return token;
@@ -45,6 +89,52 @@ const handler = NextAuth({
       session.signupRequired = Boolean(token?.signupRequired);
       session.loginError = Boolean(token?.loginError);
       return session;
+    },
+  },
+  events: {
+    async signIn({ user, account, isNewUser }) {
+      console.log(
+        JSON.stringify({
+          type: "auth_event",
+          event: "signIn",
+          email: user?.email || null,
+          provider: account?.provider || null,
+          isNewUser: Boolean(isNewUser),
+          ts: new Date().toISOString(),
+        }),
+      );
+    },
+    async signOut({ session }) {
+      console.log(
+        JSON.stringify({
+          type: "auth_event",
+          event: "signOut",
+          email: session?.user?.email || null,
+          ts: new Date().toISOString(),
+        }),
+      );
+    },
+    async session({ session }) {
+      console.log(
+        JSON.stringify({
+          type: "auth_event",
+          event: "session",
+          email: session?.user?.email || null,
+          signupRequired: Boolean(session?.signupRequired),
+          hasAppJwt: Boolean(session?.appJwt),
+          ts: new Date().toISOString(),
+        }),
+      );
+    },
+    async error(message) {
+      console.error(
+        JSON.stringify({
+          type: "auth_event",
+          event: "error",
+          message: String(message),
+          ts: new Date().toISOString(),
+        }),
+      );
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
