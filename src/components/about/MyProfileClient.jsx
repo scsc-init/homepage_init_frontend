@@ -23,6 +23,18 @@ const USER_ROLE_MAP = {
   1000: "회장",
 };
 
+async function onAuthFail() {
+  try {
+    localStorage.removeItem("jwt");
+  } catch {}
+  try {
+    sessionStorage.clear();
+  } catch {}
+  try {
+    await signOut({ redirect: false });
+  } catch {}
+}
+
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
   const [majors, setMajors] = useState(null);
@@ -31,7 +43,7 @@ export default function MyProfileClient() {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      router.push("/us/login");
+      onAuthFail().finally(() => router.push("/us/login"));
       return;
     }
 
@@ -41,7 +53,7 @@ export default function MyProfileClient() {
           headers: { "x-jwt": jwt },
         });
         if (resUser.status != 200) {
-          alert("로그인이 필요합니다.");
+          await onAuthFail();
           router.push("/us/login");
           return;
         }
@@ -50,6 +62,7 @@ export default function MyProfileClient() {
         const resMajor = await fetch(`/api/major/${userData.major_id}`);
         setMajors(await resMajor.json());
       } catch (e) {
+        await onAuthFail();
         router.push("/us/login");
       }
     };
@@ -57,9 +70,13 @@ export default function MyProfileClient() {
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("jwt");
-    sessionStorage.clear();
-    signOut({ callbackUrl: "/" });
+    try {
+      localStorage.removeItem("jwt");
+    } catch {}
+    try {
+      sessionStorage.clear();
+    } catch {}
+    signOut({ callbackUrl: "/us/login" });
   };
 
   const handleEnroll = async () => {
@@ -76,27 +93,13 @@ export default function MyProfileClient() {
       alert("등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.");
     } else if (res.status === 400) {
       alert("이미 등록 처리되었거나 제명된 회원입니다.");
+    } else if (res.status === 401) {
+      await onAuthFail();
+      router.push("/us/login");
     } else {
       alert("등록에 실패하였습니다. 다시 시도해주세요.");
     }
   };
-
-  // if (!user)
-  //   return (
-  //     <div>
-  //       <div className="main-logo-wrapper">
-  //         <p className="main-logo-description">My Page</p>
-  //         <img
-  //           src="/main/main-logo.png"
-  //           alt="Main Logo"
-  //           className="main-logo logo"
-  //         />
-  //       </div>
-  //       <div className="loading-container">
-  //         <div className="loading-description">로딩 중...</div>
-  //       </div>
-  //     </div>
-  //   );
 
   return (
     <div>
@@ -109,14 +112,23 @@ export default function MyProfileClient() {
         />
       </div>
       <div className="user-profile-wrapper">
-        {user ? <img
-          src={user.profile_picture ? user.profile_picture : "/main/default-pfp.png"}
-          alt="Profile" 
-          className="user-profile-picture"
-        /> : <img alt="" height={"50px"} src="//:0"></img>}
+        {user ? (
+          <img
+            src={
+              user.profile_picture
+                ? user.profile_picture
+                : "/main/default-pfp.png"
+            }
+            alt="Profile"
+            className="user-profile-picture"
+          />
+        ) : (
+          <img alt="" height={"50px"} src="//:0"></img>
+        )}
         <div className="user-name-container">
           <div className="user-name">
-            {user ? user.name : ''} {user ? ("[" + USER_ROLE_MAP[user.role] + "]") : ''}
+            {user ? user.name : ""}{" "}
+            {user ? "[" + USER_ROLE_MAP[user.role] + "]" : ""}
           </div>
         </div>
       </div>
@@ -127,15 +139,15 @@ export default function MyProfileClient() {
             <tbody>
               <tr>
                 <th>이메일</th>
-                <td>{user ? user.email : ''}</td>
+                <td>{user ? user.email : ""}</td>
               </tr>
               <tr>
                 <th>전화번호</th>
-                <td>{user ? user.phone : ''}</td>
+                <td>{user ? user.phone : ""}</td>
               </tr>
               <tr>
                 <th>학번</th>
-                <td>{user ? user.student_id : ''}</td>
+                <td>{user ? user.student_id : ""}</td>
               </tr>
             </tbody>
           </table>
@@ -144,7 +156,7 @@ export default function MyProfileClient() {
           <div class="user-status-container">
             <div class="user-status-content">
               <p className="user-status-description">User Status</p>
-              <p>{user ? USER_STATUS_MAP[user.status] : ''}</p>
+              <p>{user ? USER_STATUS_MAP[user.status] : ""}</p>
             </div>
             <button onClick={handleEnroll} className="enroll-button">
               입금 등록
