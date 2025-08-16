@@ -3,6 +3,8 @@ import "./global.css";
 import HeaderWrapper from "./HeaderWrapper";
 import ThemeToggle from "@/components/ThemeToggle";
 import dynamic from "next/dynamic";
+import { SessionContext } from "next-auth/react";
+import Providers from "./Providers.jsx";
 
 const FooterWrapper = dynamic(() => import("@/app/FooterWrapper"), {
   ssr: false,
@@ -78,7 +80,9 @@ export default function RootLayout({ children }) {
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
           <HeaderWrapper />
-          <main id="MainContent">{children}</main>
+          <main id="MainContent">
+            <Providers>{children}</Providers>
+          </main>
           <ThemeToggle />
           <FooterWrapper />
         </div>
