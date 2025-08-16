@@ -80,7 +80,9 @@ export default function RootLayout({ children }) {
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
           <HeaderWrapper />
-          <main id="MainContent">{children}</main>
+          <main id="MainContent">
+            <Providers>{children}</Providers>
+          </main>
           <ThemeToggle />
           <FooterWrapper />
         </div>
