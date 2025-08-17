@@ -44,7 +44,6 @@ function log(event, data = {}) {
 async function onAuthFail() {
   try {
     localStorage.removeItem("jwt");
-    alert("God themen");
   } catch {}
   try {
     await signOut({ redirect: false });
