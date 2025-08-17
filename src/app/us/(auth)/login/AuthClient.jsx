@@ -168,7 +168,7 @@ export default function LoginPage() {
         log("cleared_session_due_to_missing_jwt");
       })();
     }
-  }, [status, session]);
+  }, [status, session, router]);
 
   useEffect(() => {
     if (stage !== 4) return;
@@ -227,7 +227,7 @@ export default function LoginPage() {
       log("store_jwt_failed_after_signup");
     }
     log("redirect", { to: "/about/welcome" });
-    window.location.replace("/about/welcome");
+    router.replace("/about/welcome");
   };
 
   return (
