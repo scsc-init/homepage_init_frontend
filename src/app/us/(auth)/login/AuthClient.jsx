@@ -44,6 +44,7 @@ function log(event, data = {}) {
 async function onAuthFail() {
   try {
     localStorage.removeItem("jwt");
+    alert("God themen");
   } catch {}
   try {
     await signOut({ redirect: false });
@@ -113,8 +114,8 @@ export default function LoginPage() {
           await onAuthFail();
           return;
         }
-        log("auto_login_redirect", { to: "/" });
-        router.push("/");
+        log("auto_login_redirect", { to: "/about/welcome" });
+        router.push("/about/welcome");
       } catch (e) {
         log("auto_login_profile_check_error", { error: String(e) });
       }
