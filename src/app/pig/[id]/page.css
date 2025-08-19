@@ -137,7 +137,7 @@ body {
 }
 
 .PigActionLeave {
-  border-style: dashed;
+  border-style: solid;
 }
 
 .PigActionEdit {
@@ -314,10 +314,7 @@ body {
 }
 
 .PigButton.is-leave {
-  border-style: dashed;
-}
-
-.PigButton.is-edit {
+  border-style: solid;
 }
 
 @media (max-width: 560px) {
