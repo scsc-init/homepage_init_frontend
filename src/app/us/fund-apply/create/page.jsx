@@ -57,9 +57,11 @@ async function fetchTargets(type) {
   const data = await tryFetch(`${base}/api/${type}s`);
   const arr = Array.isArray(data)
     ? data
-    : (data.items ?? data.data ?? data.results ?? []);
-  const norm = normalizeTargets(arr);
+    : (data?.items ?? data?.data ?? data?.results ?? []);
+  const onlyActive = (Array.isArray(arr) ? arr : []).filter(
+    (x) => String(x?.status || "").toLowerCase() === "active",
+  );
+  const norm = normalizeTargets(onlyActive);
   if (norm.length) return norm;
   return [];
 }
-
