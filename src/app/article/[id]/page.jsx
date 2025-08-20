@@ -71,6 +71,10 @@ export default function ArticleDetail({ params }) {
 
 
   const markdown = article.content ?? "내용이 비어 있습니다.";
+  const isAuthor =
+    user?.id != null &&
+    article?.author_id != null &&
+    user.id === article.author_id;
 
   return (
     <div className="SigDetailContainer">
@@ -78,6 +82,19 @@ export default function ArticleDetail({ params }) {
       <p className="SigInfo">
         작성일: {TIME_NOTATION_OPTIONS(new Date(article.created_at.slice(0,23)))}
       </p>
+
+      {isAuthor && (
+        <div className="SigActionRow">
+          <button
+            className="SigButton is-edit"
+            onClick={() => router.push(`/article/edit/${id}`)}
+            type="button"
+          >
+            수정
+          </button>
+        </div>
+      )}
+
       <hr className="SigDivider" />
       <div className="SigContent">
         <ReactMarkdown

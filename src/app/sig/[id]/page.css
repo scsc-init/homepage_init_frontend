@@ -293,7 +293,7 @@ body {
 }
 
 .SigButton:hover {
-  background: var(--color-button-bg-hover);
+  background: var(--color-button-hover-bg);
   transform: translateY(-1px);
 }
 
@@ -314,7 +314,7 @@ body {
 }
 
 .SigButton.is-leave {
-  border-style: dashed;
+  border-style: solid;
 }
 
 .SigButton.is-delete:not(:hover) {

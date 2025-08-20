@@ -8,7 +8,6 @@ import PigDeleteButton from "./PigDeleteButton";
 import PigMembers from "./PigMembers";
 import PigContents from "./PigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { minExecutiveLevel } from "@/util/constants";
 
 export default function PigClient({ pig, members, articleId, pigId }) {
   const router = useRouter();
@@ -23,9 +22,7 @@ export default function PigClient({ pig, members, articleId, pigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
-    const ownerOk = !!pig?.owner && pig.owner === me.id;
-    return roleOk || ownerOk;
+    return !!pig?.owner && pig.owner === me.id;
   }, [me, pig]);
 
   const isOwner = useMemo(() => {
@@ -36,7 +33,8 @@ export default function PigClient({ pig, members, articleId, pigId }) {
 
   useEffect(() => {
     let cancelled = false;
-    const jwt = localStorage.getItem("jwt");
+    const jwt =
+      typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
     if (!jwt) {
       router.replace("/us/login");
       return;
