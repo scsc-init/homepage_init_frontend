@@ -317,7 +317,8 @@ body {
   border-style: dashed;
 }
 
-.PigButton.is-edit {
+.PigButton.is-delete:not(:hover) {
+  background-color: red;
 }
 
 @media (max-width: 560px) {
