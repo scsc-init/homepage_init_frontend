@@ -18,6 +18,7 @@ import {
   InsertImage,
   Separator,
 } from "@mdxeditor/editor";
+import "./editor.css";
 
 import "@mdxeditor/editor/style.css";
 

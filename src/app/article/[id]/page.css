@@ -108,7 +108,7 @@ body {
 }
 
 .SigButton:hover {
-  background: var(--color-button-bg-hover);
+  background: var(--color-button-hover-bg);
   transform: translateY(-1px);
 }
 
@@ -218,7 +218,7 @@ body {
 }
 
 .SigContent + div > button:hover {
-  background: var(--color-button-bg-hover);
+  background: var(--color-button-hover-bg);
   transform: translateY(-1px);
 }
 
@@ -281,7 +281,7 @@ body {
 }
 
 .SigContent + div button:hover {
-  background: var(--color-button-bg-hover);
+  background: var(--color-button-hover-bg);
   transform: translateY(-1px);
 }
 

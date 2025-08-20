@@ -1,0 +1,10 @@
+.mdxeditor [contenteditable="true"],
+.mdxeditor [role="textbox"],
+.mdxeditor [data-lexical-editor] {
+  min-height: 18rem;
+  width: 100%;
+  display: block;
+  padding: 12px;
+  box-sizing: border-box;
+  cursor: text;
+}
