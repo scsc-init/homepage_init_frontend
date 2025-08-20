@@ -317,7 +317,8 @@ body {
   border-style: dashed;
 }
 
-.SigButton.is-edit {
+.SigButton.is-delete:not(:hover) {
+  background-color: red;
 }
 
 @media (max-width: 560px) {
