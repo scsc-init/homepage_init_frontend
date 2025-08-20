@@ -66,7 +66,9 @@ export default function ArticleDetail({ params }) {
 
   const markdown = article.content ?? "내용이 비어 있습니다.";
   const isAuthor =
-    user?.id && article?.author_id && user.id === article.author_id;
+    user?.id != null &&
+    article?.author_id != null &&
+    user.id === article.author_id;
 
   return (
     <div className="SigDetailContainer">
@@ -80,6 +82,7 @@ export default function ArticleDetail({ params }) {
           <button
             className="SigButton is-edit"
             onClick={() => router.push(`/article/edit/${id}`)}
+            type="button"
           >
             수정
           </button>

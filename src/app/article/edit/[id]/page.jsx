@@ -1,5 +1,5 @@
 import EditClient from "./EditClient";
 
-export default async function EditArticlePage({ params }) {
+export default function EditArticlePage({ params }) {
   return <EditClient articleId={params.id} />;
 }
