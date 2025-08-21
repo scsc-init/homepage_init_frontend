@@ -46,13 +46,14 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
         headers: { "Content-Type": "application/json", "x-jwt": jwt },
       });
       if (res.ok) {
+        alert("PIG 가입 성공!");
         setIsMember(true);
         router.refresh();
       } else {
-        alert("SIG 가입 실패: " + (await readError(res)));
+        alert("PIG 가입 실패: " + (await readError(res)));
       }
     } catch (e) {
-      alert("SIG 가입 실패: " + (e?.message || "네트워크 오류"));
+      alert("PIG 가입 실패: " + (e?.message || "네트워크 오류"));
     } finally {
       setPending(false);
     }
@@ -68,13 +69,14 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
         headers: { "Content-Type": "application/json", "x-jwt": jwt },
       });
       if (res.ok) {
+        alert("PIG 탈퇴 성공!");
         setIsMember(false);
         router.refresh();
       } else {
-        alert("SIG 탈퇴 실패: " + (await readError(res)));
+        alert("PIG 탈퇴 실패: " + (await readError(res)));
       }
     } catch (e) {
-      alert("SIG 탈퇴 실패: " + (e?.message || "네트워크 오류"));
+      alert("PIG 탈퇴 실패: " + (e?.message || "네트워크 오류"));
     } finally {
       setPending(false);
     }
@@ -88,7 +90,7 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? "시그 탈퇴하기" : "시그 가입하기"}
+      {isMember ? "피그 탈퇴하기" : "피그 가입하기"}
     </button>
   );
 }

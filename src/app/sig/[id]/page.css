@@ -318,7 +318,13 @@ body {
 }
 
 .SigButton.is-delete:not(:hover) {
-  background-color: red;
+  background-color: var(--color-button-alert-bg);
+  border-style: solid;
+}
+
+.SigButton.is-delete:hover {
+  background-color: var(--color-button-alert-hover-bg);
+  border-style: solid;
 }
 
 @media (max-width: 560px) {

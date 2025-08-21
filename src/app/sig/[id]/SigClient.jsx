@@ -8,6 +8,7 @@ import SigDeleteButton from "./SigDeleteButton";
 import SigMembers from "./SigMembers";
 import SigContents from "./SigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function SigClient({ sig, members, articleId, sigId }) {
   const router = useRouter();
@@ -22,7 +23,9 @@ export default function SigClient({ sig, members, articleId, sigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    return !!sig?.owner && sig.owner === me.id;
+    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
+    const ownerOk = !!sig?.owner && sig.owner === me.id;
+    return roleOk || ownerOk;
   }, [me, sig]);
 
   const isOwner = useMemo(() => {

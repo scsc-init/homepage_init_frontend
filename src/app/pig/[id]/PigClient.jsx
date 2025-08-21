@@ -8,6 +8,7 @@ import PigDeleteButton from "./PigDeleteButton";
 import PigMembers from "./PigMembers";
 import PigContents from "./PigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function PigClient({ pig, members, articleId, pigId }) {
   const router = useRouter();
@@ -22,7 +23,9 @@ export default function PigClient({ pig, members, articleId, pigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    return !!pig?.owner && pig.owner === me.id;
+    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
+    const ownerOk = !!pig?.owner && pig.owner === me.id;
+    return roleOk || ownerOk;
   }, [me, pig]);
 
   const isOwner = useMemo(() => {
