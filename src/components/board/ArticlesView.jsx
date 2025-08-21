@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { TIME_NOTATION_OPTIONS } from "@/util/constants";
+import { UTC2KST } from "@/util/constants";
 import "./board.css";
 
 export default function ArticlesView({ board, sortOrder }) {
@@ -86,7 +86,7 @@ export default function ArticlesView({ board, sortOrder }) {
             <div className="sigTopbar">
               <span className="sigTitle">{article.title}</span>
               <span className="sigUserCount">
-                {TIME_NOTATION_OPTIONS(new Date(article.created_at))}
+                {UTC2KST(new Date(article.created_at))}
               </span>
             </div>
             <div className="sigDescription">

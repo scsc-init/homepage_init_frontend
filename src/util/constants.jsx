@@ -20,7 +20,7 @@ export const DISCORD_INVITE_LINK = 'https://discord.gg/d9McArjXq5'
 
 export const KAKAO_INVITE_LINK = 'https://invite.kakao.com/tc/Nfp743zYME'
 
-export function TIME_NOTATION_OPTIONS(date) {
+export function UTC2KST(date) {
   const utc = date.getTime();
   const kst = new Date(utc + 9 * 60 * 60 * 1000);
 

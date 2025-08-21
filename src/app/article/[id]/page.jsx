@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Comments from "@/components/board/Comments.jsx";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { TIME_NOTATION_OPTIONS } from "@/util/constants";
+import { UTC2KST } from "@/util/constants";
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
@@ -80,7 +80,7 @@ export default function ArticleDetail({ params }) {
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
       <p className="SigInfo">
-        작성일: {TIME_NOTATION_OPTIONS(new Date(article.created_at.slice(0,23)))}
+        작성일: {UTC2KST(new Date(article.created_at))}
       </p>
 
       {isAuthor && (
