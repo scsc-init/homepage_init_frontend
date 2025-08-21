@@ -49,11 +49,11 @@
   white-space: normal;
 }
 
-#SigCreateButton {
+#BoardCreateButton {
   all: unset;
 }
 
-.SigCreateBtn {
+.BoardCreateBtn {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   padding: 0.6rem 1.2rem;
@@ -63,7 +63,7 @@
   transition: background-color 0.2s ease;
 }
 
-.SigCreateBtn:hover {
+.BoardCreateBtn:hover {
   background-color: var(--color-button-hover-bg);
 }
 
@@ -122,7 +122,7 @@
   text-align: center;
 }
 
-.SigActions {
+.BoardActions {
   display: flex;
   justify-content: space-between; /* 좌우 끝 정렬 */
   align-items: center;
@@ -131,17 +131,17 @@
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
-  .SigActions {
+  .BoardActions {
     flex-direction: row; /* 세로 말고 가로 유지 */
     justify-content: space-between; /* 좌우 끝 */
     width: 100%;
   }
-  .SigActions > * {
+  .BoardActions > * {
     width: auto; /* 버튼이 가득 차지하지 않게 */
   }
 }
 
-.SigActions {
+.BoardActions {
   display: flex;
   justify-content: space-between; /* 왼쪽과 오른쪽 끝 */
   align-items: center;
@@ -161,7 +161,7 @@
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
-  .SigActions {
+  .BoardActions {
     flex-direction: row;
     justify-content: space-between;
     gap: 0.5rem;
