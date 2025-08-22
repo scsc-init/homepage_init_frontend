@@ -314,6 +314,16 @@ body {
 }
 
 .PigButton.is-leave {
+  border-style: dashed;
+}
+
+.PigButton.is-delete:not(:hover) {
+  background-color: var(--color-button-alert-bg);
+  border-style: solid;
+}
+
+.PigButton.is-delete:hover {
+  background-color: var(--color-button-alert-hover-bg);
   border-style: solid;
 }
 

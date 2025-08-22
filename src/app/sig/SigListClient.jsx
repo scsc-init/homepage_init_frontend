@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SortDropdown from "@/components/board/SortDropdown";
+import SortDropdown from "@/components/board/SortDropdown"; // 기존 재사용
 import Link from "next/link";
 
 export default function SigListClient({ sigs }) {

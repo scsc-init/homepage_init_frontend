@@ -9,7 +9,7 @@ export default function PigMembers({ members }) {
     >
       <div className="PigMembersHeader">
         <h2 id="pig-members-heading" className="PigMembersTitle">
-          시그 인원
+          피그 인원
         </h2>
         <span className="PigMembersCount">{count}명</span>
       </div>
