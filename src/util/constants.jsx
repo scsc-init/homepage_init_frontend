@@ -35,7 +35,7 @@ export const DISCORD_INVITE_LINK = pickEnv(
 export const KAKAO_INVITE_LINK = pickEnv(
   process.env.NEXT_PUBLIC_KAKAO_INVITE_LINK,
   process.env.KAKAO_INVITE_LINK,
-  "", // 카카오 오픈채팅 링크가 없을 경우 빈 값으로 처리
+  "https://invite.kakao.com/tc/II2yiLsQhY",
 );
 export function UTC2KST(date) {
   const utc = date.getTime();
