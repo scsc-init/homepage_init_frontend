@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import SigJoinLeaveButton from "./SigJoinLeaveButton";
 import EditSigButton from "./EditSigButton";
+import SigDeleteButton from "./SigDeleteButton";
 import SigMembers from "./SigMembers";
 import SigContents from "./SigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function SigClient({ sig, members, articleId, sigId }) {
   const router = useRouter();
@@ -21,14 +23,21 @@ export default function SigClient({ sig, members, articleId, sigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    const roleOk = typeof me?.role === "number" && me.role >= 2;
+    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
     const ownerOk = !!sig?.owner && sig.owner === me.id;
     return roleOk || ownerOk;
   }, [me, sig]);
 
+  const isOwner = useMemo(() => {
+    if (!me) return false;
+    const ownerOk = !!sig?.owner && sig.owner === me.id;
+    return ownerOk;
+  }, [me, sig]);
+
   useEffect(() => {
     let cancelled = false;
-    const jwt = localStorage.getItem("jwt");
+    const jwt =
+      typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
     if (!jwt) {
       router.replace("/us/login");
       return;
@@ -81,6 +90,7 @@ export default function SigClient({ sig, members, articleId, sigId }) {
       <div className="SigActionRow">
         <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />
         <EditSigButton sigId={sigId} canEdit={canEdit} />
+        <SigDeleteButton sigId={sigId} canDelete={canEdit} isOwner={isOwner}/>
       </div>
       <hr className="SigDivider" />
       <SigContents content={content} />

@@ -293,7 +293,7 @@ body {
 }
 
 .SigButton:hover {
-  background: var(--color-button-bg-hover);
+  background: var(--color-button-hover-bg);
   transform: translateY(-1px);
 }
 
@@ -314,10 +314,17 @@ body {
 }
 
 .SigButton.is-leave {
-  border-style: dashed;
+  border-style: solid;
 }
 
-.SigButton.is-edit {
+.SigButton.is-delete:not(:hover) {
+  background-color: var(--color-button-alert-bg);
+  border-style: solid;
+}
+
+.SigButton.is-delete:hover {
+  background-color: var(--color-button-alert-hover-bg);
+  border-style: solid;
 }
 
 @media (max-width: 560px) {

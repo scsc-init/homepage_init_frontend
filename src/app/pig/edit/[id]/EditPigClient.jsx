@@ -6,18 +6,30 @@ import PigForm from "@/components/board/PigForm";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { minExecutiveLevel } from "@/util/constants";
+
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
 
 export default function EditPigClient({ pigId }) {
   const router = useRouter();
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
+  const [pig, setPig] = useState(null);
+  const [article, setArticle] = useState(null);
+  const mounted = useMounted();
+  const [editorKey, setEditorKey] = useState(0);
 
   const {
     register,
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -60,6 +72,7 @@ export default function EditPigClient({ pigId }) {
       }
 
       const pig = await res.json();
+      setPig(pig);
       const articleRes = await fetch(`/api/article/${pig.content_id}`, {
         headers: { "x-jwt": jwt },
       });
@@ -69,12 +82,7 @@ export default function EditPigClient({ pigId }) {
         router.push("/pig");
       }
       const article = await articleRes.json();
-      console.log(article);
-      reset({
-        title: pig.title ?? "",
-        description: pig.description ?? "",
-        editor: article.content ?? "",
-      });
+      setArticle(article);
     };
     fetchPigData();
   }, [router]);
@@ -133,7 +141,7 @@ export default function EditPigClient({ pigId }) {
         description: data.description,
         content: data.editor,
       });
-      const res = await fetch(`/api/pig/${pigId}/update`, {
+      const res = await fetch((user.role >= minExecutiveLevel) ? `/api/pig/${pigId}/update/executive` : `/api/pig/${pigId}/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -148,7 +156,8 @@ export default function EditPigClient({ pigId }) {
 
       if (res.status === 204) {
         alert("PIG 수정 성공!");
-        router.push("/pig");
+        router.push(`/pig/${pigId}`);
+        router.refresh();
       } else {
         const err = await res.json();
         console.log(err);
@@ -162,6 +171,17 @@ export default function EditPigClient({ pigId }) {
     }
   };
 
+  useEffect(() => {
+    if (pig && article && mounted) {
+      reset({
+        title: pig.title ?? "",
+        description: pig.description ?? "",
+        editor: article.content ?? "",
+      });
+      setEditorKey(k => k + 1);
+    }
+  }, [pig, article, mounted, reset]);
+
   return (
     <div className="CreatePigContainer">
       <div className="CreatePigHeader">
@@ -174,6 +194,8 @@ export default function EditPigClient({ pigId }) {
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           Editor={Editor}
+          editorKey={editorKey}
+          isCreate={false}
         />
       </div>
     </div>

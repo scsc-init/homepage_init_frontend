@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import PigJoinLeaveButton from "./PigJoinLeaveButton";
 import EditPigButton from "./EditPigButton";
+import PigDeleteButton from "./PigDeleteButton";
 import PigMembers from "./PigMembers";
 import PigContents from "./PigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function PigClient({ pig, members, articleId, pigId }) {
   const router = useRouter();
@@ -21,14 +23,21 @@ export default function PigClient({ pig, members, articleId, pigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    const roleOk = typeof me?.role === "number" && me.role >= 2;
+    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
     const ownerOk = !!pig?.owner && pig.owner === me.id;
     return roleOk || ownerOk;
   }, [me, pig]);
 
+  const isOwner = useMemo(() => {
+    if (!me) return false;
+    const ownerOk = !!pig?.owner && pig.owner === me.id;
+    return ownerOk;
+  }, [me, pig]);
+
   useEffect(() => {
     let cancelled = false;
-    const jwt = localStorage.getItem("jwt");
+    const jwt =
+      typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
     if (!jwt) {
       router.replace("/us/login");
       return;
@@ -81,6 +90,7 @@ export default function PigClient({ pig, members, articleId, pigId }) {
       <div className="PigActionRow">
         <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
         <EditPigButton pigId={pigId} canEdit={canEdit} />
+        <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="PigDivider" />
       <PigContents content={content} />

@@ -13,8 +13,11 @@ html.theme-animating {
 :root {
   --color-primary: #bbbcbc;
   --color-button-bg: #128e9f;
+  --color-button-alert-bg: red;
   --color-button-border: #527a91;
   --color-button-text: white;
+  --color-button-hover-bg: #24737d;
+  --color-button-alert-hover-bg: rgb(177, 0, 0);
   --color-text-body: #2a2a2a;
   --color-text-subtle: #1b1b1b;
   --color-surface-light: #cccccc;
@@ -64,6 +67,7 @@ html.theme-animating {
   --color-primary: #1e1e1e;
   --color-button-bg: #4bb0c9;
   --color-button-border: #2f4f67;
+  --color-button-hover-bg: #368aa0;
   --color-button-text: white;
   --color-text-body: #f5f5f5;
   --color-text-subtle: #aaaaaa;

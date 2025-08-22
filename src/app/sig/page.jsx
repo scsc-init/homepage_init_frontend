@@ -1,8 +1,7 @@
-import "./page.css";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 import SigListClient from "./SigListClient";
-
+import "./page.css";
 export const metadata = { title: "SIG" };
 
 export default async function SigListPage() {
@@ -24,4 +23,3 @@ export default async function SigListPage() {
     </div>
   );
 }
-9;
