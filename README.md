@@ -51,15 +51,15 @@ src/
 
 ## 환경 변수 설명
 
-| Key Name             | Description                                                      |
-|----------------------|------------------------------------------------------------------|
-| `BACKEND_URL`                  | 연결된 BE 서버의 외부 URL  |
-| `API_SECRET`                   | BE 서버에서 처리되는 API KEY   |
-| `GOOGLE_CLIENT_ID`             | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)    |
-| `GOOGLE_CLIENT_SECRET`         | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)  |
-| `NEXTAUTH_SECRET`              | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조) |
-| `NEXTAUTH_URL`                 | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
-| `SNU_EMAIL_CHECK`              | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부 |
+| Key Name               | Description                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| `BACKEND_URL`          | 연결된 BE 서버의 외부 URL                                                                   |
+| `API_SECRET`           | BE 서버에서 처리되는 API KEY                                                                |
+| `GOOGLE_CLIENT_ID`     | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
+| `GOOGLE_CLIENT_SECRET` | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
+| `NEXTAUTH_SECRET`      | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
+| `NEXTAUTH_URL`         | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
+| `SNU_EMAIL_CHECK`      | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
 
 ## 설치 및 실행 방법
 
@@ -89,6 +89,9 @@ GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
 NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
 NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 SNU_EMAIL_CHECK=TRUE
+NEXT_PUBLIC_DEPOSIT_ACC=국민은행 942902-02-054136 (강명석) 동비 입금 계좌와 입금자명
+NEXT_PUBLIC_DISCORD_INVITE_LINK=https://discord.gg/SmXFDxA7XE 디코 초대 링크
+NEXT_PUBLIC_KAKAO_INVITE_LINK=https://open.kakao.com/o/XXXXXXXX 카카오톡 초대 링크
 ```
 
 Google OAuth, NextAuth 설정에 관한 자세한 설명은 아래를 참고하세요.
