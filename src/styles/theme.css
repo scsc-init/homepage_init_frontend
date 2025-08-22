@@ -13,9 +13,11 @@ html.theme-animating {
 :root {
   --color-primary: #bbbcbc;
   --color-button-bg: #128e9f;
+  --color-button-alert-bg: red;
   --color-button-border: #527a91;
   --color-button-text: white;
   --color-button-hover-bg: #24737d;
+  --color-button-alert-hover-bg: rgb(177, 0, 0);
   --color-text-body: #2a2a2a;
   --color-text-subtle: #1b1b1b;
   --color-surface-light: #cccccc;

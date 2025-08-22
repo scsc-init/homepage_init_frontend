@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Comments from "@/components/board/Comments.jsx";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { UTC2KST } from "@/util/constants";
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
@@ -54,6 +55,10 @@ export default function ArticleDetail({ params }) {
     loadAll();
   }, [router, id]);
 
+  useEffect(() => {
+    console.log(article)
+  }, [article])
+
   if (isLoading) return <LoadingSpinner />;
 
   if (isError || !article) {
@@ -63,6 +68,7 @@ export default function ArticleDetail({ params }) {
       </div>
     );
   }
+
 
   const markdown = article.content ?? "내용이 비어 있습니다.";
   const isAuthor =
@@ -74,7 +80,7 @@ export default function ArticleDetail({ params }) {
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
       <p className="SigInfo">
-        작성일: {new Date(article.created_at).toLocaleString()}
+        작성일: {UTC2KST(new Date(article.created_at))}
       </p>
 
       {isAuthor && (
