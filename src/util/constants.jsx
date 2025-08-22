@@ -14,6 +14,7 @@ export const COLORS = {
 };
 // 전체적인 색들입니다. @/styles/theme.css와 함께 수정해주세요.
 
+
 export const DEPOSIT_ACC = "국민은행 942902-02-054136";
 
 export const DISCORD_INVITE_LINK = "https://discord.gg/SmXFDxA7XE";
