@@ -14,8 +14,23 @@ export const COLORS = {
 };
 // 전체적인 색들입니다. @/styles/theme.css와 함께 수정해주세요.
 
-export const DEPOSIT_ACC = "국민 923801-00-058488";
+
+export const DEPOSIT_ACC = "국민은행 942902-02-054136";
 
 export const DISCORD_INVITE_LINK = "https://discord.gg/SmXFDxA7XE";
 
-export const KAKAO_INVITE_LINK = "https://invite.kakao.com/tc/Nfp743zYME";
+export const KAKAO_INVITE_LINK = 'https://invite.kakao.com/tc/Nfp743zYME'
+
+export function UTC2KST(date) {
+  const utc = date.getTime();
+  const kst = new Date(utc + 9 * 60 * 60 * 1000);
+
+  return kst.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
+}

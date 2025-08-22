@@ -24,7 +24,7 @@
 }
 
 .pigCard {
-  border: 1px solid var(--slate-6);
+  border: 1px solid var(--executive-name-color);
   border-radius: 0.75rem;
   background: white;
   padding: 1rem 1.25rem;
