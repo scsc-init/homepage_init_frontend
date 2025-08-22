@@ -16,7 +16,7 @@ export const COLORS = {
 
 export const DEPOSIT_ACC = "국민은행 942902-02-054136";
 
-export const DISCORD_INVITE_LINK = "https://discord.gg/d9McArjXq5";
+export const DISCORD_INVITE_LINK = "https://discord.gg/SmXFDxA7XE";
 
 export const KAKAO_INVITE_LINK = 'https://invite.kakao.com/tc/Nfp743zYME'
 
