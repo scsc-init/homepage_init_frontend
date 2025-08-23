@@ -33,7 +33,11 @@ export default function PigClient({ pig, members, articleId, pigId }) {
     const ownerOk = !!pig?.owner && pig.owner === me.id;
     return ownerOk;
   }, [me, pig]);
-
+  const semesterLabel = useMemo(() => {
+    const map = { 1: "1학기", 2: "여름학기", 3: "2학기", 4: "겨울학기" };
+    const key = Number(pig?.semester);
+    return map[key] ?? `${pig?.semester}`;
+  }, [pig?.semester]);
   useEffect(() => {
     let cancelled = false;
     const jwt =
@@ -84,7 +88,7 @@ export default function PigClient({ pig, members, articleId, pigId }) {
     <div className="PigDetailContainer">
       <h1 className="PigTitle">{pig.title}</h1>
       <p className="PigInfo">
-        {pig.year}학년도 {pig.semester}학기 · 상태: {pig.status}
+        {pig.year}학년도 {semesterLabel} · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>
       <div className="PigActionRow">
