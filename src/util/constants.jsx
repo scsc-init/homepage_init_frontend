@@ -26,6 +26,7 @@ export const DEPOSIT_ACC = pickEnv(
   "국민은행 942902-02-054136 (강명석)",
 );
 
+
 export const DISCORD_INVITE_LINK = pickEnv(
   process.env.NEXT_PUBLIC_DISCORD_INVITE_LINK,
   process.env.DISCORD_INVITE_LINK,
