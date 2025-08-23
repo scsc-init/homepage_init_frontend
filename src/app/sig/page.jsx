@@ -17,9 +17,12 @@ export default async function SigListPage() {
   const sigs = await res.json();
   if (!Array.isArray(sigs)) return <div>로딩중...</div>;
 
+  const allowed = new Set(["surveying", "recruiting", "active"]);
+  const visibleSigs = sigs.filter((s) => allowed.has(s.status));
+
   return (
     <div id="SigListContainer">
-      <SigListClient sigs={sigs} />
+      <SigListClient sigs={visibleSigs} />
     </div>
   );
 }
