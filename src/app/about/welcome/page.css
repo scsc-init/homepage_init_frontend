@@ -42,6 +42,10 @@ a {
   color: var(--color-button-bg);
 }
 
+.enroll-button {
+  max-width: 30%;
+}
+
 .ContentBlock:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
