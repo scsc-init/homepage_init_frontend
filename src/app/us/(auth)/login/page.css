@@ -318,3 +318,10 @@ body {
 .dark .GoogleLoginBtn:hover {
   background: var(--color-surface-light);
 }
+
+.GoogleSignupCard .SignupBtn:disabled,
+.GoogleSignupCard .SignupBtn.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}

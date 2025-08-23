@@ -37,6 +37,14 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease;
 }
+a {
+  text-decoration: none;
+  color: var(--color-button-bg);
+}
+
+.enroll-button {
+  max-width: 30%;
+}
 
 .ContentBlock:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
@@ -80,5 +88,4 @@ body {
 
 /* 반응형 */
 @media screen and (max-width: 768px) {
-
 }

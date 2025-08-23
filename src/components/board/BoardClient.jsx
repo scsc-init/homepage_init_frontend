@@ -11,13 +11,13 @@ export default function BoardClient({ board }) {
   return (
     <>
       {/* 상단 버튼 영역 */}
-      <div className="SigActions">
+      <div className="BoardActions">
         <div className="left-action">
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
         </div>
         <div className="right-action">
-          <a href={`/board/${board.id}/create`} id="SigCreateButton">
-            <button className="SigCreateBtn">글 작성</button>
+          <a href={`/board/${board.id}/create`} id="BoardCreateButton">
+            <button className="BoardCreateBtn">글 작성</button>
           </a>
         </div>
       </div>

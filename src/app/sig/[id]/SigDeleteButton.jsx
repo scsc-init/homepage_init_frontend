@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
-  const router = useRouter();
-  const [isMember, setIsMember] = useState(!!initialIsMember);
+
+export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
+  const router = useRouter();
 
   const ensureJwt = () => {
     const jwt = localStorage.getItem("jwt");
@@ -36,61 +36,60 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
     }
   };
 
-  const join = async () => {
+  const deleteBySelf = async () => {
     const jwt = ensureJwt();
     if (!jwt) return;
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/member/join`, {
+      const res = await fetch(`/api/sig/${sigId}/delete`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-jwt": jwt },
       });
       if (res.ok) {
-        alert("PIG 가입 성공!");
-        setIsMember(true);
+        alert("SIG 비활성화 성공!");
         router.refresh();
       } else {
-        alert("PIG 가입 실패: " + (await readError(res)));
+        alert("SIG 비활성화 실패: " + (await readError(res)));
       }
     } catch (e) {
-      alert("PIG 가입 실패: " + (e?.message || "네트워크 오류"));
+      alert("SIG 비활성화 실패: " + (e?.message || "네트워크 오류"));
     } finally {
       setPending(false);
     }
   };
 
-  const leave = async () => {
+  const deleteByExec = async () => {
     const jwt = ensureJwt();
     if (!jwt) return;
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/member/leave`, {
+      const res = await fetch(`/api/sig/${sigId}/delete/executive`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-jwt": jwt },
       });
       if (res.ok) {
-        alert("PIG 탈퇴 성공!");
-        setIsMember(false);
+        alert("SIG 비활성화 성공!");
         router.refresh();
       } else {
-        alert("PIG 탈퇴 실패: " + (await readError(res)));
+        alert("SIG 비활성화 실패: " + (await readError(res)));
       }
     } catch (e) {
-      alert("PIG 탈퇴 실패: " + (e?.message || "네트워크 오류"));
+      alert("SIG 비활성화 실패: " + (e?.message || "네트워크 오류"));
     } finally {
       setPending(false);
     }
   };
 
-  return (
+
+  return canDelete ? (
     <button
       type="button"
-      className={`PigButton ${isMember ? "is-leave" : "is-join"}`}
-      onClick={isMember ? leave : join}
+      className={`SigButton is-delete`}
+      onClick={isOwner ? deleteBySelf : deleteByExec}
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? "피그 탈퇴하기" : "피그 가입하기"}
+      {"시그 비활성화"}
     </button>
-  );
+  ) : null;
 }

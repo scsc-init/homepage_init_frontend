@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import SigJoinLeaveButton from "./SigJoinLeaveButton";
 import EditSigButton from "./EditSigButton";
+import SigDeleteButton from "./SigDeleteButton";
 import SigMembers from "./SigMembers";
 import SigContents from "./SigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { minExecutiveLevel } from "@/util/constants";
 
 export default function SigClient({ sig, members, articleId, sigId }) {
   const router = useRouter();
@@ -21,9 +23,21 @@ export default function SigClient({ sig, members, articleId, sigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    return !!sig?.owner && sig.owner === me.id;
+    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
+    const ownerOk = !!sig?.owner && sig.owner === me.id;
+    return roleOk || ownerOk;
   }, [me, sig]);
 
+  const isOwner = useMemo(() => {
+    if (!me) return false;
+    const ownerOk = !!sig?.owner && sig.owner === me.id;
+    return ownerOk;
+  }, [me, sig]);
+  const semesterLabel = useMemo(() => {
+    const map = { 1: "1학기", 2: "여름학기", 3: "2학기", 4: "겨울학기" };
+    const key = Number(sig?.semester);
+    return map[key] ?? `${sig?.semester}`;
+  }, [sig?.semester]);
   useEffect(() => {
     let cancelled = false;
     const jwt =
@@ -74,12 +88,13 @@ export default function SigClient({ sig, members, articleId, sigId }) {
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{sig.title}</h1>
       <p className="SigInfo">
-        {sig.year}학년도 {sig.semester}학기 · 상태: {sig.status}
+        {sig.year}학년도 {semesterLabel} · 상태: {sig.status}
       </p>
       <p className="SigDescription">{sig.description}</p>
       <div className="SigActionRow">
         <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />
         <EditSigButton sigId={sigId} canEdit={canEdit} />
+        <SigDeleteButton sigId={sigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="SigDivider" />
       <SigContents content={content} />

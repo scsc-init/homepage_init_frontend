@@ -130,7 +130,7 @@ export default function CreateSigClient() {
         router.refresh();
       } else {
         const err = await res.json();
-        alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
+        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);

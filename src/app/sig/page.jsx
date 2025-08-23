@@ -1,4 +1,3 @@
-// src/app/sig/page.jsx
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 import SigListClient from "./SigListClient";

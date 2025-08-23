@@ -13,9 +13,41 @@ export const COLORS = {
   surfaceLight: "var(--color-surface-light)",
 };
 // 전체적인 색들입니다. @/styles/theme.css와 함께 수정해주세요.
+function pickEnv(...vals) {
+  for (const v of vals) {
+    if (typeof v === "string" && v.trim()) return v.trim();
+  }
+  return "";
+}
 
-export const DEPOSIT_ACC = '국민 923801-00-058488';
+export const DEPOSIT_ACC = pickEnv(
+  process.env.NEXT_PUBLIC_DEPOSIT_ACC,
+  process.env.DEPOSIT_ACC,
+  "국민은행 942902-02-054136 (강명석)",
+);
 
-export const DISCORD_INVITE_LINK = 'https://discord.gg/d9McArjXq5'
 
-export const KAKAO_INVITE_LINK = 'https://invite.kakao.com/tc/Nfp743zYME'
+export const DISCORD_INVITE_LINK = pickEnv(
+  process.env.NEXT_PUBLIC_DISCORD_INVITE_LINK,
+  process.env.DISCORD_INVITE_LINK,
+  "https://discord.gg/SmXFDxA7XE",
+);
+
+export const KAKAO_INVITE_LINK = pickEnv(
+  process.env.NEXT_PUBLIC_KAKAO_INVITE_LINK,
+  process.env.KAKAO_INVITE_LINK,
+  "https://invite.kakao.com/tc/II2yiLsQhY",
+);
+export function UTC2KST(date) {
+  const utc = date.getTime();
+  const kst = new Date(utc + 9 * 60 * 60 * 1000);
+
+  return kst.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
+}

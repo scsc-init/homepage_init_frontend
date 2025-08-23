@@ -169,6 +169,13 @@ export default function MyProfileClient() {
             >
               정보 수정
             </button>
+            <button
+              onClick={() => router.push("/about/welcome")}
+              className="enroll-button chat-join-button"
+            >
+              <span className="material-icons">forum</span>
+              채팅 입장
+            </button>
             <button onClick={handleLogout} className="logout-button">
               <span class="material-icons">logout</span>
             </button>
