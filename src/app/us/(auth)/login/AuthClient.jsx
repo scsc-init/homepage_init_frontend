@@ -71,6 +71,8 @@ export default function LoginPage() {
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
   const router = useRouter();
+  const [authLoading, setAuthLoading] = useState(false);
+  const [signupBusy, setSignupBusy] = useState(false);
 
   useEffect(() => {
     log("page_view", {
@@ -124,12 +126,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status !== "authenticated") return;
-
     if (session?.loginError) {
       log("login_error", { source: "session_flag" });
       return;
     }
-
     if (session?.signupRequired) {
       const email = session?.user?.email || "";
       const cName = cleanName(session?.user?.name || "");
@@ -144,7 +144,6 @@ export default function LoginPage() {
       log("signup_required", { email });
       return;
     }
-
     if (session?.appJwt) {
       (async () => {
         try {
@@ -158,7 +157,6 @@ export default function LoginPage() {
       })();
       return;
     }
-
     const hasJwt = !!localStorage.getItem("jwt");
     if (!hasJwt) {
       (async () => {
@@ -253,6 +251,8 @@ export default function LoginPage() {
                 type="button"
                 className="GoogleLoginBtn"
                 onClick={() => {
+                  if (authLoading) return;
+                  setAuthLoading(true);
                   log("click_login_button", { provider: "google" });
                   signIn(
                     "google",
@@ -260,7 +260,8 @@ export default function LoginPage() {
                     { prompt: "select_account" },
                   );
                 }}
-                disabled={inAppWarning}
+                disabled={inAppWarning || authLoading}
+                aria-disabled={inAppWarning || authLoading}
               >
                 <span className="GoogleIcon" aria-hidden="true">
                   <svg viewBox="0 0 48 48">
@@ -436,23 +437,31 @@ export default function LoginPage() {
               </select>
             </div>
             <button
-              onClick={() => {
+              type="button"
+              className={`SignupBtn ${signupBusy ? "is-disabled" : ""}`}
+              onClick={async () => {
+                if (signupBusy) return;
+                setSignupBusy(true);
                 if (!college) {
                   log("stage4_missing_college");
                   alert("단과대학을 선택하세요.");
+                  setSignupBusy(false);
                   return;
                 }
                 if (!form.major_id) {
                   log("stage4_missing_major");
                   alert("학과/학부를 선택하세요.");
+                  setSignupBusy(false);
                   return;
                 }
                 log("click_signup_button", {
                   college,
                   major_id: form.major_id,
                 });
-                handleSubmit();
+                await handleSubmit();
               }}
+              disabled={signupBusy}
+              aria-disabled={signupBusy}
             >
               가입하기
             </button>
