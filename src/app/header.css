@@ -197,12 +197,24 @@
 .MobileSubMenu button {
   background: none;
   border: none;
-  padding: 0.6rem 0;
+  padding: 0.75rem 0.75rem;
   font-size: 1rem;
   font-weight: 600;
   text-align: left;
   color: var(--header-foreground-color);
   cursor: pointer;
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.MobileMenuTrigger:hover,
+.MobileSubMenu button:hover {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
 }
 
 .MobileSubMenu {
@@ -223,11 +235,6 @@
 
 .MobileSubMenu li {
   margin-bottom: 0.25rem;
-}
-
-.MobileSubMenu button:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
 }
 
 .toAdminPageButton {
