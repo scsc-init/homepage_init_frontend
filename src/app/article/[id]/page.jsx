@@ -56,8 +56,8 @@ export default function ArticleDetail({ params }) {
   }, [router, id]);
 
   useEffect(() => {
-    console.log(article)
-  }, [article])
+    console.log(article);
+  }, [article]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -69,7 +69,6 @@ export default function ArticleDetail({ params }) {
     );
   }
 
-
   const markdown = article.content ?? "내용이 비어 있습니다.";
   const isAuthor =
     user?.id != null &&
@@ -79,9 +78,7 @@ export default function ArticleDetail({ params }) {
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
-      <p className="SigInfo">
-        작성일: {UTC2KST(new Date(article.created_at))}
-      </p>
+      <p className="SigInfo">작성일: {UTC2KST(new Date(article.created_at))}</p>
 
       {isAuthor && (
         <div className="SigActionRow">
@@ -109,6 +106,12 @@ export default function ArticleDetail({ params }) {
               <code className="mdx-inline-code" {...props} />
             ),
             pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
+            img: ({ node, ...props }) => <img className="mdx-img" {...props} />,
+            table: ({ node, ...props }) => (
+              <div className="mdx-table-wrap">
+                <table {...props} />
+              </div>
+            ),
           }}
         >
           {markdown}

@@ -1,3 +1,4 @@
+/* board.css */
 #SigList {
   width: 100%;
   display: flex;
@@ -19,6 +20,7 @@
   flex-direction: column;
   gap: 0.4rem;
   transition: box-shadow 0.2s ease;
+  overflow: hidden;
 }
 
 .sigCard:hover {
@@ -29,12 +31,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
+}
+
+.sigTopbar > * {
+  min-width: 0;
 }
 
 .sigTitle {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--color-text-body);
+  display: block;
+  max-width: 50ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .sigUserCount {
@@ -47,6 +60,12 @@
   color: var(--color-text-subtle);
   line-height: 1.4;
   white-space: normal;
+  max-width: 80ch;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
 }
 
 #BoardCreateButton {
@@ -124,29 +143,28 @@
 
 .BoardActions {
   display: flex;
-  justify-content: space-between; /* 좌우 끝 정렬 */
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
 
-/* 모바일 대응 */
 @media (max-width: 768px) {
   .BoardActions {
-    flex-direction: row; /* 세로 말고 가로 유지 */
-    justify-content: space-between; /* 좌우 끝 */
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
   }
   .BoardActions > * {
-    width: auto; /* 버튼이 가득 차지하지 않게 */
+    width: auto;
   }
 }
 
 .BoardActions {
   display: flex;
-  justify-content: space-between; /* 왼쪽과 오른쪽 끝 */
+  justify-content: space-between;
   align-items: center;
-  width: 100%; /* 전체 폭 */
-  margin-bottom: 1.5rem; /* 목록과 간격 */
+  width: 100%;
+  margin-bottom: 1.5rem;
 }
 
 .left-action {
@@ -159,7 +177,6 @@
   align-items: center;
 }
 
-/* 모바일 대응 */
 @media (max-width: 768px) {
   .BoardActions {
     flex-direction: row;
