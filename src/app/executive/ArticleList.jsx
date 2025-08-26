@@ -7,7 +7,6 @@ export default function ArticleList({ boards: boardsDefault }) {
   const [saving, setSaving] = useState({});
 
   useEffect(() => {
-    const targetBoardIds = [3, 4, 5];
     async function fetchBoardArticles(boardId) {
       const res = await fetch(`/api/articles/${boardId}`, {
         method: "GET",
@@ -19,11 +18,15 @@ export default function ArticleList({ boards: boardsDefault }) {
       if (res.ok) return { [boardId]: await res.json() };
       return {};
     }
-    Promise.all(targetBoardIds.map(fetchBoardArticles)).then((resArray) => {
+
+    const ids = boards.map((b) => b.id);
+    if (!ids.length) return;
+
+    Promise.all(ids.map(fetchBoardArticles)).then((resArray) => {
       const all = resArray.reduce((acc, cur) => ({ ...acc, ...cur }), {});
       setArticles(all);
     });
-  }, []);
+  }, [boards]);
 
   const handleBoardChange = (id, value) => {
     setBoards((prev) =>
@@ -63,6 +66,11 @@ export default function ArticleList({ boards: boardsDefault }) {
     if (res.status === 204) {
       alert("삭제 완료");
       setBoards((prev) => prev.filter((b) => b.id !== id));
+      setArticles((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
     } else {
       alert("삭제 실패: " + res.status);
     }
@@ -79,6 +87,7 @@ export default function ArticleList({ boards: boardsDefault }) {
       board_id: Number(article.board_id),
     };
     try {
+      setSaving((s) => ({ ...s, [article.id]: true }));
       const res = await fetch(`/api/executive/article/update/${article.id}`, {
         method: "POST",
         headers: {
@@ -94,6 +103,8 @@ export default function ArticleList({ boards: boardsDefault }) {
       }
     } catch (err) {
       alert("요청 실패: " + err.message);
+    } finally {
+      setSaving((s) => ({ ...s, [article.id]: false }));
     }
   };
 

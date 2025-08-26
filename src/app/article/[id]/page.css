@@ -17,6 +17,10 @@ body {
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: var(--color-text-body);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 .SigInfo {
@@ -81,6 +85,29 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.mdx-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.mdx-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.mdx-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mdx-table-wrap th,
+.mdx-table-wrap td {
+  padding: 0.5rem;
+  border: 1px solid var(--color-button-border);
+  vertical-align: top;
+}
+
 .SigActionRow {
   display: flex;
   gap: 0.5rem;
@@ -136,62 +163,16 @@ body {
 }
 
 @media (max-width: 560px) {
-  .SigActionRow {
-    flex-direction: column;
-    align-items: stretch;
+  .SigDetailContainer {
+    max-width: 92vw;
+    padding: 1.25rem;
   }
-  .SigButton {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-.CompillingOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  background: var(--color-bg);
-}
-
-.compilling-text {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  font-size: 1.125rem;
-  color: var(--color-text);
-  letter-spacing: 0.02em;
-}
-
-.compilling-text .dots::after {
-  content: "";
-  display: inline-block;
-  width: 1.5ch;
-  overflow: hidden;
-  vertical-align: bottom;
-  animation: CompillingDots 1.4s steps(4, end) infinite;
-}
-
-@keyframes CompillingDots {
-  0% {
-    content: "";
-  }
-  25% {
-    content: ".";
-  }
-  50% {
-    content: "..";
-  }
-  75% {
-    content: "...";
-  }
-  100% {
-    content: "";
+  .SigTitle {
+    font-size: 1.75rem;
   }
 }
 
-/* ===== Comments area ===== */
+/* Comments */
 .SigContent + div {
   margin-top: 1.25rem;
   padding-top: 1rem;
@@ -288,14 +269,4 @@ body {
 .SigContent + div button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
-}
-
-@media (max-width: 560px) {
-  .SigDetailContainer {
-    max-width: 92vw;
-    padding: 1.25rem;
-  }
-  .SigTitle {
-    font-size: 1.75rem;
-  }
 }

@@ -77,7 +77,7 @@ export default async function AdminPanel() {
   );
 }
 
-const targetBoardIds = [3, 4, 5];
+const targetBoardIds = [3, 4, 5, 6];
 async function fetchBoards() {
   const boardResults = await Promise.all(
     targetBoardIds.map(async (id) => {
