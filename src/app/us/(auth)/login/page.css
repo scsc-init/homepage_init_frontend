@@ -298,7 +298,7 @@ body {
   background-color: #368aa0;
 }
 
-.dark .GoogleSignupCard p {
+.GoogleSignupCard p {
   color: var(--color-text-subtle);
 }
 
@@ -324,4 +324,18 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.PolicyLink {
+  margin-top: 8px;
+  font-size: 8px;
+  color: var(--color-surface-light) !important;
+}
+.PolicyLink a {
+  color: var(--color-surface-light);
+  text-decoration: underline;
+}
+
+.dark .agree {
+  color: var(--color-surface-light);
 }
