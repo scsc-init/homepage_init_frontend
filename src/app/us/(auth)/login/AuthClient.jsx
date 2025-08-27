@@ -436,6 +436,18 @@ export default function LoginPage() {
                   ))}
               </select>
             </div>
+
+            <p className="PolicyLink agree">
+              회원 가입 시{" "}
+              <a
+                href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                개인정보 처리방침
+              </a>
+              에 동의합니다.
+            </p>
             <button
               type="button"
               className={`SignupBtn ${signupBusy ? "is-disabled" : ""}`}
