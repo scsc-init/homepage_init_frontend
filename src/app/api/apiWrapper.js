@@ -41,7 +41,7 @@ export async function handleApiRequest(
   const res = await fetch(fullUrl, {
     method: method,
     headers: {
-      "Content-Type": requestBody && "application/json",
+      "Content-Type": requestBody ? "application/json" : undefined,
       "x-api-secret": getApiSecret(),
       "x-jwt": jwt,
     },
