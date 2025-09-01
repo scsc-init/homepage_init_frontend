@@ -1,3 +1,4 @@
+// app/article/[id]/page.jsx
 "use client";
 
 import ReactMarkdown from "react-markdown";
@@ -19,6 +20,7 @@ export default function ArticleDetail({ params }) {
   const [user, setUser] = useState(null);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { id } = params;
 
   useEffect(() => {
@@ -75,6 +77,34 @@ export default function ArticleDetail({ params }) {
     article?.author_id != null &&
     user.id === article.author_id;
 
+  const handleDelete = async () => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      router.push("/us/login");
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/article/delete/${id}`, {
+        method: "POST",
+        headers: { "x-jwt": jwt },
+      });
+      if (res.ok) {
+        const boardId = article?.board_id;
+        router.push(boardId ? `/board/${boardId}` : "/board");
+      } else if (res.status === 401) {
+        router.push("/us/login");
+      } else {
+        alert("삭제에 실패했습니다.");
+      }
+    } catch (_) {
+      alert("삭제 중 오류가 발생했습니다.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
@@ -88,6 +118,14 @@ export default function ArticleDetail({ params }) {
             type="button"
           >
             수정
+          </button>
+          <button
+            className="SigButton is-delete"
+            onClick={handleDelete}
+            type="button"
+            disabled={isDeleting}
+          >
+            {isDeleting ? "삭제 중..." : "삭제"}
           </button>
         </div>
       )}

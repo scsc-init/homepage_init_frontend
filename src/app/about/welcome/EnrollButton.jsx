@@ -1,13 +1,10 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import './enroll.css'
 
 export default function EnrollButton() {
-
   const [user, setUser] = useState(null);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -16,13 +13,17 @@ export default function EnrollButton() {
       router.push("/us/login");
       return;
     }
-
     const fetchProfile = async () => {
       try {
         const resUser = await fetch(`/api/user/profile`, {
           headers: { "x-jwt": jwt },
         });
-        if (resUser.status != 200) {localStorage.removeItem('jwt'); alert("로그인이 필요합니다."); router.push("/us/login"); return;}
+        if (resUser.status != 200) {
+          localStorage.removeItem("jwt");
+          alert("로그인이 필요합니다.");
+          router.push("/us/login");
+          return;
+        }
         const userData = await resUser.json();
         setUser(userData);
       } catch (e) {
@@ -41,7 +42,6 @@ export default function EnrollButton() {
         "x-jwt": jwt,
       },
     });
-
     if (res.status === 204) {
       alert("등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.");
     } else if (res.status === 400) {
@@ -52,11 +52,8 @@ export default function EnrollButton() {
   };
 
   return (
-    <button
-      onClick={handleEnroll}
-      className="enroll-button"
-    >
+    <button onClick={handleEnroll} className="enroll-button">
       입금 등록
     </button>
-  )
+  );
 }
