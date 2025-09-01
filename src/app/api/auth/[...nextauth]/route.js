@@ -26,14 +26,13 @@ const handler = NextAuth({
           }),
         );
         try {
-          const res = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/user/login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: token.email }),
-            },
-          );
+          const base = (process.env.NEXTAUTH_URL || "").trim();
+          const url = base ? `${base}/api/user/login` : "/api/user/login";
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: String(token.email).toLowerCase() }),
+          });
 
           if (res.status === 200) {
             const data = await res.json();
