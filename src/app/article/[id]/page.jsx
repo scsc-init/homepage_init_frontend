@@ -92,7 +92,7 @@ export default function ArticleDetail({ params }) {
       });
       if (res.ok) {
         const boardId = article?.board_id;
-        router.push(boardId ? `/board/${boardId}` : "/board");
+        router.push(boardId ? `/board/${boardId}` : "/us/login");
       } else if (res.status === 401) {
         router.push("/us/login");
       } else {
