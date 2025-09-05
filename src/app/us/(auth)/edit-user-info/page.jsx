@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import * as validator from "../login/validator";
 import PfpUpdate from "./PfpUpdate";
 import "./page.css";
+import { oldboyLevel } from "@/util/constants";
 
 function EditUserInfoClient() {
   const router = useRouter();
@@ -16,6 +17,8 @@ function EditUserInfoClient() {
     profile_picture: "",
   });
   const [majors, setMajors] = useState([]);
+  const [userRole, setUserRole] = useState(null);
+  const [oldboyApplicant, setOldboyApplicant] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +34,15 @@ function EditUserInfoClient() {
         }),
       );
       fetchs.push(fetch("/api/majors"));
-      const [resUser, resMajors] = await Promise.all(fetchs);
+      fetchs.push(
+        fetch("/api/user/oldboy/applicant", {
+          headers: {
+            "Content-Type": "application/json",
+            "x-jwt": jwt,
+          },
+        }),
+      );
+      const [resUser, resMajors, resOldboy] = await Promise.all(fetchs);
 
       if (!resUser.ok) {
         alert("로그인이 필요합니다.");
@@ -46,9 +57,13 @@ function EditUserInfoClient() {
         major_id: user.major_id?.toString() || "",
         profile_picture: user.profile_picture || "",
       });
+      setUserRole(user.role);
 
       const majorList = await resMajors.json();
       setMajors(majorList);
+      if (resOldboy.ok) {
+        setOldboyApplicant(await resOldboy.json());
+      }
       setLoading(false);
     };
     fetchData();
@@ -100,10 +115,7 @@ function EditUserInfoClient() {
     const jwt = localStorage.getItem("jwt");
     const res = await fetch("/api/user/delete", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-jwt": jwt,
-      },
+      headers: { "x-jwt": jwt },
     });
 
     if (res.status === 204) {
@@ -113,6 +125,73 @@ function EditUserInfoClient() {
       alert(`잘못된 접근입니다: ${(await res.json()).detail}`);
     } else {
       alert("수정에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleOBRegister = async () => {
+    const ok = confirm("정말 졸업생 전환신청하시겠습니까?");
+    if (!ok) return;
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch("/api/user/oldboy/register", {
+      method: "POST",
+      headers: { "x-jwt": jwt },
+    });
+
+    if (res.status === 201) {
+      alert("졸업생 전환신청이 완료되었습니다.");
+      router.push("/about/my-page");
+    } else if (res.status === 400) {
+      alert(`졸업생 전환신청 자격이 없습니다.`);
+    } else if (res.status === 409) {
+      alert(`이미 졸업생 전환신청을 완료했습니다.`);
+    } else {
+      alert("신청에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleOBUnregister = async () => {
+    const ok = confirm("정말 졸업생 전환신청을 취소하시겠습니까?");
+    if (!ok) return;
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch("/api/user/oldboy/unregister", {
+      method: "POST",
+      headers: { "x-jwt": jwt },
+    });
+
+    if (res.status === 204) {
+      alert("졸업생 전환신청 취소가 완료되었습니다.");
+      router.push("/about/my-page");
+    } else if (res.status === 400) {
+      alert(
+        `이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.`,
+      );
+    } else if (res.status === 404) {
+      alert(`졸업생 전환신청을 하지 않았습니다.`);
+    } else {
+      alert("신청 취소에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleOBReactivate = async () => {
+    const ok = confirm(
+      "정말 정회원으로 전환하시겠습니까? 전환 후 회비를 납부해야 전환이 완료됩니다.",
+    );
+    if (!ok) return;
+    const jwt = localStorage.getItem("jwt");
+    const res = await fetch("/api/user/oldboy/reactivate", {
+      method: "POST",
+      headers: { "x-jwt": jwt },
+    });
+
+    if (res.status === 204) {
+      alert(
+        "정회원 전환 신청이 완료되었습니다. 회비를 납부해야 정회원 전환이 완료됩니다.",
+      );
+      router.push("/about/welcome");
+    } else if (res.status === 400) {
+      alert(`졸업생이 아니어서 정회원으로 전환할 수 없습니다.`);
+    } else {
+      alert("신청에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -192,17 +271,40 @@ function EditUserInfoClient() {
         style={{
           marginTop: "2rem",
           display: "flex",
+          flexDirection: "column",
           gap: "1rem",
           flexWrap: "wrap",
           marginBottom: "1rem",
         }}
       >
-        <button onClick={handleDelete} style={{ flex: 1, minWidth: "120px" }}>
-          휴회원으로 전환
-        </button>
         <button onClick={handleSubmit} style={{ flex: 1, minWidth: "120px" }}>
           저장하기
         </button>
+        <button onClick={handleDelete} style={{ flex: 1, minWidth: "120px" }}>
+          휴회원으로 전환
+        </button>
+        {userRole === oldboyLevel ? (
+          <button
+            onClick={handleOBReactivate}
+            style={{ flex: 1, minWidth: "120px" }}
+          >
+            정회원 전환신청
+          </button>
+        ) : oldboyApplicant == null ? (
+          <button
+            onClick={handleOBRegister}
+            style={{ flex: 1, minWidth: "120px" }}
+          >
+            졸업생 전환신청
+          </button>
+        ) : (
+          <button
+            onClick={handleOBUnregister}
+            style={{ flex: 1, minWidth: "120px" }}
+          >
+            졸업생 전환신청 취소
+          </button>
+        )}
       </div>
     </div>
   );
