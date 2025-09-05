@@ -61,7 +61,9 @@ export default function EntryRow({
           }
         >
           <option value={1}>1학기</option>
-          <option value={2}>2학기</option>
+          <option value={2}>S학기</option>
+          <option value={3}>2학기</option>
+          <option value={4}>W학기</option>
         </select>
       </td>
       <td className="adm-td">

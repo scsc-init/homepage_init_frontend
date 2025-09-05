@@ -25,22 +25,10 @@ function EditUserInfoClient() {
     const fetchData = async () => {
       const jwt = localStorage.getItem("jwt");
       const fetchs = [];
-      fetchs.push(
-        fetch("/api/user/profile", {
-          headers: {
-            "Content-Type": "application/json",
-            "x-jwt": jwt,
-          },
-        }),
-      );
+      fetchs.push(fetch("/api/user/profile", { headers: { "x-jwt": jwt } }));
       fetchs.push(fetch("/api/majors"));
       fetchs.push(
-        fetch("/api/user/oldboy/applicant", {
-          headers: {
-            "Content-Type": "application/json",
-            "x-jwt": jwt,
-          },
-        }),
+        fetch("/api/user/oldboy/applicant", { headers: { "x-jwt": jwt } }),
       );
       const [resUser, resMajors, resOldboy] = await Promise.all(fetchs);
 
@@ -59,8 +47,9 @@ function EditUserInfoClient() {
       });
       setUserRole(user.role);
 
-      const majorList = await resMajors.json();
+      const majorList = resMajors.ok ? await resMajors.json() : [];
       setMajors(majorList);
+      if (!resMajors.ok) console.warn("Failed to load majors");
       if (resOldboy.ok) {
         setOldboyApplicant(await resOldboy.json());
       }
@@ -71,18 +60,23 @@ function EditUserInfoClient() {
 
   const handleSubmit = async () => {
     const { name, phone, student_id, major_id } = form;
-
+    const errors = [];
     validator.name(name, (ok) => {
-      if (!ok) return alert("이름이 올바르지 않습니다.");
+      if (!ok) errors.push("이름이 올바르지 않습니다.");
     });
     validator.phoneNumber(phone, (ok) => {
-      if (!ok) return alert("전화번호 형식이 올바르지 않습니다.");
+      if (!ok) errors.push("전화번호 형식이 올바르지 않습니다.");
     });
     validator.studentID(student_id, (ok) => {
-      if (!ok) return alert("학번 형식이 올바르지 않습니다.");
+      if (!ok) errors.push("학번 형식이 올바르지 않습니다.");
     });
+    if (errors.length) {
+      alert(errors[0]);
+      return;
+    }
 
     const jwt = localStorage.getItem("jwt");
+    setLoading(true);
     const res = await fetch("/api/user/update", {
       method: "POST",
       headers: {
@@ -96,6 +90,7 @@ function EditUserInfoClient() {
         major_id: Number(major_id),
       }),
     });
+    setLoading(false);
 
     if (res.status === 204) {
       alert("정보가 수정되었습니다.");
@@ -113,10 +108,12 @@ function EditUserInfoClient() {
     const ok = confirm("정말 휴회원 처리하시겠습니까?");
     if (!ok) return;
     const jwt = localStorage.getItem("jwt");
+    setLoading(true);
     const res = await fetch("/api/user/delete", {
       method: "POST",
       headers: { "x-jwt": jwt },
     });
+    setLoading(false);
 
     if (res.status === 204) {
       alert("휴회원으로 전환되었습니다.");
@@ -132,10 +129,12 @@ function EditUserInfoClient() {
     const ok = confirm("정말 졸업생 전환신청하시겠습니까?");
     if (!ok) return;
     const jwt = localStorage.getItem("jwt");
+    setLoading(true);
     const res = await fetch("/api/user/oldboy/register", {
       method: "POST",
       headers: { "x-jwt": jwt },
     });
+    setLoading(false);
 
     if (res.status === 201) {
       alert("졸업생 전환신청이 완료되었습니다.");
@@ -153,10 +152,12 @@ function EditUserInfoClient() {
     const ok = confirm("정말 졸업생 전환신청을 취소하시겠습니까?");
     if (!ok) return;
     const jwt = localStorage.getItem("jwt");
+    setLoading(true);
     const res = await fetch("/api/user/oldboy/unregister", {
       method: "POST",
       headers: { "x-jwt": jwt },
     });
+    setLoading(false);
 
     if (res.status === 204) {
       alert("졸업생 전환신청 취소가 완료되었습니다.");
@@ -178,10 +179,12 @@ function EditUserInfoClient() {
     );
     if (!ok) return;
     const jwt = localStorage.getItem("jwt");
+    setLoading(true);
     const res = await fetch("/api/user/oldboy/reactivate", {
       method: "POST",
       headers: { "x-jwt": jwt },
     });
+    setLoading(false);
 
     if (res.status === 204) {
       alert(
@@ -194,8 +197,6 @@ function EditUserInfoClient() {
       alert("신청에 실패했습니다. 다시 시도해주세요.");
     }
   };
-
-  if (loading) return;
 
   return (
     <div
@@ -277,15 +278,24 @@ function EditUserInfoClient() {
           marginBottom: "1rem",
         }}
       >
-        <button onClick={handleSubmit} style={{ flex: 1, minWidth: "120px" }}>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          style={{ flex: 1, minWidth: "120px" }}
+        >
           저장하기
         </button>
-        <button onClick={handleDelete} style={{ flex: 1, minWidth: "120px" }}>
+        <button
+          onClick={handleDelete}
+          disabled={loading}
+          style={{ flex: 1, minWidth: "120px" }}
+        >
           휴회원으로 전환
         </button>
         {userRole === oldboyLevel ? (
           <button
             onClick={handleOBReactivate}
+            disabled={loading}
             style={{ flex: 1, minWidth: "120px" }}
           >
             정회원 전환신청
@@ -293,6 +303,7 @@ function EditUserInfoClient() {
         ) : oldboyApplicant == null ? (
           <button
             onClick={handleOBRegister}
+            disabled={loading}
             style={{ flex: 1, minWidth: "120px" }}
           >
             졸업생 전환신청
@@ -300,6 +311,7 @@ function EditUserInfoClient() {
         ) : (
           <button
             onClick={handleOBUnregister}
+            disabled={loading}
             style={{ flex: 1, minWidth: "120px" }}
           >
             졸업생 전환신청 취소

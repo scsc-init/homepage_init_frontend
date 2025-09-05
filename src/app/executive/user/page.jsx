@@ -24,7 +24,7 @@ export default async function ExecutiveUserPage() {
           <EnrollManagementPanel />
         </div>
         <div className="adm-section">
-          <OldboyManageMentPanel users={users} />
+          <OldboyManageMentPanel users={users ?? []} />
         </div>
       </div>
     </WithAuthorization>

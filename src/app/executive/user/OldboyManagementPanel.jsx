@@ -1,8 +1,8 @@
-// src/app/executive/user/EnrollManagementPanel.jsx (CLIENT)
+// src/app/executive/user/OldboyManagementPanel.jsx (CLIENT)
 "use client";
 import { useEffect, useState } from "react";
 
-export default function OldboyManageMentPanel({ users }) {
+export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
   const [saving, setSaving] = useState({});
 
@@ -47,17 +47,18 @@ export default function OldboyManageMentPanel({ users }) {
           <tbody>
             {applicants.map((u) => {
               const user = users.find((x) => x.id === u.id);
+              const displayName = user?.name ?? "(알 수 없음)";
               return (
                 <tr key={u.id}>
-                  <td className="adm-td">{user.name}</td>
+                  <td className="adm-td">{displayName}</td>
                   <td className="adm-td">{u.created_at}</td>
                   <td className="adm-td">{u.updated_at}</td>
                   <td className="adm-td">{u.processed ? "✅" : "❌"}</td>
                   <td className="adm-td">
                     <button
                       className="adm-button"
-                      onClick={() => processOldboy(user)}
-                      disabled={saving[user.id]}
+                      onClick={() => user && processOldboy(user)}
+                      disabled={saving[user.id] || u.processed || !user}
                     >
                       승인
                     </button>
