@@ -1,3 +1,4 @@
+/* app/article/[id]/page.css */
 .SigDetailContainer {
   max-width: 60vw;
   margin: 1.5rem auto;
@@ -162,6 +163,10 @@ body {
 .SigButton.is-edit {
 }
 
+.SigButton.is-delete {
+  border-style: solid;
+}
+
 @media (max-width: 560px) {
   .SigDetailContainer {
     max-width: 92vw;
@@ -172,7 +177,6 @@ body {
   }
 }
 
-/* Comments */
 .SigContent + div {
   margin-top: 1.25rem;
   padding-top: 1rem;

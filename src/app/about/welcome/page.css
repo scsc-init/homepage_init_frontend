@@ -7,7 +7,6 @@ body {
   background: var(--main-bg-gradient);
 }
 
-/* 레이아웃 */
 #Home {
   display: flex;
   flex-direction: column;
@@ -23,7 +22,6 @@ body {
   z-index: 10;
 }
 
-/* 박스 */
 .ContentBlock {
   display: flex;
   flex-direction: column;
@@ -37,20 +35,16 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease;
 }
+
 a {
   text-decoration: none;
   color: var(--color-button-bg);
-}
-
-.enroll-button {
-  max-width: 30%;
 }
 
 .ContentBlock:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* 배경 로고 */
 .WallLogo,
 .WallLogo2 {
   position: fixed;
@@ -80,12 +74,40 @@ a {
   opacity: 1;
 }
 
-.deposit-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.EnrollCTA {
+  margin-top: 1.25rem;
 }
 
-/* 반응형 */
+.enroll-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.05rem 2.4rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  border-radius: 999px;
+  border: 2px solid var(--color-button-border);
+  background: var(--color-button-bg);
+  color: var(--foreground-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.enroll-button:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+.enroll-button:active {
+  transform: translateY(0);
+}
+
 @media screen and (max-width: 768px) {
+  .enroll-button {
+    width: 100%;
+  }
 }
