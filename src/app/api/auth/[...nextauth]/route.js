@@ -26,50 +26,61 @@ const handler = NextAuth({
           }),
         );
         try {
-          const res = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/user/login`,
-            {
+          const base = (process.env.NEXTAUTH_URL || "")
+            .replace(/\/+$/, "")
+            .trim();
+          const url = base ? `${base}/api/user/login` : "/api/user/login";
+          const ac = new AbortController();
+          const timeout = setTimeout(() => ac.abort(), 10_000);
+          try {
+            const res = await fetch(url, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: token.email }),
-            },
-          );
+              body: JSON.stringify({
+                email: String(token.email).toLowerCase(),
+              }),
+              cache: "no-store",
+              signal: ac.signal,
+            });
 
-          if (res.status === 200) {
-            const data = await res.json();
-            token.appJwt = data.jwt;
-            token.signupRequired = false;
-            console.log(
-              JSON.stringify({
-                type: "auth_flow",
-                step: "jwt_existing_user",
-                email: token.email,
-                status: 200,
-                ts: new Date().toISOString(),
-              }),
-            );
-          } else if (res.status === 404) {
-            token.signupRequired = true;
-            console.log(
-              JSON.stringify({
-                type: "auth_flow",
-                step: "jwt_need_signup",
-                email: token.email,
-                status: 404,
-                ts: new Date().toISOString(),
-              }),
-            );
-          } else {
-            token.loginError = true;
-            console.log(
-              JSON.stringify({
-                type: "auth_flow",
-                step: "jwt_backend_error",
-                email: token.email,
-                status: res.status,
-                ts: new Date().toISOString(),
-              }),
-            );
+            if (res.status === 200) {
+              const data = await res.json();
+              token.appJwt = data.jwt;
+              token.signupRequired = false;
+              console.log(
+                JSON.stringify({
+                  type: "auth_flow",
+                  step: "jwt_existing_user",
+                  email: token.email,
+                  status: 200,
+                  ts: new Date().toISOString(),
+                }),
+              );
+            } else if (res.status === 404) {
+              token.signupRequired = true;
+              console.log(
+                JSON.stringify({
+                  type: "auth_flow",
+                  step: "jwt_need_signup",
+                  email: token.email,
+                  status: 404,
+                  ts: new Date().toISOString(),
+                }),
+              );
+            } else {
+              token.loginError = true;
+              console.log(
+                JSON.stringify({
+                  type: "auth_flow",
+                  step: "jwt_backend_error",
+                  email: token.email,
+                  status: res.status,
+                  ts: new Date().toISOString(),
+                }),
+              );
+            }
+          } finally {
+            clearTimeout(timeout);
           }
         } catch (e) {
           token.loginError = true;

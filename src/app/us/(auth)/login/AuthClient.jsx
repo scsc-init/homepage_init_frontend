@@ -131,7 +131,7 @@ export default function LoginPage() {
       return;
     }
     if (session?.signupRequired) {
-      const email = session?.user?.email || "";
+      const email = (session?.user?.email || "").toLowerCase();
       const cName = cleanName(session?.user?.name || "");
       const image = session?.user?.image || "";
       setForm((prev) => ({
@@ -187,11 +187,12 @@ export default function LoginPage() {
     log("signup_submit_start");
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
+    const email = String(form.email || "").toLowerCase();
     const createRes = await fetch(`/api/user/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: form.email,
+        email,
         name: form.name,
         student_id,
         phone,
@@ -215,7 +216,7 @@ export default function LoginPage() {
     const loginRes = await fetch(`/api/user/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: form.email }),
+      body: JSON.stringify({ email }),
     });
     const { jwt } = await loginRes.json();
     try {
