@@ -5,6 +5,8 @@ export const minExecutiveLevel = 500;
 // 헤더에서 '운영진 페이지'를 표시할지 결정하는 데에 사용됩니다.
 export const oldboyLevel = 400;
 // 졸업생 권한의 값입니다. 내 정보 수정 페이지에서 사용됩니다.
+export const SEMESTER_MAP = { 1: "1", 2: "여름", 3: "2", 4: "겨울" };
+// 학기 숫자에 대응되는 학기 표시값입니다.
 
 export const COLORS = {
   primary: "var(--color-primary)",

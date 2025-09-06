@@ -1,5 +1,5 @@
 // src/app/executive/EntryRow.jsx (CLIENT)
-import React from "react";
+import { SEMESTER_MAP } from "@/util/constants";
 
 export default function EntryRow({
   entry,
@@ -49,7 +49,8 @@ export default function EntryRow({
           className="adm-input"
           type="number"
           value={entry.year}
-          onChange={(e) => onChange(entry.id, "year", parseInt(e.target.value))}
+          onChange={(e) => onChange(entry.id, "year", Number(e.target.value))}
+          disabled
         />
       </td>
       <td className="adm-td">
@@ -57,13 +58,14 @@ export default function EntryRow({
           className="adm-select"
           value={entry.semester}
           onChange={(e) =>
-            onChange(entry.id, "semester", parseInt(e.target.value))
+            onChange(entry.id, "semester", Number(e.target.value))
           }
+          disabled
         >
-          <option value={1}>1학기</option>
-          <option value={2}>S학기</option>
-          <option value={3}>2학기</option>
-          <option value={4}>W학기</option>
+          <option value={1}>{SEMESTER_MAP[1]}학기</option>
+          <option value={2}>{SEMESTER_MAP[2]}학기</option>
+          <option value={3}>{SEMESTER_MAP[3]}학기</option>
+          <option value={4}>{SEMESTER_MAP[4]}학기</option>
         </select>
       </td>
       <td className="adm-td">

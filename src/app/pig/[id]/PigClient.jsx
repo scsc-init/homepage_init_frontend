@@ -8,7 +8,7 @@ import PigDeleteButton from "./PigDeleteButton";
 import PigMembers from "./PigMembers";
 import PigContents from "./PigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { minExecutiveLevel } from "@/util/constants";
+import { minExecutiveLevel, SEMESTER_MAP } from "@/util/constants";
 
 export default function PigClient({ pig, members, articleId, pigId }) {
   const router = useRouter();
@@ -34,9 +34,8 @@ export default function PigClient({ pig, members, articleId, pigId }) {
     return ownerOk;
   }, [me, pig]);
   const semesterLabel = useMemo(() => {
-    const map = { 1: "1학기", 2: "여름학기", 3: "2학기", 4: "겨울학기" };
     const key = Number(pig?.semester);
-    return map[key] ?? `${pig?.semester}`;
+    return SEMESTER_MAP[key] ?? `${pig?.semester}`;
   }, [pig?.semester]);
   useEffect(() => {
     let cancelled = false;

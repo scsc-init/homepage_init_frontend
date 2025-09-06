@@ -24,13 +24,13 @@ function EditUserInfoClient() {
   useEffect(() => {
     const fetchData = async () => {
       const jwt = localStorage.getItem("jwt");
-      const fetchs = [];
-      fetchs.push(fetch("/api/user/profile", { headers: { "x-jwt": jwt } }));
-      fetchs.push(fetch("/api/majors"));
-      fetchs.push(
+      const fetches = [];
+      fetches.push(fetch("/api/user/profile", { headers: { "x-jwt": jwt } }));
+      fetches.push(fetch("/api/majors"));
+      fetches.push(
         fetch("/api/user/oldboy/applicant", { headers: { "x-jwt": jwt } }),
       );
-      const [resUser, resMajors, resOldboy] = await Promise.all(fetchs);
+      const [resUser, resMajors, resOldboy] = await Promise.all(fetches);
 
       if (!resUser.ok) {
         alert("로그인이 필요합니다.");
@@ -300,7 +300,7 @@ function EditUserInfoClient() {
           >
             정회원 전환신청
           </button>
-        ) : oldboyApplicant == null ? (
+        ) : oldboyApplicant === null ? (
           <button
             onClick={handleOBRegister}
             disabled={loading}
