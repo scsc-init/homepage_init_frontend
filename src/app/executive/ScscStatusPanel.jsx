@@ -1,9 +1,9 @@
 // src/app/executive/ScscStatusPanel.jsx (CLIENT)
 "use client";
+import { SEMESTER_MAP } from "@/util/constants";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const SEMESTER_MAP = { 1: "1", 2: "여름", 3: "2", 4: "겨울" };
 const STATUS_MAP = {
   surveying: "설문중",
   recruiting: "모집중",

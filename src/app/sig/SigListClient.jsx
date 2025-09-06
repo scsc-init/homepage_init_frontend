@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import SortDropdown from "@/components/board/SortDropdown"; // 기존 재사용
+import { SEMESTER_MAP } from "@/util/constants";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function SigListClient({ sigs }) {
   const [sortOrder, setSortOrder] = useState("latest");
@@ -13,8 +14,6 @@ export default function SigListClient({ sigs }) {
     if (sortOrder === "title") return a.title.localeCompare(b.title);
     return 0;
   });
-
-  const semesterMap = { 1: "1", 2: "S", 3: "2", 4: "W" };
 
   return (
     <>
@@ -35,7 +34,7 @@ export default function SigListClient({ sigs }) {
               <div className="sigTopbar">
                 <span className="sigTitle">{sig.title}</span>
                 <span className="sigUserCount">
-                  {sig.year}년 {semesterMap[sig.semester]}학기
+                  {sig.year}년 {SEMESTER_MAP[sig.semester]}학기
                 </span>
               </div>
               <div className="sigDescription">{sig.description}</div>

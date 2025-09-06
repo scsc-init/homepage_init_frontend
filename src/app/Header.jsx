@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { SEMESTER_MAP } from "@/util/constants";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import HeaderClientArea from "./HeaderClientArea";
 import "./header.css";
-
-const SEMESTER_MAP = { 1: "1", 2: "S", 3: "2", 4: "W" };
 
 const menuData = [
   {
