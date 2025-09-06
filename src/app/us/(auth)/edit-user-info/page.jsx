@@ -126,7 +126,7 @@ function EditUserInfoClient() {
   };
 
   const handleOBRegister = async () => {
-    const ok = confirm("정말 졸업생 전환신청하시겠습니까?");
+    const ok = confirm("정말 졸업생 전환 신청하시겠습니까?");
     if (!ok) return;
     const jwt = localStorage.getItem("jwt");
     setLoading(true);
@@ -137,19 +137,19 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 201) {
-      alert("졸업생 전환신청이 완료되었습니다.");
+      alert("졸업생 전환 신청이 완료되었습니다.");
       router.push("/about/my-page");
     } else if (res.status === 400) {
-      alert(`졸업생 전환신청 자격이 없습니다.`);
+      alert(`졸업생 전환 신청 자격이 없습니다.`);
     } else if (res.status === 409) {
-      alert(`이미 졸업생 전환신청을 완료했습니다.`);
+      alert(`이미 졸업생 전환 신청을 완료했습니다.`);
     } else {
       alert("신청에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   const handleOBUnregister = async () => {
-    const ok = confirm("정말 졸업생 전환신청을 취소하시겠습니까?");
+    const ok = confirm("정말 졸업생 전환 신청을 취소하시겠습니까?");
     if (!ok) return;
     const jwt = localStorage.getItem("jwt");
     setLoading(true);
@@ -160,14 +160,14 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
-      alert("졸업생 전환신청 취소가 완료되었습니다.");
+      alert("졸업생 전환 신청 취소가 완료되었습니다.");
       router.push("/about/my-page");
     } else if (res.status === 400) {
       alert(
         `이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.`,
       );
     } else if (res.status === 404) {
-      alert(`졸업생 전환신청을 하지 않았습니다.`);
+      alert(`졸업생 전환 신청을 하지 않았습니다.`);
     } else {
       alert("신청 취소에 실패했습니다. 다시 시도해주세요.");
     }
@@ -306,7 +306,7 @@ function EditUserInfoClient() {
             disabled={loading}
             style={{ flex: 1, minWidth: "120px" }}
           >
-            졸업생 전환신청
+            졸업생 전환 신청
           </button>
         ) : (
           <button
@@ -314,7 +314,7 @@ function EditUserInfoClient() {
             disabled={loading}
             style={{ flex: 1, minWidth: "120px" }}
           >
-            졸업생 전환신청 취소
+            졸업생 전환 신청 취소
           </button>
         )}
       </div>
