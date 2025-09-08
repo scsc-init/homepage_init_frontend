@@ -50,11 +50,13 @@ export default async function Contact() {
               </a>
             </h3>
             <h3>{DEPOSIT_ACC}</h3>
+
             <h3>
               회비: 2.5만원 <br />
               입금자명 : 이름 + 전화번호 마지막 두자리 <br /> ex) 김창섭57
             </h3>
             <div className="EnrollCTA">
+
               <EnrollButton />
             </div>
             <a href="/about/my-page">마이페이지로 이동</a>
