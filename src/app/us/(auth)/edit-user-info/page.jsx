@@ -298,7 +298,7 @@ function EditUserInfoClient() {
             disabled={loading}
             style={{ flex: 1, minWidth: "120px" }}
           >
-            정회원 전환신청
+            정회원 전환 신청
           </button>
         ) : oldboyApplicant === null ? (
           <button

@@ -26,7 +26,10 @@ export default function OldboyManagementPanel({ users }) {
       headers: { "x-jwt": jwt },
     });
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
-    else alert(`${user.name} 승인 실패: ${res.status}`);
+    else {
+      const err = await res.json();
+      alert(`${user.name} 승인 실패: ${res.status};${err.detail ?? err}`);
+    }
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
 
