@@ -4,7 +4,7 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import "./page.css";
 import PigClient from "./PigClient";
 
-export const metadata = { title: "SIG" };
+export const metadata = { title: "PIG" };
 
 export default async function PigDetailPage({ params }) {
   const { id } = params;

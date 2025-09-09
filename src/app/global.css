@@ -200,3 +200,7 @@ html.theme-animating * {
   transition-duration: var(--theme-anim-duration) !important;
   transition-timing-function: ease !important;
 }
+
+a {
+  color: var(--color-button-bg);
+}
