@@ -1,3 +1,5 @@
+// 로딩창의 레거시 버전입니다. 현재 로딩창은 프롬프트 스타일 디자인으로 변경했습니다. 그러나 다른 로딩 구현을 대비해 해당 파일을 유지해주십시오.
+
 "use client";
 
 import { useEffect, useState } from "react";

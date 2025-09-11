@@ -1,3 +1,5 @@
+//다크 테마를 제어합니다.
+
 "use client";
 
 import { useEffect, useState } from "react";
