@@ -240,7 +240,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                   <input
                     type="text"
                     {...register("contestName", { required: true })}
-                    placeholder="ex) Fast MRI"
+                    placeholder="ex) ICPC 본선"
                     className="C_Input"
                   />
                 </div>
