@@ -14,7 +14,7 @@ function TrxRecord({ record }) {
   );
 }
 
-export default function EnrollManageMentPanel() {
+export default function EnrollManagementPanel() {
   const [standbys, setStandbys] = useState([]);
   const [results, setResults] = useState([]);
   const [failedCnt, setFailedCnt] = useState(0);
