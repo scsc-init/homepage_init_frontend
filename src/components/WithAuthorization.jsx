@@ -1,3 +1,5 @@
+//이 파일은 사용하지 않는 것으로 보입니다. 다른 WithAuthorization.jsx가 존재하니 주의하세요.
+
 // src/components/WithAuthorization.jsx
 "use client";
 
