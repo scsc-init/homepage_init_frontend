@@ -8,7 +8,7 @@ import SigDeleteButton from "./SigDeleteButton";
 import SigMembers from "./SigMembers";
 import SigContents from "./SigContents";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { minExecutiveLevel } from "@/util/constants";
+import { minExecutiveLevel, SEMESTER_MAP } from "@/util/constants";
 
 export default function SigClient({ sig, members, articleId, sigId }) {
   const router = useRouter();
@@ -34,9 +34,8 @@ export default function SigClient({ sig, members, articleId, sigId }) {
     return ownerOk;
   }, [me, sig]);
   const semesterLabel = useMemo(() => {
-    const map = { 1: "1학기", 2: "여름학기", 3: "2학기", 4: "겨울학기" };
     const key = Number(sig?.semester);
-    return map[key] ?? `${sig?.semester}`;
+    return SEMESTER_MAP[key] ?? `${sig?.semester}`;
   }, [sig?.semester]);
   useEffect(() => {
     let cancelled = false;
