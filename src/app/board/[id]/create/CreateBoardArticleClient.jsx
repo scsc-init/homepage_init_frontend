@@ -11,7 +11,13 @@ const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
 });
 
 export default function CreateBoardArticleClient({ boardInfo }) {
-  const { register, handleSubmit, setValue, watch, formState: { isDirty } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isDirty },
+  } = useForm({
     defaultValues: {
       title: "",
       editor: "",
@@ -25,42 +31,44 @@ export default function CreateBoardArticleClient({ boardInfo }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) { 
+    if (!jwt) {
       alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+      router.push("/us/login");
+      return;
     }
   }, [router]);
 
   useEffect(() => {
-      const handleBeforeUnload = (e) => {
-        if (!isFormSubmitted.current && isDirty) {
-          e.preventDefault();
-          e.returnValue = "";
+    const handleBeforeUnload = (e) => {
+      if (!isFormSubmitted.current && isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    const handleRouteChange = (url) => {
+      if (!isFormSubmitted.current && isDirty) {
+        const confirmed = confirm(
+          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
+        );
+        if (!confirmed) {
+          router.events.emit("routeChangeError");
+          throw "Route change aborted by user.";
         }
-      };
-  
-      const handleRouteChange = (url) => {
-        if (!isFormSubmitted.current && isDirty) {
-          const confirmed = confirm(
-            "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
-          );
-          if (!confirmed) {
-            router.events.emit("routeChangeError");
-            throw "Route change aborted by user.";
-          }
-        }
-      };
-  
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      router.events?.on?.("routeChangeStart", handleRouteChange);
-  
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        router.events?.off?.("routeChangeStart", handleRouteChange);
-      };
-    }, [isDirty]);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    router.events?.on?.("routeChangeStart", handleRouteChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      router.events?.off?.("routeChangeStart", handleRouteChange);
+    };
+  }, [isDirty]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
     const jwt = localStorage.getItem("jwt");
     setSubmitting(true);
 
@@ -103,7 +111,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         </p>
       </div>
 
-      <div className="CreateSigCard space-y-4">
+      <div className={`CreateSigCard space-y-4 ${submitting ? "is-busy" : ""}`}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <input
             type="text"
