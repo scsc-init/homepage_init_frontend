@@ -1,0 +1,181 @@
+html,
+body {
+  background-color: var(--background-color);
+}
+
+.CreateSigContainer {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+.CreateSigHeader {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.CreateSigTitle {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+  margin-bottom: 0.5rem;
+}
+.CreateSigSubtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-subtle);
+}
+
+.CreateSigCard {
+  background-color: var(--executive-card-bg);
+  padding: 2rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  border-radius: 1rem;
+}
+.Step {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-in {
+  animation: fadeInUp 220ms ease-out;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.C_Label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-body);
+  margin-bottom: 0.5rem;
+}
+.C_Input {
+  color: var(--color-text-body);
+  background-color: var(--color-surface-light);
+  border: 1px solid var(--color-button-border);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  outline: none;
+  margin-bottom: 0.75rem;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+  appearance: none;
+}
+.C_Input:focus {
+  border-color: var(--color-button-bg);
+  box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.28);
+}
+select.C_Input option {
+  background-color: var(--executive-card-bg);
+  color: var(--color-text-body);
+}
+.is-disabled,
+.C_Input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.C_CheckRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.C_Checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-button-bg);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+.C_CheckText {
+  font-size: 0.9rem;
+  color: var(--color-text-body);
+}
+.C_Link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-button-bg);
+}
+
+.EditorWrapper {
+  --editor-toolbar-h: 44px;
+  --editor-min-height: 12rem;
+  position: relative;
+  min-height: var(--editor-min-height);
+}
+.mdxeditor {
+  position: relative;
+  z-index: 1;
+  min-height: var(--editor-min-height);
+  background-color: var(--box-color);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-button-border);
+}
+.mdxeditor [contenteditable="true"] {
+  position: relative;
+  z-index: 1;
+  min-height: calc(var(--editor-min-height) - var(--editor-toolbar-h));
+  padding: 1rem;
+  background: var(--box-color);
+  color: #111;
+}
+
+.EditorPlaceholder {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: calc(1rem + var(--editor-toolbar-h));
+  bottom: 1rem;
+  z-index: 2;
+  pointer-events: none;
+  color: #4b5563;
+  opacity: 0.95;
+  overflow: auto;
+}
+.EditorPlaceholderText {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+.EditorWrapper.has-content .EditorPlaceholder {
+  display: none;
+}
+
+.SigCreateBtn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 700;
+  border: 1px solid var(--color-button-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease;
+  margin-top: 0.5rem;
+}
+.SigCreateBtn:hover:enabled {
+  filter: brightness(0.95);
+}
+.SigCreateBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .CreateSigContainer {
+    padding: 2rem 1rem;
+  }
+  .CreateSigTitle {
+    font-size: 1.75rem;
+  }
+}

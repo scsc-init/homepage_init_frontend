@@ -1,3 +1,107 @@
+#SigListContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  background-color: var(--background-color);
+}
+
+#SigList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sigLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.sigCard {
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: var(--executive-card-bg);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.sigCard:hover {
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
+}
+
+.sigTopbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sigTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-body);
+}
+
+.sigUserCount {
+  font-size: 0.9rem;
+  color: var(--color-text-subtle);
+}
+
+.sigDescription {
+  font-size: 0.95rem;
+  color: var(--color-text-subtle);
+  line-height: 1.4;
+  white-space: normal;
+}
+
+#SigCreateButton {
+  all: unset;
+}
+
+.SigCreateBtn {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.SigCreateBtn:hover {
+  background-color: var(--color-button-hover-bg);
+}
+
+.SigHeader {
+  width: 100%;
+  max-width: 60rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.SigActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .SigActions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  .SigActions > * {
+    width: 100%;
+  }
+}
+
 @import "@radix-ui/colors/indigo.css";
 @import "@radix-ui/colors/violet.css";
 @import "@radix-ui/colors/slate.css";
@@ -8,14 +112,14 @@
   align-items: center;
   max-width: 60rem;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: 2rem 1rem;
 }
 
 #SigList {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .sigLink {
@@ -25,17 +129,18 @@
 
 .sigCard {
   border: 1px solid var(--slate-6);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   background: white;
-  padding: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  transition: background-color 0.2s ease;
+  gap: 0.4rem;
+  transition: box-shadow 0.2s ease;
+  background-color: var(--executive-card-bg);
 }
 
 .sigCard:hover {
-  background-color: var(--slate-2);
+  box-shadow: 0 2px 6px var(--executive-card-shadow);
 }
 
 .sigTopbar {
@@ -45,20 +150,20 @@
 }
 
 .sigTitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--indigo-11);
+  color: var(--color-text-body);
 }
 
 .sigUserCount {
-  font-size: 0.85rem;
-  color: var(--slate-9);
+  font-size: 0.9rem;
+  color: var(--slate-10);
 }
 
 .sigDescription {
-  font-size: 0.9rem;
-  color: var(--slate-11);
-  line-height: 1.3;
+  font-size: 0.95rem;
+  color: var(--color-text-subtle);
+  line-height: 1.4;
   white-space: pre-wrap;
 }
 
@@ -67,7 +172,7 @@
 }
 
 .SigCreateBtn {
-  background-color: var(--indigo-9);
+  background-color: var(--color-button-bg);
   color: white;
   padding: 0.6rem 1.2rem;
   border-radius: 0.5rem;
@@ -82,9 +187,28 @@
 
 .SigHeader {
   width: 100%;
-  max-width: 60rem;
+  max-width: 60rem; /* SigListContainer와 동일하게 제한 */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+html,
+body {
+  background-color: var(--background-color);
+}
+
+.sigDescription {
+  font-size: 0.95rem;
+  color: var(--color-text-subtle);
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.SigActions {
+  display: flex;
+  justify-content: space-between; /* 왼쪽 끝 ↔ 오른쪽 끝 */
+  align-items: center;
+  margin-bottom: 1.5rem; /* 글 목록과 간격 */
 }

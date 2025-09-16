@@ -1,21 +1,31 @@
 // src/app/executive/user/page.jsx
-
 import WithAuthorization from "@/components/WithAuthorization";
 import UserList from "./UserList";
 import EnrollManagementPanel from "./EnrollManagementPanel";
+import OldboyManageMentPanel from "./OldboyManagementPanel";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
+import "../page.css";
 
 export default async function ExecutiveUserPage() {
-  const users = await fetchUsersByRoles();
-  const majors = await fetchMajors();
+  const [users, majors] = await Promise.all([
+    fetchUsersByRoles(),
+    fetchMajors(),
+  ]);
 
   return (
     <WithAuthorization>
-      <div style={{ padding: "2rem" }}>
+      <div className="admin-panel">
         <h2>유저 관리</h2>
-        <UserList users={users} majors={majors} />
-        <EnrollManagementPanel />
+        <div className="adm-section">
+          <UserList users={users} majors={majors} />
+        </div>
+        <div className="adm-section">
+          <EnrollManagementPanel />
+        </div>
+        <div className="adm-section">
+          <OldboyManageMentPanel users={users ?? []} />
+        </div>
       </div>
     </WithAuthorization>
   );

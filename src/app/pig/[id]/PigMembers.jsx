@@ -1,54 +1,30 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-export default function PigMembers({ pigId }) {
-  const [memberNames, setMemberNames] = useState([]);
-  const router = useRouter();
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-    }
-
-    const fetchMembers = async () => {
-      try {
-        const membersRes = await fetch(`/api/pig/${pigId}/members`, {
-          headers: { "x-jwt": jwt },
-        });
-        if (!membersRes.ok) {
-          alert("피그 인원 불러오기 실패");
-          router.push('/pig');
-        }
-        const members = await membersRes.json();
-
-        const namePromises = members.map(async (m) => {
-            const res = await fetch(`/api/user/${m.user_id}`);
-            if (!res.ok) throw new Error("Member fetch failed");
-            const user = await res.json();
-            return user.name;
-        });
-
-        const names = await Promise.all(namePromises);
-        setMemberNames(names);
-      } catch (e) {
-        alert(`피그 인원 불러오기 중 오류: ${e}`);
-        router.push('/pig');
-      }
-    };
-    fetchMembers();
-  }, [router, pigId]);
+export default function PigMembers({ members }) {
+  const list = Array.isArray(members) ? members : [];
+  const count = list.length;
 
   return (
-    <div>
-      <h2>피그 인원</h2>
-      {memberNames.length === 0 ? (
-        <div>로딩 중...</div>
+    <section
+      className="PigMembersSection"
+      aria-labelledby="pig-members-heading"
+    >
+      <div className="PigMembersHeader">
+        <h2 id="pig-members-heading" className="PigMembersTitle">
+          피그 인원
+        </h2>
+        <span className="PigMembersCount">{count}명</span>
+      </div>
+
+      {count === 0 ? (
+        <div className="PigMembersEmpty">가입한 인원이 없습니다.</div>
       ) : (
-        memberNames.map((name, i) => <div key={i}>{name}</div>)
+        <ul className="PigMemberList">
+          {list.map((m) => (
+            <li key={m.id} className="PigMemberChip">
+              {m.name}
+            </li>
+          ))}
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

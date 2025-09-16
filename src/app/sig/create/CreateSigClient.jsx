@@ -12,6 +12,7 @@ export default function CreateSigClient() {
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editorKey, setEditorKey] = useState(0);
 
   const saved =
     typeof window !== "undefined" ? sessionStorage.getItem("sigForm") : null;
@@ -33,9 +34,10 @@ export default function CreateSigClient() {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) { 
+    if (!jwt) {
       alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+      router.push("/us/login");
+      return;
     }
 
     const fetchProfile = async () => {
@@ -123,11 +125,12 @@ export default function CreateSigClient() {
       if (res.status === 201) {
         alert("SIG 생성 성공!");
         isFormSubmitted.current = true;
+        sessionStorage.removeItem("sigForm");
         router.push("/sig");
         router.refresh();
       } else {
         const err = await res.json();
-        alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
+        alert("SIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
@@ -150,6 +153,8 @@ export default function CreateSigClient() {
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           Editor={Editor}
+          editorKey={editorKey}
+          isCreate={true}
         />
       </div>
     </div>

@@ -2,16 +2,16 @@
 
 Next.js App Router 기반으로 구축되었으며, 사용자 인증, SIG 생성, 게시판 등 다양한 기능을 지원합니다.
 
-> 최종 수정일 : 2025-07-22
-
-작성자 : 이한경 윤영우 강명석 박성현
+> 최신개정일 : 2025-08-05
+> 작성자 : 이한경 윤영우 강명석 박성현
+> 최신개정자 : 윤영우
 
 ---
 
 ## 브랜치 설명
 
 - main: 배포된 코드를 저장하며 버전 별로 태그가 붙어 있습니다.
-- develop(default): 개발 중인 코드를 저장합니다. 
+- develop(default): 개발 중인 코드를 저장합니다.
 
 ---
 
@@ -49,6 +49,21 @@ src/
 
 ---
 
+## 환경 변수 설명
+
+| Key Name                          | Description                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------- |
+| `BACKEND_URL`                     | 연결된 BE 서버의 외부 URL                                                                   |
+| `API_SECRET`                      | BE 서버에서 처리되는 API KEY                                                                |
+| `GOOGLE_CLIENT_ID`                | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
+| `GOOGLE_CLIENT_SECRET`            | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
+| `NEXTAUTH_SECRET`                 | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
+| `NEXTAUTH_URL`                    | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
+| `SNU_EMAIL_CHECK`                 | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
+| `NEXT_PUBLIC_DEPOSIT_ACC`         | 동비 입금 계좌와 입금자명                                                                   |
+| `NEXT_PUBLIC_DISCORD_INVITE_LINK` | 디스코드 초대 링크                                                                          |
+| `NEXT_PUBLIC_KAKAO_INVITE_LINK`   | 카카오톡 초대 링크                                                                          |
+
 ## 설치 및 실행 방법
 
 ### 1. 레포지토리 클론
@@ -61,6 +76,8 @@ git clone https://github.com/scsc-init/homepage_init_frontend.git
 
 ```bash
 npm install
+npm install react-swipeable
+
 ```
 
 ### 3. `.env.local` 설정
@@ -75,6 +92,9 @@ GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
 NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
 NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 SNU_EMAIL_CHECK=TRUE
+NEXT_PUBLIC_DEPOSIT_ACC=국민은행 942902-02-054136 (강명석)
+NEXT_PUBLIC_DISCORD_INVITE_LINK=https://discord.gg/SmXFDxA7XE
+NEXT_PUBLIC_KAKAO_INVITE_LINK=https://invite.kakao.com/tc/II2yiLsQhY
 ```
 
 Google OAuth, NextAuth 설정에 관한 자세한 설명은 아래를 참고하세요.

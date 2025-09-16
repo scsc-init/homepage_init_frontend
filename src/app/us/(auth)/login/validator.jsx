@@ -1,6 +1,5 @@
-export function email(email, then) {
-  then &&
-    then(email != undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email));
+export function email(email) {
+  return email != undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email);
 }
 
 export function emailCode(code, then) {
@@ -26,6 +25,17 @@ export function phoneNumber(phoneNumber, then) {
     );
 }
 
+// export function studentID(studentID, then) {
+//   then && then(studentID != undefined && /^[0-9]{4}[0-9]{5}$/.test(studentID));
+// }
+
 export function studentID(studentID, then) {
-  then && then(studentID != undefined && /^[0-9]{4}[0-9]{5}$/.test(studentID));
+  const match = studentID.match(/^(\d{4})(\d{5})$/);
+  if (!match) return then && then(false);
+
+  const year = parseInt(match[1], 10);
+  const currentYear = new Date().getFullYear();
+  const isValid = year >= 1946 && year <= currentYear;
+
+  then && then(isValid);
 }
