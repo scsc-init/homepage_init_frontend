@@ -14,12 +14,12 @@ const noto_sans_kr = Noto_Sans_KR({ subsets: ["latin"] });
 
 export const metadata = {
   title: {
-    default: "SCSC: 컴퓨터 연구회",
+    default: "SCSC: 서울대 컴퓨터 연구회",
     template: "%s | SCSC",
   },
   description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
   openGraph: {
-    title: "SCSC",
+    title: "SNU SCSC",
     description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
     url: "https://homepage-init-frontend-ixxt.vercel.app/",
     siteName: "SCSC",
