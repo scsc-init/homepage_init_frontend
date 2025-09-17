@@ -29,6 +29,7 @@ export default function CreatePigClient() {
       title: "",
       description: "",
       editor: "",
+      should_extend: false
     },
   });
 
@@ -119,6 +120,7 @@ export default function CreatePigClient() {
           title: data.title,
           description: data.description,
           content: data.editor,
+          should_extend: data.should_extend
         }),
       });
 
