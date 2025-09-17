@@ -46,6 +46,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
         headers: { "Content-Type": "application/json", "x-jwt": jwt },
       });
       if (res.ok) {
+        alert("SIG 가입 성공!");
         setIsMember(true);
         router.refresh();
       } else {
@@ -68,6 +69,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
         headers: { "Content-Type": "application/json", "x-jwt": jwt },
       });
       if (res.ok) {
+        alert("SIG 탈퇴 성공!");
         setIsMember(false);
         router.refresh();
       } else {

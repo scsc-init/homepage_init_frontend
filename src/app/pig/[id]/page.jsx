@@ -4,6 +4,7 @@ import { getBaseUrl } from "@/util/getBaseUrl";
 import "./page.css";
 import PigClient from "./PigClient";
 
+
 export async function generateMetadata({ params }) {
   const { id } = params;
   try {
