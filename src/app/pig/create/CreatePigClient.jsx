@@ -18,6 +18,7 @@ export default function CreatePigClient() {
     typeof window !== "undefined" ? sessionStorage.getItem("pigForm") : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
+  const baseDefaults = { title: "", description: "", editor: "", should_extend: false };
   const {
     register,
     control,
@@ -25,12 +26,9 @@ export default function CreatePigClient() {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed || {
-      title: "",
-      description: "",
-      editor: "",
-      should_extend: false
-    },
+    defaultValues: parsed 
+      ? {...baseDefaults, ...parsed, should_extend: parsed.should_extend ?? false}
+      : baseDefaults,
   });
 
   useEffect(() => {
