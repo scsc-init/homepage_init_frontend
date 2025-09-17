@@ -43,7 +43,7 @@ export default function SigForm({
         />
       </div>
 
-      <div>
+      {isCreate ? null : <div>
         <label className="block mb-2 font-semibold">다음 학기에 연장 신청</label>
         <div>
           <Controller
@@ -55,7 +55,7 @@ export default function SigForm({
             )}
           />
         </div>
-      </div>
+      </div>}
 
       <Button.Root type="submit">{isCreate ? 'SIG 생성' : 'SIG 수정'}</Button.Root>
     </form>

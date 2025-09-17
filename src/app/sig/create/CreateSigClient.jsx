@@ -18,7 +18,6 @@ export default function CreateSigClient() {
     typeof window !== "undefined" ? sessionStorage.getItem("sigForm") : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
-  const baseDefaults = { title: "", description: "", editor: "", should_extend: false };
   const {
     register,
     control,
@@ -26,9 +25,11 @@ export default function CreateSigClient() {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed 
-      ? {...baseDefaults, ...parsed, should_extend: parsed.should_extend ?? false}
-      : baseDefaults,
+    defaultValues: parsed || {
+      title: "",
+      description: "",
+      editor: "",
+    },
   });
 
   useEffect(() => {
@@ -118,7 +119,6 @@ export default function CreateSigClient() {
           title: data.title,
           description: data.description,
           content: data.editor,
-          should_extend: data.should_extend
         }),
       });
 
