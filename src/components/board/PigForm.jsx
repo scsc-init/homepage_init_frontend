@@ -45,14 +45,16 @@ export default function PigForm({
 
       <div>
         <label className="block mb-2 font-semibold">다음 학기에 연장 신청</label>
-        <Controller
-          name="should_extend"
-          control={control}
-          defaultValue={false}
-          render={({ field }) => (
-            <ToggleSwitch checked={field.value} onChange={field.onChange} />
-          )}
-        />
+        <div>
+          <Controller
+            name="should_extend"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <ToggleSwitch checked={field.value} onChange={field.onChange} />
+            )}
+          />
+        </div>
       </div>
 
       <Button.Root type="submit">{isCreate ? 'PIG 생성' : 'PIG 수정'}</Button.Root>
