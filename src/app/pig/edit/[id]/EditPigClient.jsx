@@ -73,7 +73,6 @@ export default function EditPigClient({ pigId }) {
       }
 
       const pig = await res.json();
-      console.log(pig)
       setPig(pig);
       const articleRes = await fetch(`/api/article/${pig.content_id}`, {
         headers: { "x-jwt": jwt },
@@ -153,6 +152,7 @@ export default function EditPigClient({ pigId }) {
           title: data.title,
           description: data.description,
           content: data.editor,
+          should_extend: data.should_extend
         }),
       });
 
