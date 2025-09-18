@@ -150,3 +150,4 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 ## 유지보수 관련 사항
 
 /util/constatns.jsx에 프론트에서 설정해야할 변수와 값들이 있습니다. 수정할 필요가 있다면 백엔드와 협의해 작성해주세요.
+파일 상단의 주석을 참고해 수정해주세요.

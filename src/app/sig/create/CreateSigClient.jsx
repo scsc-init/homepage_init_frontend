@@ -1,4 +1,3 @@
-// app/sig/create/CreateSigClient.jsx
 "use client";
 
 import Editor from "@/components/board/EditorWrapper.jsx";
@@ -90,6 +89,7 @@ export default function CreateSigClient() {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.push("/us/login");
@@ -106,6 +106,7 @@ export default function CreateSigClient() {
       )
         return;
     }
+
     setSubmitting(true);
 
     try {
@@ -146,7 +147,7 @@ export default function CreateSigClient() {
         <h1 className="CreateSigTitle">SIG 생성</h1>
         <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요.</p>
       </div>
-      <div className="CreateSigCard">
+      <div className={`CreateSigCard ${submitting ? "is-busy" : ""}`}>
         <SigForm
           register={register}
           control={control}

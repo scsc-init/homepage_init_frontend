@@ -111,11 +111,12 @@ export default function ArticleDetail({ params }) {
       <p className="SigInfo">작성일: {UTC2KST(new Date(article.created_at))}</p>
 
       {isAuthor && (
-        <div className="SigActionRow">
+        <div className={`SigActionRow ${isDeleting ? "is-busy" : ""}`}>
           <button
             className="SigButton is-edit"
             onClick={() => router.push(`/article/edit/${id}`)}
             type="button"
+            disabled={isDeleting}
           >
             수정
           </button>

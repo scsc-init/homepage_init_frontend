@@ -117,6 +117,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     new Intl.NumberFormat("ko-KR").format(Number(n || 0));
 
   const onSubmit = async (data) => {
+    if (submitting) return; // 이중 클릭 가드
     if (!user) return;
     const jwt = localStorage.getItem("jwt");
     setSubmitting(true);
@@ -216,7 +217,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
         <p className="CreateSigSubtitle">{boardInfo?.description ?? ""}</p>
       </div>
 
-      <div className="CreateSigCard">
+      <div className={`CreateSigCard ${submitting ? "is-busy" : ""}`}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="Step fade-in">
             <label className="C_Label">신청 유형</label>
