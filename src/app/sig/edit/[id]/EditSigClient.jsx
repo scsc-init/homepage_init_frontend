@@ -36,6 +36,7 @@ export default function EditSigClient({ sigId }) {
       title: "",
       description: "",
       editor: "",
+      should_extend: false
     },
   });
 
@@ -153,6 +154,7 @@ export default function EditSigClient({ sigId }) {
           title: data.title,
           description: data.description,
           content: data.editor,
+          should_extend: data.should_extend
         }),
       });
 
@@ -179,6 +181,7 @@ export default function EditSigClient({ sigId }) {
         title: sig.title ?? "",
         description: sig.description ?? "",
         editor: article.content ?? "",
+        should_extend: sig.should_extend ?? false
       });
       setEditorKey(k => k + 1);
     }

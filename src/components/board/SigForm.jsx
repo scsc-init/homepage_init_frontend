@@ -1,6 +1,7 @@
 // components/sig/SigForm.jsx
 import SigInputField from "./SigInputField";
 import * as Button from "@/components/Button.jsx";
+import ToggleSwitch from "@/components/ToggleSwitch.jsx";
 import { Controller } from "react-hook-form";
 
 export default function SigForm({
@@ -41,6 +42,20 @@ export default function SigForm({
           )}
         />
       </div>
+
+      {isCreate ? null : <div>
+        <label className="block mb-2 font-semibold">다음 학기에 연장 신청</label>
+        <div>
+          <Controller
+            name="should_extend"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <ToggleSwitch checked={field.value} onChange={field.onChange} />
+            )}
+          />
+        </div>
+      </div>}
 
       <Button.Root type="submit">{isCreate ? 'SIG 생성' : 'SIG 수정'}</Button.Root>
     </form>

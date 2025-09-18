@@ -36,6 +36,7 @@ export default function EditPigClient({ pigId }) {
       title: "",
       description: "",
       editor: "",
+      should_extend: false
     },
   });
 
@@ -151,6 +152,7 @@ export default function EditPigClient({ pigId }) {
           title: data.title,
           description: data.description,
           content: data.editor,
+          should_extend: data.should_extend
         }),
       });
 
@@ -177,6 +179,7 @@ export default function EditPigClient({ pigId }) {
         title: pig.title ?? "",
         description: pig.description ?? "",
         editor: article.content ?? "",
+        should_extend: pig.should_extend ?? false
       });
       setEditorKey(k => k + 1);
     }
