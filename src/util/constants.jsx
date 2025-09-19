@@ -8,7 +8,7 @@ export const oldboyLevel = 400;
 export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 // 학기 숫자에 대응되는 학기 표시값입니다.
 
-const CRTL_STATUS_AVAILABLE = {
+const CTRL_STATUS_AVAILABLE = {
   JOIN_SIGPIG: ['surveying', 'recruiting'],
   JOIN_SIGPIG_ROLLING_ADMISSION: ['surveying', 'recruiting', 'active'],
 };
@@ -20,9 +20,12 @@ const CRTL_STATUS_AVAILABLE = {
  * @returns {Boolean}
  */
 export function is_sigpig_join_available(status, is_rolling_admission) {
-  return CRTL_STATUS_AVAILABLE[
-    is_rolling_admission ? 'JOIN_SIGPIG_ROLLING_ADMISSION' : 'JOIN_SIGPIG'
-  ].includes(status);
+  const rolling =
+    typeof is_rolling_admission === 'boolean'
+      ? is_rolling_admission
+      : String(is_rolling_admission).toLowerCase() === 'true';
+  const key = rolling ? 'JOIN_SIGPIG_ROLLING_ADMISSION' : 'JOIN_SIGPIG';
+  return CTRL_STATUS_AVAILABLE[key].includes(status);
 }
 
 export const COLORS = {
@@ -58,7 +61,7 @@ export const KAKAO_INVITE_LINK = pickEnv(
   process.env.KAKAO_INVITE_LINK,
   'https://invite.kakao.com/tc/II2yiLsQhY',
 );
-export function UTC2KST(date) {
+export function utc2kst(date) {
   const utc = date.getTime();
   const kst = new Date(utc + 9 * 60 * 60 * 1000);
 
