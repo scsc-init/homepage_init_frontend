@@ -119,6 +119,7 @@ export default function EditSigClient({ sigId }) {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {
       router.push('/us/login');
@@ -134,13 +135,6 @@ export default function EditSigClient({ sigId }) {
     setSubmitting(true);
 
     try {
-      console.log('Payload being sent:', {
-        title: data.title,
-        description: data.description,
-        content: data.editor,
-        should_extend: data.should_extend,
-        is_rolling_admission: data.is_rolling_admission,
-      });
       const res = await fetch(
         user.role >= minExecutiveLevel
           ? `/api/sig/${sigId}/update/executive`

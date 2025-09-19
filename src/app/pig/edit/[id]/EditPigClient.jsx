@@ -119,6 +119,7 @@ export default function EditPigClient({ pigId }) {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {
       router.push('/us/login');
@@ -134,13 +135,6 @@ export default function EditPigClient({ pigId }) {
     setSubmitting(true);
 
     try {
-      console.log('Payload being sent:', {
-        title: data.title,
-        description: data.description,
-        content: data.editor,
-        should_extend: data.should_extend,
-        is_rolling_admission: data.is_rolling_admission,
-      });
       const res = await fetch(
         user.role >= minExecutiveLevel
           ? `/api/pig/${pigId}/update/executive`
@@ -185,7 +179,7 @@ export default function EditPigClient({ pigId }) {
         description: pig.description ?? '',
         editor: article.content ?? '',
         should_extend: pig.should_extend ?? false,
-        is_rolling_admission: sig.is_rolling_admission ?? false,
+        is_rolling_admission: pig.is_rolling_admission ?? false,
       });
       setEditorKey((k) => k + 1);
     }

@@ -84,7 +84,7 @@ export default function PigClient({ pig, members, articleId, pigId }) {
       <h1 className="PigTitle">{pig.title}</h1>
       <p className="PigInfo">
         {pig.year}학년도 {semesterLabel} · 상태: {pig.status} · 가입 기간 자유화:{' '}
-        {sig.is_rolling_admission ? 'O' : 'X'}
+        {pig.is_rolling_admission ? 'O' : 'X'}
       </p>
       <p className="PigDescription">{pig.description}</p>
       <div className="PigActionRow">

@@ -44,7 +44,6 @@ export default function SigForm({
           <Controller
             name="is_rolling_admission"
             control={control}
-            defaultValue={false}
             render={({ field }) => (
               <ToggleSwitch checked={field.value} onChange={field.onChange} />
             )}
@@ -59,7 +58,6 @@ export default function SigForm({
             <Controller
               name="should_extend"
               control={control}
-              defaultValue={false}
               render={({ field }) => (
                 <ToggleSwitch checked={field.value} onChange={field.onChange} />
               )}
