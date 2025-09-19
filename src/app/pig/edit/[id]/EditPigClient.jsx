@@ -72,6 +72,7 @@ export default function EditPigClient({ pigId }) {
       if (!res.ok) {
         alert('피그 정보를 불러오지 못했습니다.');
         router.push('/pig');
+        return;
       }
 
       const pig = await res.json();
@@ -84,12 +85,13 @@ export default function EditPigClient({ pigId }) {
       if (!articleRes.ok) {
         alert('피그 정보를 불러오지 못했습니다.');
         router.push('/pig');
+        return;
       }
       const article = await articleRes.json();
       setArticle(article);
     };
     fetchPigData();
-  }, [router]);
+  }, [router, pigId]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -128,6 +130,7 @@ export default function EditPigClient({ pigId }) {
 
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
+      return;
     } else if (!user.discord_id) {
       if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
@@ -156,6 +159,7 @@ export default function EditPigClient({ pigId }) {
       );
 
       if (res.status === 204) {
+        isFormSubmitted.current = true;
         alert('PIG 수정 성공!');
         router.push(`/pig/${pigId}`);
         router.refresh();
