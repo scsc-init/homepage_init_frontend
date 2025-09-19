@@ -3,7 +3,6 @@ import "./global.css";
 import HeaderWrapper from "./HeaderWrapper";
 import ThemeToggle from "@/components/ThemeToggle";
 import dynamic from "next/dynamic";
-import { SessionContext } from "next-auth/react";
 import Providers from "./Providers.jsx";
 
 const FooterWrapper = dynamic(() => import("@/app/FooterWrapper"), {
@@ -19,9 +18,11 @@ export const metadata = {
   },
   description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
   openGraph: {
-    title: "SNU SCSC",
-    description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
-    url: "https://homepage-init-frontend-ixxt.vercel.app/",
+    title: "서울대학교 SCSC",
+    description: "서울대학교 컴퓨터 연구회 SCSC의 공식 홈페이지입니다.  \
+      SCSC는 SIG(Special Interested Group) 또는 PIG를 통해 스터디와 \
+      연구를 진행합니다. 이에 더해 SCSC는, SKYST 대회 진행 및 세미나 운영을 진행하고 있습니다.",
+    url: "https://scsc.dev/",
     siteName: "SCSC",
     images: [
       { url: "/opengraph.png", width: 1200, height: 630, alt: "SCSC Logo" },
@@ -30,9 +31,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SCSC",
+    title: "서울대학교 SCSC",
     description: "서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.",
-    images: ["/img4.jpg"],
+    images: ["/opengraph.png"],
   },
   icons: { icon: "/favicon.ico" },
 };
