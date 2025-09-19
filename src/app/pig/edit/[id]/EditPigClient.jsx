@@ -1,12 +1,12 @@
 // app/pig/edit/[id]/EditPigClient.jsx
-"use client";
+'use client';
 
-import Editor from "@/components/board/EditorWrapper.jsx";
-import PigForm from "@/components/board/PigForm";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { minExecutiveLevel } from "@/util/constants";
+import Editor from '@/components/board/EditorWrapper.jsx';
+import PigForm from '@/components/board/PigForm';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { minExecutiveLevel } from '@/util/constants';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -33,54 +33,57 @@ export default function EditPigClient({ pigId }) {
     formState: { isDirty },
   } = useForm({
     defaultValues: {
-      title: "",
-      description: "",
-      editor: "",
-      should_extend: false
+      title: '',
+      description: '',
+      editor: '',
+      should_extend: false,
+      is_rolling_admission: false,
     },
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) { 
-      alert("로그인이 필요합니다.");
-      router.push("/us/login"); return;
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) {
+      alert('로그인이 필요합니다.');
+      router.push('/us/login');
+      return;
     }
 
     const fetchProfile = async () => {
-      const jwt = localStorage.getItem("jwt");
+      const jwt = localStorage.getItem('jwt');
       if (!jwt) return;
 
       const res = await fetch(`/api/user/profile`, {
-        headers: { "x-jwt": jwt },
+        headers: { 'x-jwt': jwt },
       });
       if (res.ok) setUser(await res.json());
-      else router.push("/us/login");
+      else router.push('/us/login');
     };
     fetchProfile();
 
     const fetchPigData = async () => {
-      const jwt = localStorage.getItem("jwt");
+      const jwt = localStorage.getItem('jwt');
       if (!jwt) return;
 
       const res = await fetch(`/api/pig/${pigId}`, {
-        headers: { "x-jwt": jwt },
+        headers: { 'x-jwt': jwt },
       });
 
       if (!res.ok) {
-        alert("피그 정보를 불러오지 못했습니다.");
-        router.push("/pig");
+        alert('피그 정보를 불러오지 못했습니다.');
+        router.push('/pig');
       }
 
       const pig = await res.json();
       setPig(pig);
+
       const articleRes = await fetch(`/api/article/${pig.content_id}`, {
-        headers: { "x-jwt": jwt },
+        headers: { 'x-jwt': jwt },
       });
 
       if (!articleRes.ok) {
-        alert("피그 정보를 불러오지 못했습니다.");
-        router.push("/pig");
+        alert('피그 정보를 불러오지 못했습니다.');
+        router.push('/pig');
       }
       const article = await articleRes.json();
       setArticle(article);
@@ -92,82 +95,84 @@ export default function EditPigClient({ pigId }) {
     const handleBeforeUnload = (e) => {
       if (!isFormSubmitted.current && isDirty) {
         e.preventDefault();
-        e.returnValue = "";
+        e.returnValue = '';
       }
     };
 
     const handleRouteChange = (url) => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm(
-          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
-        );
+        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
-          router.events.emit("routeChangeError");
-          throw "Route change aborted by user.";
+          router.events.emit('routeChangeError');
+          throw 'Route change aborted by user.';
         }
       }
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    router.events?.on?.("routeChangeStart", handleRouteChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    router.events?.on?.('routeChangeStart', handleRouteChange);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      router.events?.off?.("routeChangeStart", handleRouteChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      router.events?.off?.('routeChangeStart', handleRouteChange);
     };
   }, [isDirty]);
 
   const onSubmit = async (data) => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     if (!jwt) {
-      router.push("/us/login");
+      router.push('/us/login');
       return;
     }
 
     if (!user) {
-      alert("잠시 뒤 다시 시도해주세요");
+      alert('잠시 뒤 다시 시도해주세요');
     } else if (!user.discord_id) {
-      if (
-        !confirm(
-          "계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?",
-        )
-      )
+      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
     }
     setSubmitting(true);
 
     try {
-      console.log("Payload being sent:", {
+      console.log('Payload being sent:', {
         title: data.title,
         description: data.description,
         content: data.editor,
+        should_extend: data.should_extend,
+        is_rolling_admission: data.is_rolling_admission,
       });
-      const res = await fetch((user.role >= minExecutiveLevel) ? `/api/pig/${pigId}/update/executive` : `/api/pig/${pigId}/update`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-jwt": jwt,
+      const res = await fetch(
+        user.role >= minExecutiveLevel
+          ? `/api/pig/${pigId}/update/executive`
+          : `/api/pig/${pigId}/update`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-jwt': jwt,
+          },
+          body: JSON.stringify({
+            title: data.title,
+            description: data.description,
+            content: data.editor,
+            should_extend: data.should_extend,
+            is_rolling_admission: data.is_rolling_admission,
+          }),
         },
-        body: JSON.stringify({
-          title: data.title,
-          description: data.description,
-          content: data.editor,
-          should_extend: data.should_extend
-        }),
-      });
+      );
 
       if (res.status === 204) {
-        alert("PIG 수정 성공!");
+        alert('PIG 수정 성공!');
         router.push(`/pig/${pigId}`);
         router.refresh();
       } else {
         const err = await res.json();
         console.log(err);
-        alert("PIG 수정 실패: " + (err.detail ?? JSON.stringify(err)));
+        alert('PIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       console.error(err);
-      alert(err.message || "네트워크 오류");
+      alert(err.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }
@@ -176,12 +181,13 @@ export default function EditPigClient({ pigId }) {
   useEffect(() => {
     if (pig && article && mounted) {
       reset({
-        title: pig.title ?? "",
-        description: pig.description ?? "",
-        editor: article.content ?? "",
-        should_extend: pig.should_extend ?? false
+        title: pig.title ?? '',
+        description: pig.description ?? '',
+        editor: article.content ?? '',
+        should_extend: pig.should_extend ?? false,
+        is_rolling_admission: sig.is_rolling_admission ?? false,
       });
-      setEditorKey(k => k + 1);
+      setEditorKey((k) => k + 1);
     }
   }, [pig, article, mounted, reset]);
 
