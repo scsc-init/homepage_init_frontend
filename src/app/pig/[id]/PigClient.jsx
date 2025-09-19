@@ -8,7 +8,7 @@ import PigDeleteButton from './PigDeleteButton';
 import PigMembers from './PigMembers';
 import PigContents from './PigContents';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
+import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 
 export default function PigClient({ pig, members, articleId, pigId }) {
   const router = useRouter();
@@ -83,12 +83,13 @@ export default function PigClient({ pig, members, articleId, pigId }) {
     <div className="PigDetailContainer">
       <h1 className="PigTitle">{pig.title}</h1>
       <p className="PigInfo">
-        {pig.year}학년도 {semesterLabel} · 상태: {pig.status} · 가입 기간 자유화:{' '}
-        {pig.is_rolling_admission ? 'O' : 'X'}
+        {pig.year}학년도 {semesterLabel} · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>
       <div className="PigActionRow">
-        <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
+        {is_sigpig_join_available(pig.status, pig.is_rolling_admission) && (
+          <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
+        )}
         <EditPigButton pigId={pigId} canEdit={canEdit} />
         <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
