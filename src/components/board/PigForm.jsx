@@ -1,6 +1,7 @@
 // component를 잘못 설계해서, sig로 재활용하는 양상이 되어버렸습니다. 배포 이전에는 수정하겠습니다.
 import SigInputField from "./SigInputField";
 import * as Button from "@/components/Button.jsx";
+import ToggleSwitch from "@/components/ToggleSwitch.jsx";
 import { Controller } from "react-hook-form";
 
 export default function PigForm({
@@ -41,6 +42,20 @@ export default function PigForm({
           )}
         />
       </div>
+
+      {isCreate ? null : <div>
+        <label className="block mb-2 font-semibold">다음 학기에 연장 신청</label>
+        <div>
+          <Controller
+            name="should_extend"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <ToggleSwitch checked={field.value} onChange={field.onChange} />
+            )}
+          />
+        </div>
+      </div>}
 
       <Button.Root type="submit">{isCreate ? 'PIG 생성' : 'PIG 수정'}</Button.Root>
     </form>

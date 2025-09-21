@@ -58,10 +58,11 @@ async function fetchTargets(type) {
   const arr = Array.isArray(data)
     ? data
     : (data?.items ?? data?.data ?? data?.results ?? []);
-  const onlyActive = (Array.isArray(arr) ? arr : []).filter(
-    (x) => String(x?.status || "").toLowerCase() === "active",
+  const allowed = new Set(["active", "surveying", "recruiting"]);
+  const filtered = (Array.isArray(arr) ? arr : []).filter((x) =>
+    allowed.has(String(x?.status || "").toLowerCase()),
   );
-  const norm = normalizeTargets(onlyActive);
+  const norm = normalizeTargets(filtered);
   if (norm.length) return norm;
   return [];
 }

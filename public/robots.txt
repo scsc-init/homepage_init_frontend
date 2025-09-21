@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /us/login
+Disallow: /us/signup
+Disallow: /us/my-page
+Disallow: /article/edit/
+Disallow: /sig/edit/
+Disallow: /pig/edit/
+Disallow: /draft/
+Disallow: /internal/
+
+Sitemap: https://scsc.dev/sitemap.xml
+Host: https://scsc.dev
