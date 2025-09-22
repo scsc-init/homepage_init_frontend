@@ -2,6 +2,7 @@
 import WithAuthorization from "@/components/WithAuthorization";
 import UserList from "./UserList";
 import EnrollManagementPanel from "./EnrollManagementPanel";
+import OldboyManageMentPanel from "./OldboyManagementPanel";
 import { getBaseUrl } from "@/util/getBaseUrl";
 import { getApiSecret } from "@/util/getApiSecret";
 import "../page.css";
@@ -21,6 +22,9 @@ export default async function ExecutiveUserPage() {
         </div>
         <div className="adm-section">
           <EnrollManagementPanel />
+        </div>
+        <div className="adm-section">
+          <OldboyManageMentPanel users={users ?? []} />
         </div>
       </div>
     </WithAuthorization>
