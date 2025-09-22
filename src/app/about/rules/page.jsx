@@ -1,22 +1,22 @@
-import ScrollEffectWrapper from "@/components/about/ScrollEffectWrapper";
-import ReactMarkdown from "react-markdown";
-import "./page.css";
+import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
+import ReactMarkdown from 'react-markdown';
+import './page.css';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 async function fetchMarkdown() {
   const url =
-    "https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md";
-  const res = await fetch(url, { cache: "no-store" });
+    'https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md';
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) {
-    throw new Error("Failed to fetch regulation markdown.");
+    throw new Error('Failed to fetch regulation markdown.');
   }
   return res.text();
 }
 
 export default async function RegulationPage() {
   const markdow = await fetchMarkdown();
-  const markdown = markdow.replace("<!-- SCSC 회칙 -->", "");
+  const markdown = markdow.replace('<!-- SCSC 회칙 -->', '');
 
   return (
     <>

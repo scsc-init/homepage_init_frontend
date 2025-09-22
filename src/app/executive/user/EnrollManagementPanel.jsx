@@ -1,6 +1,6 @@
 // src/app/executive/user/EnrollManagementPanel.jsx (CLIENT)
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
 
 function TrxRecord({ record }) {
   return (
@@ -20,11 +20,11 @@ export default function EnrollManagementPanel() {
   const [failedCnt, setFailedCnt] = useState(0);
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     if (!jwt) return;
     const fetchStandbys = async () => {
       const res = await fetch(`/api/executive/user/standby/list`, {
-        headers: { "x-jwt": jwt },
+        headers: { 'x-jwt': jwt },
       });
       if (res.ok) setStandbys(await res.json());
     };
@@ -34,17 +34,17 @@ export default function EnrollManagementPanel() {
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     const form = new FormData();
-    form.append("file", file);
+    form.append('file', file);
     const res = await fetch(`/api/executive/user/standby/process`, {
-      method: "POST",
-      headers: { "x-jwt": jwt },
+      method: 'POST',
+      headers: { 'x-jwt': jwt },
       body: form,
     });
     if (res.status !== 200) {
       const err = await res.json();
-      alert("파일 처리 실패: " + err.detail);
+      alert('파일 처리 실패: ' + err.detail);
     } else {
       const enrollData = await res.json();
       setFailedCnt(enrollData.cnt_failed_records);
@@ -70,8 +70,8 @@ export default function EnrollManagementPanel() {
               <tr key={u.standby_user_id}>
                 <td className="adm-td">{u.user_name}</td>
                 <td className="adm-td">{u.deposit_name}</td>
-                <td className="adm-td">{u.deposit_time ?? "(없음)"}</td>
-                <td className="adm-td">{u.is_checked ? "✅" : "❌"}</td>
+                <td className="adm-td">{u.deposit_time ?? '(없음)'}</td>
+                <td className="adm-td">{u.is_checked ? '✅' : '❌'}</td>
               </tr>
             ))}
           </tbody>
@@ -92,7 +92,7 @@ export default function EnrollManagementPanel() {
             <div
               key={r.record.deposit_time}
               className="adm-table-wrap"
-              style={{ padding: "1rem" }}
+              style={{ padding: '1rem' }}
             >
               <div>{r.result_msg}</div>
               <TrxRecord record={r.record} />

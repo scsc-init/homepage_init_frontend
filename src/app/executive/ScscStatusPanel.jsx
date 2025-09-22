@@ -1,28 +1,28 @@
 // src/app/executive/ScscStatusPanel.jsx (CLIENT)
-"use client";
-import { SEMESTER_MAP } from "@/util/constants";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+'use client';
+import { SEMESTER_MAP } from '@/util/constants';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 const STATUS_MAP = {
-  surveying: "설문중",
-  recruiting: "모집중",
-  active: "활동중",
-  inactive: "비활성",
+  surveying: '설문중',
+  recruiting: '모집중',
+  active: '활동중',
+  inactive: '비활성',
 };
 const TRANSITION_MAP_REGULAR = {
-  inactive: ["surveying"],
-  surveying: ["recruiting"],
-  recruiting: ["active"],
-  active: ["surveying"],
+  inactive: ['surveying'],
+  surveying: ['recruiting'],
+  recruiting: ['active'],
+  active: ['surveying'],
 };
 const TRANSITION_MAP_SEASONAL = {
-  inactive: ["surveying"],
-  surveying: ["recruiting"],
-  recruiting: ["active"],
-  active: ["inactive"],
+  inactive: ['surveying'],
+  surveying: ['recruiting'],
+  recruiting: ['active'],
+  active: ['inactive'],
 };
-const REQUIRED_PHRASE = "confirm change";
+const REQUIRED_PHRASE = 'confirm change';
 const getNextStates = (current, semester) =>
   semester % 2 === 1
     ? TRANSITION_MAP_REGULAR[current] || []
@@ -34,29 +34,29 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
-  const [confirmationText, setConfirmationText] = useState("");
+  const [confirmationText, setConfirmationText] = useState('');
 
   const saveToModal = (status) => {
     setSelectedStatus(status);
-    setConfirmationText("");
+    setConfirmationText('');
     setModalOpen(true);
   };
 
   const handleConfirmSave = async () => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     setSaving(true);
     const res = await fetch(`/api/executive/scsc/global/status`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
       body: JSON.stringify({ status: selectedStatus }),
     });
     if (res.status === 204) {
-      alert("상태가 변경되었습니다.");
+      alert('상태가 변경되었습니다.');
       setCurrentStatus(selectedStatus);
       router.refresh();
     } else {
       const error = await res.text();
-      alert("업데이트 실패: " + error);
+      alert('업데이트 실패: ' + error);
     }
     setSaving(false);
     setModalOpen(false);
@@ -79,11 +79,8 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               onChange={(e) => setConfirmationText(e.target.value)}
               placeholder="확인 문구 입력"
             />
-            <div className="adm-flex" style={{ justifyContent: "flex-end" }}>
-              <button
-                className="adm-button outline"
-                onClick={() => setModalOpen(false)}
-              >
+            <div className="adm-flex" style={{ justifyContent: 'flex-end' }}>
+              <button className="adm-button outline" onClick={() => setModalOpen(false)}>
                 취소
               </button>
               <button
@@ -107,11 +104,11 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
             <div>
               {year}년 {SEMESTER_MAP[semester]}학기
             </div>
-            <div className="adm-flex" style={{ flexWrap: "wrap" }}>
+            <div className="adm-flex" style={{ flexWrap: 'wrap' }}>
               <div style={{ fontWeight: 700 }}>
                 {STATUS_MAP[currentStatus] || currentStatus}
               </div>
-              <span style={{ fontSize: "1.2rem" }}>→</span>
+              <span style={{ fontSize: '1.2rem' }}>→</span>
               {nextStates.map((status) => (
                 <button
                   key={status}

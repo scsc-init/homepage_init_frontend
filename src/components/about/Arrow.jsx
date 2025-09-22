@@ -1,8 +1,8 @@
 export default function Arrow({
-  width = "70px",
-  height = "70px",
-  rotate = "0deg",
-  color = "var(--foreground-color)",
+  width = '70px',
+  height = '70px',
+  rotate = '0deg',
+  color = 'var(--foreground-color)',
 }) {
   return (
     <svg

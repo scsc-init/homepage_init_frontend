@@ -1,7 +1,7 @@
 // components/sig/MDXEditor.jsx
-"use client";
+'use client';
 
-import React, { forwardRef } from "react";
+import React, { forwardRef } from 'react';
 import {
   MDXEditor,
   headingsPlugin,
@@ -17,13 +17,13 @@ import {
   CodeToggle,
   InsertImage,
   Separator,
-} from "@mdxeditor/editor";
-import "./editor.css";
+} from '@mdxeditor/editor';
+import './editor.css';
 
-import "@mdxeditor/editor/style.css";
+import '@mdxeditor/editor/style.css';
 
 const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
-  { markdown = "", onChange = () => {} },
+  { markdown = '', onChange = () => {} },
   ref,
 ) {
   return (
@@ -42,9 +42,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
           toolbarContents: () => (
             <>
               <BlockTypeSelect />
-              <BoldItalicUnderlineToggles
-                options={["Bold", "Italic", "Underline"]}
-              />
+              <BoldItalicUnderlineToggles options={['Bold', 'Italic', 'Underline']} />
               <CodeToggle />
               <Separator />
               <InsertImage />

@@ -1,4 +1,4 @@
-@import "@/styles/theme.css";
+@import '@/styles/theme.css';
 
 /* ===== 전역 초기화 ===== */
 * {
@@ -34,7 +34,7 @@ img {
 }
 
 .main-wrapper::before {
-  content: "";
+  content: '';
   position: absolute;
   width: 100%;
   height: 100%;

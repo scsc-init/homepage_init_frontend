@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import joinClassName from "@/util/joinClassName";
-import "./Button.css";
+import joinClassName from '@/util/joinClassName';
+import './Button.css';
 
-const Root = ({ className = "", children, ...props }) => {
+const Root = ({ className = '', children, ...props }) => {
   return (
-    <button className={joinClassName("C_ButtonRoot", className)} {...props}>
+    <button className={joinClassName('C_ButtonRoot', className)} {...props}>
       {children}
     </button>
   );

@@ -1,42 +1,42 @@
-"use client";
+'use client';
 
-import { SEMESTER_MAP } from "@/util/constants";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import HeaderClientArea from "./HeaderClientArea";
-import "./header.css";
+import { SEMESTER_MAP } from '@/util/constants';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
+import HeaderClientArea from './HeaderClientArea';
+import './header.css';
 
 const menuData = [
   {
-    title: "About us",
+    title: 'About us',
     items: [
-      { label: "SCSC", url: "/about" },
-      { label: "Executives", url: "/about/executives" },
-      { label: "Developers", url: "/about/developers" },
-      { label: "Rules", url: "/about/rules" },
+      { label: 'SCSC', url: '/about' },
+      { label: 'Executives', url: '/about/executives' },
+      { label: 'Developers', url: '/about/developers' },
+      { label: 'Rules', url: '/about/rules' },
     ],
   },
   {
-    title: "Board",
+    title: 'Board',
     items: [
-      { label: "Project Archives", url: "/board/3" },
-      { label: "Album", url: "/board/4" },
-      { label: "Notice", url: "/board/5" },
+      { label: 'Project Archives', url: '/board/3' },
+      { label: 'Album', url: '/board/4' },
+      { label: 'Notice', url: '/board/5' },
     ],
   },
   {
-    title: "SIG/PIG",
+    title: 'SIG/PIG',
     items: [
-      { label: "SIG", url: "/sig" },
-      { label: "PIG", url: "/pig" },
+      { label: 'SIG', url: '/sig' },
+      { label: 'PIG', url: '/pig' },
     ],
   },
   {
-    title: "Contact",
+    title: 'Contact',
     items: [
-      { label: "Contact Us!", url: "/us/contact" },
-      { label: "Fund Apply", url: "/us/fund-apply/create" },
-      { label: "Join Us!", url: "/us/login" },
+      { label: 'Contact Us!', url: '/us/contact' },
+      { label: 'Fund Apply', url: '/us/fund-apply/create' },
+      { label: 'Join Us!', url: '/us/login' },
     ],
   },
 ];
@@ -51,11 +51,11 @@ export default function Header({ year, semester }) {
 
   useEffect(() => {
     setIsMounted(true);
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       const handleResize = () => setWindowWidth(window.innerWidth);
       handleResize();
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
@@ -75,10 +75,7 @@ export default function Header({ year, semester }) {
       <div id="HeaderContainer" ref={headerRef}>
         <div id="Header">
           <div id="HeaderLeft">
-            <button
-              className="unset"
-              onClick={() => (window.location.href = "/")}
-            >
+            <button className="unset" onClick={() => (window.location.href = '/')}>
               <Image
                 src="/vectors/logo.svg"
                 alt="SCSC Logo"
@@ -105,15 +102,11 @@ export default function Header({ year, semester }) {
                     onMouseLeave={handleMouseLeave}
                   >
                     <button className="HeaderMenuTrigger">{menu.title}</button>
-                    <div
-                      className={`HeaderMenuContent ${openIndex === index ? "open" : ""}`}
-                    >
+                    <div className={`HeaderMenuContent ${openIndex === index ? 'open' : ''}`}>
                       <ul>
                         {menu.items.map((item) => (
                           <li key={item.label}>
-                            <button
-                              onClick={() => (window.location.href = item.url)}
-                            >
+                            <button onClick={() => (window.location.href = item.url)}>
                               {item.label}
                             </button>
                           </li>
@@ -126,13 +119,10 @@ export default function Header({ year, semester }) {
             </div>
           )}
 
-          <div id="HeaderRight" style={{ minWidth: "12rem" }}>
+          <div id="HeaderRight" style={{ minWidth: '12rem' }}>
             {isMounted && isMobile ? (
               <>
-                <HeaderClientArea
-                  allowAnonymous={true}
-                  showMyPageInline={true}
-                />
+                <HeaderClientArea allowAnonymous={true} showMyPageInline={true} />
                 <button
                   className="HamburgerButton"
                   onClick={() => setMenuOpen((prev) => !prev)}
@@ -147,28 +137,22 @@ export default function Header({ year, semester }) {
         </div>
 
         {isMounted && isMobile && (
-          <div className={`MobileMenuWrapper ${menuOpen ? "open" : ""}`}>
+          <div className={`MobileMenuWrapper ${menuOpen ? 'open' : ''}`}>
             <div className="MobileMenu">
               <ul className="MobileMenuList">
                 {menuData.map((menu, index) => (
                   <li className="MobileMenuItem" key={menu.title}>
                     <button
                       className="MobileMenuTrigger"
-                      onClick={() =>
-                        setOpenIndex((prev) => (prev === index ? null : index))
-                      }
+                      onClick={() => setOpenIndex((prev) => (prev === index ? null : index))}
                     >
                       {menu.title}
                     </button>
-                    <div
-                      className={`MobileSubMenu ${openIndex === index ? "open" : ""}`}
-                    >
+                    <div className={`MobileSubMenu ${openIndex === index ? 'open' : ''}`}>
                       <ul>
                         {menu.items.map((item) => (
                           <li key={item.label}>
-                            <button
-                              onClick={() => (window.location.href = item.url)}
-                            >
+                            <button onClick={() => (window.location.href = item.url)}>
                               {item.label}
                             </button>
                           </li>
@@ -184,7 +168,7 @@ export default function Header({ year, semester }) {
         )}
       </div>
 
-      <div id="HeaderSpacer" style={{ height: "3.5rem" }} />
+      <div id="HeaderSpacer" style={{ height: '3.5rem' }} />
     </>
   );
 }

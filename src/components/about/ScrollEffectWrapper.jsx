@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export default function ScrollEffectWrapper({ children }) {
   const ref = useRef(null);
@@ -10,7 +10,7 @@ export default function ScrollEffectWrapper({ children }) {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
+            entry.target.classList.add('visible');
           }
         });
       },
