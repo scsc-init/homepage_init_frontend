@@ -1,5 +1,5 @@
-.mdxeditor [contenteditable="true"],
-.mdxeditor [role="textbox"],
+.mdxeditor [contenteditable='true'],
+.mdxeditor [role='textbox'],
 .mdxeditor [data-lexical-editor] {
   min-height: 18rem;
   width: 100%;

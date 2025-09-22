@@ -1,5 +1,5 @@
-import "./page.css";
-import { MainLogo } from "./checkInAppBrowser"
+import './page.css';
+import { MainLogo } from './checkInAppBrowser';
 
 export default function HomePage() {
   return (
@@ -29,7 +29,7 @@ export default function HomePage() {
           Seoul National University Computer Study Club
         </div>
       </div> */}
-      <MainLogo/>
+      <MainLogo />
 
       {/* 학교 로고
       <div className="school-logo">

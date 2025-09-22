@@ -1,6 +1,6 @@
-import { headers } from "next/headers";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { headers } from 'next/headers';
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
 
 /**
  * Handles forwarding requests to an internal API.
@@ -12,14 +12,9 @@ import { getApiSecret } from "@/util/getApiSecret";
  * @param {Request} request - If included, fetch with body from it. The incoming Next.js Request object.
  * @returns {Promise<Response>} - A Next.js Response object.
  */
-export async function handleApiRequest(
-  method,
-  pathTemplate,
-  options = {},
-  request,
-) {
+export async function handleApiRequest(method, pathTemplate, options = {}, request) {
   const headersList = headers();
-  const jwt = headersList.get("x-jwt");
+  const jwt = headersList.get('x-jwt');
 
   // --- URL Construction (as before, using pathTemplate and params/query) ---
   let fullPath = pathTemplate;
@@ -41,12 +36,12 @@ export async function handleApiRequest(
   const res = await fetch(fullUrl, {
     method: method,
     headers: {
-      "Content-Type": requestBody ? "application/json" : undefined,
-      "x-api-secret": getApiSecret(),
-      "x-jwt": jwt,
+      'Content-Type': requestBody ? 'application/json' : undefined,
+      'x-api-secret': getApiSecret(),
+      'x-jwt': jwt,
     },
     body: requestBody && JSON.stringify(requestBody),
-    cache: "no-store",
+    cache: 'no-store',
   });
   return res;
 }

@@ -1,5 +1,5 @@
-import { handleApiRequest } from "@/app/api/apiWrapper";
+import { handleApiRequest } from '@/app/api/apiWrapper';
 
 export async function POST(request) {
-  return handleApiRequest("POST", "/api/user/update", {}, request);
+  return handleApiRequest('POST', '/api/user/update', {}, request);
 }

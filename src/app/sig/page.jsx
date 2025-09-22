@@ -1,13 +1,13 @@
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
-import SigListClient from "./SigListClient";
-import "./page.css";
-export const metadata = { title: "SIG" };
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
+import SigListClient from './SigListClient';
+import './page.css';
+export const metadata = { title: 'SIG' };
 
 export default async function SigListPage() {
   const res = await fetch(`${getBaseUrl()}/api/sigs`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
+    headers: { 'x-api-secret': getApiSecret() },
+    cache: 'no-store',
   });
 
   if (!res.ok) {
@@ -17,7 +17,7 @@ export default async function SigListPage() {
   const sigs = await res.json();
   if (!Array.isArray(sigs)) return <div>로딩중...</div>;
 
-  const allowed = new Set(["surveying", "recruiting", "active"]);
+  const allowed = new Set(['surveying', 'recruiting', 'active']);
   const visibleSigs = sigs.filter((s) => allowed.has(s.status));
 
   return (

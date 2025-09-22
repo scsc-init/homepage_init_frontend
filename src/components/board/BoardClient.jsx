@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import SortDropdown from "./SortDropdown";
-import ArticlesView from "./ArticlesView";
-import "./board.css";
+import { useState } from 'react';
+import SortDropdown from './SortDropdown';
+import ArticlesView from './ArticlesView';
+import './board.css';
 
 export default function BoardClient({ board }) {
-  const [sortOrder, setSortOrder] = useState("latest");
+  const [sortOrder, setSortOrder] = useState('latest');
 
   return (
     <>

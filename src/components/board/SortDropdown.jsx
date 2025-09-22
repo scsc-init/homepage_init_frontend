@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import "./board.css";
+import { useState, useEffect, useRef } from 'react';
+import './board.css';
 
 export default function SortDropdown({ sortOrder, setSortOrder }) {
   const [open, setOpen] = useState(false);
@@ -13,29 +13,26 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const labelMap = {
-    latest: "최신순",
-    oldest: "오래된 순",
-    title: "제목순",
+    latest: '최신순',
+    oldest: '오래된 순',
+    title: '제목순',
   };
 
   return (
     <div className="SigSortDropdown" ref={dropdownRef}>
-      <button
-        className="SigSortBtn fixed-width"
-        onClick={() => setOpen((prev) => !prev)}
-      >
+      <button className="SigSortBtn fixed-width" onClick={() => setOpen((prev) => !prev)}>
         {labelMap[sortOrder]} ▼
       </button>
       {open && (
         <div className="SigSortMenu open fixed-width">
           <button
             onClick={() => {
-              setSortOrder("latest");
+              setSortOrder('latest');
               setOpen(false);
             }}
           >
@@ -43,7 +40,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
           </button>
           <button
             onClick={() => {
-              setSortOrder("oldest");
+              setSortOrder('oldest');
               setOpen(false);
             }}
           >
@@ -51,7 +48,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
           </button>
           <button
             onClick={() => {
-              setSortOrder("title");
+              setSortOrder('title');
               setOpen(false);
             }}
           >

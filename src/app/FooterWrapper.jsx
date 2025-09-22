@@ -1,13 +1,13 @@
-import "./footer.css";
-import Footer from "./Footer";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
-import { DISCORD_INVITE_LINK } from "@/util/constants";
+import './footer.css';
+import Footer from './Footer';
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
+import { DISCORD_INVITE_LINK } from '@/util/constants';
 
 async function fetchDiscordInviteLink() {
   const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
+    headers: { 'x-api-secret': getApiSecret() },
+    cache: 'no-store',
   });
   if (res.ok) {
     const resData = await res.json();
@@ -18,5 +18,5 @@ async function fetchDiscordInviteLink() {
 export default async function FooterWrapper() {
   // const discordInviteLink = await fetchDiscordInviteLink();
 
-  return <Footer discordInviteLink={DISCORD_INVITE_LINK}/>;
+  return <Footer discordInviteLink={DISCORD_INVITE_LINK} />;
 }

@@ -1,45 +1,43 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 
 const handler = NextAuth({
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: {
-        params: { prompt: "select_account" },
+        params: { prompt: 'select_account' },
       },
     }),
   ],
-  pages: { signIn: "/us/login" },
+  pages: { signIn: '/us/login' },
   callbacks: {
     async jwt({ token, account }) {
-      if (account?.provider === "google" && token?.email) {
+      if (account?.provider === 'google' && token?.email) {
         console.log(
           JSON.stringify({
-            type: "auth_flow",
-            step: "jwt_start",
+            type: 'auth_flow',
+            step: 'jwt_start',
             email: token.email,
             provider: account.provider,
             ts: new Date().toISOString(),
           }),
         );
         try {
-          const base = (process.env.NEXTAUTH_URL || "")
-            .replace(/\/+$/, "")
-            .trim();
-          const url = base ? `${base}/api/user/login` : "/api/user/login";
+          const base = (process.env.NEXTAUTH_URL || '').replace(/\/+$/, '').trim();
+          const url = base ? `${base}/api/user/login` : '/api/user/login';
           const ac = new AbortController();
           const timeout = setTimeout(() => ac.abort(), 10_000);
           try {
             const res = await fetch(url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 email: String(token.email).toLowerCase(),
               }),
-              cache: "no-store",
+              cache: 'no-store',
               signal: ac.signal,
             });
 
@@ -49,8 +47,8 @@ const handler = NextAuth({
               token.signupRequired = false;
               console.log(
                 JSON.stringify({
-                  type: "auth_flow",
-                  step: "jwt_existing_user",
+                  type: 'auth_flow',
+                  step: 'jwt_existing_user',
                   email: token.email,
                   status: 200,
                   ts: new Date().toISOString(),
@@ -60,8 +58,8 @@ const handler = NextAuth({
               token.signupRequired = true;
               console.log(
                 JSON.stringify({
-                  type: "auth_flow",
-                  step: "jwt_need_signup",
+                  type: 'auth_flow',
+                  step: 'jwt_need_signup',
                   email: token.email,
                   status: 404,
                   ts: new Date().toISOString(),
@@ -71,8 +69,8 @@ const handler = NextAuth({
               token.loginError = true;
               console.log(
                 JSON.stringify({
-                  type: "auth_flow",
-                  step: "jwt_backend_error",
+                  type: 'auth_flow',
+                  step: 'jwt_backend_error',
                   email: token.email,
                   status: res.status,
                   ts: new Date().toISOString(),
@@ -86,8 +84,8 @@ const handler = NextAuth({
           token.loginError = true;
           console.error(
             JSON.stringify({
-              type: "auth_flow",
-              step: "jwt_fetch_failed",
+              type: 'auth_flow',
+              step: 'jwt_fetch_failed',
               email: token.email,
               error: String(e),
               ts: new Date().toISOString(),
@@ -109,8 +107,8 @@ const handler = NextAuth({
     async signIn({ user, account, isNewUser }) {
       console.log(
         JSON.stringify({
-          type: "auth_event",
-          event: "signIn",
+          type: 'auth_event',
+          event: 'signIn',
           email: user?.email || null,
           provider: account?.provider || null,
           isNewUser: Boolean(isNewUser),
@@ -121,8 +119,8 @@ const handler = NextAuth({
     async signOut({ session }) {
       console.log(
         JSON.stringify({
-          type: "auth_event",
-          event: "signOut",
+          type: 'auth_event',
+          event: 'signOut',
           email: session?.user?.email || null,
           ts: new Date().toISOString(),
         }),
@@ -131,8 +129,8 @@ const handler = NextAuth({
     async session({ session }) {
       console.log(
         JSON.stringify({
-          type: "auth_event",
-          event: "session",
+          type: 'auth_event',
+          event: 'session',
           email: session?.user?.email || null,
           signupRequired: Boolean(session?.signupRequired),
           hasAppJwt: Boolean(session?.appJwt),
@@ -143,8 +141,8 @@ const handler = NextAuth({
     async error(message) {
       console.error(
         JSON.stringify({
-          type: "auth_event",
-          event: "error",
+          type: 'auth_event',
+          event: 'error',
           message: String(message),
           ts: new Date().toISOString(),
         }),

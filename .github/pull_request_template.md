@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Please follow the gitmoji convention for commit messages.
 Common gitmoji examples for quick copy-paste:
 ✨  :sparkles:  → Introduce new features
@@ -11,9 +11,11 @@ Common gitmoji examples for quick copy-paste:
 -->
 
 ### What feature does this PR add?
+
 <!-- Describe the feature or enhancement you implemented -->
 
 ---
 
 ### Are there any caveats or things to watch out for?
+
 <!-- If none, write "None" -->

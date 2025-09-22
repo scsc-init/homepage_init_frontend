@@ -1,8 +1,8 @@
 // 로딩창의 레거시 버전입니다. 현재 로딩창은 프롬프트 스타일 디자인으로 변경했습니다. 그러나 다른 로딩 구현을 대비해 해당 파일을 유지해주십시오.
 
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const codes = [
   `<span style="color:#569CD6;">#include</span> &lt;stdio.h&gt;
@@ -33,7 +33,7 @@ export default function LoadingSpinner() {
     return codes[random_index];
   });
 
-  const [displayed, setDisplayed] = useState("");
+  const [displayed, setDisplayed] = useState('');
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
@@ -61,8 +61,7 @@ export default function LoadingSpinner() {
       <pre
         className="LoadingCodeBlock"
         dangerouslySetInnerHTML={{
-          __html:
-            displayed + `<span class="Cursor">${showCursor ? "|" : " "}</span>`,
+          __html: displayed + `<span class="Cursor">${showCursor ? '|' : ' '}</span>`,
         }}
       ></pre>
       <p className="LoadingText">Compiling...</p>
