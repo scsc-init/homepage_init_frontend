@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 export default function SigListClient({ sigs }) {
   const [sortOrder, setSortOrder] = useState("latest");
-  const [mySigIds, setMySigIds] = useState(() => new Set());
+  const [myOwnedSigIds, setMyOwnedSigIds] = useState(() => new Set());
 
   const sortedSigs = [...sigs].sort((a, b) => {
     if (sortOrder === "latest") return b.id - a.id;
@@ -19,15 +19,16 @@ export default function SigListClient({ sigs }) {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt || sigs.length === 0) {
-      setMySigIds(new Set());
+      setMyOwnedSigIds(new Set());
       return;
     }
 
     const controller = new AbortController();
 
-    async function loadMemberships() {
+    async function loadOwnedSigs() {
       try {
         const meRes = await fetch("/api/user/profile", {
+          cache: "no-cache",
           headers: { "x-jwt": jwt },
           signal: controller.signal,
         });
@@ -37,33 +38,13 @@ export default function SigListClient({ sigs }) {
         const myId = me?.id ? String(me.id) : "";
         if (!myId) return;
 
-        const membershipResults = await Promise.allSettled(
-          sigs.map(async (sig) => {
-            const res = await fetch(`/api/sig/${sig.id}/members`, {
-              headers: { "x-jwt": jwt },
-              signal: controller.signal,
-            });
-            if (!res.ok) return null;
-
-            const members = await res.json();
-            const hasMe =
-              Array.isArray(members) &&
-              members.some((member) => {
-                const memberId = member?.user_id ?? member?.id ?? member?.user?.id;
-                return memberId != null && String(memberId) === myId;
-              });
-            return hasMe ? String(sig.id) : null;
-          })
-        );
-
-        if (controller.signal.aborted) return;
-
         const nextSet = new Set(
-          membershipResults
-            .filter((result) => result.status === "fulfilled" && result.value)
-            .map((result) => /** @type {PromiseFulfilledResult<string>} */ (result).value)
+          sigs
+            .filter((sig) => sig?.owner && String(sig.owner) === myId)
+            .map((sig) => String(sig.id))
         );
-        setMySigIds(nextSet);
+
+        if (!controller.signal.aborted) setMyOwnedSigIds(nextSet);
       } catch (error) {
         if (error?.name !== "AbortError") {
           /* ignore other errors */
@@ -71,7 +52,7 @@ export default function SigListClient({ sigs }) {
       }
     }
 
-    loadMemberships();
+    loadOwnedSigs();
 
     return () => controller.abort();
   }, [sigs]);
@@ -91,7 +72,7 @@ export default function SigListClient({ sigs }) {
       <div id="SigList">
         {sortedSigs.map((sig) => {
           const sid = String(sig.id);
-          const isMine = mySigIds.has(sid);
+          const isMine = myOwnedSigIds.has(sid);
           return (
             <Link key={sig.id} href={`/sig/${sig.id}`} className="sigLink">
               <div className={`sigCard ${isMine ? "isMine" : ""}`}>
