@@ -37,12 +37,36 @@ body {
 }
 
 a {
-  text-decoration: none;
+  text-decoration: underline;
   color: var(--color-button-bg);
 }
 
+a:hover {
+  color: white;
+}
+
+.copy-discord-link {
+  text-decoration: none;
+  color: var(--color-button-bg);
+  background-color: var(--executive-card-bg);
+}
+
+.copy-discord-link:hover {
+  text-decoration: underline;
+}
+
+.copy-kakao-link {
+  text-decoration: none;
+  color: var(--color-button-bg);
+  background-color: var(--executive-card-bg);
+}
+
+.copy-kakao-link:hover {
+  text-decoration: underline;
+}
+
 .enroll-button {
-  max-width: 30%;
+  max-width: 40%;
 }
 
 .ContentBlock:hover {
@@ -92,7 +116,7 @@ a {
   border-radius: 999px;
   border: 2px solid var(--color-button-border);
   background: var(--color-button-bg);
-  color: var(--foreground-color);
+  color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   transition:
     transform 0.2s ease,
