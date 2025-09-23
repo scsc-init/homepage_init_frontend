@@ -1,4 +1,3 @@
-// app/pig/create/CreatePigClient.jsx
 'use client';
 
 import Editor from '@/components/board/EditorWrapper.jsx';
@@ -56,7 +55,7 @@ export default function CreatePigClient() {
       }
     };
 
-    const handleRouteChange = (url) => {
+    const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
         const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
@@ -73,23 +72,24 @@ export default function CreatePigClient() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty]);
+  }, [isDirty, router]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
+
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
     } else if (!user.discord_id) {
       if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
     }
+
     setSubmitting(true);
 
     try {
       const res = await fetch(`/api/pig/create`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
           description: data.description,
@@ -101,16 +101,17 @@ export default function CreatePigClient() {
       if (res.status === 201) {
         alert('PIG 생성 성공!');
         isFormSubmitted.current = true;
-
         sessionStorage.removeItem('pigForm');
         router.push('/pig');
         router.refresh();
+      } else if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
       } else {
         const err = await res.json();
         alert('PIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      console.error(err);
       alert(err.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
@@ -123,7 +124,7 @@ export default function CreatePigClient() {
         <h1 className="CreatePigTitle">PIG 생성</h1>
         <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
       </div>
-      <div className="CreatePigCard">
+      <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
         <PigForm
           register={register}
           control={control}

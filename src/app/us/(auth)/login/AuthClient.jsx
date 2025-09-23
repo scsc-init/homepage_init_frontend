@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import './page.css';
 import * as validator from './validator';
 
@@ -96,83 +96,44 @@ export default function LoginPage() {
         router.replace('/about/welcome');
         return;
       }
-      if (status !== 'authenticated') return;
 
-      if (isOAuthReturn) {
-        const email = (session?.user?.email || '').toLowerCase();
-        if (!email) return;
-        const loginRes = await fetch('/api/user/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        if (loginRes.ok) {
-          const { jwt } = await loginRes.json();
-          await fetch('/api/auth/app-jwt', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jwt }),
-          });
-          await signOut({ redirect: false });
-          router.replace('/about/welcome');
-          return;
-        }
-        if (loginRes.status === 404) {
-          const cName = cleanName(session?.user?.name || '');
-          const image = session?.user?.image || '';
-          setForm((p) => ({ ...p, email, name: cName, profile_picture_url: image }));
-          setStage(1);
-          return;
-        }
-        await signOut({ redirect: false });
+      if (status !== 'authenticated' || !isOAuthReturn) {
         setStage(0);
         return;
       }
 
-      await signOut({ redirect: false });
+      const email = (session?.user?.email || '').toLowerCase();
+      if (!email) return;
+
+      const loginRes = await fetch('/api/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (loginRes.ok) {
+        const { jwt } = await loginRes.json();
+        await fetch('/api/auth/app-jwt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jwt }),
+        });
+        router.replace('/about/welcome');
+        return;
+      }
+
+      if (loginRes.status === 404) {
+        const cName = cleanName(session?.user?.name || '');
+        const image = session?.user?.image || '';
+        setForm((p) => ({ ...p, email, name: cName, profile_picture_url: image }));
+        setStage(1);
+        log('signup_required', { email });
+        return;
+      }
+
       setStage(0);
     })();
   }, [router, status, session, isOAuthReturn]);
-
-  useEffect(() => {
-    if (status !== 'authenticated') return;
-    (async () => {
-      try {
-        const p = await fetch('/api/user/profile', { cache: 'no-store' });
-        if (p.status === 200) {
-          window.location.replace('/about/welcome');
-          return;
-        }
-        const email = (session?.user?.email || '').toLowerCase();
-        if (!email) return;
-        const loginRes = await fetch('/api/user/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        if (loginRes.status === 200) {
-          const { jwt } = await loginRes.json();
-          await fetch('/api/auth/app-jwt', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jwt }),
-          });
-          try {
-            await signOut({ redirect: false });
-          } catch {}
-          window.location.replace('/');
-          return;
-        }
-        if (loginRes.status === 404) {
-          const cName = cleanName(session?.user?.name || '');
-          const image = session?.user?.image || '';
-          setForm((prev) => ({ ...prev, email, name: cName, profile_picture_url: image }));
-          setStage(1);
-          log('signup_required', { email });
-        }
-      } catch {}
-    })();
-  }, [status, session, router]);
 
   useEffect(() => {
     if (stage !== 4) return;

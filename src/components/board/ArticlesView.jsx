@@ -59,9 +59,7 @@ export default function ArticlesView({ board, sortOrder }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
-  const displayArticles = sortedArticles.filter(
-    (a) => !(a?.is_deleted === 1 || a?.is_deleted === true || a?.deleted_at),
-  );
+  const displayArticles = sortedArticles.filter((a) => a?.is_deleted !== true);
   return (
     <div id="SigList">
       {displayArticles.map((article) => (
