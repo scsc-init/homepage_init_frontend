@@ -42,32 +42,15 @@ export default function EditPigClient({ pigId }) {
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
-
     const fetchProfile = async () => {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) return;
-
-      const res = await fetch(`/api/user/profile`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
       else router.push('/us/login');
     };
     fetchProfile();
 
     const fetchPigData = async () => {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) return;
-
-      const res = await fetch(`/api/pig/${pigId}`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/pig/${pigId}`);
 
       if (!res.ok) {
         alert('피그 정보를 불러오지 못했습니다.');
@@ -77,10 +60,7 @@ export default function EditPigClient({ pigId }) {
 
       const pig = await res.json();
       setPig(pig);
-
-      const articleRes = await fetch(`/api/article/${pig.content_id}`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const articleRes = await fetch(`/api/article/${pig.content_id}`);
 
       if (!articleRes.ok) {
         alert('피그 정보를 불러오지 못했습니다.');
@@ -121,12 +101,6 @@ export default function EditPigClient({ pigId }) {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
-    if (submitting) return;
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
 
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
@@ -138,23 +112,11 @@ export default function EditPigClient({ pigId }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(
-        user.role >= minExecutiveLevel
-          ? `/api/pig/${pigId}/update/executive`
-          : `/api/pig/${pigId}/update`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-jwt': jwt,
-          },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            content: data.editor,
-            should_extend: data.should_extend,
-            is_rolling_admission: data.is_rolling_admission,
-          }),
+      const res = await fetch((user.role >= minExecutiveLevel) ? `/api/pig/${pigId}/update/executive` : `/api/pig/${pigId}/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          
         },
       );
 

@@ -23,11 +23,10 @@ function EditUserInfoClient() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const jwt = localStorage.getItem('jwt');
       const fetches = [];
-      fetches.push(fetch('/api/user/profile', { headers: { 'x-jwt': jwt } }));
-      fetches.push(fetch('/api/majors'));
-      fetches.push(fetch('/api/user/oldboy/applicant', { headers: { 'x-jwt': jwt } }));
+      fetches.push(fetch("/api/user/profile"));
+      fetches.push(fetch("/api/majors"));
+      fetches.push(fetch("/api/user/oldboy/applicant"));
       const [resUser, resMajors, resOldboy] = await Promise.all(fetches);
 
       if (!resUser.ok) {
@@ -73,14 +72,10 @@ function EditUserInfoClient() {
       return;
     }
 
-    const jwt = localStorage.getItem('jwt');
     setLoading(true);
-    const res = await fetch('/api/user/update', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-jwt': jwt,
-      },
+    const res = await fetch("/api/user/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name,
         phone,
@@ -105,12 +100,8 @@ function EditUserInfoClient() {
   const handleDelete = async () => {
     const ok = confirm('정말 휴회원 처리하시겠습니까?');
     if (!ok) return;
-    const jwt = localStorage.getItem('jwt');
     setLoading(true);
-    const res = await fetch('/api/user/delete', {
-      method: 'POST',
-      headers: { 'x-jwt': jwt },
-    });
+    const res = await fetch("/api/user/delete", { method: "POST" });
     setLoading(false);
 
     if (res.status === 204) {
@@ -126,12 +117,8 @@ function EditUserInfoClient() {
   const handleOBRegister = async () => {
     const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
     if (!ok) return;
-    const jwt = localStorage.getItem('jwt');
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/register', {
-      method: 'POST',
-      headers: { 'x-jwt': jwt },
-    });
+    const res = await fetch("/api/user/oldboy/register", { method: "POST" });
     setLoading(false);
 
     if (res.status === 201) {
@@ -149,12 +136,8 @@ function EditUserInfoClient() {
   const handleOBUnregister = async () => {
     const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
     if (!ok) return;
-    const jwt = localStorage.getItem('jwt');
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/unregister', {
-      method: 'POST',
-      headers: { 'x-jwt': jwt },
-    });
+    const res = await fetch("/api/user/oldboy/unregister", { method: "POST" });
     setLoading(false);
 
     if (res.status === 204) {
@@ -176,12 +159,8 @@ function EditUserInfoClient() {
       '정말 정회원으로 전환하시겠습니까? 전환 후 회비를 납부해야 전환이 완료됩니다.',
     );
     if (!ok) return;
-    const jwt = localStorage.getItem('jwt');
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/reactivate', {
-      method: 'POST',
-      headers: { 'x-jwt': jwt },
-    });
+    const res = await fetch("/api/user/oldboy/reactivate", { method: "POST" });
     setLoading(false);
 
     if (res.status === 204) {

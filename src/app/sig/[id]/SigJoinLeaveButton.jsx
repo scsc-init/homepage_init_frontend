@@ -8,15 +8,6 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const [isMember, setIsMember] = useState(!!initialIsMember);
   const [pending, setPending] = useState(false);
 
-  const ensureJwt = () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.replace('/us/login');
-    }
-    return jwt;
-  };
-
   const readError = async (res) => {
     const base = `HTTP ${res.status}`;
     const ct = res.headers.get('content-type') || '';
@@ -25,28 +16,25 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
         const body = await res.json();
         const detail = body?.detail ?? body?.message ?? body?.error;
         return detail ? `${base} - ${detail}` : `${base} - ${JSON.stringify(body)}`;
-      } else {
-        const text = await res.text();
-        return text ? `${base} - ${text}` : base;
       }
+      const text = await res.text();
+      return text ? `${base} - ${text}` : base;
     } catch {
       return base;
     }
   };
 
   const join = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/member/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/sig/${sigId}/member/join`, { method: "POST" });
       if (res.ok) {
         alert('SIG 가입 성공!');
         setIsMember(true);
         router.refresh();
+      } else if (res.status === 401) {
+        alert("로그인이 필요합니다.");
+        router.replace("/us/login");
       } else {
         alert('SIG 가입 실패: ' + (await readError(res)));
       }
@@ -58,18 +46,16 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   };
 
   const leave = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/member/leave`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/sig/${sigId}/member/leave`, { method: "POST" });
       if (res.ok) {
         alert('SIG 탈퇴 성공!');
         setIsMember(false);
         router.refresh();
+      } else if (res.status === 401) {
+        alert("로그인이 필요합니다.");
+        router.replace("/us/login");
       } else {
         alert('SIG 탈퇴 실패: ' + (await readError(res)));
       }

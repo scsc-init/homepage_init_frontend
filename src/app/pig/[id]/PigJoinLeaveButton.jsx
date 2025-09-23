@@ -8,15 +8,6 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const [isMember, setIsMember] = useState(!!initialIsMember);
   const [pending, setPending] = useState(false);
 
-  const ensureJwt = () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.replace('/us/login');
-    }
-    return jwt;
-  };
-
   const readError = async (res) => {
     const base = `HTTP ${res.status}`;
     const ct = res.headers.get('content-type') || '';
@@ -35,13 +26,11 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   };
 
   const join = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/member/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {
         alert('PIG 가입 성공!');
@@ -58,13 +47,11 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   };
 
   const leave = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/member/leave`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {
         alert('PIG 탈퇴 성공!');

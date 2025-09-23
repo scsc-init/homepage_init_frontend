@@ -1,8 +1,7 @@
-// src/app/executive/ScscStatusPanel.jsx (CLIENT)
-'use client';
-import { SEMESTER_MAP } from '@/util/constants';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+"use client";
+import { SEMESTER_MAP } from "@/util/constants";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const STATUS_MAP = {
   surveying: '설문중',
@@ -43,11 +42,10 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   };
 
   const handleConfirmSave = async () => {
-    const jwt = localStorage.getItem('jwt');
     setSaving(true);
     const res = await fetch(`/api/executive/scsc/global/status`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: selectedStatus }),
     });
     if (res.status === 204) {

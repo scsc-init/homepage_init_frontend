@@ -12,16 +12,10 @@ export default function ArticlesView({ board, sortOrder }) {
   const [articles, setArticles] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
 
-  const boardId = board?.id; // board가 없으면 undefined
+  const boardId = board?.id;
 
   useEffect(() => {
-    if (!boardId) return; // board 없을 경우 실행하지 않음
-
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
+    if (!boardId) return;
 
     if (boardId === 1 || boardId === 2) {
       setUnauthorized(true);
@@ -30,15 +24,15 @@ export default function ArticlesView({ board, sortOrder }) {
 
     const fetchContents = async () => {
       try {
-        const res = await fetch(`/api/articles/${boardId}`, {
-          headers: { 'x-jwt': jwt },
-        });
-
+        const res = await fetch(`/api/articles/${boardId}`);
+        if (res.status === 401) {
+          router.push("/us/login");
+          return;
+        }
         if (!res.ok) {
           router.push('/us/login');
           return;
         }
-
         const data = await res.json();
         setArticles(data);
       } catch (_) {

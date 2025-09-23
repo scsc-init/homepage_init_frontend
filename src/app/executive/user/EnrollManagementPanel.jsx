@@ -1,6 +1,5 @@
-// src/app/executive/user/EnrollManagementPanel.jsx (CLIENT)
-'use client';
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
 
 function TrxRecord({ record }) {
   return (
@@ -20,12 +19,8 @@ export default function EnrollManagementPanel() {
   const [failedCnt, setFailedCnt] = useState(0);
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return;
     const fetchStandbys = async () => {
-      const res = await fetch(`/api/executive/user/standby/list`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/executive/user/standby/list`);
       if (res.ok) setStandbys(await res.json());
     };
     fetchStandbys();
@@ -34,12 +29,10 @@ export default function EnrollManagementPanel() {
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const jwt = localStorage.getItem('jwt');
     const form = new FormData();
     form.append('file', file);
     const res = await fetch(`/api/executive/user/standby/process`, {
-      method: 'POST',
-      headers: { 'x-jwt': jwt },
+      method: "POST",
       body: form,
     });
     if (res.status !== 200) {

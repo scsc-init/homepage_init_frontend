@@ -9,11 +9,8 @@ export default function ArticleList({ boards: boardsDefault }) {
   useEffect(() => {
     async function fetchBoardArticles(boardId) {
       const res = await fetch(`/api/articles/${boardId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-jwt': localStorage.getItem('jwt'),
-        },
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       });
       if (res.ok) return { [boardId]: await res.json() };
       return {};
@@ -41,11 +38,8 @@ export default function ArticleList({ boards: boardsDefault }) {
 
   const saveBoard = async (board) => {
     const res = await fetch(`/api/executive/board/update/${board.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-jwt': localStorage.getItem('jwt'),
-      },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: board.name }),
     });
     if (res.status === 204) alert('게시판 이름 수정 완료');
@@ -56,8 +50,7 @@ export default function ArticleList({ boards: boardsDefault }) {
     const ok = confirm('게시판을 삭제하시겠습니까?');
     if (!ok) return;
     const res = await fetch(`/api/executive/board/delete/${id}`, {
-      method: 'POST',
-      headers: { 'x-jwt': localStorage.getItem('jwt') },
+      method: "POST",
     });
     if (res.status === 204) {
       alert('삭제 완료');
@@ -85,11 +78,8 @@ export default function ArticleList({ boards: boardsDefault }) {
     try {
       setSaving((s) => ({ ...s, [article.id]: true }));
       const res = await fetch(`/api/executive/article/update/${article.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-jwt': localStorage.getItem('jwt'),
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (res.status === 204) alert('✅ 게시글 수정 완료');
@@ -108,8 +98,7 @@ export default function ArticleList({ boards: boardsDefault }) {
     const ok = confirm('정말 삭제하시겠습니까?');
     if (!ok) return;
     const res = await fetch(`/api/executive/article/delete/${id}`, {
-      method: 'POST',
-      headers: { 'x-jwt': localStorage.getItem('jwt') },
+      method: "POST",
     });
     if (res.status === 204) {
       setArticles((prev) => ({

@@ -33,20 +33,8 @@ export default function CreatePigClient() {
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
-
     const fetchProfile = async () => {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) return;
-
-      const res = await fetch(`/api/user/profile`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
       else router.push('/us/login');
     };
@@ -88,11 +76,6 @@ export default function CreatePigClient() {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
 
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
@@ -106,8 +89,8 @@ export default function CreatePigClient() {
       const res = await fetch(`/api/pig/create`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-jwt': jwt,
+          "Content-Type": "application/json",
+          
         },
         body: JSON.stringify({
           title: data.title,

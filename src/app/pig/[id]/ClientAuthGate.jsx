@@ -14,23 +14,14 @@ export default function ClientAuthGate({ children }) {
       Promise.resolve().then(() => router.replace('/us/login'));
     };
 
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      goLogin();
-      return;
-    }
-
     (async () => {
       try {
-        const res = await fetch('/api/user/profile', {
-          headers: { 'x-jwt': jwt },
-          cache: 'no-store',
-        });
-        if (!res.ok) {
+        const res = await fetch("/api/user/profile", { cache: "no-store" });
+        if (!res.ok || res.status === 401) {
           goLogin();
           return;
         }
-        if (!cancelled) setChecking(false); // 인증 통과 → 오버레이 해제
+        if (!cancelled) setChecking(false);
       } catch {
         goLogin();
       }

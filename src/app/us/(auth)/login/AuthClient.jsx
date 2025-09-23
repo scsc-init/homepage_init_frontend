@@ -32,21 +32,7 @@ function log(event, data = {}) {
       navigator.sendBeacon(url, blob);
       return;
     }
-    fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body,
-      keepalive: true,
-    });
-  } catch {}
-}
-
-async function onAuthFail() {
-  try {
-    localStorage.removeItem('jwt');
-  } catch {}
-  try {
-    await signOut({ redirect: false });
+    fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true });
   } catch {}
 }
 
@@ -82,88 +68,59 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
-    let isInAppBrowser = false;
-    let inAppBrowserName = '';
     const ua = navigator.userAgent.toLowerCase();
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
-      const re = new RegExp(`\\b${key}\\b`);
-      if (re.test(ua)) {
-        isInAppBrowser = true;
-        inAppBrowserName = name;
+      if (new RegExp(`\\b${key}\\b`).test(ua)) {
+        log("inapp_warning_shown", { name });
+        alert(`${name} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`);
+        setInAppWarning(true);
         break;
       }
     }
-    if (isInAppBrowser) {
-      log('inapp_warning_shown', { name: inAppBrowserName });
-      alert(
-        `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
-      );
-      setInAppWarning(true);
-    }
   }, []);
 
+  // ✅ 쿠키(app_jwt) 기반으로 이미 로그인된 상태면 로그인 페이지에서 곧장 welcome으로 보냄
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return;
-    const checkProfile = async () => {
+    const checkByCookie = async () => {
       try {
-        const resUser = await fetch(`/api/user/profile`, {
-          headers: { 'x-jwt': jwt },
-        });
-        if (resUser.status !== 200) {
-          log('auto_login_profile_check_failed', { status: resUser.status });
-          await onAuthFail();
-          return;
+        const r = await fetch("/api/user/profile", { cache: "no-store" });
+        if (r.status === 200) {
+          log("login_page_cookie_autoredirect", { to: "/about/welcome" });
+          router.replace("/about/welcome");
         }
-        log('auto_login_redirect', { to: '/about/welcome' });
-        router.push('/about/welcome');
-      } catch (e) {
-        log('auto_login_profile_check_error', { error: String(e) });
-      }
+      } catch {}
     };
-    checkProfile();
+    checkByCookie();
   }, [router]);
 
+  // ✅ 세션이 생긴 경우(구글 로그인 직후) 처리: appJwt 쿠키 저장 → NextAuth 세션 정리 → 홈으로 이동
   useEffect(() => {
-    if (status !== 'authenticated') return;
-    if (session?.loginError) {
-      log('login_error', { source: 'session_flag' });
-      return;
-    }
+    if (status !== "authenticated") return;
+
     if (session?.signupRequired) {
-      const email = (session?.user?.email || '').toLowerCase();
-      const cName = cleanName(session?.user?.name || '');
-      const image = session?.user?.image || '';
-      setForm((prev) => ({
-        ...prev,
-        email,
-        name: cName,
-        profile_picture_url: image,
-      }));
+      const email = (session?.user?.email || "").toLowerCase();
+      const cName = cleanName(session?.user?.name || "");
+      const image = session?.user?.image || "";
+      setForm((prev) => ({ ...prev, email, name: cName, profile_picture_url: image }));
       setStage(1);
       log('signup_required', { email });
       return;
     }
+
     if (session?.appJwt) {
       (async () => {
         try {
-          localStorage.setItem('jwt', session.appJwt);
+          await fetch("/api/auth/app-jwt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jwt: session.appJwt }),
+          });
         } catch {}
         try {
           await signOut({ redirect: false });
         } catch {}
-        log('redirect', { to: '/' });
-        window.location.replace('/');
-      })();
-      return;
-    }
-    const hasJwt = !!localStorage.getItem('jwt');
-    if (!hasJwt) {
-      (async () => {
-        try {
-          await signOut({ redirect: false });
-        } catch {}
-        log('cleared_session_due_to_missing_jwt');
+        log("redirect_after_session_cookie_store", { to: "/" });
+        window.location.replace("/");
       })();
     }
   }, [status, session]);
@@ -187,7 +144,8 @@ export default function LoginPage() {
     log('signup_submit_start');
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-    const email = String(form.email || '').toLowerCase();
+    const email = String(form.email || "").toLowerCase();
+
     const createRes = await fetch(`/api/user/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -204,29 +162,38 @@ export default function LoginPage() {
     });
     if (createRes.status !== 201) {
       const createData = await createRes.json();
-      log('signup_create_failed', {
-        status: createRes.status,
-        detail: createData?.detail || null,
-      });
+      log("signup_create_failed", { status: createRes.status, detail: createData?.detail || null });
       alert(`유저 생성 실패: ${createData.detail}`);
       router.push('/');
       return;
     }
-    log('signup_create_success');
+
+    log("signup_create_success");
+
     const loginRes = await fetch(`/api/user/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
     });
-    const { jwt } = await loginRes.json();
-    try {
-      localStorage.setItem('jwt', jwt);
-      log('stored_app_jwt_after_signup');
-    } catch {
-      log('store_jwt_failed_after_signup');
+    if (!loginRes.ok) {
+      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      return;
     }
-    log('redirect', { to: '/about/welcome' });
-    window.location.replace('/about/welcome');
+    const { jwt } = await loginRes.json();
+
+    try {
+      await fetch("/api/auth/app-jwt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jwt }),
+      });
+      log("stored_app_jwt_cookie_after_signup");
+    } catch {
+      log("store_jwt_cookie_failed_after_signup");
+    }
+
+    log("redirect_after_signup", { to: "/about/welcome" });
+    window.location.replace("/about/welcome");
   };
 
   return (
@@ -246,8 +213,8 @@ export default function LoginPage() {
                 onClick={() => {
                   if (authLoading) return;
                   setAuthLoading(true);
-                  log('click_login_button', { provider: 'google' });
-                  signIn('google', { callbackUrl: '/us/login' }, { prompt: 'select_account' });
+                  log("click_login_button", { provider: "google" });
+                  signIn("google", { callbackUrl: "/us/login" }, { prompt: "select_account" });
                 }}
                 disabled={inAppWarning || authLoading}
                 aria-disabled={inAppWarning || authLoading}
@@ -262,41 +229,23 @@ export default function LoginPage() {
                 </span>
                 <span className="GoogleLoginText">Google 계정으로 로그인</span>
               </button>
-              {inAppWarning && (
-                <p className="InAppWarning">
-                  인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로 다시 열어주세요.
-                </p>
-              )}
+              {inAppWarning && <p className="InAppWarning">인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로 다시 열어주세요.</p>}
             </div>
           </div>
         )}
 
         {stage === 1 && (
-          <div style={{ boxSizing: 'border-box', marginTop: '10vh' }}>
-            <input
-              value={form.email}
-              disabled
-              style={{ width: '100%', boxSizing: 'border-box' }}
-            />
-            <p>
-              이름: <strong>{form.name}</strong>
-            </p>
-            <button
-              onClick={() => {
-                log('click_stage1_next');
-                setStage(2);
-              }}
-              style={{ width: '100%', boxSizing: 'border-box' }}
-            >
-              다음
-            </button>
+          <div style={{ boxSizing: "border-box", marginTop: "10vh" }}>
+            <input value={form.email} disabled style={{ width: "100%", boxSizing: "border-box" }} />
+            <p>이름: <strong>{form.name}</strong></p>
+            <button onClick={() => setStage(2)} style={{ width: "100%", boxSizing: "border-box" }}>다음</button>
           </div>
         )}
 
         {stage === 2 && (
           <div style={{ marginTop: '0vh' }}>
             <p>학번 입력</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <input
                 value={form.student_id_year}
                 onChange={(e) => {
@@ -319,16 +268,7 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const sid = `${form.student_id_year}${form.student_id_number}`;
-                log('click_stage2_next_attempt', { sid_length: sid.length });
-                validator.studentID(sid, (ok) => {
-                  if (ok) {
-                    log('stage2_valid');
-                    setStage(3);
-                  } else {
-                    log('stage2_invalid');
-                    alert('올바른 학번 형식이 아닙니다.');
-                  }
-                });
+                validator.studentID(sid, (ok) => (ok ? setStage(3) : alert("올바른 학번 형식이 아닙니다.")));
               }}
             >
               다음
@@ -372,18 +312,7 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-                log('click_stage3_next_attempt', {
-                  phone_length: phone.length,
-                });
-                validator.phoneNumber(phone, (ok) => {
-                  if (ok) {
-                    log('stage3_valid');
-                    setStage(4);
-                  } else {
-                    log('stage3_invalid');
-                    alert('전화번호 형식이 올바르지 않습니다.');
-                  }
-                });
+                validator.phoneNumber(phone, (ok) => (ok ? setStage(4) : alert("전화번호 형식이 올바르지 않습니다.")));
               }}
             >
               다음
@@ -394,30 +323,20 @@ export default function LoginPage() {
         {stage === 4 && (
           <div style={{ marginTop: '0vh' }}>
             <p>단과대학 소속 입력</p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
               <select onChange={(e) => setCollege(e.target.value)} value={college}>
                 <option value="">단과대학 선택</option>
                 {[...new Set(majors.map((m) => m.college))].map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-              <select
-                onChange={(e) => setForm({ ...form, major_id: e.target.value })}
-                value={form.major_id}
-              >
+              <select onChange={(e) => setForm({ ...form, major_id: e.target.value })} value={form.major_id}>
                 <option value="">학과/학부 선택</option>
-                {majors
-                  .filter((m) => m.college == college)
-                  .map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.major_name}
-                    </option>
-                  ))}
+                {majors.filter((m) => m.college == college).map((m) => (
+                  <option key={m.id} value={m.id}>{m.major_name}</option>
+                ))}
               </select>
             </div>
-
             <p className="PolicyLink agree">
               회원 가입 시{' '}
               <a
@@ -435,23 +354,9 @@ export default function LoginPage() {
               onClick={async () => {
                 if (signupBusy) return;
                 setSignupBusy(true);
-                if (!college) {
-                  log('stage4_missing_college');
-                  alert('단과대학을 선택하세요.');
-                  setSignupBusy(false);
-                  return;
-                }
-                if (!form.major_id) {
-                  log('stage4_missing_major');
-                  alert('학과/학부를 선택하세요.');
-                  setSignupBusy(false);
-                  return;
-                }
-                log('click_signup_button', {
-                  college,
-                  major_id: form.major_id,
-                });
-                await handleSubmit();
+                if (!college) { alert("단과대학을 선택하세요."); setSignupBusy(false); return; }
+                if (!form.major_id) { alert("학과/학부를 선택하세요."); setSignupBusy(false); return; }
+                try { await handleSubmit(); } finally { setSignupBusy(false); }
               }}
               disabled={signupBusy}
               aria-disabled={signupBusy}
