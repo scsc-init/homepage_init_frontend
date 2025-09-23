@@ -75,7 +75,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const step3Ready = step1Done && step2Done;
 
   useEffect(() => {
-    fetch("/api/user/profile")
+    fetch('/api/user/profile')
       .then((res) => {
         if (res.status === 401) throw new Error('Unauthorized');
         return res.json();
@@ -129,9 +129,9 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     const summary = `${metaBlock}\n\n---\n\n### 상세 내용\n\n${body}`;
 
     try {
-      const res = await fetch("/api/article/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/article/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: `[${tLabel}] ${targetDisplay}`,
           content: summary,

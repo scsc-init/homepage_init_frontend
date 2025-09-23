@@ -26,7 +26,7 @@ export default function ArticlesView({ board, sortOrder }) {
       try {
         const res = await fetch(`/api/articles/${boardId}`);
         if (res.status === 401) {
-          router.push("/us/login");
+          router.push('/us/login');
           return;
         }
         if (!res.ok) {
@@ -59,7 +59,9 @@ export default function ArticlesView({ board, sortOrder }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
-  const displayArticles = sortedArticles.filter(a => !(a?.is_deleted === 1 || a?.is_deleted === true || a?.deleted_at));
+  const displayArticles = sortedArticles.filter(
+    (a) => !(a?.is_deleted === 1 || a?.is_deleted === true || a?.deleted_at),
+  );
   return (
     <div id="SigList">
       {displayArticles.map((article) => (
@@ -78,4 +80,3 @@ export default function ArticlesView({ board, sortOrder }) {
     </div>
   );
 }
-  

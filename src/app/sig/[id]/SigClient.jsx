@@ -44,11 +44,11 @@ export default function SigClient({ sig, members, articleId, sigId }) {
     (async () => {
       try {
         const [meRes, articleRes] = await Promise.all([
-          fetch("/api/user/profile", { cache: "no-store" }),
-          fetch(`/api/article/${articleId}`, { cache: "no-store" }),
+          fetch('/api/user/profile', { cache: 'no-store' }),
+          fetch(`/api/article/${articleId}`, { cache: 'no-store' }),
         ]);
         if (meRes.status === 401 || !meRes.ok || !articleRes.ok) {
-          router.replace("/us/login");
+          router.replace('/us/login');
           return;
         }
         const [meData, article] = await Promise.all([meRes.json(), articleRes.json()]);

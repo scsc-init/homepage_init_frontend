@@ -29,8 +29,8 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/member/join`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         alert('PIG 가입 성공!');
@@ -50,8 +50,8 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/member/leave`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         alert('PIG 탈퇴 성공!');

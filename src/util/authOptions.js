@@ -1,11 +1,11 @@
-import Google from "next-auth/providers/google";
+import Google from 'next-auth/providers/google';
 
 const ABS_BASE =
   process.env.NEXTAUTH_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
 export const authOptions = {
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -18,10 +18,10 @@ export const authOptions = {
       if (account?.provider === 'google' && token?.email) {
         try {
           const res = await fetch(`${ABS_BASE}/api/user/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: token.email }),
-            cache: "no-store",
+            cache: 'no-store',
           });
           if (res.status === 200) {
             const data = await res.json();
@@ -43,7 +43,7 @@ export const authOptions = {
   events: {
     async signOut() {
       try {
-        await fetch(`${ABS_BASE}/api/auth/app-jwt`, { method: "DELETE", cache: "no-store" });
+        await fetch(`${ABS_BASE}/api/auth/app-jwt`, { method: 'DELETE', cache: 'no-store' });
       } catch {}
     },
   },

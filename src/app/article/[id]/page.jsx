@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -32,7 +32,7 @@ export default function ArticleDetail({ params }) {
         ]);
 
         if (userRes.status === 401) {
-          router.push("/us/login");
+          router.push('/us/login');
           return;
         }
         if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
@@ -67,14 +67,15 @@ export default function ArticleDetail({ params }) {
     return <div className="p-6 text-center text-red-600">게시글을 찾을 수 없습니다.</div>;
   }
 
-  const markdown = article.content ?? "내용이 비어 있습니다.";
-  const isAuthor = user?.id != null && article?.author_id != null && user.id === article.author_id;
+  const markdown = article.content ?? '내용이 비어 있습니다.';
+  const isAuthor =
+    user?.id != null && article?.author_id != null && user.id === article.author_id;
 
   const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, { method: "POST" });
+      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/us/login');

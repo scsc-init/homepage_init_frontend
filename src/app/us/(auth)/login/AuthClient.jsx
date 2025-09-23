@@ -32,7 +32,12 @@ function log(event, data = {}) {
       navigator.sendBeacon(url, blob);
       return;
     }
-    fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true });
+    fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body,
+      keepalive: true,
+    });
   } catch {}
 }
 
@@ -62,7 +67,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     let isInAppBrowser = false;
-    let inAppBrowserName = "";
+    let inAppBrowserName = '';
     const ua = navigator.userAgent.toLowerCase();
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
       const re = new RegExp(`\\b${key}\\b`);
@@ -73,7 +78,7 @@ export default function LoginPage() {
       }
     }
     if (isInAppBrowser) {
-      log("inapp_warning_shown", { name: inAppBrowserName });
+      log('inapp_warning_shown', { name: inAppBrowserName });
       alert(
         `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
       );
@@ -82,39 +87,39 @@ export default function LoginPage() {
   }, []);
 
   const search = useSearchParams();
-  const isOAuthReturn = search.get("oauth") === "1";
+  const isOAuthReturn = search.get('oauth') === '1';
 
   useEffect(() => {
     (async () => {
-      const prof = await fetch("/api/user/profile", { cache: "no-store" });
+      const prof = await fetch('/api/user/profile', { cache: 'no-store' });
       if (prof.status === 200) {
-        router.replace("/about/welcome");
+        router.replace('/about/welcome');
         return;
       }
-      if (status !== "authenticated") return;
+      if (status !== 'authenticated') return;
 
       if (isOAuthReturn) {
-        const email = (session?.user?.email || "").toLowerCase();
+        const email = (session?.user?.email || '').toLowerCase();
         if (!email) return;
-        const loginRes = await fetch("/api/user/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const loginRes = await fetch('/api/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
         });
         if (loginRes.ok) {
           const { jwt } = await loginRes.json();
-          await fetch("/api/auth/app-jwt", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+          await fetch('/api/auth/app-jwt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ jwt }),
           });
           await signOut({ redirect: false });
-          router.replace("/about/welcome");
+          router.replace('/about/welcome');
           return;
         }
         if (loginRes.status === 404) {
-          const cName = cleanName(session?.user?.name || "");
-          const image = session?.user?.image || "";
+          const cName = cleanName(session?.user?.name || '');
+          const image = session?.user?.image || '';
           setForm((p) => ({ ...p, email, name: cName, profile_picture_url: image }));
           setStage(1);
           return;
@@ -129,36 +134,38 @@ export default function LoginPage() {
     })();
   }, [router, status, session, isOAuthReturn]);
 
-    useEffect(() => {
-    if (status !== "authenticated") return;
+  useEffect(() => {
+    if (status !== 'authenticated') return;
     (async () => {
       try {
-        const p = await fetch("/api/user/profile", { cache: "no-store" });
+        const p = await fetch('/api/user/profile', { cache: 'no-store' });
         if (p.status === 200) {
-          window.location.replace("/about/welcome");
+          window.location.replace('/about/welcome');
           return;
         }
-        const email = (session?.user?.email || "").toLowerCase();
+        const email = (session?.user?.email || '').toLowerCase();
         if (!email) return;
-        const loginRes = await fetch("/api/user/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const loginRes = await fetch('/api/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
         });
         if (loginRes.status === 200) {
           const { jwt } = await loginRes.json();
-          await fetch("/api/auth/app-jwt", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+          await fetch('/api/auth/app-jwt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ jwt }),
           });
-          try { await signOut({ redirect: false }); } catch {}
-          window.location.replace("/");
+          try {
+            await signOut({ redirect: false });
+          } catch {}
+          window.location.replace('/');
           return;
         }
         if (loginRes.status === 404) {
-          const cName = cleanName(session?.user?.name || "");
-          const image = session?.user?.image || "";
+          const cName = cleanName(session?.user?.name || '');
+          const image = session?.user?.image || '';
           setForm((prev) => ({ ...prev, email, name: cName, profile_picture_url: image }));
           setStage(1);
           log('signup_required', { email });
@@ -186,7 +193,7 @@ export default function LoginPage() {
     log('signup_submit_start');
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-    const email = String(form.email || "").toLowerCase();
+    const email = String(form.email || '').toLowerCase();
 
     const createRes = await fetch(`/api/user/create`, {
       method: 'POST',
@@ -204,13 +211,16 @@ export default function LoginPage() {
     });
     if (createRes.status !== 201) {
       const createData = await createRes.json();
-      log("signup_create_failed", { status: createRes.status, detail: createData?.detail || null });
+      log('signup_create_failed', {
+        status: createRes.status,
+        detail: createData?.detail || null,
+      });
       alert(`유저 생성 실패: ${createData.detail}`);
       router.push('/');
       return;
     }
 
-    log("signup_create_success");
+    log('signup_create_success');
 
     const loginRes = await fetch(`/api/user/login`, {
       method: 'POST',
@@ -218,24 +228,24 @@ export default function LoginPage() {
       body: JSON.stringify({ email }),
     });
     if (!loginRes.ok) {
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
       return;
     }
     const { jwt } = await loginRes.json();
 
     try {
-      await fetch("/api/auth/app-jwt", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      await fetch('/api/auth/app-jwt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jwt }),
       });
-      log("stored_app_jwt_cookie_after_signup");
+      log('stored_app_jwt_cookie_after_signup');
     } catch {
-      log("store_jwt_cookie_failed_after_signup");
+      log('store_jwt_cookie_failed_after_signup');
     }
 
-    log("redirect_after_signup", { to: "/about/welcome" });
-    window.location.replace("/about/welcome");
+    log('redirect_after_signup', { to: '/about/welcome' });
+    window.location.replace('/about/welcome');
   };
 
   return (
@@ -255,8 +265,12 @@ export default function LoginPage() {
                 onClick={() => {
                   if (authLoading) return;
                   setAuthLoading(true);
-                  log("click_login_button", { provider: "google" });
-                  signIn("google", { callbackUrl: "/us/login?oauth=1" }, { prompt: "select_account" });
+                  log('click_login_button', { provider: 'google' });
+                  signIn(
+                    'google',
+                    { callbackUrl: '/us/login?oauth=1' },
+                    { prompt: 'select_account' },
+                  );
                 }}
                 disabled={inAppWarning || authLoading}
                 aria-disabled={inAppWarning || authLoading}
@@ -271,23 +285,38 @@ export default function LoginPage() {
                 </span>
                 <span className="GoogleLoginText">Google 계정으로 로그인</span>
               </button>
-              {inAppWarning && <p className="InAppWarning">인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로 다시 열어주세요.</p>}
+              {inAppWarning && (
+                <p className="InAppWarning">
+                  인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로 다시 열어주세요.
+                </p>
+              )}
             </div>
           </div>
         )}
 
         {stage === 1 && (
-          <div style={{ boxSizing: "border-box", marginTop: "10vh" }}>
-            <input value={form.email} disabled style={{ width: "100%", boxSizing: "border-box" }} />
-            <p>이름: <strong>{form.name}</strong></p>
-            <button onClick={() => setStage(2)} style={{ width: "100%", boxSizing: "border-box" }}>다음</button>
+          <div style={{ boxSizing: 'border-box', marginTop: '10vh' }}>
+            <input
+              value={form.email}
+              disabled
+              style={{ width: '100%', boxSizing: 'border-box' }}
+            />
+            <p>
+              이름: <strong>{form.name}</strong>
+            </p>
+            <button
+              onClick={() => setStage(2)}
+              style={{ width: '100%', boxSizing: 'border-box' }}
+            >
+              다음
+            </button>
           </div>
         )}
 
         {stage === 2 && (
           <div style={{ marginTop: '0vh' }}>
             <p>학번 입력</p>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <input
                 value={form.student_id_year}
                 onChange={(e) => {
@@ -310,7 +339,9 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const sid = `${form.student_id_year}${form.student_id_number}`;
-                validator.studentID(sid, (ok) => (ok ? setStage(3) : alert("올바른 학번 형식이 아닙니다.")));
+                validator.studentID(sid, (ok) =>
+                  ok ? setStage(3) : alert('올바른 학번 형식이 아닙니다.'),
+                );
               }}
             >
               다음
@@ -354,7 +385,9 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-                validator.phoneNumber(phone, (ok) => (ok ? setStage(4) : alert("전화번호 형식이 올바르지 않습니다.")));
+                validator.phoneNumber(phone, (ok) =>
+                  ok ? setStage(4) : alert('전화번호 형식이 올바르지 않습니다.'),
+                );
               }}
             >
               다음
@@ -365,18 +398,27 @@ export default function LoginPage() {
         {stage === 4 && (
           <div style={{ marginTop: '0vh' }}>
             <p>단과대학 소속 입력</p>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
               <select onChange={(e) => setCollege(e.target.value)} value={college}>
                 <option value="">단과대학 선택</option>
                 {[...new Set(majors.map((m) => m.college))].map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
-              <select onChange={(e) => setForm({ ...form, major_id: e.target.value })} value={form.major_id}>
+              <select
+                onChange={(e) => setForm({ ...form, major_id: e.target.value })}
+                value={form.major_id}
+              >
                 <option value="">학과/학부 선택</option>
-                {majors.filter((m) => m.college == college).map((m) => (
-                  <option key={m.id} value={m.id}>{m.major_name}</option>
-                ))}
+                {majors
+                  .filter((m) => m.college == college)
+                  .map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.major_name}
+                    </option>
+                  ))}
               </select>
             </div>
             <p className="PolicyLink agree">
@@ -396,9 +438,21 @@ export default function LoginPage() {
               onClick={async () => {
                 if (signupBusy) return;
                 setSignupBusy(true);
-                if (!college) { alert("단과대학을 선택하세요."); setSignupBusy(false); return; }
-                if (!form.major_id) { alert("학과/학부를 선택하세요."); setSignupBusy(false); return; }
-                try { await handleSubmit(); } finally { setSignupBusy(false); }
+                if (!college) {
+                  alert('단과대학을 선택하세요.');
+                  setSignupBusy(false);
+                  return;
+                }
+                if (!form.major_id) {
+                  alert('학과/학부를 선택하세요.');
+                  setSignupBusy(false);
+                  return;
+                }
+                try {
+                  await handleSubmit();
+                } finally {
+                  setSignupBusy(false);
+                }
               }}
               disabled={signupBusy}
               aria-disabled={signupBusy}

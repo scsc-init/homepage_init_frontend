@@ -1,6 +1,6 @@
-"use client";
-import React, { useState } from "react";
-import EntryRow from "./EntryRow.jsx";
+'use client';
+import React, { useState } from 'react';
+import EntryRow from './EntryRow.jsx';
 
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);
@@ -13,8 +13,8 @@ export default function PigList({ pigs: pigsDefault }) {
   const handleSave = async (pig) => {
     setSaving((prev) => ({ ...prev, [pig.id]: true }));
     const res = await fetch(`/api/executive/pig/${pig.id}/update`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: pig.title,
         description: pig.description,
@@ -30,9 +30,9 @@ export default function PigList({ pigs: pigsDefault }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/executive/pig/${id}/delete`, {
-      method: "POST",
+      method: 'POST',
     });
     if (res.status === 204) setPigs((prev) => prev.filter((p) => p.id !== id));
     else alert('삭제 실패: ' + res.status);

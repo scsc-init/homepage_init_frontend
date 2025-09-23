@@ -76,7 +76,6 @@ export default function CreatePigClient() {
   }, [isDirty]);
 
   const onSubmit = async (data) => {
-
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
     } else if (!user.discord_id) {
@@ -89,8 +88,7 @@ export default function CreatePigClient() {
       const res = await fetch(`/api/pig/create`, {
         method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title: data.title,

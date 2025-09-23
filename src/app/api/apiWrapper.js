@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
+import { cookies } from 'next/headers';
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
 /**
  * Handles forwarding requests to an internal API.
  * @param {string} method - The HTTP method (e.g., "POST").
@@ -13,7 +13,7 @@ import { getApiSecret } from "@/util/getApiSecret";
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
   const cookieStore = cookies();
-  const appJwt = cookieStore.get("app_jwt")?.value || null;
+  const appJwt = cookieStore.get('app_jwt')?.value || null;
 
   let fullPath = pathTemplate;
   if (options.params) {
@@ -31,15 +31,15 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const bodyJson = hasIncoming ? await request.json() : undefined;
 
   const hdrs = {
-    "x-api-secret": getApiSecret(),
+    'x-api-secret': getApiSecret(),
   };
-  if (appJwt) hdrs["x-jwt"] = appJwt;
-  if (bodyJson !== undefined) hdrs["Content-Type"] = "application/json";
+  if (appJwt) hdrs['x-jwt'] = appJwt;
+  if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
 
   return fetch(fullUrl, {
     method,
     headers: hdrs,
     body: bodyJson !== undefined ? JSON.stringify(bodyJson) : undefined,
-    cache: "no-store",
+    cache: 'no-store',
   });
 }

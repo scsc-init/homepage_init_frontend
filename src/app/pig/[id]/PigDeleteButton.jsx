@@ -25,8 +25,8 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         alert('PIG 비활성화 성공!');
@@ -45,8 +45,8 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/delete/executive`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         alert('PIG 비활성화 성공!');

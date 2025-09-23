@@ -25,13 +25,13 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/delete`, { method: "POST" });
+      const res = await fetch(`/api/sig/${sigId}/delete`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 비활성화 성공!');
         router.refresh();
       } else if (res.status === 401) {
-        alert("로그인이 필요합니다.");
-        router.replace("/us/login");
+        alert('로그인이 필요합니다.');
+        router.replace('/us/login');
       } else {
         alert('SIG 비활성화 실패: ' + (await readError(res)));
       }
@@ -45,13 +45,13 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/delete/executive`, { method: "POST" });
+      const res = await fetch(`/api/sig/${sigId}/delete/executive`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 비활성화 성공!');
         router.refresh();
       } else if (res.status === 401) {
-        alert("로그인이 필요합니다.");
-        router.replace("/us/login");
+        alert('로그인이 필요합니다.');
+        router.replace('/us/login');
       } else {
         alert('SIG 비활성화 실패: ' + (await readError(res)));
       }

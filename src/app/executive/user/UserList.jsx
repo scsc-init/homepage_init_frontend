@@ -1,6 +1,6 @@
-"use client";
-import { useEffect, useState } from "react";
-import ExportUsersButton from "./ExportUsersButton";
+'use client';
+import { useEffect, useState } from 'react';
+import ExportUsersButton from './ExportUsersButton';
 
 export default function UserList({ users: usersDefault, majors = [] }) {
   const [users, setUsers] = useState(usersDefault ?? []);
@@ -60,8 +60,8 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       status: user.status || 'active',
     };
     const res = await fetch(`/api/executive/user/${user.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),
     });
     if (res.status === 204) alert(`${user.name} 저장 완료`);
@@ -72,8 +72,8 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   const manualEnroll = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const res = await fetch(`/api/executive/user/standby/process/manual`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id }),
     });
     if (res.status === 204) alert(`${user.name} 입금 확인 완료`);

@@ -25,54 +25,52 @@ export default function PfpUpdate() {
   };
 
   const handleSubmit = async () => {
-    if (mode === "url" && url) {
+    if (mode === 'url' && url) {
       const res = await fetch('/api/user/update', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile_picture: url,
           profile_picture_is_url: true,
         }),
       });
       if (res.status === 401) {
-        alert("로그인이 필요합니다.");
-        router.push("/us/login");
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
         return;
       }
-      alert(res.status === 204 ? "변경 완료" : `변경 실패`);
-      router.push("/about/my-page");
-    } else if (mode === "file" && file) {
+      alert(res.status === 204 ? '변경 완료' : `변경 실패`);
+      router.push('/about/my-page');
+    } else if (mode === 'file' && file) {
       const form = new FormData();
       form.append('file', file);
 
       const res = await fetch('/api/user/update-pfp-file', {
-        method: "POST",
+        method: 'POST',
         body: form,
       });
       if (res.status === 401) {
-        alert("로그인이 필요합니다.");
-        router.push("/us/login");
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
         return;
       }
-      alert(res.status === 204 ? "변경 완료" : `변경 실패`);
-      router.push("/about/my-page");
+      alert(res.status === 204 ? '변경 완료' : `변경 실패`);
+      router.push('/about/my-page');
     }
   };
 
   return (
-    <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-      <p style={{ marginBottom: ".5rem", fontWeight: "bold" }}>
-        프로필 사진 변경
-      </p>
+    <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+      <p style={{ marginBottom: '.5rem', fontWeight: 'bold' }}>프로필 사진 변경</p>
       <div>
         <label>
           <input
             type="radio"
             name="mode"
             value="url"
-            checked={mode === "url"}
-            onChange={() => setMode("url")}
-            style={{ marginRight: "2px" }}
+            checked={mode === 'url'}
+            onChange={() => setMode('url')}
+            style={{ marginRight: '2px' }}
           />
           URL 입력
         </label>
@@ -81,9 +79,9 @@ export default function PfpUpdate() {
             type="radio"
             name="mode"
             value="file"
-            checked={mode === "file"}
-            onChange={() => setMode("file")}
-            style={{ marginRight: "2px" }}
+            checked={mode === 'file'}
+            onChange={() => setMode('file')}
+            style={{ marginRight: '2px' }}
           />
           이미지 업로드
         </label>

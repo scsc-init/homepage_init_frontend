@@ -1,13 +1,13 @@
-import "./page.css";
-import EnrollButton from "./EnrollButton";
-import { redirect } from "next/navigation";
-import { handleApiRequest } from "@/app/api/apiWrapper";
-import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from "@/util/constants";
+import './page.css';
+import EnrollButton from './EnrollButton';
+import { redirect } from 'next/navigation';
+import { handleApiRequest } from '@/app/api/apiWrapper';
+import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 
 export default async function WelcomePage() {
-  const res = await handleApiRequest("GET", "/api/user/profile");
+  const res = await handleApiRequest('GET', '/api/user/profile');
   if (!res.ok) {
-    redirect("/us/login");
+    redirect('/us/login');
   }
   const user = await res.json();
 

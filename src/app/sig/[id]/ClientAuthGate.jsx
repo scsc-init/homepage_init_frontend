@@ -16,7 +16,7 @@ export default function ClientAuthGate({ children }) {
 
     (async () => {
       try {
-        const res = await fetch("/api/user/profile", { cache: "no-store" });
+        const res = await fetch('/api/user/profile', { cache: 'no-store' });
         if (!res.ok || res.status === 401) {
           goLogin();
           return;

@@ -27,14 +27,14 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const join = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/member/join`, { method: "POST" });
+      const res = await fetch(`/api/sig/${sigId}/member/join`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 가입 성공!');
         setIsMember(true);
         router.refresh();
       } else if (res.status === 401) {
-        alert("로그인이 필요합니다.");
-        router.replace("/us/login");
+        alert('로그인이 필요합니다.');
+        router.replace('/us/login');
       } else {
         alert('SIG 가입 실패: ' + (await readError(res)));
       }
@@ -48,14 +48,14 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const leave = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/member/leave`, { method: "POST" });
+      const res = await fetch(`/api/sig/${sigId}/member/leave`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 탈퇴 성공!');
         setIsMember(false);
         router.refresh();
       } else if (res.status === 401) {
-        alert("로그인이 필요합니다.");
-        router.replace("/us/login");
+        alert('로그인이 필요합니다.');
+        router.replace('/us/login');
       } else {
         alert('SIG 탈퇴 실패: ' + (await readError(res)));
       }

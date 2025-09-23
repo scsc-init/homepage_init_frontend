@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import '@/app/board/[id]/create/page.css';
 
-const Editor = dynamic(() => import("@/components/board/EditorWrapper"), { ssr: false });
+const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
 export default function EditClient({ articleId }) {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function EditClient({ articleId }) {
     setValue,
     watch,
     formState: { isDirty },
-  } = useForm({ defaultValues: { title: "", editor: "" } });
+  } = useForm({ defaultValues: { title: '', editor: '' } });
 
   const content = watch('editor');
 
@@ -34,8 +34,8 @@ export default function EditClient({ articleId }) {
           fetch(`/api/user/profile`),
         ]);
         if (userRes.status === 401) {
-          alert("로그인이 필요합니다.");
-          router.push("/us/login");
+          alert('로그인이 필요합니다.');
+          router.push('/us/login');
           return;
         }
         if (!articleRes.ok || !userRes.ok) throw new Error();
@@ -70,7 +70,7 @@ export default function EditClient({ articleId }) {
     };
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm("작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?");
+        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
           router.events?.emit?.('routeChangeError');
           throw 'Route change aborted by user.';
@@ -89,8 +89,8 @@ export default function EditClient({ articleId }) {
     setSubmitting(true);
     try {
       const res = await fetch(`/api/article/update/${articleId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
@@ -103,8 +103,8 @@ export default function EditClient({ articleId }) {
         alert('수정 완료!');
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
-        alert("다시 로그인해주세요.");
-        router.push("/us/login");
+        alert('다시 로그인해주세요.');
+        router.push('/us/login');
       } else {
         let errText = '수정 실패';
         try {

@@ -25,7 +25,7 @@ const USER_ROLE_MAP = {
 
 async function onAuthFail() {
   try {
-    await fetch("/api/auth/app-jwt", { method: "DELETE" });
+    await fetch('/api/auth/app-jwt', { method: 'DELETE' });
   } catch {}
   try {
     await signOut({ redirect: false });
@@ -60,13 +60,13 @@ export default function MyProfileClient() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/app-jwt", { method: "DELETE" });
+      await fetch('/api/auth/app-jwt', { method: 'DELETE' });
     } catch {}
     signOut({ callbackUrl: '/' });
   };
 
   const handleEnroll = async () => {
-    const res = await fetch("/api/user/enroll", { method: "POST" });
+    const res = await fetch('/api/user/enroll', { method: 'POST' });
 
     if (res.status === 204) {
       alert('등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.');

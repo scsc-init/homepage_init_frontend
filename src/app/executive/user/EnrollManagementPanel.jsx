@@ -1,5 +1,5 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
 
 function TrxRecord({ record }) {
   return (
@@ -32,7 +32,7 @@ export default function EnrollManagementPanel() {
     const form = new FormData();
     form.append('file', file);
     const res = await fetch(`/api/executive/user/standby/process`, {
-      method: "POST",
+      method: 'POST',
       body: form,
     });
     if (res.status !== 200) {

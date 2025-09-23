@@ -8,7 +8,7 @@ export default function JoinButton() {
   const ref = useRef();
 
   useEffect(() => {
-    fetch("/api/user/profile")
+    fetch('/api/user/profile')
       .then((r) => setShow(r.status === 401))
       .catch(() => setShow(true));
   }, []);

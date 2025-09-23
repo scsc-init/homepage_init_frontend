@@ -1,5 +1,5 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
@@ -16,7 +16,7 @@ export default function OldboyManagementPanel({ users }) {
   const processOldboy = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const res = await fetch(`/api/executive/user/oldboy/${user.id}/process`, {
-      method: "POST",
+      method: 'POST',
     });
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
     else {

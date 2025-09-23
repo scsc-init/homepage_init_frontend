@@ -1,6 +1,6 @@
-"use client";
-import React, { useState } from "react";
-import EntryRow from "./EntryRow.jsx";
+'use client';
+import React, { useState } from 'react';
+import EntryRow from './EntryRow.jsx';
 
 export default function SigList({ sigs: sigsDefault }) {
   const [sigs, setSigs] = useState(sigsDefault ?? []);
@@ -13,8 +13,8 @@ export default function SigList({ sigs: sigsDefault }) {
   const handleSave = async (sig) => {
     setSaving((prev) => ({ ...prev, [sig.id]: true }));
     const res = await fetch(`/api/executive/sig/${sig.id}/update`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: sig.title,
         description: sig.description,
@@ -30,9 +30,9 @@ export default function SigList({ sigs: sigsDefault }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/executive/sig/${id}/delete`, {
-      method: "POST",
+      method: 'POST',
     });
     if (res.status === 204) setSigs((prev) => prev.filter((s) => s.id !== id));
     else alert('삭제 실패: ' + res.status);
