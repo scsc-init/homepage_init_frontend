@@ -42,27 +42,7 @@ a {
 }
 
 a:hover {
-  color: white;
-}
-
-.copy-discord-link {
-  text-decoration: none;
-  color: var(--color-button-bg);
-  background-color: var(--executive-card-bg);
-}
-
-.copy-discord-link:hover {
-  text-decoration: underline;
-}
-
-.copy-kakao-link {
-  text-decoration: none;
-  color: var(--color-button-bg);
-  background-color: var(--executive-card-bg);
-}
-
-.copy-kakao-link:hover {
-  text-decoration: underline;
+  color: var(--foreground-color);
 }
 
 .enroll-button {
