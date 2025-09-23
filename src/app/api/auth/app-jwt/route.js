@@ -10,7 +10,7 @@ export async function POST(req) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: typeof maxAge === "number" ? maxAge : 60 * 60 * 24 * 7, // 7 days
+    maxAge: typeof maxAge === "number" ? maxAge : 60 * 60 * 24 * 7, 
   });
   return NextResponse.json({ ok: true });
 }

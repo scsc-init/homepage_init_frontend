@@ -16,7 +16,6 @@ const authConfig = {
   pages: { signIn: "/us/login" },
   callbacks: {
     async jwt({ token, account }) {
-      // 최초 Google 로그인 시 BE 로그인 시도 → 기존회원이면 appJwt 발급, 미가입이면 signupRequired=true
       if (account?.provider === "google" && token?.email) {
         try {
           const res = await fetch(`${ABS_BASE}/api/user/login`, {
@@ -33,7 +32,7 @@ const authConfig = {
             token.signupRequired = true;
           }
         } catch {
-          // BE 연결 실패 시 그대로 두고, 클라에서 가입 플로우 진행
+          
         }
       }
       return token;
@@ -46,10 +45,8 @@ const authConfig = {
   },
 };
 
-// v4면 함수, v5면 객체가 반환됨
 const nextAuthReturn = NextAuth(authConfig);
-
-// v5 감지
+// package.json에서 v4로 명시했지만, 무언가 꼬이는 현상이 있어 nextauth v5 대응 코드를 남겼습니다.
 const isV5 =
   typeof nextAuthReturn === "object" &&
   nextAuthReturn !== null &&
@@ -58,12 +55,12 @@ const isV5 =
   typeof nextAuthReturn.handlers.GET === "function" &&
   typeof nextAuthReturn.handlers.POST === "function";
 
-// v5라면 그대로 노출
+
 export const handlers = isV5 ? nextAuthReturn.handlers : undefined;
 export const auth = isV5 ? nextAuthReturn.auth : undefined;
 export const signIn = isV5 ? nextAuthReturn.signIn : undefined;
 export const signOut = isV5 ? nextAuthReturn.signOut : undefined;
 
-// 공통 진입점: 라우트에서 바로 재노출할 수 있게 GET/POST 보장
-export const GET = isV5 ? nextAuthReturn.handlers.GET : nextAuthReturn;   // v4는 handler 함수
-export const POST = isV5 ? nextAuthReturn.handlers.POST : nextAuthReturn; // v4는 handler 함수
+
+export const GET = isV5 ? nextAuthReturn.handlers.GET : nextAuthReturn;
+export const POST = isV5 ? nextAuthReturn.handlers.POST : nextAuthReturn;

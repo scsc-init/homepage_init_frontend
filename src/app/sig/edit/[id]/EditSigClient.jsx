@@ -146,9 +146,9 @@ export default function EditSigClient({ sigId }) {
         title: sig.title ?? "",
         description: sig.description ?? "",
         editor: article.content ?? "",
-        should_extend: sig.should_extend ?? false,
+        should_extend: sig.should_extend ?? false
       });
-      setEditorKey((k) => k + 1);
+      setEditorKey(k => k + 1);
     }
   }, [sig, article, mounted, reset]);
 

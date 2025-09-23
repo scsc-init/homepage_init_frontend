@@ -61,25 +61,26 @@ export default function LoginPage() {
   const [signupBusy, setSignupBusy] = useState(false);
 
   useEffect(() => {
-    log('page_view', {
-      path: typeof window !== 'undefined' ? window.location.pathname : '',
-      search: typeof window !== 'undefined' ? window.location.search : '',
-    });
-  }, []);
-
-  useEffect(() => {
+    let isInAppBrowser = false;
+    let inAppBrowserName = "";
     const ua = navigator.userAgent.toLowerCase();
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
-      if (new RegExp(`\\b${key}\\b`).test(ua)) {
-        log("inapp_warning_shown", { name });
-        alert(`${name} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`);
-        setInAppWarning(true);
+      const re = new RegExp(`\\b${key}\\b`);
+      if (re.test(ua)) {
+        isInAppBrowser = true;
+        inAppBrowserName = name;
         break;
       }
     }
+    if (isInAppBrowser) {
+      log("inapp_warning_shown", { name: inAppBrowserName });
+      alert(
+        `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
+      );
+      setInAppWarning(true);
+    }
   }, []);
 
-  // ✅ 쿠키(app_jwt) 기반으로 이미 로그인된 상태면 로그인 페이지에서 곧장 welcome으로 보냄
   useEffect(() => {
     const checkByCookie = async () => {
       try {
@@ -93,7 +94,6 @@ export default function LoginPage() {
     checkByCookie();
   }, [router]);
 
-  // ✅ 세션이 생긴 경우(구글 로그인 직후) 처리: appJwt 쿠키 저장 → NextAuth 세션 정리 → 홈으로 이동
   useEffect(() => {
     if (status !== "authenticated") return;
 

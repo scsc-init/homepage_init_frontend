@@ -45,7 +45,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       if (!isFormSubmitted.current && isDirty) {
         const confirmed = confirm("작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?");
         if (!confirmed) {
-          router.events.emit?.("routeChangeError");
+          router.events.emit("routeChangeError");
           throw "Route change aborted by user.";
         }
       }

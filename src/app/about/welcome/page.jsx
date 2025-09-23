@@ -5,7 +5,6 @@ import { handleApiRequest } from "@/app/api/apiWrapper";
 import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from "@/util/constants";
 
 export default async function WelcomePage() {
-  // 쿠키(app_jwt) → 프록시가 x-jwt 주입 → BE 프로필 확인
   const res = await handleApiRequest("GET", "/api/user/profile");
   if (!res.ok) {
     redirect("/us/login");
