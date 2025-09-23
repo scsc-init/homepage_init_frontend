@@ -3,6 +3,7 @@ import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
 import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import EnrollButton from './EnrollButton';
+import CopyButton from '@/components/CopyButton';
 
 async function fetchDiscordInviteLink() {
   const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
@@ -28,11 +29,13 @@ export default async function Contact() {
               <a href={DISCORD_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 디스코드 서버 링크
               </a>
+                <CopyButton link = {DISCORD_INVITE_LINK} />
             </h3>
             <h3>
               <a href={KAKAO_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 카카오톡 팀 채팅방
               </a>
+                <CopyButton link = {KAKAO_INVITE_LINK} />
             </h3>
             <h3>{DEPOSIT_ACC}</h3>
 
