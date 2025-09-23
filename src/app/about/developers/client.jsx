@@ -20,7 +20,7 @@ const executives = [
     name: '박성현',
     role: '프론트',
     image: '/devs/psh.jpg',
-    description: '카와이한 여고생쨩',
+    description: '아주아주 귀여운 여고생',
   },
   {
     name: '황민기',
@@ -39,6 +39,12 @@ const executives = [
     role: '백엔드',
     image: '/devs/yyw.jpg',
     description: '고능',
+  },
+  {
+    name: '박상혁(Ethan)',
+    role: '백엔드, 프론트엔드',
+    image: '/devs/psh.jpg',
+    description: 'SCSC 막스 베르슈타펜',
   },
 ];
 export default function ExecutivesClient() {
