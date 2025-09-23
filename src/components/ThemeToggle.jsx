@@ -18,7 +18,6 @@ function setCookie(name, value, days = 365) {
 
 export default function ThemeToggle() {
   const [dark, setDark] = useState(true);
-
   useEffect(() => {
     const saved = getCookie('theme');
     const prefersDark =
