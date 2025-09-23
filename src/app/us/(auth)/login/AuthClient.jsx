@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import './page.css';
 import * as validator from './validator';
@@ -81,49 +81,91 @@ export default function LoginPage() {
     }
   }, []);
 
-  useEffect(() => {
-    const checkByCookie = async () => {
-      try {
-        const r = await fetch("/api/user/profile", { cache: "no-store" });
-        if (r.status === 200) {
-          log("login_page_cookie_autoredirect", { to: "/about/welcome" });
-          router.replace("/about/welcome");
-        }
-      } catch {}
-    };
-    checkByCookie();
-  }, [router]);
+  const search = useSearchParams();
+  const isOAuthReturn = search.get("oauth") === "1";
 
   useEffect(() => {
-    if (status !== "authenticated") return;
+    (async () => {
+      const prof = await fetch("/api/user/profile", { cache: "no-store" });
+      if (prof.status === 200) {
+        router.replace("/about/welcome");
+        return;
+      }
+      if (status !== "authenticated") return;
 
-    if (session?.signupRequired) {
-      const email = (session?.user?.email || "").toLowerCase();
-      const cName = cleanName(session?.user?.name || "");
-      const image = session?.user?.image || "";
-      setForm((prev) => ({ ...prev, email, name: cName, profile_picture_url: image }));
-      setStage(1);
-      log('signup_required', { email });
-      return;
-    }
-
-    if (session?.appJwt) {
-      (async () => {
-        try {
+      if (isOAuthReturn) {
+        const email = (session?.user?.email || "").toLowerCase();
+        if (!email) return;
+        const loginRes = await fetch("/api/user/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        if (loginRes.ok) {
+          const { jwt } = await loginRes.json();
           await fetch("/api/auth/app-jwt", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ jwt: session.appJwt }),
+            body: JSON.stringify({ jwt }),
           });
-        } catch {}
-        try {
           await signOut({ redirect: false });
-        } catch {}
-        log("redirect_after_session_cookie_store", { to: "/" });
-        window.location.replace("/");
-      })();
-    }
-  }, [status, session]);
+          router.replace("/about/welcome");
+          return;
+        }
+        if (loginRes.status === 404) {
+          const cName = cleanName(session?.user?.name || "");
+          const image = session?.user?.image || "";
+          setForm((p) => ({ ...p, email, name: cName, profile_picture_url: image }));
+          setStage(1);
+          return;
+        }
+        await signOut({ redirect: false });
+        setStage(0);
+        return;
+      }
+
+      await signOut({ redirect: false });
+      setStage(0);
+    })();
+  }, [router, status, session, isOAuthReturn]);
+
+    useEffect(() => {
+    if (status !== "authenticated") return;
+    (async () => {
+      try {
+        const p = await fetch("/api/user/profile", { cache: "no-store" });
+        if (p.status === 200) {
+          window.location.replace("/about/welcome");
+          return;
+        }
+        const email = (session?.user?.email || "").toLowerCase();
+        if (!email) return;
+        const loginRes = await fetch("/api/user/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        if (loginRes.status === 200) {
+          const { jwt } = await loginRes.json();
+          await fetch("/api/auth/app-jwt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jwt }),
+          });
+          try { await signOut({ redirect: false }); } catch {}
+          window.location.replace("/");
+          return;
+        }
+        if (loginRes.status === 404) {
+          const cName = cleanName(session?.user?.name || "");
+          const image = session?.user?.image || "";
+          setForm((prev) => ({ ...prev, email, name: cName, profile_picture_url: image }));
+          setStage(1);
+          log('signup_required', { email });
+        }
+      } catch {}
+    })();
+  }, [status, session, router]);
 
   useEffect(() => {
     if (stage !== 4) return;
@@ -214,7 +256,7 @@ export default function LoginPage() {
                   if (authLoading) return;
                   setAuthLoading(true);
                   log("click_login_button", { provider: "google" });
-                  signIn("google", { callbackUrl: "/us/login" }, { prompt: "select_account" });
+                  signIn("google", { callbackUrl: "/us/login?oauth=1" }, { prompt: "select_account" });
                 }}
                 disabled={inAppWarning || authLoading}
                 aria-disabled={inAppWarning || authLoading}

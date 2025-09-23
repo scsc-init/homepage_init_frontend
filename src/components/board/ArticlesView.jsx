@@ -59,10 +59,10 @@ export default function ArticlesView({ board, sortOrder }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
-
+  const displayArticles = sortedArticles.filter(a => !(a?.is_deleted === 1 || a?.is_deleted === true || a?.deleted_at));
   return (
     <div id="SigList">
-      {sortedArticles.map((article) => (
+      {displayArticles.map((article) => (
         <Link key={article.id} href={`/article/${article.id}`} className="sigLink">
           <div className="sigCard">
             <div className="sigTopbar">
@@ -78,3 +78,4 @@ export default function ArticlesView({ board, sortOrder }) {
     </div>
   );
 }
+  

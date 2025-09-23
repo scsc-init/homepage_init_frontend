@@ -1,5 +1,6 @@
 'use client';
-
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
