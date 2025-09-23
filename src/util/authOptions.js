@@ -40,11 +40,5 @@ export const authOptions = {
       return session;
     },
   },
-  events: {
-    async signOut() {
-      try {
-        await fetch(`${ABS_BASE}/api/auth/app-jwt`, { method: 'DELETE', cache: 'no-store' });
-      } catch {}
-    },
-  },
+  events: {},
 };
