@@ -82,7 +82,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   };
 
   useEffect(() => {
-    console.log(filteredUsers);
+    console.debug(filteredUsers);
   }, [filteredUsers]);
 
   return (

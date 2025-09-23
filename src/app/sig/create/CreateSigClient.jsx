@@ -23,7 +23,12 @@ export default function CreateSigClient() {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed || { title: '', description: '', editor: '' },
+    defaultValues: parsed || {
+      title: '',
+      description: '',
+      editor: '',
+      is_rolling_admission: false,
+    },
   });
 
   useEffect(() => {

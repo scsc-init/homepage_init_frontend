@@ -1,4 +1,3 @@
-// app/sig/edit/[id]/EditSigClient.jsx
 'use client';
 
 import Editor from '@/components/board/EditorWrapper.jsx';
@@ -32,11 +31,13 @@ export default function EditSigClient({ sigId }) {
     watch,
     formState: { isDirty },
   } = useForm({
+    // 기본값에 is_rolling_admission 추가 (빠져있던 부분 복구)
     defaultValues: {
       title: '',
       description: '',
       editor: '',
       should_extend: false,
+      is_rolling_admission: false,
     },
   });
 
@@ -120,6 +121,7 @@ export default function EditSigClient({ sigId }) {
             description: data.description,
             content: data.editor,
             should_extend: data.should_extend,
+            is_rolling_admission: data.is_rolling_admission,
           }),
         },
       );
@@ -150,6 +152,7 @@ export default function EditSigClient({ sigId }) {
         description: sig.description ?? '',
         editor: article.content ?? '',
         should_extend: sig.should_extend ?? false,
+        is_rolling_admission: sig.is_rolling_admission ?? false,
       });
       setEditorKey((k) => k + 1);
     }
