@@ -1,12 +1,13 @@
-'use client';
+﻿"use client";
 
-import SortDropdown from '@/components/board/SortDropdown'; // 기존 재사용
-import { SEMESTER_MAP } from '@/util/constants';
-import Link from 'next/link';
-import { useState } from 'react';
+import SortDropdown from "@/components/board/SortDropdown"; // 기존 재사용
+import { SEMESTER_MAP } from "@/util/constants";
+import Link from "next/link";
+import { useState,useEffect } from "react";
 
 export default function PigListClient({ pigs }) {
-  const [sortOrder, setSortOrder] = useState('latest');
+  const [sortOrder, setSortOrder] = useState("latest");
+  const [myOwnedPigIds, setMyOwnedPigIds] = useState(() => new Set());
 
   const sortedPigs = [...pigs].sort((a, b) => {
     if (sortOrder === 'latest') return b.id - a.id;
@@ -14,6 +15,46 @@ export default function PigListClient({ pigs }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt || pigs.length === 0) {
+      setMyOwnedPigIds(new Set());
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function loadOwnedPigs() {
+      try {
+        const meRes = await fetch("/api/user/profile", {
+          cache: "no-cache",
+          headers: { "x-jwt": jwt },
+          signal: controller.signal,
+        });
+        if (!meRes.ok) return;
+
+        const me = await meRes.json();
+        const myId = me?.id ? String(me.id) : "";
+        if (!myId) return;
+
+        const nextSet = new Set(
+          pigs
+            .filter((pig) => pig?.owner && String(pig.owner) === myId)
+            .map((pig) => String(pig.id))
+        );
+
+        if (!controller.signal.aborted) setMyOwnedPigIds(nextSet);
+      } catch (error) {
+        if (error?.name !== "AbortError") {
+          /* ignore other errors */
+        }
+      }
+    }
+
+    loadOwnedPigs();
+
+    return () => controller.abort();
+  }, [pigs]);
 
   return (
     <>
@@ -28,9 +69,12 @@ export default function PigListClient({ pigs }) {
       </div>
 
       <div id="PigList">
-        {sortedPigs.map((pig) => (
+        {sortedPigs.map((pig) => {
+          const pid = String(pig.id);
+          const isMine = myOwnedPigIds.has(pid);
+          return (
           <Link key={pig.id} href={`/pig/${pig.id}`} className="pigLink">
-            <div className="pigCard">
+            <div className={`pigCard ${isMine ? "isMine" : ""}`}>
               <div className="pigTopbar">
                 <span className="pigTitle">{pig.title}</span>
                 <span className="pigUserCount">
@@ -40,7 +84,8 @@ export default function PigListClient({ pigs }) {
               <div className="pigDescription">{pig.description}</div>
             </div>
           </Link>
-        ))}
+        );
+      })}
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import EnrollButton from './EnrollButton';
 import { redirect } from 'next/navigation';
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
+import CopyButton from '@/components/CopyButton';
 
 export default async function WelcomePage() {
   const res = await handleApiRequest('GET', '/api/user/profile');
@@ -23,11 +24,13 @@ export default async function WelcomePage() {
               <a href={DISCORD_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 디스코드 서버 링크
               </a>
+                <CopyButton link = {DISCORD_INVITE_LINK} />
             </h3>
             <h3>
               <a href={KAKAO_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 카카오톡 팀 채팅방
               </a>
+                <CopyButton link = {KAKAO_INVITE_LINK} />
             </h3>
             <h3>{DEPOSIT_ACC}</h3>
             <h3>
