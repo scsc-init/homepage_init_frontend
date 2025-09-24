@@ -1,5 +1,5 @@
-import { handleApiRequest } from "@/app/api/apiWrapper";
+import { handleApiRequest } from '@/app/api/apiWrapper';
 
 export async function POST(request) {
-  return handleApiRequest("POST", "/api/pig/create", {}, request);
+  return handleApiRequest('POST', '/api/pig/create', {}, request);
 }

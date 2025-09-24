@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import "./footer.css";
-import { usePathname } from "next/navigation";
-import Image from "next/image";
+import './footer.css';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 function Footer({ discordInviteLink }) {
   const pathname = usePathname();
-  const hideFooterRoutes = ["/us/login", "/signup", "/about/my-page"];
+  const hideFooterRoutes = ['/us/login', '/signup', '/about/my-page'];
 
   if (hideFooterRoutes.includes(pathname)) return null;
 

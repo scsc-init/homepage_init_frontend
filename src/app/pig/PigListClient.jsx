@@ -10,9 +10,9 @@ export default function PigListClient({ pigs }) {
   const [myOwnedPigIds, setMyOwnedPigIds] = useState(() => new Set());
 
   const sortedPigs = [...pigs].sort((a, b) => {
-    if (sortOrder === "latest") return b.id - a.id;
-    if (sortOrder === "oldest") return a.id - b.id;
-    if (sortOrder === "title") return a.title.localeCompare(b.title);
+    if (sortOrder === 'latest') return b.id - a.id;
+    if (sortOrder === 'oldest') return a.id - b.id;
+    if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
   useEffect(() => {

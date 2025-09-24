@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const router = useRouter();
@@ -9,24 +9,22 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const [pending, setPending] = useState(false);
 
   const ensureJwt = () => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.replace("/us/login");
+      alert('로그인이 필요합니다.');
+      router.replace('/us/login');
     }
     return jwt;
   };
 
   const readError = async (res) => {
     const base = `HTTP ${res.status}`;
-    const ct = res.headers.get("content-type") || "";
+    const ct = res.headers.get('content-type') || '';
     try {
-      if (ct.includes("application/json")) {
+      if (ct.includes('application/json')) {
         const body = await res.json();
         const detail = body?.detail ?? body?.message ?? body?.error;
-        return detail
-          ? `${base} - ${detail}`
-          : `${base} - ${JSON.stringify(body)}`;
+        return detail ? `${base} - ${detail}` : `${base} - ${JSON.stringify(body)}`;
       } else {
         const text = await res.text();
         return text ? `${base} - ${text}` : base;
@@ -42,18 +40,18 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
     try {
       setPending(true);
       const res = await fetch(`/api/sig/${sigId}/member/join`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
       });
       if (res.ok) {
-        alert("SIG 가입 성공!");
+        alert('SIG 가입 성공!');
         setIsMember(true);
         router.refresh();
       } else {
-        alert("SIG 가입 실패: " + (await readError(res)));
+        alert('SIG 가입 실패: ' + (await readError(res)));
       }
     } catch (e) {
-      alert("SIG 가입 실패: " + (e?.message || "네트워크 오류"));
+      alert('SIG 가입 실패: ' + (e?.message || '네트워크 오류'));
     } finally {
       setPending(false);
     }
@@ -65,18 +63,18 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
     try {
       setPending(true);
       const res = await fetch(`/api/sig/${sigId}/member/leave`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
       });
       if (res.ok) {
-        alert("SIG 탈퇴 성공!");
+        alert('SIG 탈퇴 성공!');
         setIsMember(false);
         router.refresh();
       } else {
-        alert("SIG 탈퇴 실패: " + (await readError(res)));
+        alert('SIG 탈퇴 실패: ' + (await readError(res)));
       }
     } catch (e) {
-      alert("SIG 탈퇴 실패: " + (e?.message || "네트워크 오류"));
+      alert('SIG 탈퇴 실패: ' + (e?.message || '네트워크 오류'));
     } finally {
       setPending(false);
     }
@@ -85,12 +83,12 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   return (
     <button
       type="button"
-      className={`SigButton ${isMember ? "is-leave" : "is-join"}`}
+      className={`SigButton ${isMember ? 'is-leave' : 'is-join'}`}
       onClick={isMember ? leave : join}
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? "시그 탈퇴하기" : "시그 가입하기"}
+      {isMember ? '시그 탈퇴하기' : '시그 가입하기'}
     </button>
   );
 }

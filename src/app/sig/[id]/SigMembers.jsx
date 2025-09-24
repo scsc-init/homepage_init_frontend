@@ -3,10 +3,7 @@ export default function SigMembers({ members }) {
   const count = list.length;
 
   return (
-    <section
-      className="SigMembersSection"
-      aria-labelledby="sig-members-heading"
-    >
+    <section className="SigMembersSection" aria-labelledby="sig-members-heading">
       <div className="SigMembersHeader">
         <h2 id="sig-members-heading" className="SigMembersTitle">
           시그 인원

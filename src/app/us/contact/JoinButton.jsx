@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import "./page.css";
+import { useEffect, useState, useRef } from 'react';
+import './page.css';
 
 export default function JoinButton() {
   const [show, setShow] = useState(false);
   const ref = useRef();
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     if (!jwt) {
       setShow(true);
     }
@@ -16,8 +16,8 @@ export default function JoinButton() {
 
   const handleMouseEnter = (e) => {
     const btn = ref.current;
-    const ripple = document.createElement("span");
-    ripple.className = "ripple";
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
 
     const rect = btn.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -38,12 +38,7 @@ export default function JoinButton() {
       <p className="JoinDescription">
         SCSC에 관심 있으신가요? 아래 버튼을 눌러 가입 신청서를 작성해주세요.
       </p>
-      <a
-        href="./login"
-        className="JoinButton"
-        ref={ref}
-        onMouseEnter={handleMouseEnter}
-      >
+      <a href="./login" className="JoinButton" ref={ref} onMouseEnter={handleMouseEnter}>
         Join us!
       </a>
     </div>

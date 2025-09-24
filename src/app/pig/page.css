@@ -1,6 +1,6 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/violet.css";
-@import "@radix-ui/colors/slate.css";
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/violet.css';
+@import '@radix-ui/colors/slate.css';
 
 #PigListContainer {
   display: flex;

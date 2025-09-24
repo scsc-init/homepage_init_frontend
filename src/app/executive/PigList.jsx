@@ -1,24 +1,22 @@
 // src/app/executive/PigList.jsx (CLIENT)
-"use client";
-import React, { useState } from "react";
-import EntryRow from "./EntryRow.jsx";
+'use client';
+import React, { useState } from 'react';
+import EntryRow from './EntryRow.jsx';
 
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);
   const [saving, setSaving] = useState({});
 
   const handleChange = (id, field, value) => {
-    setPigs((prev) =>
-      prev.map((pig) => (pig.id === id ? { ...pig, [field]: value } : pig)),
-    );
+    setPigs((prev) => prev.map((pig) => (pig.id === id ? { ...pig, [field]: value } : pig)));
   };
 
   const handleSave = async (pig) => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     setSaving((prev) => ({ ...prev, [pig.id]: true }));
     const res = await fetch(`/api/executive/pig/${pig.id}/update`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
       body: JSON.stringify({
         title: pig.title,
         description: pig.description,
@@ -28,20 +26,20 @@ export default function PigList({ pigs: pigsDefault }) {
         semester: pig.semester,
       }),
     });
-    if (res.status === 204) alert("저장 완료");
-    else alert("저장 실패: " + res.status);
+    if (res.status === 204) alert('저장 완료');
+    else alert('저장 실패: ' + res.status);
     setSaving((prev) => ({ ...prev, [pig.id]: false }));
   };
 
   const handleDelete = async (id) => {
-    const jwt = localStorage.getItem("jwt");
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    const jwt = localStorage.getItem('jwt');
+    if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/executive/pig/${id}/delete`, {
-      method: "POST",
-      headers: { "x-jwt": jwt },
+      method: 'POST',
+      headers: { 'x-jwt': jwt },
     });
     if (res.status === 204) setPigs((prev) => prev.filter((p) => p.id !== id));
-    else alert("삭제 실패: " + res.status);
+    else alert('삭제 실패: ' + res.status);
   };
 
   return (
