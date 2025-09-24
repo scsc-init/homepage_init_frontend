@@ -39,6 +39,14 @@
   box-shadow: 0 2px 6px var(--executive-card-shadow);
 }
 
+.pigCard.isMine {
+  border: 1px solid var(--selection-bg);
+  border-left-width: 4px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
 .pigTopbar {
   display: flex;
   justify-content: space-between;

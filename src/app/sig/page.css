@@ -23,6 +23,7 @@
   color: inherit;
 }
 
+
 .sigCard {
   border: 1px solid var(--slate-6);
   border-radius: 0.75rem;
@@ -38,6 +39,14 @@
 .sigCard:hover {
   box-shadow: 0 2px 6px var(--executive-card-shadow);
 }
+.sigCard.isMine {
+  border: 1px solid var(--selection-bg);
+  border-left-width: 4px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
 
 .sigTopbar {
   display: flex;
@@ -83,7 +92,7 @@
 
 .SigHeader {
   width: 100%;
-  max-width: 60rem; /* SigListContainer와 동일하게 제한 */
+  max-width: 60rem; /* SigListContainer?� ?�일?�게 ?�한 */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -109,3 +118,5 @@ body {
   gap: 0.5rem;
   align-items: center;
 }
+
+
