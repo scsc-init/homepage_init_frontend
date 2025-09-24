@@ -34,6 +34,11 @@ export default async function AdminPanel() {
           <Link href="/board/6">지원금 요청 게시판으로 이동</Link>
         </p>
 
+        <h2>HTML 페이지 관리</h2>
+        <p>
+          <Link href="/executive/w">HTML 페이지 관리 페이지로 이동</Link>
+        </p>
+
         <h2>게시글 관리</h2>
         <div className="adm-section">
           <ArticleList boards={boards} />

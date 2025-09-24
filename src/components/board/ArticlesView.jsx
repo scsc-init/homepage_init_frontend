@@ -67,7 +67,7 @@ export default function ArticlesView({ board, sortOrder }) {
           <div className="sigCard">
             <div className="sigTopbar">
               <span className="sigTitle">{article.title}</span>
-              <span className="sigUserCount">{utc2kst(new Date(article.created_at))}</span>
+              <span className="sigUserCount">{utc2kst(article.created_at)}</span>
             </div>
             <div className="sigDescription">
               {article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...

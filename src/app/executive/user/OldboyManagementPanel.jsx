@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { utc2kst } from '@/util/constants';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
@@ -47,8 +48,8 @@ export default function OldboyManagementPanel({ users }) {
               return (
                 <tr key={u.id}>
                   <td className="adm-td">{displayName}</td>
-                  <td className="adm-td">{u.created_at}</td>
-                  <td className="adm-td">{u.updated_at}</td>
+                  <td className="adm-td">{utc2kst(u.created_at)}</td>
+                  <td className="adm-td">{utc2kst(u.updated_at)}</td>
                   <td className="adm-td">{u.processed ? '✅' : '❌'}</td>
                   <td className="adm-td">
                     <button

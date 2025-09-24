@@ -94,7 +94,7 @@ export default function ArticleDetail({ params }) {
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
-      <p className="SigInfo">작성일: {utc2kst(new Date(article.created_at))}</p>
+      <p className="SigInfo">작성일: {utc2kst(article.created_at)}</p>
 
       {isAuthor && (
         <div className={`SigActionRow ${isDeleting ? 'is-busy' : ''}`}>
