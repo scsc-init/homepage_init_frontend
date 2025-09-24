@@ -30,7 +30,8 @@ export default function ClientAuthGate({ children }) {
           goLogin();
           return;
         }
-        if (!cancelled) setChecking(false); // 인증 통과 → 오버레이 해제
+        // NOTE(KMSstudio): An authentication is successful, the overlay will be dismissed.
+        if (!cancelled) setChecking(false);
       } catch {
         goLogin();
       }
