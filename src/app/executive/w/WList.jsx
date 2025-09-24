@@ -4,83 +4,91 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { utc2kst } from '@/util/constants';
 
-export default function WList() {
-  const [wMetas, setWMetas] = useState([]);
-  const [isBusy, setIsBusy] = useState(true);
-  const [refetchToggle, setRefetchToggle] = useState(false);
+export default function WList({ wMetas }) {
+  const [isBusy, setIsBusy] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchWMetas = async () => {
-      const res = await fetch('/api/executive/ws');
-      if (!res.ok) {
-        router.push('/us/login');
-        return;
-      }
-      setWMetas(await res.json());
-      setIsBusy(false);
-    };
-    fetchWMetas();
-  }, [router, refetchToggle]);
 
   const handleCreate = async (e) => {
     if (isBusy) return;
     setIsBusy(true);
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setIsBusy(false);
+      return;
+    }
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`/api/executive/w/create`, {
-      method: 'POST',
-      body: form,
-    });
-    if (res.status !== 201) {
-      const err = await res.json();
-      alert('파일 처리 실패: ' + err.detail);
-    } else {
-      setRefetchToggle((v) => !v);
-      alert('파일 처리 성공');
+    try {
+      const res = await fetch(`/api/executive/w/create`, {
+        method: 'POST',
+        body: form,
+      });
+      if (res.status !== 201) {
+        const err = await res.json();
+        alert('파일 처리 실패: ' + err.detail);
+      } else {
+        router.refresh();
+        alert('파일 처리 성공');
+      }
+    } catch {
+      alert('파일 처리 실패');
+    } finally {
+      setIsBusy(false);
+      if (e.target) e.target.value = '';
     }
-    setIsBusy(false);
   };
 
   const handleUpdate = (name) => async (e) => {
     if (isBusy) return;
     setIsBusy(true);
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setIsBusy(false);
+      return;
+    }
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`/api/executive/w/${name}/update`, {
-      method: 'POST',
-      body: form,
-    });
-    if (res.status !== 200) {
-      const err = await res.json();
-      alert('파일 처리 실패: ' + err.detail);
-    } else {
-      setRefetchToggle((v) => !v);
-      alert('파일 처리 성공');
+    try {
+      const res = await fetch(`/api/executive/w/${name}/update`, {
+        method: 'POST',
+        body: form,
+      });
+      if (res.status !== 200) {
+        const err = await res.json();
+        alert('파일 처리 실패: ' + err.detail);
+      } else {
+        router.refresh();
+        alert('파일 처리 성공');
+      }
+    } catch {
+      alert('파일 처리 실패');
+    } finally {
+      setIsBusy(false);
+      if (e.target) e.target.value = '';
     }
-    setIsBusy(false);
   };
 
   const onClickDelete = async (name) => {
     if (isBusy) return;
     setIsBusy(true);
-    const res = await fetch(`/api/executive/w/${name}/delete`, { method: 'POST' });
-    if (res.status !== 204) {
-      const err = await res.json();
-      alert('삭제 실패: ' + err.detail);
-    } else {
-      setRefetchToggle((v) => !v);
-      alert('삭제 성공');
+    try {
+      const res = await fetch(`/api/executive/w/${name}/delete`, { method: 'POST' });
+      if (res.status !== 204) {
+        const err = await res.json();
+        alert('삭제 실패: ' + err.detail);
+      } else {
+        router.refresh();
+        alert('삭제 성공');
+      }
+    } catch {
+      alert('삭제 실패');
+    } finally {
+      setIsBusy(false);
     }
-    setIsBusy(false);
   };
 
   return (
-    <div className={isBusy && 'is-busy'}>
+    <div className={isBusy ? 'is-busy' : undefined}>
       <div className="adm-section">
         <h3>HTML 페이지 목록</h3>
         <div className="adm-table-wrap">
@@ -109,6 +117,7 @@ export default function WList() {
                   <td className="adm-td">
                     <input
                       type="file"
+                      title=" "
                       accept=".html"
                       onChange={handleUpdate(w[0].name)}
                       disabled={isBusy}
@@ -134,7 +143,13 @@ export default function WList() {
         <h3>HTML 파일 업로드</h3>
         <p>파일명이 이름으로 지정됩니다</p>
         <div className="adm-actions">
-          <input type="file" accept=".html" onChange={handleCreate} disabled={isBusy} />
+          <input
+            type="file"
+            title=" "
+            accept=".html"
+            onChange={handleCreate}
+            disabled={isBusy}
+          />
         </div>
       </div>
     </div>

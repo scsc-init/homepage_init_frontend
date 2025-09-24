@@ -5,10 +5,12 @@ import { getApiSecret } from '@/util/getApiSecret';
 export async function POST(request) {
   const cookieStore = cookies();
   const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const hdrs = { 'x-api-secret': getApiSecret() };
+  if (appJwt) hdrs['x-jwt'] = appJwt;
   const formData = await request.formData();
   const res = await fetch(`${getBaseUrl()}/api/executive/w/create`, {
     method: 'POST',
-    headers: { 'x-api-secret': getApiSecret(), 'x-jwt': appJwt },
+    headers: hdrs,
     body: formData,
     cache: 'no-store',
   });

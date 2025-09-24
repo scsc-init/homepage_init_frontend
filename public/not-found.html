@@ -2,8 +2,36 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>404 – 페이지를 찾을 수 없습니다</title>
+    <title>SCSC: 서울대 컴퓨터 연구회 - 404</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="서울대학교 SCSC" />
+    <meta
+      property="og:description"
+      content="서울대학교 컴퓨터 연구회 SCSC의 공식 홈페이지입니다.  
+SCSC는 SIG(Special Interested Group) 또는 PIG를 통해 스터디와 연구를 진행합니다. 이에 더해 SCSC는, SKYST 대회 진행 및 세미나 운영을 진행하고 있습니다."
+    />
+    <meta property="og:url" content="https://scsc.dev/" />
+    <meta property="og:site_name" content="SCSC" />
+    <meta property="og:image" content="https://scsc.dev/opengraph.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SCSC Logo" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="서울대학교 SCSC" />
+    <meta
+      name="twitter:description"
+      content="서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다."
+    />
+    <meta name="twitter:image" content="https://scsc.dev/opengraph.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" />
+
     <style>
       /* === Styles from not-found.css === */
       .NF_Root {
@@ -135,7 +163,9 @@
         <h1 id="nf-title" class="NF_Title">페이지를 찾을 수 없습니다</h1>
         <p class="NF_Desc">요청하신 주소가 변경되었거나 존재하지 않습니다.</p>
         <div class="NF_Actions">
-          <button class="NF_Button NF_Secondary" onclick="goBack()">← 뒤로가기</button>
+          <button type="button" class="NF_Button NF_Secondary" onclick="goBack()">
+            ← 뒤로가기
+          </button>
           <a class="NF_Button" href="/">홈으로 이동</a>
         </div>
       </section>
