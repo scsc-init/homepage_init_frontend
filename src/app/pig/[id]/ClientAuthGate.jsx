@@ -27,9 +27,7 @@ export default function ClientAuthGate({ children }) {
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [router]);
 
   return (

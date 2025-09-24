@@ -3,7 +3,8 @@
 
 import dynamic from 'next/dynamic';
 
-// ✅ 핵심: forwardRef: true 옵션
+// NOTE(unknown): `forwardRef: true` ensures that refs are properly 
+// passed down to the dynamically imported MDXEditor component.
 const Editor = dynamic(() => import('./MDXEditor.jsx'), {
   ssr: false,
   loading: () => <p>로딩 중...</p>,
