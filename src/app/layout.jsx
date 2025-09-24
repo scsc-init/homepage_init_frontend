@@ -4,6 +4,7 @@ import HeaderWrapper from './HeaderWrapper';
 import ThemeToggle from '@/components/ThemeToggle';
 import dynamic from 'next/dynamic';
 import Providers from './Providers.jsx';
+import Script from 'next/script';
 
 const FooterWrapper = dynamic(() => import('@/app/FooterWrapper'), { ssr: false });
 
@@ -40,9 +41,7 @@ export default function RootLayout({ children }) {
     <html lang="ko" suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
+        <Script id="theme-init" strategy="beforeInteractive">{`
 (function () {
   try {
     var d = document.documentElement;
@@ -53,9 +52,7 @@ export default function RootLayout({ children }) {
     d.classList.toggle('dark', !!dark);
   } catch (e) {}
 })();
-`,
-          }}
-        />
+        `}</Script>
       </head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">

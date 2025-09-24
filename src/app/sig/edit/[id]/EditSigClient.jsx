@@ -31,7 +31,6 @@ export default function EditSigClient({ sigId }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    // 기본값에 is_rolling_admission 추가 (빠져있던 부분 복구)
     defaultValues: {
       title: '',
       description: '',

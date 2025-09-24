@@ -1,8 +1,5 @@
 import Google from 'next-auth/providers/google';
-
-const ABS_BASE =
-  process.env.NEXTAUTH_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+import { cookies } from 'next/headers';
 
 export const authOptions = {
   session: { strategy: 'jwt' },
@@ -17,7 +14,7 @@ export const authOptions = {
     async jwt({ token, account }) {
       if (account?.provider === 'google' && token?.email) {
         try {
-          const res = await fetch(`${ABS_BASE}/api/user/login`, {
+          const res = await fetch('/api/user/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: token.email }),
@@ -25,7 +22,13 @@ export const authOptions = {
           });
           if (res.status === 200) {
             const data = await res.json();
-            token.appJwt = data?.jwt;
+            cookies().set('app_jwt', data.jwt, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              path: '/',
+              maxAge: 60 * 60 * 24 * 7,
+            });
             token.signupRequired = false;
           } else if (res.status === 404) {
             token.signupRequired = true;
@@ -35,7 +38,6 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (token?.appJwt) session.appJwt = token.appJwt;
       session.signupRequired = Boolean(token?.signupRequired);
       return session;
     },
