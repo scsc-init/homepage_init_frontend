@@ -1,4 +1,3 @@
-// src/app/executive/user/OldboyManagementPanel.jsx (CLIENT)
 'use client';
 import { useEffect, useState } from 'react';
 
@@ -7,23 +6,17 @@ export default function OldboyManagementPanel({ users }) {
   const [saving, setSaving] = useState({});
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return;
     const fetchApplicants = async () => {
-      const res = await fetch(`/api/executive/user/oldboy/applicants`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/executive/user/oldboy/applicants`);
       if (res.ok) setApplicants(await res.json());
     };
     fetchApplicants();
   }, []);
 
   const processOldboy = async (user) => {
-    const jwt = localStorage.getItem('jwt');
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const res = await fetch(`/api/executive/user/oldboy/${user.id}/process`, {
       method: 'POST',
-      headers: { 'x-jwt': jwt },
     });
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
     else {

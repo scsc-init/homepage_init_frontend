@@ -1,4 +1,3 @@
-// app/pig/edit/[id]/EditPigClient.jsx
 'use client';
 
 import Editor from '@/components/board/EditorWrapper.jsx';
@@ -42,46 +41,24 @@ export default function EditPigClient({ pigId }) {
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
-
     const fetchProfile = async () => {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) return;
-
-      const res = await fetch(`/api/user/profile`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
       else router.push('/us/login');
     };
     fetchProfile();
 
     const fetchPigData = async () => {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) return;
-
-      const res = await fetch(`/api/pig/${pigId}`, {
-        headers: { 'x-jwt': jwt },
-      });
-
+      const res = await fetch(`/api/pig/${pigId}`);
       if (!res.ok) {
         alert('피그 정보를 불러오지 못했습니다.');
         router.push('/pig');
         return;
       }
-
       const pig = await res.json();
       setPig(pig);
 
-      const articleRes = await fetch(`/api/article/${pig.content_id}`, {
-        headers: { 'x-jwt': jwt },
-      });
-
+      const articleRes = await fetch(`/api/article/${pig.content_id}`);
       if (!articleRes.ok) {
         alert('피그 정보를 불러오지 못했습니다.');
         router.push('/pig');
@@ -101,7 +78,7 @@ export default function EditPigClient({ pigId }) {
       }
     };
 
-    const handleRouteChange = (url) => {
+    const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
         const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
@@ -118,16 +95,9 @@ export default function EditPigClient({ pigId }) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty]);
+  }, [isDirty, router]);
 
   const onSubmit = async (data) => {
-    if (submitting) return;
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
-
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
@@ -144,10 +114,7 @@ export default function EditPigClient({ pigId }) {
           : `/api/pig/${pigId}/update`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-jwt': jwt,
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             title: data.title,
             description: data.description,
@@ -163,13 +130,14 @@ export default function EditPigClient({ pigId }) {
         alert('PIG 수정 성공!');
         router.push(`/pig/${pigId}`);
         router.refresh();
+      } else if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
       } else {
         const err = await res.json();
-        console.log(err);
         alert('PIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      console.error(err);
       alert(err.message || '네트워크 오류');
     } finally {
       setSubmitting(false);

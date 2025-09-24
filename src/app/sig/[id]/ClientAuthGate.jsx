@@ -14,23 +14,13 @@ export default function ClientAuthGate({ children }) {
       Promise.resolve().then(() => router.replace('/us/login'));
     };
 
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      goLogin();
-      return;
-    }
-
     (async () => {
       try {
-        const res = await fetch('/api/user/profile', {
-          headers: { 'x-jwt': jwt },
-          cache: 'no-store',
-        });
-        if (!res.ok) {
+        const res = await fetch('/api/user/profile', { cache: 'no-store' });
+        if (!res.ok || res.status === 401) {
           goLogin();
           return;
         }
-        // NOTE(KMSstudio): An authentication is successful, the overlay will be dismissed.
         if (!cancelled) setChecking(false);
       } catch {
         goLogin();

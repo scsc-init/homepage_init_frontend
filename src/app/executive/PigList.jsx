@@ -1,4 +1,3 @@
-// src/app/executive/PigList.jsx (CLIENT)
 'use client';
 import React, { useState } from 'react';
 import EntryRow from './EntryRow.jsx';
@@ -12,11 +11,10 @@ export default function PigList({ pigs: pigsDefault }) {
   };
 
   const handleSave = async (pig) => {
-    const jwt = localStorage.getItem('jwt');
     setSaving((prev) => ({ ...prev, [pig.id]: true }));
     const res = await fetch(`/api/executive/pig/${pig.id}/update`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: pig.title,
         description: pig.description,
@@ -32,11 +30,9 @@ export default function PigList({ pigs: pigsDefault }) {
   };
 
   const handleDelete = async (id) => {
-    const jwt = localStorage.getItem('jwt');
     if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/executive/pig/${id}/delete`, {
       method: 'POST',
-      headers: { 'x-jwt': jwt },
     });
     if (res.status === 204) setPigs((prev) => prev.filter((p) => p.id !== id));
     else alert('삭제 실패: ' + res.status);

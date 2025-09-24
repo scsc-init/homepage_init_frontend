@@ -1,20 +1,9 @@
 'use client';
-
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
-
-  const ensureJwt = () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.replace('/us/login');
-    }
-    return jwt;
-  };
 
   const readError = async (res) => {
     const base = `HTTP ${res.status}`;
@@ -24,23 +13,20 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
         const body = await res.json();
         const detail = body?.detail ?? body?.message ?? body?.error;
         return detail ? `${base} - ${detail}` : `${base} - ${JSON.stringify(body)}`;
-      } else {
-        const text = await res.text();
-        return text ? `${base} - ${text}` : base;
       }
+      const text = await res.text();
+      return text ? `${base} - ${text}` : base;
     } catch {
       return base;
     }
   };
 
   const deleteBySelf = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         alert('PIG 비활성화 성공!');
@@ -56,13 +42,11 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   };
 
   const deleteByExec = async () => {
-    const jwt = ensureJwt();
-    if (!jwt) return;
     try {
       setPending(true);
       const res = await fetch(`/api/pig/${pigId}/delete/executive`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         alert('PIG 비활성화 성공!');

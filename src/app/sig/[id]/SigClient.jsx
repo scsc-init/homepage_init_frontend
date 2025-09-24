@@ -33,30 +33,21 @@ export default function SigClient({ sig, members, articleId, sigId }) {
     const ownerOk = !!sig?.owner && sig.owner === me.id;
     return ownerOk;
   }, [me, sig]);
+
   const semesterLabel = useMemo(() => {
     const key = Number(sig?.semester);
     return SEMESTER_MAP[key] ?? `${sig?.semester}`;
   }, [sig?.semester]);
+
   useEffect(() => {
     let cancelled = false;
-    const jwt = typeof window !== 'undefined' ? localStorage.getItem('jwt') : null;
-    if (!jwt) {
-      router.replace('/us/login');
-      return;
-    }
     (async () => {
       try {
         const [meRes, articleRes] = await Promise.all([
-          fetch('/api/user/profile', {
-            headers: { 'x-jwt': jwt },
-            cache: 'no-store',
-          }),
-          fetch(`/api/article/${articleId}`, {
-            headers: { 'x-jwt': jwt },
-            cache: 'no-store',
-          }),
+          fetch('/api/user/profile', { cache: 'no-store' }),
+          fetch(`/api/article/${articleId}`, { cache: 'no-store' }),
         ]);
-        if (!meRes.ok || !articleRes.ok) {
+        if (meRes.status === 401 || !meRes.ok || !articleRes.ok) {
           router.replace('/us/login');
           return;
         }

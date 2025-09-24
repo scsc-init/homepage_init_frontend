@@ -17,12 +17,6 @@ export default function ArticlesView({ board, sortOrder }) {
   useEffect(() => {
     if (!boardId) return;
 
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
-
     if (boardId === 1 || boardId === 2) {
       setUnauthorized(true);
       return;
@@ -30,15 +24,15 @@ export default function ArticlesView({ board, sortOrder }) {
 
     const fetchContents = async () => {
       try {
-        const res = await fetch(`/api/articles/${boardId}`, {
-          headers: { 'x-jwt': jwt },
-        });
-
+        const res = await fetch(`/api/articles/${boardId}`);
+        if (res.status === 401) {
+          router.push('/us/login');
+          return;
+        }
         if (!res.ok) {
           router.push('/us/login');
           return;
         }
-
         const data = await res.json();
         setArticles(data);
       } catch (_) {
@@ -65,10 +59,10 @@ export default function ArticlesView({ board, sortOrder }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
-
+  const displayArticles = sortedArticles.filter((a) => a?.is_deleted !== true);
   return (
     <div id="SigList">
-      {sortedArticles.map((article) => (
+      {displayArticles.map((article) => (
         <Link key={article.id} href={`/article/${article.id}`} className="sigLink">
           <div className="sigCard">
             <div className="sigTopbar">

@@ -1,4 +1,3 @@
-// src/app/executive/MajorList.jsx (CLIENT)
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -15,10 +14,7 @@ export default function MajorList({ majors: majorsDefault }) {
   const saveMajor = async (major) => {
     const res = await fetch(`/api/executive/major/update/${major.id}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-jwt': localStorage.getItem('jwt'),
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(major),
     });
     if (res.status === 204) alert('저장 완료');
@@ -29,7 +25,6 @@ export default function MajorList({ majors: majorsDefault }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     const res = await fetch(`/api/executive/major/delete/${id}`, {
       method: 'POST',
-      headers: { 'x-jwt': localStorage.getItem('jwt') },
     });
     if (res.status === 204) {
       alert('삭제 완료');
@@ -40,10 +35,7 @@ export default function MajorList({ majors: majorsDefault }) {
   const createMajor = async () => {
     const res = await fetch(`/api/executive/major/create`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-jwt': localStorage.getItem('jwt'),
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMajor),
     });
     if (res.status === 201) {

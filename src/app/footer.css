@@ -48,7 +48,7 @@
 }
 
 .FooterLogo {
-  background-color: var(--footer-icon-bg);
+  background-color: var(--executive-card-bg);
   padding: 0.75rem;
   border-radius: 50%;
   display: flex;

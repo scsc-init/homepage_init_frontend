@@ -4,10 +4,9 @@ import HeaderWrapper from './HeaderWrapper';
 import ThemeToggle from '@/components/ThemeToggle';
 import dynamic from 'next/dynamic';
 import Providers from './Providers.jsx';
+import Script from 'next/script';
 
-const FooterWrapper = dynamic(() => import('@/app/FooterWrapper'), {
-  ssr: false,
-});
+const FooterWrapper = dynamic(() => import('@/app/FooterWrapper'), { ssr: false });
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -41,40 +40,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem("theme");
-                  if (theme === "dark") {
-                    document.documentElement.classList.add("dark");
-                  }
-                } catch (_) {}
-              })();
-            `,
-          }}
-        />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-(function() {
+        <Script id="theme-init" strategy="beforeInteractive">{`
+(function () {
   try {
-    var ls = localStorage.getItem('theme');
-    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var dark = ls ? (ls === 'dark') : prefersDark;
-    if (dark) document.documentElement.classList.add('dark');
+    var d = document.documentElement;
+    var c = document.cookie.split('; ').find(function (r) { return r.indexOf('theme=') === 0; });
+    var v = c ? decodeURIComponent(c.split('=')[1]) : '';
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var dark = v ? (v === 'dark') : prefersDark;
+    d.classList.toggle('dark', !!dark);
   } catch (e) {}
 })();
-`,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `!function(){try{var d=document.documentElement;var m=localStorage.getItem('theme');var dark=m?m==='dark':true;d.classList.toggle('dark',dark)}catch(e){}}()`,
-          }}
-        />
+        `}</Script>
       </head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">

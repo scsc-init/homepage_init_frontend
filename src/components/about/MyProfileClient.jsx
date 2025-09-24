@@ -25,10 +25,7 @@ const USER_ROLE_MAP = {
 
 async function onAuthFail() {
   try {
-    localStorage.removeItem('jwt');
-  } catch {}
-  try {
-    sessionStorage.clear();
+    await fetch('/api/auth/app-jwt', { method: 'DELETE' });
   } catch {}
   try {
     await signOut({ redirect: false });
@@ -41,17 +38,9 @@ export default function MyProfileClient() {
   const router = useRouter();
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      onAuthFail().finally(() => router.push('/us/login'));
-      return;
-    }
-
     const fetchProfile = async () => {
       try {
-        const resUser = await fetch(`/api/user/profile`, {
-          headers: { 'x-jwt': jwt },
-        });
+        const resUser = await fetch(`/api/user/profile`);
         if (resUser.status != 200) {
           await onAuthFail();
           router.push('/us/login');
@@ -69,25 +58,15 @@ export default function MyProfileClient() {
     fetchProfile();
   }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      localStorage.removeItem('jwt');
-    } catch {}
-    try {
-      sessionStorage.clear();
+      await fetch('/api/auth/app-jwt', { method: 'DELETE' });
     } catch {}
     signOut({ callbackUrl: '/' });
   };
 
   const handleEnroll = async () => {
-    const jwt = localStorage.getItem('jwt');
-    const res = await fetch('/api/user/enroll', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-jwt': jwt,
-      },
-    });
+    const res = await fetch('/api/user/enroll', { method: 'POST' });
 
     if (res.status === 204) {
       alert('등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.');

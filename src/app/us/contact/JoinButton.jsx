@@ -8,10 +8,9 @@ export default function JoinButton() {
   const ref = useRef();
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      setShow(true);
-    }
+    fetch('/api/user/profile')
+      .then((r) => setShow(r.status === 401))
+      .catch(() => setShow(true));
   }, []);
 
   const handleMouseEnter = (e) => {

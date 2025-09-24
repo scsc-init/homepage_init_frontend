@@ -75,9 +75,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const step3Ready = step1Done && step2Done;
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return router.push('/us/login');
-    fetch('/api/user/profile', { headers: { 'x-jwt': jwt } })
+    fetch('/api/user/profile')
       .then((res) => {
         if (res.status === 401) throw new Error('Unauthorized');
         return res.json();
@@ -110,7 +108,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const onSubmit = async (data) => {
     if (submitting) return;
     if (!user) return;
-    const jwt = localStorage.getItem('jwt');
+
     setSubmitting(true);
 
     const tLabel = typeLabel(data.applyType);
@@ -133,7 +131,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     try {
       const res = await fetch('/api/article/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: `[${tLabel}] ${targetDisplay}`,
           content: summary,

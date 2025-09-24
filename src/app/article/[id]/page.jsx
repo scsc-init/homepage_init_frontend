@@ -1,4 +1,3 @@
-// app/article/[id]/page.jsx
 'use client';
 
 import ReactMarkdown from 'react-markdown';
@@ -24,22 +23,23 @@ export default function ArticleDetail({ params }) {
   const { id } = params;
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
     const loadAll = async () => {
       try {
         const [contentRes, commentsRes, userRes] = await Promise.all([
-          fetch(`/api/article/${id}`, { headers: { 'x-jwt': jwt } }),
-          fetch(`/api/comments/${id}`, { headers: { 'x-jwt': jwt } }),
-          fetch(`/api/user/profile`, { headers: { 'x-jwt': jwt } }),
+          fetch(`/api/article/${id}`),
+          fetch(`/api/comments/${id}`),
+          fetch(`/api/user/profile`),
         ]);
+
+        if (userRes.status === 401) {
+          router.push('/us/login');
+          return;
+        }
         if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
           setIsError(true);
           return;
         }
+
         const [articleJson, commentsJson, userJson] = await Promise.all([
           contentRes.json(),
           commentsRes.json(),
@@ -73,17 +73,9 @@ export default function ArticleDetail({ params }) {
 
   const handleDelete = async () => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, {
-        method: 'POST',
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/us/login');
