@@ -108,7 +108,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const fmtNumber = (n) => new Intl.NumberFormat('ko-KR').format(Number(n || 0));
 
   const onSubmit = async (data) => {
-    if (submitting) return; // 이중 클릭 가드
+    if (submitting) return;
     if (!user) return;
     const jwt = localStorage.getItem('jwt');
     setSubmitting(true);

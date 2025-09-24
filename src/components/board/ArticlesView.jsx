@@ -12,10 +12,10 @@ export default function ArticlesView({ board, sortOrder }) {
   const [articles, setArticles] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
 
-  const boardId = board?.id; // board가 없으면 undefined
+  const boardId = board?.id;
 
   useEffect(() => {
-    if (!boardId) return; // board 없을 경우 실행하지 않음
+    if (!boardId) return;
 
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {

@@ -1,18 +1,36 @@
-//변경 가능성이 있는 변수들과 설명입니다. 유지보수시 이 파일에서 수정해주세요.
+// @/util/constants.jsx
 
+/**
+ * @file 변경 가능성이 있는 변수들과 설명을 모아둔 파일입니다.
+ * @description 유지보수 시 반드시 이 파일에서 수정하세요.
+ */
+
+
+/**
+ * 관리자의 최소 권한 레벨입니다.
+ * - BE의 role level과 name을 관리할 때, 관리자는 반드시 이 값 **이상**의 권한을,
+ *   비관리자는 이 값 **미만**의 권한을 가져야 합니다.
+ * - 헤더에서 '운영진 페이지' 표시 여부를 결정하는 데 사용됩니다.
+ */
 export const minExecutiveLevel = 500;
-// 관리자의 최소 권한입니다. BE의 role level과 name을 관리할 때, 관리자는 반드시 이 변수 이상의 권한을, 비관리자는 이 변수 미만의 권한을 가지고 있어야 합니다.
-// 헤더에서 '운영진 페이지'를 표시할지 결정하는 데에 사용됩니다.
+/** 졸업생 권한 레벨 값입니다. 내 정보 수정 페이지에서 사용됩니다. */
 export const oldboyLevel = 400;
-// 졸업생 권한의 값입니다. 내 정보 수정 페이지에서 사용됩니다.
-export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
-// 학기 숫자에 대응되는 학기 표시값입니다.
 
+/** 
+ * 학기 숫자에 대응되는 학기 표시값입니다. 
+ * @type {Record<number, string>} 
+ */
+export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
+
+/**
+ * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
+ * BE의 src/controller/scsc.py에서 정의합니다.
+ */
 const CTRL_STATUS_AVAILABLE = {
   JOIN_SIGPIG: ['surveying', 'recruiting'],
   JOIN_SIGPIG_ROLLING_ADMISSION: ['surveying', 'recruiting', 'active'],
 };
-// 시그/피그에 가입/탈퇴할 수 있는 시그/피그의 상태 목록입니다. BE의 src/controller/scsc.py에서 정의합니다.
+
 /**
  *
  * @param {String} status sig/pig status
@@ -36,13 +54,24 @@ export const COLORS = {
   surfaceDark: 'var(--color-surface-dark)',
   surfaceLight: 'var(--color-surface-light)',
 };
-// 전체적인 색들입니다. @/styles/theme.css와 함께 수정해주세요.
+
+/**
+ * Returns the first valid string among the provided values.
+ *
+ * @param {...(string|undefined|null)} vals - Candidate values.
+ * @returns {string} The first non-empty string found, or an empty string if none exist.
+ */
 function pickEnv(...vals) {
   for (const v of vals) {
     if (typeof v === 'string' && v.trim()) return v.trim();
   }
   return '';
 }
+
+/*
+ * 전체적인 색상 정의와 관련된 설정입니다.
+ * 반드시 @/styles/theme.css와 함께 수정해야 합니다.
+ */
 
 export const DEPOSIT_ACC = pickEnv(
   process.env.NEXT_PUBLIC_DEPOSIT_ACC,

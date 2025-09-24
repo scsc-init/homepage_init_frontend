@@ -1,7 +1,9 @@
-﻿"use client";
+﻿// @/app/pig/PigListClient.jsx
 
-import SortDropdown from "@/components/board/SortDropdown"; // 기존 재사용
+"use client";
+
 import { SEMESTER_MAP } from "@/util/constants";
+import SortDropdown from "@/components/board/SortDropdown";
 import Link from "next/link";
 import { useState,useEffect } from "react";
 
