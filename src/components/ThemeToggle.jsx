@@ -12,23 +12,17 @@ function getCookie(name) {
 function setCookie(name, value, days = 365) {
   if (typeof document === 'undefined') return;
   const maxAge = days * 24 * 60 * 60;
-  const secure =
-    typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
+  const secure = typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
 }
 
-export default function ThemeToggle() {
-  const [dark, setDark] = useState(true);
-  useEffect(() => {
-    const saved = getCookie('theme');
-    const prefersDark =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
+export default function ThemeToggle({ initialDark }) {
+  const [dark, setDark] = useState(typeof initialDark === 'boolean' ? initialDark : true);
 
-    const shouldDark = saved ? saved === 'dark' : prefersDark;
-    document.documentElement.classList.toggle('dark', shouldDark);
-    setDark(shouldDark);
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      setDark(document.documentElement.classList.contains('dark'));
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -49,7 +43,7 @@ export default function ThemeToggle() {
 
   return (
     <button className="ThemeToggle" onClick={toggleTheme} aria-label="Toggle dark mode">
-      {dark ? '🌙' : '☀️'}
+      <span suppressHydrationWarning>{dark ? '🌙' : '☀️'}</span>
     </button>
   );
 }

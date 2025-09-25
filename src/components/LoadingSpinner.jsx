@@ -3,7 +3,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+const codes = [
+  `<span style="color:#569CD6;">#include</span> &lt;stdio.h&gt;
+<span style="color:#4EC9B0;">int</span> main(void){
+  <span style="color:#DCDCAA;">printf</span>("Hello, world!");
+}`,
+  `<span style="color:#569CD6;">#include</span> &lt;iostream&gt;
+<span style="color:#4EC9B0;">int</span> main(void){
+  std::<span style="color:#DCDCAA;">cout</span> &lt;&lt; "Hello, world!";
+}`,
+  `<span style="color:#569CD6;">using</span> System;
+<span style="color:#4EC9B0;">class</span> Hello
+{
+  <span style="color:#569CD6;">static</span> <span style="color:#569CD6;">void</span> Main()
+  {
+    Console.<span style="color:#DCDCAA;">Write</span>("Hello, world!");
+  }
+}`,
+  `<span style="color:#DCDCAA;">print</span>("Hello, world!")
+<span style="color:#DCDCAA;">print</span>("Hello, SCSC!")
+name = <span style="color:#DCDCAA;">input</span>("이름을 입력하세요: ")
+<span style="color:#DCDCAA;">print</span>(f"안녕하세요, {name}님!")`,
+];
 export default function LoadingSpinner() {
   const [sampleCode] = useState(() => {
     const random_index = Math.floor(Math.random() * codes.length);
