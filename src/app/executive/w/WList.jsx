@@ -49,7 +49,7 @@ export default function WList({ wMetas }) {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch(`/api/executive/w/${name}/update`, {
+      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/update`, {
         method: 'POST',
         body: form,
       });
@@ -72,7 +72,9 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(`/api/executive/w/${name}/delete`, { method: 'POST' });
+      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/delete`, {
+        method: 'POST',
+      });
       if (res.status !== 204) {
         const err = await res.json();
         alert('삭제 실패: ' + err.detail);
@@ -108,7 +110,7 @@ export default function WList({ wMetas }) {
               {wMetas.map((w) => (
                 <tr key={w[0].name}>
                   <td className="adm-td">
-                    <Link href={`/w/${w[0].name}`}>{w[0].name}</Link>
+                    <Link href={`/w/${encodeURIComponent(w[0].name)}`}>{w[0].name}</Link>
                   </td>
                   <td className="adm-td">{w[1]}</td>
                   <td className="adm-td">{w[0].size}</td>

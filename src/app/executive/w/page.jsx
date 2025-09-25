@@ -1,5 +1,6 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import WithAuthorization from '@/components/WithAuthorization';
+import { redirect } from 'next/navigation';
 import '../page.css';
 import WList from './WList';
 

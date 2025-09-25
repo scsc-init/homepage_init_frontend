@@ -17,8 +17,9 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
 
   let fullPath = pathTemplate;
   if (options.params) {
-    for (const key in options.params) {
-      fullPath = fullPath.replace(`{${key}}`, encodeURIComponent(options.params[key]));
+    for (const key of Object.keys(options.params)) {
+      const encoded = encodeURIComponent(String(options.params[key]));
+      fullPath = fullPath.replaceAll(`{${key}}`, encoded);
     }
   }
   if (options.query) {
