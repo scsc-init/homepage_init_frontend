@@ -17,8 +17,9 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
 
   let fullPath = pathTemplate;
   if (options.params) {
-    for (const key in options.params) {
-      fullPath = fullPath.replace(`{${key}}`, options.params[key]);
+    for (const key of Object.keys(options.params)) {
+      const encoded = encodeURIComponent(String(options.params[key]));
+      fullPath = fullPath.replaceAll(`{${key}}`, encoded);
     }
   }
   if (options.query) {
@@ -30,9 +31,7 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const hasIncoming = Boolean(request);
   const bodyJson = hasIncoming ? await request.json() : undefined;
 
-  const hdrs = {
-    'x-api-secret': getApiSecret(),
-  };
+  const hdrs = { 'x-api-secret': getApiSecret() };
   if (appJwt) hdrs['x-jwt'] = appJwt;
   if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
 

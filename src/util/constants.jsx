@@ -5,7 +5,6 @@
  * @description 유지보수 시 반드시 이 파일에서 수정하세요.
  */
 
-
 /**
  * 관리자의 최소 권한 레벨입니다.
  * - BE의 role level과 name을 관리할 때, 관리자는 반드시 이 값 **이상**의 권한을,
@@ -16,9 +15,9 @@ export const minExecutiveLevel = 500;
 /** 졸업생 권한 레벨 값입니다. 내 정보 수정 페이지에서 사용됩니다. */
 export const oldboyLevel = 400;
 
-/** 
- * 학기 숫자에 대응되는 학기 표시값입니다. 
- * @type {Record<number, string>} 
+/**
+ * 학기 숫자에 대응되는 학기 표시값입니다.
+ * @type {Record<number, string>}
  */
 export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 
@@ -90,8 +89,14 @@ export const KAKAO_INVITE_LINK = pickEnv(
   process.env.KAKAO_INVITE_LINK,
   'https://invite.kakao.com/tc/II2yiLsQhY',
 );
+
+/**
+ *
+ * @param {string | number | Date} date utc datetime
+ * @returns {string} kst datetime
+ */
 export function utc2kst(date) {
-  const utc = date.getTime();
+  const utc = new Date(date).getTime();
   const kst = new Date(utc + 9 * 60 * 60 * 1000);
 
   return kst.toLocaleString('ko-KR', {
