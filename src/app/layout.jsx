@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;
 
   return (
-    <html lang="ko" suppressHydrationWarning className={initialDark ? 'dark' : ''}>
+    <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
       <head>
         <meta name="color-scheme" content="dark light" />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
