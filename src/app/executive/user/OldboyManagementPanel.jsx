@@ -1,29 +1,23 @@
-// src/app/executive/user/OldboyManagementPanel.jsx (CLIENT)
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
+import { utc2kst } from '@/util/constants';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
   const [saving, setSaving] = useState({});
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return;
     const fetchApplicants = async () => {
-      const res = await fetch(`/api/executive/user/oldboy/applicants`, {
-        headers: { "x-jwt": jwt },
-      });
+      const res = await fetch(`/api/executive/user/oldboy/applicants`);
       if (res.ok) setApplicants(await res.json());
     };
     fetchApplicants();
   }, []);
 
   const processOldboy = async (user) => {
-    const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const res = await fetch(`/api/executive/user/oldboy/${user.id}/process`, {
-      method: "POST",
-      headers: { "x-jwt": jwt },
+      method: 'POST',
     });
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
     else {
@@ -50,13 +44,13 @@ export default function OldboyManagementPanel({ users }) {
           <tbody>
             {applicants.map((u) => {
               const user = users.find((x) => x.id === u.id);
-              const displayName = user?.name ?? "(알 수 없음)";
+              const displayName = user?.name ?? '(알 수 없음)';
               return (
                 <tr key={u.id}>
                   <td className="adm-td">{displayName}</td>
-                  <td className="adm-td">{u.created_at}</td>
-                  <td className="adm-td">{u.updated_at}</td>
-                  <td className="adm-td">{u.processed ? "✅" : "❌"}</td>
+                  <td className="adm-td">{utc2kst(u.created_at)}</td>
+                  <td className="adm-td">{utc2kst(u.updated_at)}</td>
+                  <td className="adm-td">{u.processed ? '✅' : '❌'}</td>
                   <td className="adm-td">
                     <button
                       className="adm-button"

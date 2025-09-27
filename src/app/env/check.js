@@ -1,5 +1,5 @@
-"use server";
+'use server';
 
 export async function isSkipEmailCheck() {
-  return process.env.SNU_EMAIL_CHECK === "FALSE";
+  return process.env.SNU_EMAIL_CHECK === 'FALSE';
 }

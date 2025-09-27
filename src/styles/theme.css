@@ -100,12 +100,7 @@ html.theme-animating {
   --selection-bg: #4bb0c9;
   --selection-text: #ffffff;
 
-  --main-bg-gradient: radial-gradient(
-    circle at center,
-    #1e1e1e 0%,
-    #151515 40%,
-    #121212 100%
-  );
+  --main-bg-gradient: radial-gradient(circle at center, #1e1e1e 0%, #151515 40%, #121212 100%);
 
   --main-focus-gradient: radial-gradient(
     circle at center,

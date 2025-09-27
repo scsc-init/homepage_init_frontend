@@ -1,6 +1,6 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/violet.css";
-@import "@radix-ui/colors/slate.css";
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/violet.css';
+@import '@radix-ui/colors/slate.css';
 
 #PigListContainer {
   display: flex;
@@ -40,9 +40,8 @@
 }
 
 .pigCard.isMine {
-  border-width: 1px;
-  border-color: var(--slate-6);
-  border-left: 4px solid var(--selection-bg);
+  border: 1px solid var(--selection-bg);
+  border-left-width: 4px;
   transition:
     border-color 0.2s ease,
     background 0.2s ease;

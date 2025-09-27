@@ -118,7 +118,7 @@ select.C_Input option {
   border-radius: 0.5rem;
   border: 1px solid var(--color-button-border);
 }
-.mdxeditor [contenteditable="true"] {
+.mdxeditor [contenteditable='true'] {
   position: relative;
   z-index: 1;
   min-height: calc(var(--editor-min-height) - var(--editor-toolbar-h));

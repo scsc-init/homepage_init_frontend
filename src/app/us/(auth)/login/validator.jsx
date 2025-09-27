@@ -7,10 +7,7 @@ export function emailCode(code, then) {
 }
 
 export function password(password, then) {
-  then &&
-    then(
-      password != undefined && password.length >= 8 && password.length <= 128,
-    );
+  then && then(password != undefined && password.length >= 8 && password.length <= 128);
 }
 
 export function name(name, then) {
@@ -18,16 +15,10 @@ export function name(name, then) {
 }
 
 export function phoneNumber(phoneNumber, then) {
-  then &&
-    then(
-      phoneNumber != undefined &&
-        /^01[016789][0-9]{3,4}[0-9]{4}$/.test(phoneNumber),
-    );
+  then && then(phoneNumber != undefined && /^01[016789][0-9]{3,4}[0-9]{4}$/.test(phoneNumber));
 }
 
-// export function studentID(studentID, then) {
-//   then && then(studentID != undefined && /^[0-9]{4}[0-9]{5}$/.test(studentID));
-// }
+
 
 export function studentID(studentID, then) {
   const match = studentID.match(/^(\d{4})(\d{5})$/);

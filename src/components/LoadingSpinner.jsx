@@ -1,9 +1,8 @@
-// 로딩창의 레거시 버전입니다. 현재 로딩창은 프롬프트 스타일 디자인으로 변경했습니다. 그러나 다른 로딩 구현을 대비해 해당 파일을 유지해주십시오.
+// @/components/LoadingSpinner.jsx
 
 "use client";
 
 import { useEffect, useState } from "react";
-
 const codes = [
   `<span style="color:#569CD6;">#include</span> &lt;stdio.h&gt;
 <span style="color:#4EC9B0;">int</span> main(void){
@@ -26,7 +25,6 @@ const codes = [
 name = <span style="color:#DCDCAA;">input</span>("이름을 입력하세요: ")
 <span style="color:#DCDCAA;">print</span>(f"안녕하세요, {name}님!")`,
 ];
-
 export default function LoadingSpinner() {
   const [sampleCode] = useState(() => {
     const random_index = Math.floor(Math.random() * codes.length);

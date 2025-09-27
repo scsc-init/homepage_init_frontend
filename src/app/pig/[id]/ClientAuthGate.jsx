@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
@@ -11,34 +11,23 @@ export default function ClientAuthGate({ children }) {
     let cancelled = false;
 
     const goLogin = () => {
-      Promise.resolve().then(() => router.replace("/us/login"));
+      Promise.resolve().then(() => router.replace('/us/login'));
     };
-
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      goLogin();
-      return;
-    }
 
     (async () => {
       try {
-        const res = await fetch("/api/user/profile", {
-          headers: { "x-jwt": jwt },
-          cache: "no-store",
-        });
-        if (!res.ok) {
+        const res = await fetch('/api/user/profile', { cache: 'no-store' });
+        if (!res.ok || res.status === 401) {
           goLogin();
           return;
         }
-        if (!cancelled) setChecking(false); // 인증 통과 → 오버레이 해제
+        if (!cancelled) setChecking(false);
       } catch {
         goLogin();
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [router]);
 
   return (

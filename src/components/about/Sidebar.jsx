@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { scrollToId } from "./ScrollToID";
+import { scrollToId } from './ScrollToID';
 
 export default function ClientSidebar() {
   return (
@@ -11,7 +11,7 @@ export default function ClientSidebar() {
             href="#scsc"
             onClick={(e) => {
               e.preventDefault();
-              scrollToId("scsc");
+              scrollToId('scsc');
             }}
           >
             SCSC
@@ -22,7 +22,7 @@ export default function ClientSidebar() {
             href="#activities"
             onClick={(e) => {
               e.preventDefault();
-              scrollToId("activities");
+              scrollToId('activities');
             }}
           >
             활동
@@ -33,7 +33,7 @@ export default function ClientSidebar() {
             href="#faq"
             onClick={(e) => {
               e.preventDefault();
-              scrollToId("faq");
+              scrollToId('faq');
             }}
           >
             자주 묻는 질문
@@ -44,7 +44,7 @@ export default function ClientSidebar() {
             href="#clubroom"
             onClick={(e) => {
               e.preventDefault();
-              scrollToId("clubroom");
+              scrollToId('clubroom');
             }}
           >
             동아리 시설
@@ -55,7 +55,7 @@ export default function ClientSidebar() {
             href="#more"
             onClick={(e) => {
               e.preventDefault();
-              scrollToId("more");
+              scrollToId('more');
             }}
           >
             더 알아보기

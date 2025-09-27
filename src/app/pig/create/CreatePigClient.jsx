@@ -1,11 +1,10 @@
-// app/pig/create/CreatePigClient.jsx
-"use client";
+'use client';
 
-import Editor from "@/components/board/EditorWrapper.jsx";
-import PigForm from "@/components/board/PigForm";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
-import { useForm } from "react-hook-form";
+import Editor from '@/components/board/EditorWrapper.jsx';
+import PigForm from '@/components/board/PigForm';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function CreatePigClient() {
   const router = useRouter();
@@ -14,8 +13,7 @@ export default function CreatePigClient() {
   const [submitting, setSubmitting] = useState(false);
   const [editorKey, setEditorKey] = useState(0);
 
-  const saved =
-    typeof window !== "undefined" ? sessionStorage.getItem("pigForm") : null;
+  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('pigForm') : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
   const {
@@ -26,29 +24,18 @@ export default function CreatePigClient() {
     formState: { isDirty },
   } = useForm({
     defaultValues: parsed || {
-      title: "",
-      description: "",
-      editor: "",
+      title: '',
+      description: '',
+      editor: '',
+      is_rolling_admission: false,
     },
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/us/login");
-      return;
-    }
-
     const fetchProfile = async () => {
-      const jwt = localStorage.getItem("jwt");
-      if (!jwt) return;
-
-      const res = await fetch(`/api/user/profile`, {
-        headers: { "x-jwt": jwt },
-      });
+      const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
-      else router.push("/us/login");
+      else router.push('/us/login');
     };
     fetchProfile();
   }, [router]);
@@ -56,7 +43,7 @@ export default function CreatePigClient() {
   const watched = watch();
   useEffect(() => {
     if (!isFormSubmitted.current) {
-      sessionStorage.setItem("pigForm", JSON.stringify(watched));
+      sessionStorage.setItem('pigForm', JSON.stringify(watched));
     }
   }, [watched]);
 
@@ -64,78 +51,69 @@ export default function CreatePigClient() {
     const handleBeforeUnload = (e) => {
       if (!isFormSubmitted.current && isDirty) {
         e.preventDefault();
-        e.returnValue = "";
+        e.returnValue = '';
       }
     };
 
-    const handleRouteChange = (url) => {
+    const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm(
-          "작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?",
-        );
+        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
-          router.events.emit("routeChangeError");
-          throw "Route change aborted by user.";
+          router.events.emit('routeChangeError');
+          throw 'Route change aborted by user.';
         }
       }
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    router.events?.on?.("routeChangeStart", handleRouteChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    router.events?.on?.('routeChangeStart', handleRouteChange);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      router.events?.off?.("routeChangeStart", handleRouteChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty]);
+  }, [isDirty, router]);
 
   const onSubmit = async (data) => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-      return;
-    }
+    if (submitting) return;
 
     if (!user) {
-      alert("잠시 뒤 다시 시도해주세요");
+      alert('잠시 뒤 다시 시도해주세요');
+      return;
     } else if (!user.discord_id) {
-      if (
-        !confirm(
-          "계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?",
-        )
-      )
+      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
     }
+
     setSubmitting(true);
 
     try {
       const res = await fetch(`/api/pig/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-jwt": jwt,
-        },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
           description: data.description,
           content: data.editor,
+          is_rolling_admission: data.is_rolling_admission,
         }),
       });
 
       if (res.status === 201) {
-        alert("PIG 생성 성공!");
+        alert('PIG 생성 성공!');
         isFormSubmitted.current = true;
-
-        sessionStorage.removeItem("pigForm");
-        router.push("/pig");
+        sessionStorage.removeItem('pigForm');
+        router.push('/pig');
         router.refresh();
+      } else if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
       } else {
         const err = await res.json();
-        alert("PIG 생성 실패: " + (err.detail ?? JSON.stringify(err)));
+        alert('PIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      console.error(err);
-      alert(err.message || "네트워크 오류");
+      alert(err.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }
@@ -147,7 +125,7 @@ export default function CreatePigClient() {
         <h1 className="CreatePigTitle">PIG 생성</h1>
         <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
       </div>
-      <div className="CreatePigCard">
+      <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
         <PigForm
           register={register}
           control={control}

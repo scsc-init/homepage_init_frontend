@@ -1,25 +1,22 @@
-// src/app/executive/user/UserList.jsx (CLIENT)
-"use client";
-import { useEffect, useState } from "react";
-import ExportUsersButton from "./ExportUsersButton";
+'use client';
+import { useEffect, useState } from 'react';
+import ExportUsersButton from './ExportUsersButton';
 
 export default function UserList({ users: usersDefault, majors = [] }) {
   const [users, setUsers] = useState(usersDefault ?? []);
   const [filteredUsers, setFilteredUsers] = useState(usersDefault ?? []);
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
-    name: "",
-    phone: "",
-    student_id: "",
-    role: "",
-    status: "",
-    major: "",
+    name: '',
+    phone: '',
+    student_id: '',
+    role: '',
+    status: '',
+    major: '',
   });
 
   const updateUserField = (userId, field, value) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
-    );
+    setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)));
     setFilteredUsers((prev) =>
       prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
     );
@@ -28,46 +25,43 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   const updateFilterCriteria = (field, value) => {
     const newFilter = { ...filter, [field]: value };
     setFilter(newFilter);
-    const lower = (v) => v?.toString().toLowerCase() || "";
+    const lower = (v) => v?.toString().toLowerCase() || '';
     const matches = (u) =>
       (!newFilter.name || lower(u.name).includes(lower(newFilter.name))) &&
       (!newFilter.phone || lower(u.phone).includes(lower(newFilter.phone))) &&
-      (!newFilter.student_id ||
-        lower(u.student_id).includes(lower(newFilter.student_id))) &&
+      (!newFilter.student_id || lower(u.student_id).includes(lower(newFilter.student_id))) &&
       (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
-      (!newFilter.status ||
-        lower(u.status).includes(lower(newFilter.status))) &&
+      (!newFilter.status || lower(u.status).includes(lower(newFilter.status))) &&
       (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
     setFilteredUsers(users.filter(matches));
   };
 
   const roleNumberToString = (val) => {
     const map = {
-      0: "lowest",
-      100: "dormant",
-      200: "newcomer",
-      300: "member",
-      400: "oldboy",
-      500: "executive",
-      1000: "president",
+      0: 'lowest',
+      100: 'dormant',
+      200: 'newcomer',
+      300: 'member',
+      400: 'oldboy',
+      500: 'executive',
+      1000: 'president',
     };
-    return typeof val === "string" ? val : (map[val] ?? "member");
+    return typeof val === 'string' ? val : (map[val] ?? 'member');
   };
 
   const sendUserData = async (user) => {
-    const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const updated = {
-      name: user.name?.trim() || "이름없음",
-      phone: user.phone?.trim() || "01000000000",
-      student_id: user.student_id?.trim() || "202500000",
+      name: user.name?.trim() || '이름없음',
+      phone: user.phone?.trim() || '01000000000',
+      student_id: user.student_id?.trim() || '202500000',
       major_id: user.major_id ? Number(user.major_id) : 1,
       role: roleNumberToString(user.role),
-      status: user.status || "active",
+      status: user.status || 'active',
     };
     const res = await fetch(`/api/executive/user/${user.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),
     });
     if (res.status === 204) alert(`${user.name} 저장 완료`);
@@ -76,11 +70,10 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   };
 
   const manualEnroll = async (user) => {
-    const jwt = localStorage.getItem("jwt");
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const res = await fetch(`/api/executive/user/standby/process/manual`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id }),
     });
     if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
@@ -89,7 +82,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   };
 
   useEffect(() => {
-    /* debug */ console.log(filteredUsers);
+    console.debug(filteredUsers);
   }, [filteredUsers]);
 
   return (
@@ -119,16 +112,14 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 <input
                   className="adm-input"
                   value={filter.name}
-                  onChange={(e) => updateFilterCriteria("name", e.target.value)}
+                  onChange={(e) => updateFilterCriteria('name', e.target.value)}
                 />
               </td>
               <td className="adm-td">
                 <select
                   className="adm-select"
                   value={filter.major}
-                  onChange={(e) =>
-                    updateFilterCriteria("major", e.target.value)
-                  }
+                  onChange={(e) => updateFilterCriteria('major', e.target.value)}
                 >
                   <option value="">전공 전체</option>
                   {majors.map((m) => (
@@ -142,34 +133,28 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 <input
                   className="adm-input"
                   value={filter.phone}
-                  onChange={(e) =>
-                    updateFilterCriteria("phone", e.target.value)
-                  }
+                  onChange={(e) => updateFilterCriteria('phone', e.target.value)}
                 />
               </td>
               <td className="adm-td">
                 <input
                   className="adm-input"
                   value={filter.student_id}
-                  onChange={(e) =>
-                    updateFilterCriteria("student_id", e.target.value)
-                  }
+                  onChange={(e) => updateFilterCriteria('student_id', e.target.value)}
                 />
               </td>
               <td className="adm-td">
                 <input
                   className="adm-input"
                   value={filter.role}
-                  onChange={(e) => updateFilterCriteria("role", e.target.value)}
+                  onChange={(e) => updateFilterCriteria('role', e.target.value)}
                 />
               </td>
               <td className="adm-td">
                 <input
                   className="adm-input"
                   value={filter.status}
-                  onChange={(e) =>
-                    updateFilterCriteria("status", e.target.value)
-                  }
+                  onChange={(e) => updateFilterCriteria('status', e.target.value)}
                 />
               </td>
               <td className="adm-td"></td>
@@ -183,9 +168,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   <input
                     className="adm-input"
                     value={user.name}
-                    onChange={(e) =>
-                      updateUserField(user.id, "name", e.target.value)
-                    }
+                    onChange={(e) => updateUserField(user.id, 'name', e.target.value)}
                   />
                 </td>
                 <td className="adm-td">
@@ -193,11 +176,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                     className="adm-select"
                     value={user.major_id}
                     onChange={(e) =>
-                      updateUserField(
-                        user.id,
-                        "major_id",
-                        Number(e.target.value),
-                      )
+                      updateUserField(user.id, 'major_id', Number(e.target.value))
                     }
                   >
                     <option value="">전공 선택</option>
@@ -211,28 +190,22 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 <td className="adm-td">
                   <input
                     className="adm-input"
-                    value={user.phone || ""}
-                    onChange={(e) =>
-                      updateUserField(user.id, "phone", e.target.value)
-                    }
+                    value={user.phone || ''}
+                    onChange={(e) => updateUserField(user.id, 'phone', e.target.value)}
                   />
                 </td>
                 <td className="adm-td">
                   <input
                     className="adm-input"
-                    value={user.student_id || ""}
-                    onChange={(e) =>
-                      updateUserField(user.id, "student_id", e.target.value)
-                    }
+                    value={user.student_id || ''}
+                    onChange={(e) => updateUserField(user.id, 'student_id', e.target.value)}
                   />
                 </td>
                 <td className="adm-td">
                   <select
                     className="adm-select"
                     value={roleNumberToString(user.role)}
-                    onChange={(e) =>
-                      updateUserField(user.id, "role", e.target.value)
-                    }
+                    onChange={(e) => updateUserField(user.id, 'role', e.target.value)}
                   >
                     <option value="president">회장</option>
                     <option value="executive">운영진</option>
@@ -247,9 +220,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   <select
                     className="adm-select"
                     value={user.status}
-                    onChange={(e) =>
-                      updateUserField(user.id, "status", e.target.value)
-                    }
+                    onChange={(e) => updateUserField(user.id, 'status', e.target.value)}
                   >
                     <option value="active">active</option>
                     <option value="pending">pending</option>

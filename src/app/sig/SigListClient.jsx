@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import SortDropdown from "@/components/board/SortDropdown";
 import { SEMESTER_MAP } from "@/util/constants";
@@ -10,9 +10,9 @@ export default function SigListClient({ sigs }) {
   const [myOwnedSigIds, setMyOwnedSigIds] = useState(() => new Set());
 
   const sortedSigs = [...sigs].sort((a, b) => {
-    if (sortOrder === "latest") return b.id - a.id;
-    if (sortOrder === "oldest") return a.id - b.id;
-    if (sortOrder === "title") return a.title.localeCompare(b.title);
+    if (sortOrder === 'latest') return b.id - a.id;
+    if (sortOrder === 'oldest') return a.id - b.id;
+    if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
 

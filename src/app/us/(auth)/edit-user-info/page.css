@@ -1,6 +1,6 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/slate.css";
-@import "@/styles/theme.css";
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/slate.css';
+@import '@/styles/theme.css';
 
 html,
 body {

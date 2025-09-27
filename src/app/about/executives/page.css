@@ -1,4 +1,4 @@
-@import "@/styles/theme.css";
+@import '@/styles/theme.css';
 
 html,
 body {
@@ -209,7 +209,7 @@ body {
 .WallLogo,
 .WallLogo2 {
   position: fixed;
-  background-image: url("/wall-logo.png");
+  background-image: url('/wall-logo.png');
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;

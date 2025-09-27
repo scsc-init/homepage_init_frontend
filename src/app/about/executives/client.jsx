@@ -1,87 +1,87 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useSwipeable } from "react-swipeable";
-import { useEffect, useRef, useState, useMemo } from "react";
+import Image from 'next/image';
+import { useSwipeable } from 'react-swipeable';
+import { useEffect, useRef, useState, useMemo } from 'react';
 
 const executives = [
   {
-    name: "한성재",
-    role: "회장",
-    image: "/xctvs/han-sung-jae.png",
-    description: "그는 신입니다.",
+    name: '한성재',
+    role: '회장',
+    image: '/xctvs/han-sung-jae.png',
+    description: '그는 신입니다.',
   },
   {
-    name: "김지훈",
-    role: "부회장",
-    image: "/xctvs/kim-ji-hoon.png",
-    description: "그 역시 신입니다.",
+    name: '김지훈',
+    role: '부회장',
+    image: '/xctvs/kim-ji-hoon.png',
+    description: '그 역시 신입니다.',
   },
   {
-    name: "정연호",
-    role: "임원",
-    image: "/xctvs/jeong-yeon-ho.png",
-    description: "그 또한 신입니다.",
+    name: '정연호',
+    role: '임원',
+    image: '/xctvs/jeong-yeon-ho.png',
+    description: '그 또한 신입니다.',
   },
   {
-    name: "김재희",
-    role: "임원",
-    image: "/xctvs/kim-jae-hee.png",
-    description: "마이 경제입니다.",
+    name: '김재희',
+    role: '임원',
+    image: '/xctvs/kim-jae-hee.png',
+    description: '마이 경제입니다.',
   },
   {
-    name: "신지환",
-    role: "임원",
-    image: "/xctvs/shin-ji-hwan.png",
-    description: "GOAT",
+    name: '신지환',
+    role: '임원',
+    image: '/xctvs/shin-ji-hwan.png',
+    description: 'GOAT',
   },
   {
-    name: "신효재",
-    role: "임원",
-    image: "/xctvs/shin-hyo-jae.png",
-    description: "GOAT",
+    name: '신효재',
+    role: '임원',
+    image: '/xctvs/shin-hyo-jae.png',
+    description: 'GOAT',
   },
   {
-    name: "김건우",
-    role: "임원",
-    image: "/xctvs/kim-geon-woo.png",
-    description: "기 습 숭 배",
+    name: '김건우',
+    role: '임원',
+    image: '/xctvs/kim-geon-woo.png',
+    description: '기 습 숭 배',
   },
   {
-    name: "오현우",
-    role: "임원",
-    image: "/xctvs/o-hyeon-woo.png",
-    description: "파이어펀치! 파이어펀치!",
+    name: '오현우',
+    role: '임원',
+    image: '/xctvs/o-hyeon-woo.png',
+    description: '파이어펀치! 파이어펀치!',
   },
   {
-    name: "한지후",
-    role: "임원",
-    image: "/xctvs/han-ji-hoo.png",
-    description: "물감비",
+    name: '한지후',
+    role: '임원',
+    image: '/xctvs/han-ji-hoo.png',
+    description: '물감비',
   },
   {
-    name: "허유민",
-    role: "임원",
-    image: "/xctvs/heo-yoo-min.png",
-    description: "goat",
+    name: '허유민',
+    role: '임원',
+    image: '/xctvs/heo-yoo-min.png',
+    description: 'goat',
   },
   {
-    name: "박상혁",
-    role: "임원",
-    image: "/xctvs/park-sang-hyeok.png",
-    description: "잘생김",
+    name: '박상혁',
+    role: '임원',
+    image: '/xctvs/park-sang-hyeok.png',
+    description: '잘생김',
   },
   {
-    name: "이태윤",
-    role: "임원",
-    image: "/xctvs/lee-tae-yoon.png",
-    description: "JOAT",
+    name: '이태윤',
+    role: '임원',
+    image: '/xctvs/lee-tae-yoon.png',
+    description: 'JOAT',
   },
   {
-    name: "강명석",
-    role: "임원",
-    image: "/xctvs/kang-myeong-suk.png",
-    description: "그 분",
+    name: '강명석',
+    role: '임원',
+    image: '/xctvs/kang-myeong-suk.png',
+    description: '그 분',
   },
 ];
 
@@ -105,8 +105,8 @@ export default function ExecutivesClient() {
       setIsMobile(window.innerWidth <= 768);
     };
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -126,12 +126,12 @@ export default function ExecutivesClient() {
 
   const positionClass = (idx) => {
     const offset = (idx - centerIndex + total) % total;
-    if (offset === 0) return "center";
-    if (offset === 1 || offset === -total + 1) return "right-1";
-    if (offset === 2 || offset === -total + 2) return "right-2";
-    if (offset === total - 1) return "left-1";
-    if (offset === total - 2) return "left-2";
-    return "hidden";
+    if (offset === 0) return 'center';
+    if (offset === 1 || offset === -total + 1) return 'right-1';
+    if (offset === 2 || offset === -total + 2) return 'right-2';
+    if (offset === total - 1) return 'left-1';
+    if (offset === total - 2) return 'left-2';
+    return 'hidden';
   };
 
   if (isMobile) {
@@ -140,12 +140,7 @@ export default function ExecutivesClient() {
         {executives.map((person, i) => (
           <div className="ExecutiveCard" key={i}>
             <div className="ExecutiveImageWrapper">
-              <Image
-                src={person.image}
-                alt={person.name}
-                fill
-                className="ExecutiveImage"
-              />
+              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
               <div className="ExecutiveOverlay">
                 <p className="ExecutiveDescription">{person.description}</p>
               </div>
@@ -175,16 +170,11 @@ export default function ExecutivesClient() {
             className={`ExecutiveCard ${positionClass(idx)}`}
             key={idx}
             style={{
-              transition: "transform 0.6s ease, opacity 0.6s ease",
+              transition: 'transform 0.6s ease, opacity 0.6s ease',
             }}
           >
             <div className="ExecutiveImageWrapper">
-              <Image
-                src={person.image}
-                alt={person.name}
-                fill
-                className="ExecutiveImage"
-              />
+              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
             </div>
             <h3>{person.name}</h3>
             <p className="ExecutiveRole">{person.role}</p>
@@ -199,7 +189,7 @@ export default function ExecutivesClient() {
         {executives.map((_, i) => (
           <div
             key={i}
-            className={`ExecutiveDot ${i === centerIndex ? "active" : ""}`}
+            className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
             onClick={() => setCenterIndex(i)}
           />
         ))}

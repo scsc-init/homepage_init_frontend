@@ -3,10 +3,7 @@ export default function PigMembers({ members }) {
   const count = list.length;
 
   return (
-    <section
-      className="PigMembersSection"
-      aria-labelledby="pig-members-heading"
-    >
+    <section className="PigMembersSection" aria-labelledby="pig-members-heading">
       <div className="PigMembersHeader">
         <h2 id="pig-members-heading" className="PigMembersTitle">
           피그 인원

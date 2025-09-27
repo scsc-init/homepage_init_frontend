@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
-import "./page.css";
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+import './page.css';
 
-const Editor = dynamic(() => import("@/components/board/EditorWrapper"), {
+const Editor = dynamic(() => import('@/components/board/EditorWrapper'), {
   ssr: false,
 });
 
 const GUIDE_URL =
-  "https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md";
+  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
 
 const PLACEHOLDER = {
   contest: `아래 항목을 참고해 상세 내용을 작성해주세요.
@@ -44,22 +44,22 @@ const PLACEHOLDER = {
 export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
-      applyType: "",
-      orgCategory: "",
-      target: "",
-      contestName: "",
-      amount: "",
-      editor: "",
+      applyType: '',
+      orgCategory: '',
+      target: '',
+      contestName: '',
+      amount: '',
+      editor: '',
       checked: false,
     },
   });
 
   const router = useRouter();
-  const content = watch("editor");
-  const applyType = watch("applyType");
-  const orgCategory = watch("orgCategory");
-  const contestName = watch("contestName");
-  const isChecked = watch("checked");
+  const content = watch('editor');
+  const applyType = watch('applyType');
+  const orgCategory = watch('orgCategory');
+  const contestName = watch('contestName');
+  const isChecked = watch('checked');
 
   const [user, setUser] = useState(null);
   const [targetList, setTargetList] = useState([]);
@@ -71,60 +71,49 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
   const step1Done = !!applyType;
   const step2Done =
-    applyType === "contest"
-      ? contestName.trim().length > 0
-      : orgCategory && !!watch("target");
+    applyType === 'contest' ? contestName.trim().length > 0 : orgCategory && !!watch('target');
   const step3Ready = step1Done && step2Done;
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return router.push("/us/login");
-    fetch("/api/user/profile", { headers: { "x-jwt": jwt } })
+    fetch('/api/user/profile')
       .then((res) => {
-        if (res.status === 401) throw new Error("Unauthorized");
+        if (res.status === 401) throw new Error('Unauthorized');
         return res.json();
       })
       .then((data) => setUser(data))
-      .catch(() => router.push("/us/login"));
+      .catch(() => router.push('/us/login'));
   }, [router]);
 
   useEffect(() => {
-    if (orgCategory === "sig") setTargetList(Array.isArray(sigs) ? sigs : []);
-    else if (orgCategory === "pig")
-      setTargetList(Array.isArray(pigs) ? pigs : []);
+    if (orgCategory === 'sig') setTargetList(Array.isArray(sigs) ? sigs : []);
+    else if (orgCategory === 'pig') setTargetList(Array.isArray(pigs) ? pigs : []);
     else setTargetList([]);
   }, [orgCategory, sigs, pigs]);
 
   useEffect(() => {
-    if (applyType === "contest") {
-      setValue("orgCategory", "");
-      setValue("target", "");
+    if (applyType === 'contest') {
+      setValue('orgCategory', '');
+      setValue('target', '');
     } else {
-      setValue("contestName", "");
+      setValue('contestName', '');
     }
   }, [applyType, setValue]);
 
   const typeLabel = (t) =>
-    t === "contest"
-      ? "대회 참여 지원금"
-      : t === "fund"
-        ? "SIG/PIG 지원금"
-        : "SIG/PIG 회식비";
+    t === 'contest' ? '대회 참여 지원금' : t === 'fund' ? 'SIG/PIG 지원금' : 'SIG/PIG 회식비';
 
-  const normalizeLF = (s) =>
-    (s ?? "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  const fmtNumber = (n) =>
-    new Intl.NumberFormat("ko-KR").format(Number(n || 0));
+  const normalizeLF = (s) => (s ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const fmtNumber = (n) => new Intl.NumberFormat('ko-KR').format(Number(n || 0));
 
   const onSubmit = async (data) => {
-    if (submitting) return; // 이중 클릭 가드
+    if (submitting) return;
     if (!user) return;
-    const jwt = localStorage.getItem("jwt");
+
     setSubmitting(true);
 
     const tLabel = typeLabel(data.applyType);
     const targetDisplay =
-      data.applyType === "contest"
+      data.applyType === 'contest'
         ? data.contestName
         : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
 
@@ -134,15 +123,15 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
       `**신청 금액**: ${fmtNumber(data.amount)}원`,
       `**신청자**: ${user.student_id} ${user.name} (${user.email})`,
     ];
-    const metaBlock = metaLines.join("  \n");
+    const metaBlock = metaLines.join('  \n');
 
     const body = normalizeLF(data.editor).trim();
     const summary = `${metaBlock}\n\n---\n\n### 상세 내용\n\n${body}`;
 
     try {
-      const res = await fetch("/api/article/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      const res = await fetch('/api/article/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: `[${tLabel}] ${targetDisplay}`,
           content: summary,
@@ -152,8 +141,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
       if (res.status === 201) {
         isFormSubmitted.current = true;
-        alert("신청이 접수되었습니다.");
-        router.push("/us/contact");
+        alert('신청이 접수되었습니다.');
+        router.push('/us/contact');
         return;
       }
 
@@ -171,14 +160,14 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   };
 
   const placeholderText =
-    applyType === "contest"
+    applyType === 'contest'
       ? PLACEHOLDER.contest
-      : applyType === "fund"
+      : applyType === 'fund'
         ? PLACEHOLDER.fund
-        : applyType === "meal"
+        : applyType === 'meal'
           ? PLACEHOLDER.meal
-          : "";
-  const hasContent = (content || "").replace(/\s|#/g, "").length > 0;
+          : '';
+  const hasContent = (content || '').replace(/\s|#/g, '').length > 0;
 
   const updateMinHeight = () => {
     if (!wrapperRef.current || !placeholderRef.current) return;
@@ -187,7 +176,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     const ph = el.scrollHeight || 0;
     const bottomPad = 16;
     const desired = Math.max(192, top + ph + bottomPad);
-    wrapperRef.current.style.setProperty("--editor-min-height", `${desired}px`);
+    wrapperRef.current.style.setProperty('--editor-min-height', `${desired}px`);
   };
 
   useEffect(() => {
@@ -199,30 +188,30 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     if (!placeholderRef.current) return;
     const ro = new ResizeObserver(updateMinHeight);
     ro.observe(placeholderRef.current);
-    window.addEventListener("resize", updateMinHeight);
+    window.addEventListener('resize', updateMinHeight);
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", updateMinHeight);
+      window.removeEventListener('resize', updateMinHeight);
     };
   }, []);
 
   if (!boardInfo?.id) return null;
 
-  const disableOrgSelects = applyType === "contest";
+  const disableOrgSelects = applyType === 'contest';
 
   return (
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">지원금 신청</h1>
-        <p className="CreateSigSubtitle">{boardInfo?.description ?? ""}</p>
+        <p className="CreateSigSubtitle">{boardInfo?.description ?? ''}</p>
       </div>
 
-      <div className={`CreateSigCard ${submitting ? "is-busy" : ""}`}>
+      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="Step fade-in">
             <label className="C_Label">신청 유형</label>
             <select
-              {...register("applyType", { required: true })}
+              {...register('applyType', { required: true })}
               className="C_Input"
               defaultValue=""
             >
@@ -235,12 +224,12 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
           {step1Done && (
             <div className="Step fade-in">
-              {applyType === "contest" ? (
+              {applyType === 'contest' ? (
                 <div className="grid grid-cols-1 gap-4">
                   <label className="C_Label">대회명</label>
                   <input
                     type="text"
-                    {...register("contestName", { required: true })}
+                    {...register('contestName', { required: true })}
                     placeholder="ex) ICPC 본선"
                     className="C_Input"
                   />
@@ -250,8 +239,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                   <div>
                     <label className="C_Label">대상 유형</label>
                     <select
-                      {...register("orgCategory", { required: true })}
-                      className={`C_Input ${disableOrgSelects ? "is-disabled" : ""}`}
+                      {...register('orgCategory', { required: true })}
+                      className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
                       disabled={disableOrgSelects}
                       defaultValue=""
                     >
@@ -263,8 +252,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                   <div>
                     <label className="C_Label">대상 선택</label>
                     <select
-                      {...register("target", { required: true })}
-                      className={`C_Input ${disableOrgSelects ? "is-disabled" : ""}`}
+                      {...register('target', { required: true })}
+                      className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
                       disabled={disableOrgSelects}
                       defaultValue=""
                     >
@@ -294,7 +283,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                 <label className="C_Label">신청 금액</label>
                 <input
                   type="number"
-                  {...register("amount", { required: true, min: 1 })}
+                  {...register('amount', { required: true, min: 1 })}
                   placeholder="신청 금액 (숫자만)"
                   className="C_Input"
                 />
@@ -302,19 +291,14 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
               <div
                 ref={wrapperRef}
-                className={`EditorWrapper ${hasContent ? "has-content" : ""}`}
+                className={`EditorWrapper ${hasContent ? 'has-content' : ''}`}
               >
                 {!hasContent && (
                   <div ref={placeholderRef} className="EditorPlaceholder">
-                    <div className="EditorPlaceholderText">
-                      {placeholderText}
-                    </div>
+                    <div className="EditorPlaceholderText">{placeholderText}</div>
                   </div>
                 )}
-                <Editor
-                  markdown={content}
-                  onChange={(v) => setValue("editor", v)}
-                />
+                <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
               </div>
             </div>
           )}
@@ -324,7 +308,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
               <label className="C_CheckRow">
                 <input
                   type="checkbox"
-                  {...register("checked", { required: true })}
+                  {...register('checked', { required: true })}
                   className="C_Checkbox"
                 />
                 <span className="C_CheckText">
@@ -345,7 +329,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                 className="SigCreateBtn"
                 disabled={submitting || !isChecked}
               >
-                {submitting ? "신청 중..." : "신청하기"}
+                {submitting ? '신청 중...' : '신청하기'}
               </button>
             </div>
           )}

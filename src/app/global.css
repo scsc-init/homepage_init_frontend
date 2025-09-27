@@ -1,8 +1,8 @@
-@import "normalize.css";
-@import "@radix-ui/colors/black-alpha.css";
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/slate.css";
-@import "@/styles/theme.css";
+@import 'normalize.css';
+@import '@radix-ui/colors/black-alpha.css';
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/slate.css';
+@import '@/styles/theme.css';
 
 @media (max-width: 480px) {
   :root {
@@ -124,7 +124,7 @@ img {
   color: var(--color-text-strong);
   padding: 2rem;
   border-radius: 1rem;
-  font-family: "Fira Code", monospace;
+  font-family: 'Fira Code', monospace;
   width: 92%;
   max-width: 700px;
   margin: 4rem auto;
@@ -202,7 +202,7 @@ a {
 /* 비활성화/로딩 공통 처리 */
 button[disabled],
 button.is-disabled,
-[aria-disabled="true"] {
+[aria-disabled='true'] {
   opacity: 0.6;
   cursor: not-allowed !important;
   pointer-events: none !important;
@@ -214,11 +214,11 @@ button.is-disabled,
   position: relative;
 }
 .is-busy button,
-.is-busy [type="button"],
-.is-busy [type="submit"],
+.is-busy [type='button'],
+.is-busy [type='submit'],
 .is-loading button,
-.is-loading [type="button"],
-.is-loading [type="submit"] {
+.is-loading [type='button'],
+.is-loading [type='submit'] {
   opacity: 0.6;
   cursor: not-allowed !important;
   pointer-events: none !important;

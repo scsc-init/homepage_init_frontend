@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { minExecutiveLevel } from "@/util/constants";
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { minExecutiveLevel } from '@/util/constants';
 
 function buildTree(flat) {
   const idMap = {};
@@ -21,13 +21,12 @@ function buildTree(flat) {
 
 async function readErrorText(res) {
   const base = `HTTP ${res.status}`;
-  const ct = res.headers.get("content-type") || "";
+  const ct = res.headers.get('content-type') || '';
   try {
-    if (ct.includes("application/json")) {
+    if (ct.includes('application/json')) {
       const body = await res.json();
-      const detail =
-        body?.detail ?? body?.message ?? body?.error ?? body?.errors;
-      return typeof detail === "string"
+      const detail = body?.detail ?? body?.message ?? body?.error ?? body?.errors;
+      return typeof detail === 'string'
         ? `${base} - ${detail}`
         : `${base} - ${JSON.stringify(detail)}`;
     }
@@ -40,15 +39,13 @@ async function readErrorText(res) {
 
 function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
   const [showReply, setShowReply] = useState(false);
-  const [replyContent, setReplyContent] = useState("");
+  const [replyContent, setReplyContent] = useState('');
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return alert("로그인이 필요합니다.");
-    const res = await fetch("/api/comments/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-jwt": jwt },
+    const res = await fetch('/api/comments/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         article_id: Number(articleId),
         parent_id: comment.id,
@@ -56,31 +53,29 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
       }),
     });
     if (res.ok) {
-      setReplyContent("");
+      setReplyContent('');
       setShowReply(false);
       onReplySubmit();
     } else {
-      alert("답글 작성 실패: " + (await readErrorText(res)));
+      alert('답글 작성 실패: ' + (await readErrorText(res)));
     }
   };
 
   const handleDeleteReply = async () => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return alert("로그인이 필요합니다.");
     if (userId === comment.author_id) {
       const res = await fetch(`/api/comments/${comment.id}/delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.status === 204) onReplySubmit();
-      else alert("댓글 삭제 실패: " + (await readErrorText(res)));
+      else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
     } else {
       const res = await fetch(`/api/comments/${comment.id}/executive/delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.status === 204) onReplySubmit();
-      else alert("댓글 삭제 실패: " + (await readErrorText(res)));
+      else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
     }
   };
 
@@ -88,7 +83,7 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
     <div style={{ marginLeft: comment.parent_id ? 20 : 0, marginTop: 10 }}>
       <div>{comment.content}</div>
       <button onClick={() => setShowReply((v) => !v)}>
-        {showReply ? "취소" : "답글 달기"}
+        {showReply ? '취소' : '답글 달기'}
       </button>
       {(userId === comment.author_id || userRole >= minExecutiveLevel) && (
         <button onClick={handleDeleteReply}>댓글 삭제</button>
@@ -100,14 +95,14 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder="답글을 입력하세요"
             onKeyDown={(e) => {
-              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) handleReply();
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleReply();
             }}
           />
           <button onClick={handleReply}>작성</button>
           <button
             onClick={() => {
               setShowReply(false);
-              setReplyContent("");
+              setReplyContent('');
             }}
           >
             취소
@@ -134,7 +129,7 @@ export default function Comments({ articleId, initialComments, user }) {
   const [comments, setComments] = useState(initialComments || []);
   const [isError, setIsError] = useState(false);
   const [showNew, setShowNew] = useState(false);
-  const [newContent, setNewContent] = useState("");
+  const [newContent, setNewContent] = useState('');
   const newRef = useRef(null);
 
   useEffect(() => {
@@ -142,26 +137,19 @@ export default function Comments({ articleId, initialComments, user }) {
   }, [initialComments, user, router]);
 
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.location.hash === "#new-comment"
-    ) {
+    if (typeof window !== 'undefined' && window.location.hash === '#new-comment') {
       setShowNew(true);
       setTimeout(() => newRef.current?.focus(), 0);
     }
   }, []);
 
   const fetchComments = async () => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/us/login");
-      return;
-    }
     try {
-      const res = await fetch(`/api/comments/${articleId}`, {
-        headers: { "x-jwt": jwt },
-      });
+      const res = await fetch(`/api/comments/${articleId}`);
+      if (res.status === 401) {
+        router.push('/us/login');
+        return;
+      }
       if (!res.ok) {
         setIsError(true);
         return;
@@ -175,16 +163,10 @@ export default function Comments({ articleId, initialComments, user }) {
 
   const submitNew = async () => {
     if (!newContent.trim()) return;
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      alert("로그인이 필요합니다.");
-      router.push("/us/login");
-      return;
-    }
     try {
-      const res = await fetch("/api/comments/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-jwt": jwt },
+      const res = await fetch('/api/comments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           article_id: Number(articleId),
           parent_id: null,
@@ -192,14 +174,17 @@ export default function Comments({ articleId, initialComments, user }) {
         }),
       });
       if (res.ok) {
-        setNewContent("");
+        setNewContent('');
         setShowNew(false);
         await fetchComments();
+      } else if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
       } else {
-        alert("댓글 작성 실패: " + (await readErrorText(res)));
+        alert('댓글 작성 실패: ' + (await readErrorText(res)));
       }
     } catch (e) {
-      alert("댓글 작성 실패: " + (e?.message || "네트워크 오류"));
+      alert('댓글 작성 실패: ' + (e?.message || '네트워크 오류'));
     }
   };
 
@@ -209,9 +194,7 @@ export default function Comments({ articleId, initialComments, user }) {
 
   return (
     <div>
-      <button onClick={() => setShowNew((v) => !v)}>
-        {showNew ? "취소" : "댓글 달기"}
-      </button>
+      <button onClick={() => setShowNew((v) => !v)}>{showNew ? '취소' : '댓글 달기'}</button>
       {showNew && (
         <div id="new-comment">
           <textarea
@@ -220,14 +203,14 @@ export default function Comments({ articleId, initialComments, user }) {
             onChange={(e) => setNewContent(e.target.value)}
             placeholder="댓글을 입력하세요"
             onKeyDown={(e) => {
-              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) submitNew();
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitNew();
             }}
           />
           <button onClick={submitNew}>작성</button>
           <button
             onClick={() => {
               setShowNew(false);
-              setNewContent("");
+              setNewContent('');
             }}
           >
             취소

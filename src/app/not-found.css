@@ -15,11 +15,7 @@ html {
 .NF_Backdrop {
   position: absolute;
   inset: -20%;
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    var(--dot-bg) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(circle at 1px 1px, var(--dot-bg) 1px, transparent 1px);
   background-size: 22px 22px;
   opacity: 0.18;
   pointer-events: none;
@@ -39,7 +35,7 @@ html {
 }
 
 .NF_Card::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: -30% -10% auto -10%;
   height: 60%;

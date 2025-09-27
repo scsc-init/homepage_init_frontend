@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import PigJoinLeaveButton from "./PigJoinLeaveButton";
-import EditPigButton from "./EditPigButton";
-import PigDeleteButton from "./PigDeleteButton";
-import PigMembers from "./PigMembers";
-import PigContents from "./PigContents";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { minExecutiveLevel, SEMESTER_MAP } from "@/util/constants";
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import PigJoinLeaveButton from './PigJoinLeaveButton';
+import EditPigButton from './EditPigButton';
+import PigDeleteButton from './PigDeleteButton';
+import PigMembers from './PigMembers';
+import PigContents from './PigContents';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 
 export default function PigClient({ pig, members, articleId, pigId }) {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
   const [me, setMe] = useState(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
 
   const isMember = useMemo(() => {
     if (!me) return false;
@@ -23,7 +23,7 @@ export default function PigClient({ pig, members, articleId, pigId }) {
 
   const canEdit = useMemo(() => {
     if (!me) return false;
-    const roleOk = typeof me?.role === "number" && me.role >= minExecutiveLevel;
+    const roleOk = typeof me?.role === 'number' && me.role >= minExecutiveLevel;
     const ownerOk = !!pig?.owner && pig.owner === me.id;
     return roleOk || ownerOk;
   }, [me, pig]);
@@ -33,45 +33,32 @@ export default function PigClient({ pig, members, articleId, pigId }) {
     const ownerOk = !!pig?.owner && pig.owner === me.id;
     return ownerOk;
   }, [me, pig]);
+
   const semesterLabel = useMemo(() => {
     const key = Number(pig?.semester);
     return SEMESTER_MAP[key] ?? `${pig?.semester}`;
   }, [pig?.semester]);
+
   useEffect(() => {
     let cancelled = false;
-    const jwt =
-      typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
-    if (!jwt) {
-      router.replace("/us/login");
-      return;
-    }
     (async () => {
       try {
         const [meRes, articleRes] = await Promise.all([
-          fetch("/api/user/profile", {
-            headers: { "x-jwt": jwt },
-            cache: "no-store",
-          }),
-          fetch(`/api/article/${articleId}`, {
-            headers: { "x-jwt": jwt },
-            cache: "no-store",
-          }),
+          fetch('/api/user/profile', { cache: 'no-store' }),
+          fetch(`/api/article/${articleId}`, { cache: 'no-store' }),
         ]);
-        if (!meRes.ok || !articleRes.ok) {
-          router.replace("/us/login");
+        if (meRes.status === 401 || !meRes.ok || !articleRes.ok) {
+          router.replace('/us/login');
           return;
         }
-        const [meData, article] = await Promise.all([
-          meRes.json(),
-          articleRes.json(),
-        ]);
+        const [meData, article] = await Promise.all([meRes.json(), articleRes.json()]);
         if (!cancelled) {
           setMe(meData);
-          setContent(article?.content ?? "");
+          setContent(article?.content ?? '');
           setChecking(false);
         }
       } catch {
-        if (!cancelled) router.replace("/us/login");
+        if (!cancelled) router.replace('/us/login');
       }
     })();
     return () => {
@@ -91,7 +78,9 @@ export default function PigClient({ pig, members, articleId, pigId }) {
       </p>
       <p className="PigDescription">{pig.description}</p>
       <div className="PigActionRow">
-        <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
+        {is_sigpig_join_available(pig.status, pig.is_rolling_admission) && (
+          <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
+        )}
         <EditPigButton pigId={pigId} canEdit={canEdit} />
         <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
