@@ -1,59 +1,52 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { minExecutiveLevel } from '@/util/constants';
 
-export default function HeaderRight({ setMobileMenuOpen, user }) {
-  const router = useRouter();
+export default function HeaderRight({ user }) {
   const isExecutive = user?.role >= minExecutiveLevel;
 
   return (
-    <div id="HeaderRight">
+    <div>
       {user === undefined && <div className="HeaderRight__loading" />}
 
       {user === null && (
         <div className="HeaderRight__login">
-          <button
-            id="HeaderUserLogin"
-            className="unset"
-            onClick={() => router.push('/us/login')}
-          >
-            로그인
-          </button>
+          <Link href={'/us/login'}>
+            <button
+              id="HeaderUserLogin"
+              className="unset"
+            >
+              로그인
+            </button>
+          </Link>
         </div>
       )}
 
       {user && (
-        <>
+        <div className='HeaderRight__main'>
           {isExecutive && (
-            <button
-              className="unset toAdminPageButton HeaderRight__executive"
-              onClick={() => router.push('/executive')}
-            >
-              운영진 페이지
-            </button>
+            <Link href={'/executive'}>
+              <button
+                className="unset toAdminPageButton HeaderRight__executive"
+              >
+                운영진 페이지
+              </button>
+            </Link>
           )}
 
-          <button
-            id="HeaderUser"
-            className="unset HeaderRight__user"
-            onClick={() => router.push('/about/my-page')}
-          >
-            <img
-              src={user.profile_picture || '/main/default-pfp.png'}
-              alt="Profile"
-              className="user-profile-picture"
-            />
-            <span id="HeaderUserName">{user.name}</span>
-          </button>
-
-          <button
-            className="HamburgerButton"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-          >
-            ☰
-          </button>
-        </>
+          <Link href={'/about/my-page'} style={{'textDecoration': 'none'}}>
+            <button
+              id="HeaderUser"
+              className="unset HeaderRight__user"
+            >
+              <img
+                src={user.profile_picture || '/main/default-pfp.png'}
+                alt="Profile"
+                className="user-profile-picture"
+              />
+              <span id="HeaderUserName">{user.name}</span>
+            </button>
+          </Link>
+        </div>
       )}
     </div>
   );

@@ -54,6 +54,12 @@
   align-items: center;
 }
 
+.HeaderRight__main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .HeaderRight__executive {
   font-size: 0.875rem;
 }

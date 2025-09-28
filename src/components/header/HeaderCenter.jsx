@@ -1,13 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { headerMenuData } from '@/util/constants';
 
 export default function HeaderCenter() {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const timeoutRef = useRef();
-  const router = useRouter();
 
   useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
@@ -37,9 +36,9 @@ export default function HeaderCenter() {
               <ul>
                 {menu.items.map((item) => (
                   <li key={item.label}>
-                    <button onClick={() => router.push(item.url)}>
-                      {item.label}
-                    </button>
+                    <Link href={item.url}>
+                      <button>{item.label}</button>
+                    </Link>
                   </li>
                 ))}
               </ul>

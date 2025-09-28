@@ -65,6 +65,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   };
 
   const [nextStatus, nextSemester, nextYear] = currentStatus ? getNextStatus(currentStatus, semester, year) : [null, null, null];
+  const totalRequiredPhrase = `${nextYear}-${SEMESTER_MAP[nextSemester]} ${STATUS_MAP[nextStatus]} ${REQUIRED_PHRASE}`;
 
   return (
     <>
@@ -75,7 +76,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
             <h4>{year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}학기</h4>
             <h4>{STATUS_MAP[currentStatus]} → {STATUS_MAP[nextStatus]}</h4>
             <p>다음 문구를 입력해야 변경됩니다:</p>
-            <pre className="adm-pre" style={{'userSelect': 'none'}}>{nextYear}-{SEMESTER_MAP[nextSemester]} {STATUS_MAP[nextStatus]} {REQUIRED_PHRASE}</pre>
+            <pre className="adm-pre" style={{'userSelect': 'none'}}>{totalRequiredPhrase}</pre>
             <input
               className="adm-input"
               type="text"
@@ -90,7 +91,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               <button
                 className="adm-button"
                 onClick={handleConfirmSave}
-                disabled={confirmationText !== `${nextYear}-${SEMESTER_MAP[nextSemester]} ${STATUS_MAP[nextStatus]} ${REQUIRED_PHRASE}` || saving}
+                disabled={confirmationText !== totalRequiredPhrase || saving}
               >
                 확인
               </button>

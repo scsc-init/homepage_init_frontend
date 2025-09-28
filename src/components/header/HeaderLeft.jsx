@@ -1,14 +1,11 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
 import { SEMESTER_MAP } from '@/util/constants';
 
 export default function HeaderLeft({ year, semester }) {
-  const router = useRouter();
   return (
     <div id="HeaderLeft">
-      <button className="unset" onClick={() => router.push('/')}>
+      <Link className='unset' href={'/'}>
         <Image
           src="/vectors/logo.svg"
           alt="SCSC Logo"
@@ -16,7 +13,7 @@ export default function HeaderLeft({ year, semester }) {
           height={40}
           className="logo"
         />
-      </button>
+      </Link>
       {year && semester && (
         <div className="toAdminPageButton">
           {year} - {SEMESTER_MAP[semester]}학기

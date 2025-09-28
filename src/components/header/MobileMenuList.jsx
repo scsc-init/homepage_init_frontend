@@ -1,39 +1,47 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 
-function MobileExecutiveButton({ user, onNavigate }) {
+function MobileExecutiveButton({ user }) {
   const isExecutive = user?.role >= minExecutiveLevel;
 
   if (user === undefined || !user) return null;
 
   if (isExecutive) {
     return (
-      <button
-        className="unset toAdminPageButton"
-        onClick={() => onNavigate('/executive')}
-        style={{
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.3rem',
-        }}
-      >
-        운영진 페이지
-      </button>
+      <Link href={'/executive'} style={{'textDecoration': 'none'}}>
+        <button
+          className="unset toAdminPageButton"
+          style={{
+            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+          }}
+        >
+          운영진 페이지
+        </button>
+      </Link>
     );
   }
   
   return null;
 }
 
-export default function MobileMenuList({ mobileMenuOpen, user }) {
-  const router = useRouter();
+export default function MobileMenuList({ user }) {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
+    <div>
+    <button
+      className="HamburgerButton"
+      onClick={() => setMobileMenuOpen((prev) => !prev)}
+    >
+      ☰
+    </button>
     <div className={`MobileMenuWrapper ${mobileMenuOpen ? 'open' : ''}`}>
       <div className="MobileMenu">
         <ul className="MobileMenuList">
@@ -49,9 +57,11 @@ export default function MobileMenuList({ mobileMenuOpen, user }) {
                 <ul>
                   {menu.items.map((item) => (
                     <li key={item.label}>
-                      <button onClick={() => router.push(item.url)}>
-                        {item.label}
-                      </button>
+                      <Link href={item.url} style={{'textDecoration': 'none'}}>
+                        <button>
+                          {item.label}
+                        </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -59,8 +69,9 @@ export default function MobileMenuList({ mobileMenuOpen, user }) {
             </li>
           ))}
         </ul>
-        <MobileExecutiveButton user={user} onNavigate={(url) => router.push(url)} />
+        <MobileExecutiveButton user={user} />
       </div>
+    </div>
     </div>
   );
 }

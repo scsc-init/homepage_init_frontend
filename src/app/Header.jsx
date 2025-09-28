@@ -1,39 +1,33 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import HeaderLeft from '@/components/header/HeaderLeft';
 import HeaderCenter from '@/components/header/HeaderCenter';
 import HeaderRight from '@/components/header/HeaderRight';
 import MobileMenuList from '@/components/header/MobileMenuList';
+import { fetchUser, fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
 import './header.css';
 
-export default function Header({ year, semester }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState(undefined);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch(`/api/user/profile`);
-      setUser(res.ok ? await res.json() : null);
-    };
-    fetchUser();
-  }, []);
+export default async function Header() {
+  const [user, scscGlobalStatus] = await Promise.all([
+    fetchUser(),
+    fetchSCSCGlobalStatus(),
+  ]);
 
   return (
-    <>
+    <div>
       <div id="HeaderContainer">
         <div id="Header">
-          <HeaderLeft year={year} semester={semester} />
+          <HeaderLeft year={scscGlobalStatus ? scscGlobalStatus.year : null} semester={scscGlobalStatus ? scscGlobalStatus.semester : null} />
 
           <HeaderCenter />
 
-          <HeaderRight setMobileMenuOpen={setMobileMenuOpen} user={user} />
+          <div id="HeaderRight">
+            <HeaderRight user={user} />
+            <MobileMenuList user={user} />
+          </div>
         </div>
 
-        <MobileMenuList mobileMenuOpen={mobileMenuOpen} user={user} />
       </div>
 
       <div id="HeaderSpacer" />
-    </>
+    </div>
   );
 }
