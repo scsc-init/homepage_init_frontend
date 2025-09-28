@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 
-function MobileExecutiveButton({ user }) {
+function MobileExecutiveButton({ user, onNavigate }) {
   const isExecutive = user?.role >= minExecutiveLevel;
 
   if (user === undefined || !user) return null;
@@ -12,7 +13,7 @@ function MobileExecutiveButton({ user }) {
     return (
       <button
         className="unset toAdminPageButton"
-        onClick={() => (window.location.href = '/executive')}
+        onClick={() => onNavigate('/executive')}
         style={{
           fontSize: '0.875rem',
           display: 'flex',
@@ -24,9 +25,12 @@ function MobileExecutiveButton({ user }) {
       </button>
     );
   }
+  
+  return null;
 }
 
 export default function MobileMenuList({ mobileMenuOpen, user }) {
+  const router = useRouter();
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
 
   return (
@@ -45,7 +49,7 @@ export default function MobileMenuList({ mobileMenuOpen, user }) {
                 <ul>
                   {menu.items.map((item) => (
                     <li key={item.label}>
-                      <button onClick={() => (window.location.href = item.url)}>
+                      <button onClick={() => router.push(item.url)}>
                         {item.label}
                       </button>
                     </li>
@@ -55,7 +59,7 @@ export default function MobileMenuList({ mobileMenuOpen, user }) {
             </li>
           ))}
         </ul>
-        <MobileExecutiveButton user={user} />
+        <MobileExecutiveButton user={user} onNavigate={(url) => router.push(url)} />
       </div>
     </div>
   );
