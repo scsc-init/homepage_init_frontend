@@ -10,22 +10,26 @@ const STATUS_MAP = {
   inactive: '비활성',
 };
 const TRANSITION_MAP_REGULAR = {
-  inactive: ['surveying'],
-  surveying: ['recruiting'],
-  recruiting: ['active'],
-  active: ['surveying'],
+  inactive: 'surveying',
+  surveying: 'recruiting',
+  recruiting: 'active',
+  active: 'surveying',
 };
 const TRANSITION_MAP_SEASONAL = {
-  inactive: ['surveying'],
-  surveying: ['recruiting'],
-  recruiting: ['active'],
-  active: ['inactive'],
+  inactive: 'surveying',
+  surveying: 'recruiting',
+  recruiting: 'active',
+  active: 'inactive',
 };
 const REQUIRED_PHRASE = 'confirm change';
-const getNextStates = (current, semester) =>
-  semester % 2 === 1
-    ? TRANSITION_MAP_REGULAR[current] || []
-    : TRANSITION_MAP_SEASONAL[current] || [];
+
+const getNextStatus = (currentStatus, currentSemester, currentYear) => {
+  return [
+    (currentSemester % 2 === 1) ? TRANSITION_MAP_REGULAR[currentStatus] : TRANSITION_MAP_SEASONAL[currentStatus],
+    (currentStatus === 'active') ? currentSemester % 4 + 1 : currentSemester,
+    (currentSemester === 4 && currentStatus === 'active') ? currentYear + 1 : currentYear
+  ]
+}
 
 export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   const [currentStatus, setCurrentStatus] = useState(scscGlobalStatus);
@@ -60,16 +64,18 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
     setModalOpen(false);
   };
 
-  const nextStates = getNextStates(currentStatus, semester);
+  const [nextStatus, nextSemester, nextYear] = currentStatus ? getNextStatus(currentStatus, semester, year) : [null, null, null];
 
   return (
     <>
-      {modalOpen && (
+      {currentStatus && modalOpen && (
         <div className="adm-modal-overlay">
           <div className="adm-modal-card">
             <h3>상태 변경 확인</h3>
+            <h4>{year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}학기</h4>
+            <h4>{STATUS_MAP[currentStatus]} → {STATUS_MAP[nextStatus]}</h4>
             <p>다음 문구를 입력해야 변경됩니다:</p>
-            <pre className="adm-pre">{REQUIRED_PHRASE}</pre>
+            <pre className="adm-pre" style={{'userSelect': 'none'}}>{nextYear}-{SEMESTER_MAP[nextSemester]} {STATUS_MAP[nextStatus]} {REQUIRED_PHRASE}</pre>
             <input
               className="adm-input"
               type="text"
@@ -84,7 +90,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               <button
                 className="adm-button"
                 onClick={handleConfirmSave}
-                disabled={confirmationText !== REQUIRED_PHRASE || saving}
+                disabled={confirmationText !== `${nextYear}-${SEMESTER_MAP[nextSemester]} ${STATUS_MAP[nextStatus]} ${REQUIRED_PHRASE}` || saving}
               >
                 확인
               </button>
@@ -100,23 +106,21 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
         ) : (
           <div>
             <div>
-              {year}년 {SEMESTER_MAP[semester]}학기
+              {year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}학기
             </div>
             <div className="adm-flex" style={{ flexWrap: 'wrap' }}>
               <div style={{ fontWeight: 700 }}>
                 {STATUS_MAP[currentStatus] || currentStatus}
               </div>
               <span style={{ fontSize: '1.2rem' }}>→</span>
-              {nextStates.map((status) => (
-                <button
-                  key={status}
-                  className="adm-button outline"
-                  onClick={() => saveToModal(status)}
-                  disabled={saving}
-                >
-                  {STATUS_MAP[status]}
-                </button>
-              ))}
+              <button
+                key={nextStatus}
+                className="adm-button outline"
+                onClick={() => saveToModal(nextStatus)}
+                disabled={saving}
+              >
+                {STATUS_MAP[nextStatus] || nextStatus}
+              </button>
             </div>
           </div>
         )}
