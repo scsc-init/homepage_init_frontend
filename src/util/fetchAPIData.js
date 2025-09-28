@@ -1,5 +1,4 @@
-import { handleApiRequest } from "@/app/api/apiWrapper";
-
+import { handleApiRequest } from '@/app/api/apiWrapper';
 
 export async function fetchUser() {
   const res = await handleApiRequest('GET', `/api/user/profile`);

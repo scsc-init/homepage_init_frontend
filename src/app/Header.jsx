@@ -8,16 +8,16 @@ import './header.css';
 
 export default async function Header() {
   noStore();
-  const [user, scscGlobalStatus] = await Promise.all([
-    fetchUser(),
-    fetchSCSCGlobalStatus(),
-  ]);
+  const [user, scscGlobalStatus] = await Promise.all([fetchUser(), fetchSCSCGlobalStatus()]);
 
   return (
     <div>
       <div id="HeaderContainer">
         <div id="Header">
-          <HeaderLeft year={scscGlobalStatus ? scscGlobalStatus.year : null} semester={scscGlobalStatus ? scscGlobalStatus.semester : null} />
+          <HeaderLeft
+            year={scscGlobalStatus ? scscGlobalStatus.year : null}
+            semester={scscGlobalStatus ? scscGlobalStatus.semester : null}
+          />
 
           <HeaderCenter />
 
@@ -26,7 +26,6 @@ export default async function Header() {
             <MobileMenuList user={user} />
           </div>
         </div>
-
       </div>
 
       <div id="HeaderSpacer" />

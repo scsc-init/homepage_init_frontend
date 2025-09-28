@@ -5,7 +5,7 @@ import { SEMESTER_MAP } from '@/util/constants';
 export default function HeaderLeft({ year, semester }) {
   return (
     <div id="HeaderLeft">
-      <Link className='unset' href={'/'}>
+      <Link className="unset" href={'/'}>
         <Image
           src="/vectors/logo.svg"
           alt="SCSC Logo"

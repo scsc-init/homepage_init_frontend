@@ -11,7 +11,7 @@ function MobileExecutiveButton({ user }) {
 
   if (isExecutive) {
     return (
-      <Link href={'/executive'} style={{'textDecoration': 'none'}}>
+      <Link href={'/executive'} style={{ textDecoration: 'none' }}>
         <button
           className="unset toAdminPageButton"
           style={{
@@ -26,7 +26,7 @@ function MobileExecutiveButton({ user }) {
       </Link>
     );
   }
-  
+
   return null;
 }
 
@@ -36,42 +36,37 @@ export default function MobileMenuList({ user }) {
 
   return (
     <div>
-    <button
-      className="HamburgerButton"
-      onClick={() => setMobileMenuOpen((prev) => !prev)}
-    >
-      ☰
-    </button>
-    <div className={`MobileMenuWrapper ${mobileMenuOpen ? 'open' : ''}`}>
-      <div className="MobileMenu">
-        <ul className="MobileMenuList">
-          {headerMenuData.map((menu, index) => (
-            <li className="MobileMenuItem" key={menu.title}>
-              <button
-                className="MobileMenuTrigger"
-                onClick={() => setOpenedMenuIndex((prev) => (prev === index ? null : index))}
-              >
-                {menu.title}
-              </button>
-              <div className={`MobileSubMenu ${openedMenuIndex === index ? 'open' : ''}`}>
-                <ul>
-                  {menu.items.map((item) => (
-                    <li key={item.label}>
-                      <Link href={item.url} style={{'textDecoration': 'none'}}>
-                        <button>
-                          {item.label}
-                        </button>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <MobileExecutiveButton user={user} />
+      <button className="HamburgerButton" onClick={() => setMobileMenuOpen((prev) => !prev)}>
+        ☰
+      </button>
+      <div className={`MobileMenuWrapper ${mobileMenuOpen ? 'open' : ''}`}>
+        <div className="MobileMenu">
+          <ul className="MobileMenuList">
+            {headerMenuData.map((menu, index) => (
+              <li className="MobileMenuItem" key={menu.title}>
+                <button
+                  className="MobileMenuTrigger"
+                  onClick={() => setOpenedMenuIndex((prev) => (prev === index ? null : index))}
+                >
+                  {menu.title}
+                </button>
+                <div className={`MobileSubMenu ${openedMenuIndex === index ? 'open' : ''}`}>
+                  <ul>
+                    {menu.items.map((item) => (
+                      <li key={item.label}>
+                        <Link href={item.url} style={{ textDecoration: 'none' }}>
+                          <button>{item.label}</button>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <MobileExecutiveButton user={user} />
+        </div>
       </div>
-    </div>
     </div>
   );
 }
