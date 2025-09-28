@@ -47,6 +47,14 @@ html.theme-animating {
   --box-color: rgb(235, 235, 235);
   --selection-bg: #128e9f;
   --selection-text: #1d1236;
+  --form-switch-accent: #4F7DFF;
+  --form-switch-aura-rgb: 30, 112, 255;
+  --form-switch-track-off: #eceff3;
+  --form-switch-border-off: rgba(0, 0, 0, 0.12);
+  --form-switch-thumb-off: #ffffff;
+  --form-switch-track-on: color-mix(in srgb, var(--form-switch-accent) 45%, #f2f6ff);
+  --form-switch-border-on: color-mix(in srgb, var(--form-switch-accent) 55%, rgba(0, 0, 0, 0.16));
+  --form-switch-thumb-on: #ffffff;
 
   --main-bg-gradient: radial-gradient(
     circle at center,
@@ -99,6 +107,13 @@ html.theme-animating {
   --selection-text: #111111;
   --selection-bg: #4bb0c9;
   --selection-text: #ffffff;
+  --form-switch-track-off: #171717;
+  --form-switch-border-off: rgba(255, 255, 255, 0.22);
+  --form-switch-thumb-off: #0f0f0f;
+  --form-switch-track-on: color-mix(in srgb, var(--form-switch-accent) 45%, #141b2e);
+  --form-switch-border-on: color-mix(in srgb, var(--form-switch-accent) 55%, rgba(255, 255, 255, 0.24));
+  --form-switch-thumb-on: #0e0e0e;
+  --form-switch-aura-rgb: 160, 200, 255;
 
   --main-bg-gradient: radial-gradient(circle at center, #1e1e1e 0%, #151515 40%, #121212 100%);
 
