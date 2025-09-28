@@ -1,3 +1,5 @@
+'use client';
+
 import { minExecutiveLevel } from '@/util/constants';
 
 export default function HeaderRight({ setMobileMenuOpen, user }) {

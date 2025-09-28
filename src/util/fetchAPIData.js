@@ -54,14 +54,6 @@ export async function fetchPigs() {
   return pigsWithContent;
 }
 
-export async function fetchScscGlobalStatus() {
-  const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
-  return res.ok ? await res.json() : '';
-}
-
 export async function fetchMajors() {
   const res = await fetch(`${getBaseUrl()}/api/majors`, {
     headers: { 'x-api-secret': getApiSecret() },
@@ -83,7 +75,7 @@ export async function fetchSCSCGlobalStatus() {
     headers: { 'x-api-secret': getApiSecret() },
     cache: 'no-store',
   });
-  return res.ok ? await res.json() : null;
+  if (res.ok) return await res.json();
 }
 
 export async function fetchDiscordInviteLink() {

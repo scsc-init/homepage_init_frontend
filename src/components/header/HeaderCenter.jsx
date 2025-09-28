@@ -1,9 +1,17 @@
-import { useRef, useState } from 'react';
+'use client';
+
+import { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { headerMenuData } from '@/util/constants';
 
 export default function HeaderCenter() {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const timeoutRef = useRef();
+  const router = useRouter();
+
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current);
+  }, []);
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);
@@ -29,7 +37,7 @@ export default function HeaderCenter() {
               <ul>
                 {menu.items.map((item) => (
                   <li key={item.label}>
-                    <button onClick={() => (window.location.href = item.url)}>
+                    <button onClick={() => router.push(item.url)}>
                       {item.label}
                     </button>
                   </li>
