@@ -1,12 +1,11 @@
 import { Noto_Sans_KR } from 'next/font/google';
 import './global.css';
 import HeaderWrapper from './HeaderWrapper';
+import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
-import dynamic from 'next/dynamic';
 import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
 
-const FooterWrapper = dynamic(() => import('@/app/FooterWrapper'), { ssr: false });
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
 export const metadata = {
@@ -21,7 +20,12 @@ export const metadata = {
     images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
     type: 'website',
   },
-  twitter: { card: 'summary_large_image', title: '서울대학교 SCSC', description: '서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.', images: ['/opengraph.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: '서울대학교 SCSC',
+    description: '서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.',
+    images: ['/opengraph.png'],
+  },
   icons: { icon: '/favicon.ico' },
 };
 
@@ -60,7 +64,7 @@ export default function RootLayout({ children }) {
             <Providers>{children}</Providers>
           </main>
           <ThemeToggle initialDark={initialDark} />
-          <FooterWrapper />
+          <Footer />
         </div>
       </body>
     </html>

@@ -3,10 +3,10 @@
 import './footer.css';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { DISCORD_INVITE_LINK, hideFooterRoutes } from '@/util/constants';
 
-function Footer({ discordInviteLink }) {
+function Footer() {
   const pathname = usePathname();
-  const hideFooterRoutes = ['/us/login', '/signup', '/about/my-page'];
 
   if (hideFooterRoutes.includes(pathname)) return null;
 
@@ -58,7 +58,7 @@ function Footer({ discordInviteLink }) {
         </a> */}
           <div className="FooterLogo">
             <a
-              href={discordInviteLink}
+              href={DISCORD_INVITE_LINK}
               className="ContactLink"
               target="_blank"
               rel="noopener noreferrer"

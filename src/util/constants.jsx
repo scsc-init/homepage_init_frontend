@@ -22,6 +22,51 @@ export const oldboyLevel = 400;
 export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 
 /**
+ * 헤더에 들어가는 네비게이션 정보입니다.
+ * @type {{title: string, items: {label: string, url: string}[]}[]}
+ */
+export const headerMenuData = [
+  {
+    title: 'About us',
+    items: [
+      { label: 'SCSC', url: '/about' },
+      { label: 'Executives', url: '/about/executives' },
+      { label: 'Developers', url: '/about/developers' },
+      { label: 'Rules', url: '/about/rules' },
+    ],
+  },
+  {
+    title: 'Board',
+    items: [
+      { label: 'Project Archives', url: '/board/3' },
+      { label: 'Album', url: '/board/4' },
+      { label: 'Notice', url: '/board/5' },
+    ],
+  },
+  {
+    title: 'SIG/PIG',
+    items: [
+      { label: 'SIG', url: '/sig' },
+      { label: 'PIG', url: '/pig' },
+    ],
+  },
+  {
+    title: 'Contact',
+    items: [
+      { label: 'Contact Us!', url: '/us/contact' },
+      { label: 'Fund Apply', url: '/us/fund-apply/create' },
+      { label: 'Join Us!', url: '/us/login' },
+    ],
+  },
+];
+
+/**
+ * 푸터가 표시되지 않는 라우트의 리스트입니다.
+ * @type {string[]}
+ */
+export const hideFooterRoutes = ['/us/login', '/signup', '/about/my-page'];
+
+/**
  * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
  * BE의 src/controller/scsc.py에서 정의합니다.
  */
