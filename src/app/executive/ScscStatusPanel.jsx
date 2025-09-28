@@ -1,7 +1,8 @@
 'use client';
+
 import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const STATUS_MAP = {
   surveying: '설문중',
