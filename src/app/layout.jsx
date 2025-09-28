@@ -21,7 +21,12 @@ export const metadata = {
     images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
     type: 'website',
   },
-  twitter: { card: 'summary_large_image', title: '서울대학교 SCSC', description: '서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.', images: ['/opengraph.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: '서울대학교 SCSC',
+    description: '서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.',
+    images: ['/opengraph.png'],
+  },
   icons: { icon: '/favicon.ico' },
 };
 

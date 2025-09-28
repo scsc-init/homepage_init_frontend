@@ -3,16 +3,11 @@
 import { useEffect, useState } from 'react';
 import '@/styles/theme.css';
 
-function getCookie(name) {
-  if (typeof document === 'undefined') return null;
-  const m = document.cookie.split('; ').find((r) => r.startsWith(name + '='));
-  return m ? decodeURIComponent(m.split('=')[1]) : null;
-}
-
 function setCookie(name, value, days = 365) {
   if (typeof document === 'undefined') return;
   const maxAge = days * 24 * 60 * 60;
-  const secure = typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
+  const secure =
+    typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
 }
 

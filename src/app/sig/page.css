@@ -23,7 +23,6 @@
   color: inherit;
 }
 
-
 .sigCard {
   border: 1px solid var(--slate-6);
   border-radius: 0.75rem;
@@ -46,7 +45,6 @@
     border-color 0.2s ease,
     background 0.2s ease;
 }
-
 
 .sigTopbar {
   display: flex;
@@ -118,5 +116,3 @@ body {
   gap: 0.5rem;
   align-items: center;
 }
-
-

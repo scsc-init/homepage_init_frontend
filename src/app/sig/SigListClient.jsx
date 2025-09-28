@@ -1,12 +1,12 @@
 'use client';
 
-import SortDropdown from "@/components/board/SortDropdown";
-import { SEMESTER_MAP } from "@/util/constants";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import SortDropdown from '@/components/board/SortDropdown';
+import { SEMESTER_MAP } from '@/util/constants';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function SigListClient({ sigs }) {
-  const [sortOrder, setSortOrder] = useState("latest");
+  const [sortOrder, setSortOrder] = useState('latest');
   const [myOwnedSigIds, setMyOwnedSigIds] = useState(() => new Set());
 
   const sortedSigs = [...sigs].sort((a, b) => {
@@ -17,7 +17,7 @@ export default function SigListClient({ sigs }) {
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem('jwt');
     if (!jwt || sigs.length === 0) {
       setMyOwnedSigIds(new Set());
       return;
@@ -27,26 +27,26 @@ export default function SigListClient({ sigs }) {
 
     async function loadOwnedSigs() {
       try {
-        const meRes = await fetch("/api/user/profile", {
-          cache: "no-cache",
-          headers: { "x-jwt": jwt },
+        const meRes = await fetch('/api/user/profile', {
+          cache: 'no-cache',
+          headers: { 'x-jwt': jwt },
           signal: controller.signal,
         });
         if (!meRes.ok) return;
 
         const me = await meRes.json();
-        const myId = me?.id ? String(me.id) : "";
+        const myId = me?.id ? String(me.id) : '';
         if (!myId) return;
 
         const nextSet = new Set(
           sigs
             .filter((sig) => sig?.owner && String(sig.owner) === myId)
-            .map((sig) => String(sig.id))
+            .map((sig) => String(sig.id)),
         );
 
         if (!controller.signal.aborted) setMyOwnedSigIds(nextSet);
       } catch (error) {
-        if (error?.name !== "AbortError") {
+        if (error?.name !== 'AbortError') {
           /* ignore other errors */
         }
       }
@@ -75,7 +75,7 @@ export default function SigListClient({ sigs }) {
           const isMine = myOwnedSigIds.has(sid);
           return (
             <Link key={sig.id} href={`/sig/${sig.id}`} className="sigLink">
-              <div className={`sigCard ${isMine ? "isMine" : ""}`}>
+              <div className={`sigCard ${isMine ? 'isMine' : ''}`}>
                 <div className="sigTopbar">
                   <span className="sigTitle">{sig.title}</span>
                   <span className="sigUserCount">
