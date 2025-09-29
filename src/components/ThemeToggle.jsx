@@ -12,7 +12,8 @@ function getCookie(name) {
 function setCookie(name, value, days = 365) {
   if (typeof document === 'undefined') return;
   const maxAge = days * 24 * 60 * 60;
-  const secure = typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
+  const secure =
+    typeof location !== 'undefined' && location.protocol === 'https:' ? '; Secure' : '';
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
 }
 

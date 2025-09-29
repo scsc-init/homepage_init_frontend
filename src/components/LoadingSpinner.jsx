@@ -1,8 +1,8 @@
 // @/components/LoadingSpinner.jsx
 
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 const codes = [
   `<span style="color:#569CD6;">#include</span> &lt;stdio.h&gt;
 <span style="color:#4EC9B0;">int</span> main(void){
@@ -31,7 +31,7 @@ export default function LoadingSpinner() {
     return codes[random_index];
   });
 
-  const [displayed, setDisplayed] = useState("");
+  const [displayed, setDisplayed] = useState('');
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
@@ -59,8 +59,7 @@ export default function LoadingSpinner() {
       <pre
         className="LoadingCodeBlock"
         dangerouslySetInnerHTML={{
-          __html:
-            displayed + `<span class="Cursor">${showCursor ? "|" : " "}</span>`,
+          __html: displayed + `<span class="Cursor">${showCursor ? '|' : ' '}</span>`,
         }}
       ></pre>
       <p className="LoadingText">Compiling...</p>

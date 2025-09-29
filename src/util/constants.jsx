@@ -22,6 +22,117 @@ export const oldboyLevel = 400;
 export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 
 /**
+ * Returns the first valid string among the provided values.
+ *
+ * @param {...(string|undefined|null)} vals - Candidate values.
+ * @returns {string} The first non-empty string found, or an empty string if none exist.
+ */
+function pickEnv(...vals) {
+  for (const v of vals) {
+    if (typeof v === 'string' && v.trim()) return v.trim();
+  }
+  return '';
+}
+
+/**
+ * 하드코딩된 정보들입니다.
+ */
+export const DEPOSIT_ACC = pickEnv(
+  process.env.NEXT_PUBLIC_DEPOSIT_ACC,
+  process.env.DEPOSIT_ACC,
+  '국민은행 942902-02-054136 (강명석)',
+);
+
+export const DISCORD_INVITE_LINK = pickEnv(
+  process.env.NEXT_PUBLIC_DISCORD_INVITE_LINK,
+  process.env.DISCORD_INVITE_LINK,
+  'https://discord.gg/SmXFDxA7XE',
+);
+
+export const KAKAO_INVITE_LINK = pickEnv(
+  process.env.NEXT_PUBLIC_KAKAO_INVITE_LINK,
+  process.env.KAKAO_INVITE_LINK,
+  'https://invite.kakao.com/tc/II2yiLsQhY',
+);
+
+/**
+ * 헤더에 들어가는 네비게이션 정보입니다.
+ * @type {{title: string, items: {label: string, url: string}[]}[]}
+ */
+export const headerMenuData = [
+  {
+    title: 'About us',
+    items: [
+      { label: 'SCSC', url: '/about' },
+      { label: 'Executives', url: '/about/executives' },
+      { label: 'Developers', url: '/about/developers' },
+      { label: 'Rules', url: '/about/rules' },
+    ],
+  },
+  {
+    title: 'Board',
+    items: [
+      { label: 'Project Archives', url: '/board/3' },
+      { label: 'Album', url: '/board/4' },
+      { label: 'Notice', url: '/board/5' },
+    ],
+  },
+  {
+    title: 'SIG/PIG',
+    items: [
+      { label: 'SIG', url: '/sig' },
+      { label: 'PIG', url: '/pig' },
+    ],
+  },
+  {
+    title: 'Contact',
+    items: [
+      { label: 'Contact Us!', url: '/us/contact' },
+      { label: 'Fund Apply', url: '/us/fund-apply/create' },
+      { label: 'Join Us!', url: '/us/login' },
+    ],
+  },
+];
+
+/**
+ * 푸터에 표시되는 로고 정보입니다. 순서대로 푸터에 표시됩니다. 현재 사용되지 않는 로고는 코멘트 처리되어있습니다.
+ * @type {{href: string, src: string, alt: string}[]}
+ */
+export const footerLogoData = [
+  {
+    href: 'mailto:scsc.snu@gmail.com',
+    src: '/vectors/mail.svg',
+    alt: 'Mail',
+  },
+  {
+    href: DISCORD_INVITE_LINK,
+    src: '/vectors/discord.svg',
+    alt: 'Discord',
+  },
+  {
+    href: 'https://github.com/SNU-SCSC',
+    src: '/vectors/github.svg',
+    alt: 'GitHub',
+  },
+  {
+    href: 'https://www.instagram.com/scsc_snu/?hl=ko',
+    src: '/vectors/instagram.svg',
+    alt: 'Instagram',
+  },
+  // {
+  //   href: "https://www.facebook.com/scscian/",
+  //   src: "/vectors/facebook.svg",
+  //   alt: "Facebook",
+  // },
+];
+
+/**
+ * 푸터가 표시되지 않는 라우트의 리스트입니다.
+ * @type {string[]}
+ */
+export const hideFooterRoutes = ['/us/login', '/signup', '/about/my-page'];
+
+/**
  * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
  * BE의 src/controller/scsc.py에서 정의합니다.
  */
@@ -45,6 +156,10 @@ export function is_sigpig_join_available(status, is_rolling_admission) {
   return CTRL_STATUS_AVAILABLE[key].includes(status);
 }
 
+/*
+ * 전체적인 색상 정의와 관련된 설정입니다.
+ * 반드시 @/styles/theme.css와 함께 수정해야 합니다.
+ */
 export const COLORS = {
   primary: 'var(--color-primary)',
   primaryHover: 'var(--color-primary-hover)',
@@ -53,42 +168,6 @@ export const COLORS = {
   surfaceDark: 'var(--color-surface-dark)',
   surfaceLight: 'var(--color-surface-light)',
 };
-
-/**
- * Returns the first valid string among the provided values.
- *
- * @param {...(string|undefined|null)} vals - Candidate values.
- * @returns {string} The first non-empty string found, or an empty string if none exist.
- */
-function pickEnv(...vals) {
-  for (const v of vals) {
-    if (typeof v === 'string' && v.trim()) return v.trim();
-  }
-  return '';
-}
-
-/*
- * 전체적인 색상 정의와 관련된 설정입니다.
- * 반드시 @/styles/theme.css와 함께 수정해야 합니다.
- */
-
-export const DEPOSIT_ACC = pickEnv(
-  process.env.NEXT_PUBLIC_DEPOSIT_ACC,
-  process.env.DEPOSIT_ACC,
-  '국민은행 942902-02-054136 (강명석)',
-);
-
-export const DISCORD_INVITE_LINK = pickEnv(
-  process.env.NEXT_PUBLIC_DISCORD_INVITE_LINK,
-  process.env.DISCORD_INVITE_LINK,
-  'https://discord.gg/SmXFDxA7XE',
-);
-
-export const KAKAO_INVITE_LINK = pickEnv(
-  process.env.NEXT_PUBLIC_KAKAO_INVITE_LINK,
-  process.env.KAKAO_INVITE_LINK,
-  'https://invite.kakao.com/tc/II2yiLsQhY',
-);
 
 /**
  *
