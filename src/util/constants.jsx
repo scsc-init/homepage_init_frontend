@@ -100,24 +100,24 @@ export const headerMenuData = [
  */
 export const footerLogoData = [
   {
-    href: "mailto:scsc.snu@gmail.com",
-    src: "/vectors/mail.svg",
-    alt: "Mail",
+    href: 'mailto:scsc.snu@gmail.com',
+    src: '/vectors/mail.svg',
+    alt: 'Mail',
   },
   {
     href: DISCORD_INVITE_LINK,
-    src: "/vectors/discord.svg",
-    alt: "Discord",
+    src: '/vectors/discord.svg',
+    alt: 'Discord',
   },
   {
-    href: "https://github.com/SNU-SCSC",
-    src: "/vectors/github.svg",
-    alt: "GitHub",
+    href: 'https://github.com/SNU-SCSC',
+    src: '/vectors/github.svg',
+    alt: 'GitHub',
   },
   {
-    href: "https://www.instagram.com/scsc_snu/?hl=ko",
-    src: "/vectors/instagram.svg",
-    alt: "Instagram",
+    href: 'https://www.instagram.com/scsc_snu/?hl=ko',
+    src: '/vectors/instagram.svg',
+    alt: 'Instagram',
   },
   // {
   //   href: "https://www.facebook.com/scscian/",

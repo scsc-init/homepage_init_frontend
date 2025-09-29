@@ -11,17 +11,18 @@ function MobileExecutiveButton({ user }) {
 
   if (isExecutive) {
     return (
-      <Link 
-        href={'/executive'} 
+      <Link
+        href={'/executive'}
         className="unset toAdminPageButton"
         style={{
-            fontSize: '0.875rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            textDecoration: 'none'
-        }}>
-          운영진 페이지
+          fontSize: '0.875rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.3rem',
+          textDecoration: 'none',
+        }}
+      >
+        운영진 페이지
       </Link>
     );
   }

@@ -28,19 +28,8 @@ function Footer() {
         <div id="FooterLogoList">
           {footerLogoData.map(({ href, src, alt }) => (
             <div className="FooterLogo" key={alt}>
-              <a
-                href={href}
-                className="ContactLink"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  src={src}
-                  alt={alt}
-                  width={24}
-                  height={24}
-                  className="ico"
-                />
+              <a href={href} className="ContactLink" target="_blank" rel="noopener noreferrer">
+                <Image src={src} alt={alt} width={24} height={24} className="ico" />
               </a>
             </div>
           ))}

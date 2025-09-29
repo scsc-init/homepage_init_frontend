@@ -36,7 +36,9 @@ export default function HeaderCenter({ user }) {
               <ul>
                 {menu.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={(item.url==='/us/login' && user) ? '/about/welcome' : item.url}>{item.label}</Link>
+                    <Link href={item.url === '/us/login' && user ? '/about/welcome' : item.url}>
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -19,7 +19,7 @@ export default async function Header() {
             semester={scscGlobalStatus ? scscGlobalStatus.semester : null}
           />
 
-          <HeaderCenter user={user}/>
+          <HeaderCenter user={user} />
 
           <div id="HeaderRight">
             <HeaderRight user={user} />
