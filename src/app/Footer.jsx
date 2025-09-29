@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { hideFooterRoutes, footerLogoData } from '@/util/constants';
 
-function Footer() {
+export default function Footer() {
   const pathname = usePathname();
 
   if (hideFooterRoutes.includes(pathname)) return null;
@@ -38,5 +38,3 @@ function Footer() {
     </div>
   );
 }
-
-export default Footer;
