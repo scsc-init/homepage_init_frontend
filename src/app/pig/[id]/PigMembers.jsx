@@ -1,9 +1,14 @@
 export default function PigMembers({ owner, members }) {
   const rawList = Array.isArray(members) ? members : [];
-  const ownerIndex = !!owner ? rawList.findIndex(m => m.id === owner) : -1
-  const list = ownerIndex === -1
-    ? rawList
-    : [rawList[ownerIndex], ...rawList.slice(0, ownerIndex), ...rawList.slice(ownerIndex + 1)];
+  const ownerIndex = !!owner ? rawList.findIndex((m) => m.id === owner) : -1;
+  const list =
+    ownerIndex === -1
+      ? rawList
+      : [
+          rawList[ownerIndex],
+          ...rawList.slice(0, ownerIndex),
+          ...rawList.slice(ownerIndex + 1),
+        ];
   const count = list.length;
 
   return (
@@ -19,7 +24,7 @@ export default function PigMembers({ owner, members }) {
         <div className="PigMembersEmpty">가입한 인원이 없습니다.</div>
       ) : (
         <ul className="PigMemberList">
-          {list.map((m) => (
+          {list.map((m) =>
             m.id === owner ? (
               <li key={m.id} className="PigMemberOwner">
                 {m.name}
@@ -28,8 +33,8 @@ export default function PigMembers({ owner, members }) {
               <li key={m.id} className="PigMemberChip">
                 {m.name}
               </li>
-              )
-          ))}
+            ),
+          )}
         </ul>
       )}
     </section>
