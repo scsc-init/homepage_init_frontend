@@ -224,3 +224,22 @@ button.is-disabled,
   pointer-events: none !important;
   filter: grayscale(0.1) saturate(0.75);
 }
+
+.form-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  min-height: 2.25rem;
+}
+
+.form-toggle-label {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.form-toggle-right {
+  display: inline-block;
+  margin-left: 0.75rem;
+  margin-top: 0.25rem;
+}

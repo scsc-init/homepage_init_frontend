@@ -40,8 +40,9 @@
 }
 
 .pigCard.isMine {
-  border: 1px solid var(--selection-bg);
-  border-left-width: 4px;
+  border-width: 1px;
+  border-color: var(--slate-6);
+  border-left: 4px solid var(--selection-bg);
   transition:
     border-color 0.2s ease,
     background 0.2s ease;
