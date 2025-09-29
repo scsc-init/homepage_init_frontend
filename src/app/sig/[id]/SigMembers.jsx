@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 export default function SigMembers({ owner, members }) {
   const rawList = Array.isArray(members) ? members : [];
   const ownerIndex = !!owner ? rawList.findIndex(m => m.id === owner) : -1
@@ -7,10 +5,6 @@ export default function SigMembers({ owner, members }) {
     ? rawList
     : [rawList[ownerIndex], ...rawList.slice(0, ownerIndex), ...rawList.slice(ownerIndex + 1)];
   const count = list.length;
-
-  useEffect(() => {
-    console.log(owner, members)
-  }, [owner, members])
 
   return (
     <section className="SigMembersSection" aria-labelledby="sig-members-heading">
