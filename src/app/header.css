@@ -57,7 +57,7 @@
 .HeaderRight__main {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 1.5rem;
 }
 
 .HeaderRight__executive {

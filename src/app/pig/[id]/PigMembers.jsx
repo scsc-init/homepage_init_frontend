@@ -1,5 +1,9 @@
-export default function PigMembers({ members }) {
-  const list = Array.isArray(members) ? members : [];
+export default function PigMembers({ owner, members }) {
+  const rawList = Array.isArray(members) ? members : [];
+  const ownerIndex = !!owner ? rawList.findIndex(m => m.id === owner) : -1
+  const list = ownerIndex === -1
+    ? rawList
+    : [rawList[ownerIndex], ...rawList.slice(0, ownerIndex), ...rawList.slice(ownerIndex + 1)];
   const count = list.length;
 
   return (
@@ -16,9 +20,15 @@ export default function PigMembers({ members }) {
       ) : (
         <ul className="PigMemberList">
           {list.map((m) => (
-            <li key={m.id} className="PigMemberChip">
-              {m.name}
-            </li>
+            m.id === owner ? (
+              <li key={m.id} className="PigMemberOwner">
+                {m.name}
+              </li>
+            ) : (
+              <li key={m.id} className="PigMemberChip">
+                {m.name}
+              </li>
+              )
           ))}
         </ul>
       )}

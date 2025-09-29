@@ -87,7 +87,7 @@ export default function PigClient({ pig, members, articleId, pigId }) {
       <hr className="PigDivider" />
       <PigContents content={content} />
       <hr />
-      <PigMembers members={members} />
+      <PigMembers owner={pig?.owner} members={members} />
     </div>
   );
 }
