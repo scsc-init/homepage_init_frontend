@@ -1,4 +1,4 @@
-@import "@/styles/theme.css";
+@import '@/styles/theme.css';
 
 .main-logo {
   position: relative;
@@ -128,7 +128,6 @@
   object-fit: cover;
 }
 
-
 .user-name-container {
   display: flex;
   flex-direction: column;
@@ -146,7 +145,6 @@
   font-size: 1.2rem;
   font-weight: bolder;
 }
-
 
 .user-info-table {
   width: 100%;

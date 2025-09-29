@@ -1,17 +1,16 @@
-// app/article/[id]/page.jsx
-"use client";
+'use client';
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import rehypeRaw from "rehype-raw";
-import "highlight.js/styles/github.css";
-import "./page.css";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import Comments from "@/components/board/Comments.jsx";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { UTC2KST } from "@/util/constants";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import 'highlight.js/styles/github.css';
+import './page.css';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Comments from '@/components/board/Comments.jsx';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { utc2kst } from '@/util/constants';
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
@@ -24,22 +23,23 @@ export default function ArticleDetail({ params }) {
   const { id } = params;
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-      return;
-    }
     const loadAll = async () => {
       try {
         const [contentRes, commentsRes, userRes] = await Promise.all([
-          fetch(`/api/article/${id}`, { headers: { "x-jwt": jwt } }),
-          fetch(`/api/comments/${id}`, { headers: { "x-jwt": jwt } }),
-          fetch(`/api/user/profile`, { headers: { "x-jwt": jwt } }),
+          fetch(`/api/article/${id}`),
+          fetch(`/api/comments/${id}`),
+          fetch(`/api/user/profile`),
         ]);
+
+        if (userRes.status === 401) {
+          router.push('/us/login');
+          return;
+        }
         if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
           setIsError(true);
           return;
         }
+
         const [articleJson, commentsJson, userJson] = await Promise.all([
           contentRes.json(),
           commentsRes.json(),
@@ -64,42 +64,28 @@ export default function ArticleDetail({ params }) {
   if (isLoading) return <LoadingSpinner />;
 
   if (isError || !article) {
-    return (
-      <div className="p-6 text-center text-red-600">
-        게시글을 찾을 수 없습니다.
-      </div>
-    );
+    return <div className="p-6 text-center text-red-600">게시글을 찾을 수 없습니다.</div>;
   }
 
-  const markdown = article.content ?? "내용이 비어 있습니다.";
+  const markdown = article.content ?? '내용이 비어 있습니다.';
   const isAuthor =
-    user?.id != null &&
-    article?.author_id != null &&
-    user.id === article.author_id;
+    user?.id != null && article?.author_id != null && user.id === article.author_id;
 
   const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      router.push("/us/login");
-      return;
-    }
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, {
-        method: "POST",
-        headers: { "x-jwt": jwt },
-      });
+      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
-        router.push(boardId ? `/board/${boardId}` : "/us/login");
+        router.push(boardId ? `/board/${boardId}` : '/us/login');
       } else if (res.status === 401) {
-        router.push("/us/login");
+        router.push('/us/login');
       } else {
-        alert("삭제에 실패했습니다.");
+        alert('삭제에 실패했습니다.');
       }
     } catch (_) {
-      alert("삭제 중 오류가 발생했습니다.");
+      alert('삭제 중 오류가 발생했습니다.');
     } finally {
       setIsDeleting(false);
     }
@@ -108,14 +94,15 @@ export default function ArticleDetail({ params }) {
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
-      <p className="SigInfo">작성일: {UTC2KST(new Date(article.created_at))}</p>
+      <p className="SigInfo">작성일: {utc2kst(article.created_at)}</p>
 
       {isAuthor && (
-        <div className="SigActionRow">
+        <div className={`SigActionRow ${isDeleting ? 'is-busy' : ''}`}>
           <button
             className="SigButton is-edit"
             onClick={() => router.push(`/article/edit/${id}`)}
             type="button"
+            disabled={isDeleting}
           >
             수정
           </button>
@@ -125,7 +112,7 @@ export default function ArticleDetail({ params }) {
             type="button"
             disabled={isDeleting}
           >
-            {isDeleting ? "삭제 중..." : "삭제"}
+            {isDeleting ? '삭제 중...' : '삭제'}
           </button>
         </div>
       )}
@@ -140,9 +127,7 @@ export default function ArticleDetail({ params }) {
             h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
             p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
             li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
-            code: ({ node, ...props }) => (
-              <code className="mdx-inline-code" {...props} />
-            ),
+            code: ({ node, ...props }) => <code className="mdx-inline-code" {...props} />,
             pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
             img: ({ node, ...props }) => <img className="mdx-img" {...props} />,
             table: ({ node, ...props }) => (

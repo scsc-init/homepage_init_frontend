@@ -122,7 +122,7 @@ body {
 }
 
 .SigActionBtn:disabled,
-.SigActionBtn[aria-busy="true"] {
+.SigActionBtn[aria-busy='true'] {
   opacity: 0.7;
   cursor: default;
   transform: none;
@@ -202,15 +202,15 @@ body {
 
 .compilling-text {
   font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   font-size: 1.125rem;
   color: var(--color-text);
   letter-spacing: 0.02em;
 }
 
 .compilling-text .dots::after {
-  content: "";
+  content: '';
   display: inline-block;
   width: 1.5ch;
   overflow: hidden;
@@ -220,19 +220,19 @@ body {
 
 @keyframes CompillingDots {
   0% {
-    content: "";
+    content: '';
   }
   25% {
-    content: ".";
+    content: '.';
   }
   50% {
-    content: "..";
+    content: '..';
   }
   75% {
-    content: "...";
+    content: '...';
   }
   100% {
-    content: "";
+    content: '';
   }
 }
 
@@ -349,15 +349,15 @@ body {
 
 .compilling-text {
   font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   font-size: 1.125rem;
   color: var(--color-text);
   letter-spacing: 0.02em;
 }
 
 .compilling-text .dots::after {
-  content: "";
+  content: '';
   display: inline-block;
   width: 1.5ch;
   overflow: hidden;
@@ -367,19 +367,19 @@ body {
 
 @keyframes CompillingDots {
   0% {
-    content: "";
+    content: '';
   }
   25% {
-    content: ".";
+    content: '.';
   }
   50% {
-    content: "..";
+    content: '..';
   }
   75% {
-    content: "...";
+    content: '...';
   }
   100% {
-    content: "";
+    content: '';
   }
 }
 
@@ -388,11 +388,7 @@ body {
   padding: 1.25rem 1rem;
   border-radius: 0.75rem;
   border: 1px solid var(--executive-card-shadow);
-  background: color-mix(
-    in srgb,
-    var(--color-bg) 85%,
-    var(--executive-card-bg) 15%
-  );
+  background: color-mix(in srgb, var(--color-bg) 85%, var(--executive-card-bg) 15%);
 }
 
 .SigMembersHeader {
@@ -438,6 +434,16 @@ body {
   background: var(--executive-card-bg);
   border: 1px solid var(--color-button-border);
   color: var(--color-text-body);
+  box-shadow: 0 1px 3px var(--executive-card-shadow);
+}
+
+.SigMemberOwner {
+  padding: 0.45rem 0.75rem;
+  border-radius: 9999px;
+  background: var(--color-text-body);
+  border: 1px solid var(--color-button-border);
+  color: var(--executive-card-bg);
+  font-weight: bold;
   box-shadow: 0 1px 3px var(--executive-card-shadow);
 }
 

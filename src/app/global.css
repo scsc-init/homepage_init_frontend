@@ -1,8 +1,8 @@
-@import "normalize.css";
-@import "@radix-ui/colors/black-alpha.css";
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/slate.css";
-@import "@/styles/theme.css";
+@import 'normalize.css';
+@import '@radix-ui/colors/black-alpha.css';
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/slate.css';
+@import '@/styles/theme.css';
 
 @media (max-width: 480px) {
   :root {
@@ -26,10 +26,9 @@ h1 {
 button {
   border: unset;
   cursor: pointer;
-
-  &.unset {
-    background: 0;
-  }
+}
+button.unset {
+  background: 0;
 }
 
 :root {
@@ -71,7 +70,6 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
-
 .ThemeToggle:hover {
   background: var(--color-text-subtle);
   color: var(--color-text-body);
@@ -110,7 +108,6 @@ img {
   animation: spin 1s linear infinite;
   margin-bottom: 0.5rem;
 }
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -127,7 +124,7 @@ img {
   color: var(--color-text-strong);
   padding: 2rem;
   border-radius: 1rem;
-  font-family: "Fira Code", monospace;
+  font-family: 'Fira Code', monospace;
   width: 92%;
   max-width: 700px;
   margin: 4rem auto;
@@ -146,15 +143,14 @@ img {
 
 .LoadingCodeBlock {
   white-space: pre-wrap;
-  font-size: 1.05rem; /* 🔹 더 크게 */
-  font-weight: 600; /* 🔹 더 두껍게 */
+  font-size: 1.05rem;
+  font-weight: 600;
   line-height: 1.7;
   animation: flicker 1.2s ease-in-out infinite alternate;
   background-color: rgba(0, 0, 0, 0.03);
   padding: 1rem;
   border-radius: 0.5rem;
 }
-
 .dark .LoadingCodeBlock {
   background-color: rgba(255, 255, 255, 0.04);
 }
@@ -189,12 +185,10 @@ html.theme-animating,
 html.theme-animating *:not(svg *):not(.no-theme-anim):not(.no-theme-anim *) {
   transition: background-color var(--theme-anim-duration) ease !important;
 }
-
 html.theme-animating *::before,
 html.theme-animating *::after {
   transition: background-color var(--theme-anim-duration) ease !important;
 }
-
 html.theme-animating * {
   transition-property: background-color !important;
   transition-duration: var(--theme-anim-duration) !important;
@@ -203,4 +197,49 @@ html.theme-animating * {
 
 a {
   color: var(--color-button-bg);
+}
+
+/* 비활성화/로딩 공통 처리 */
+button[disabled],
+button.is-disabled,
+[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  filter: grayscale(0.1) saturate(0.75);
+}
+
+.is-busy,
+.is-loading {
+  position: relative;
+}
+.is-busy button,
+.is-busy [type='button'],
+.is-busy [type='submit'],
+.is-loading button,
+.is-loading [type='button'],
+.is-loading [type='submit'] {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  filter: grayscale(0.1) saturate(0.75);
+}
+
+.form-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  min-height: 2.25rem;
+}
+
+.form-toggle-label {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.form-toggle-right {
+  display: inline-block;
+  margin-left: 0.75rem;
+  margin-top: 0.25rem;
 }

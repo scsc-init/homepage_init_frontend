@@ -1,14 +1,14 @@
-import Image from "next/image";
-import "./page.css";
-import JoinButton from "./JoinButton.jsx";
-import { getBaseUrl } from "@/util/getBaseUrl";
-import { getApiSecret } from "@/util/getApiSecret";
-import { DISCORD_INVITE_LINK } from "@/util/constants";
+import Image from 'next/image';
+import './page.css';
+import JoinButton from './JoinButton.jsx';
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
+import { DISCORD_INVITE_LINK } from '@/util/constants';
 
 async function fetchDiscordInviteLink() {
   const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
-    headers: { "x-api-secret": getApiSecret() },
-    cache: "no-store",
+    headers: { 'x-api-secret': getApiSecret() },
+    cache: 'no-store',
   });
   if (res.ok) {
     const resData = await res.json();
@@ -49,10 +49,7 @@ export default async function Contact() {
                     <tr>
                       <td className="label">Email</td>
                       <td colSpan="2" className="info">
-                        <a
-                          href="mailto:scsc.snu@gmail.com"
-                          className="ContactLink"
-                        >
+                        <a href="mailto:scsc.snu@gmail.com" className="ContactLink">
                           scsc.snu@gmail.com
                         </a>
                       </td>

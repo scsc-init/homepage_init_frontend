@@ -1,12 +1,13 @@
-export default function SigMembers({ members }) {
-  const list = Array.isArray(members) ? members : [];
+export default function SigMembers({ owner, members }) {
+  const rawList = Array.isArray(members) ? members : [];
+  const ownerIndex = !!owner ? rawList.findIndex(m => m.id === owner) : -1
+  const list = ownerIndex === -1
+    ? rawList
+    : [rawList[ownerIndex], ...rawList.slice(0, ownerIndex), ...rawList.slice(ownerIndex + 1)];
   const count = list.length;
 
   return (
-    <section
-      className="SigMembersSection"
-      aria-labelledby="sig-members-heading"
-    >
+    <section className="SigMembersSection" aria-labelledby="sig-members-heading">
       <div className="SigMembersHeader">
         <h2 id="sig-members-heading" className="SigMembersTitle">
           시그 인원
@@ -19,9 +20,15 @@ export default function SigMembers({ members }) {
       ) : (
         <ul className="SigMemberList">
           {list.map((m) => (
-            <li key={m.id} className="SigMemberChip">
-              {m.name}
-            </li>
+            m.id === owner ? (
+              <li key={m.id} className="SigMemberOwner">
+                {m.name}
+              </li>
+            ) : (
+              <li key={m.id} className="SigMemberChip">
+                {m.name}
+              </li>
+              )
           ))}
         </ul>
       )}

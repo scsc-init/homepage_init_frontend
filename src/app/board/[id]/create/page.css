@@ -120,7 +120,7 @@ label {
   color: var(--color-text-subtle);
 }
 
-form input[type="text"] {
+form input[type='text'] {
   background-color: white;
   color: var(--color-text-body);
   border: 2px solid var(--color-text-subtle);
@@ -130,18 +130,18 @@ form input[type="text"] {
   transition: border 0.2s ease;
 }
 
-form input[type="text"]:focus {
+form input[type='text']:focus {
   outline: none;
   border-color: var(--color-button-bg);
 }
 
-.dark form input[type="text"] {
+.dark form input[type='text'] {
   background-color: var(--color-surface-light);
   color: var(--color-text-body);
   border: 2px solid var(--color-text-subtle);
 }
 
-.dark form input[type="text"]::placeholder {
+.dark form input[type='text']::placeholder {
   color: var(--color-text-subtle);
 }
 
@@ -213,7 +213,7 @@ label {
   margin-bottom: 0.5rem;
 }
 
-input[type="text"],
+input[type='text'],
 textarea {
   width: 100%;
   background-color: transparent;
@@ -225,23 +225,23 @@ textarea {
   transition: border-color 0.2s ease;
 }
 
-input[type="text"]::placeholder {
+input[type='text']::placeholder {
   color: var(--color-text-subtle);
 }
 
-input[type="text"]:focus {
+input[type='text']:focus {
   outline: none;
   border-color: var(--color-button-bg);
 }
 
 /* 다크모드 입력창 */
-.dark input[type="text"] {
+.dark input[type='text'] {
   background-color: transparent;
   color: var(--color-text-body);
   border-bottom: 3px solid var(--color-text-body);
 }
 
-.dark input[type="text"]::placeholder {
+.dark input[type='text']::placeholder {
   color: var(--color-text-subtle);
 }
 

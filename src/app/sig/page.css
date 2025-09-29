@@ -1,6 +1,6 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/violet.css";
-@import "@radix-ui/colors/slate.css";
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/violet.css';
+@import '@radix-ui/colors/slate.css';
 
 #SigListContainer {
   display: flex;
@@ -37,6 +37,14 @@
 
 .sigCard:hover {
   box-shadow: 0 2px 6px var(--executive-card-shadow);
+}
+.sigCard.isMine {
+  border-width: 1px;
+  border-color: var(--slate-6);
+  border-left: 4px solid var(--selection-bg);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .sigTopbar {
@@ -83,7 +91,7 @@
 
 .SigHeader {
   width: 100%;
-  max-width: 60rem; /* SigListContainer와 동일하게 제한 */
+  max-width: 60rem; /* SigListContainer?� ?�일?�게 ?�한 */
   display: flex;
   justify-content: space-between;
   align-items: center;

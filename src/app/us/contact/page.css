@@ -1,5 +1,5 @@
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/slate.css";
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/colors/slate.css';
 
 html,
 body {
@@ -211,7 +211,7 @@ a.ContactLink:hover {
 .WallLogo,
 .WallLogo2 {
   position: fixed;
-  background-image: url("/wall-logo.png");
+  background-image: url('/wall-logo.png');
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;

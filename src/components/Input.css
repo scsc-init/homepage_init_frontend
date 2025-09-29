@@ -1,5 +1,5 @@
-@import "@radix-ui/colors/slate.css";
-@import "@radix-ui/colors/indigo.css";
+@import '@radix-ui/colors/slate.css';
+@import '@radix-ui/colors/indigo.css';
 
 .C_InputRoot {
   display: flex;
