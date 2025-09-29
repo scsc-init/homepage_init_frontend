@@ -11,18 +11,17 @@ function MobileExecutiveButton({ user }) {
 
   if (isExecutive) {
     return (
-      <Link href={'/executive'} style={{ textDecoration: 'none' }}>
-        <button
-          className="unset toAdminPageButton"
-          style={{
+      <Link 
+        href={'/executive'} 
+        className="unset toAdminPageButton"
+        style={{
             fontSize: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.3rem',
-          }}
-        >
+            textDecoration: 'none'
+        }}>
           운영진 페이지
-        </button>
       </Link>
     );
   }
@@ -54,9 +53,7 @@ export default function MobileMenuList({ user }) {
                   <ul>
                     {menu.items.map((item) => (
                       <li key={item.label}>
-                        <Link href={item.url} style={{ textDecoration: 'none' }}>
-                          <button>{item.label}</button>
-                        </Link>
+                        <Link href={item.url}>{item.label}</Link>
                       </li>
                     ))}
                   </ul>

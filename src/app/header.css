@@ -72,6 +72,7 @@
 }
 
 .toAdminPageButton {
+  text-decoration: none;
   color: var(--header-foreground-color);
 }
 
@@ -146,8 +147,10 @@
   margin-bottom: 0.25rem;
 }
 
-.HeaderMenuContent button {
+.HeaderMenuContent a {
+  display: inline-block;
   background: none;
+  text-decoration: none;
   border: none;
   font-size: 0.95rem;
   color: var(--header-foreground-color);
@@ -159,7 +162,7 @@
   transition: background-color 0.15s ease;
 }
 
-.HeaderMenuContent button:hover {
+.HeaderMenuContent a:hover {
   background-color: var(--foreground-color);
   color: var(--background-color);
 }
@@ -179,6 +182,7 @@
 }
 
 #HeaderUserLogin {
+  text-decoration: none;
   font-size: 0.9rem;
 }
 
@@ -274,7 +278,7 @@
   }
 
   .MobileMenuTrigger,
-  .MobileSubMenu button {
+  .MobileSubMenu a {
     background: none;
     border: none;
     padding: 0.75rem 0.75rem;
@@ -291,8 +295,13 @@
       color 0.15s ease;
   }
 
+  .MobileSubMenu a {
+    display: inline-block;
+    text-decoration: none;
+  }
+
   .MobileMenuTrigger:hover,
-  .MobileSubMenu button:hover {
+  .MobileSubMenu a:hover {
     background-color: var(--foreground-color);
     color: var(--background-color);
   }

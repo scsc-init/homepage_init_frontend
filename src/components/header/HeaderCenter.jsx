@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
 import { headerMenuData } from '@/util/constants';
 
-export default function HeaderCenter() {
+export default function HeaderCenter({ user }) {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const timeoutRef = useRef();
 
@@ -36,9 +36,7 @@ export default function HeaderCenter() {
               <ul>
                 {menu.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.url}>
-                      <button>{item.label}</button>
-                    </Link>
+                    <Link href={(item.url==='/us/login' && user) ? '/about/welcome' : item.url}>{item.label}</Link>
                   </li>
                 ))}
               </ul>
