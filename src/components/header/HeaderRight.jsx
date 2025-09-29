@@ -34,7 +34,7 @@ export default function HeaderRight({ user }) {
             id="HeaderUser"
             className="unset HeaderRight__user"
           >
-            <Image
+            <img
               src={user.profile_picture || '/main/default-pfp.png'}
               alt="Profile"
               className="user-profile-picture"
