@@ -87,7 +87,7 @@ export default function SigClient({ sig, members, articleId, sigId }) {
       <hr className="SigDivider" />
       <SigContents content={content} />
       <hr />
-      <SigMembers members={members} />
+      <SigMembers owner={sig?.owner} members={members} />
     </div>
   );
 }
