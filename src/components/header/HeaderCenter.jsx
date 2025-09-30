@@ -4,13 +4,23 @@ import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
 import { headerMenuData } from '@/util/constants';
 
-export default function HeaderCenter({ user }) {
+export default function HeaderCenter() {
+  const [user, setUser] = useState(undefined);
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const timeoutRef = useRef();
 
   useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
   }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch('/api/user/profile');
+      if (res.ok) setUser(await res.json());
+      else setUser(null);
+    }
+    fetchUser();
+  }, [])
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);

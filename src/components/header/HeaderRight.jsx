@@ -1,9 +1,25 @@
+'use client';
+
 import Link from 'next/link';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { minExecutiveLevel } from '@/util/constants';
 
-export default function HeaderRight({ user }) {
-  const isExecutive = user?.role >= minExecutiveLevel;
+export default function HeaderRight() {
+  const [user, setUser] = useState(undefined);
+  const [isExecutive, setIsExecutive] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch('/api/user/profile');
+      if (res.ok) setUser(await res.json());
+      else setUser(null);
+    }
+    fetchUser();
+  }, [])
+
+  useEffect(() => {
+    setIsExecutive(user?.role >= minExecutiveLevel);
+  }, [user])
 
   return (
     <div>

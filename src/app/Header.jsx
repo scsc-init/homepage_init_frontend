@@ -3,12 +3,12 @@ import HeaderLeft from '@/components/header/HeaderLeft';
 import HeaderCenter from '@/components/header/HeaderCenter';
 import HeaderRight from '@/components/header/HeaderRight';
 import MobileMenuList from '@/components/header/MobileMenuList';
-import { fetchUser, fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
+import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
 import './header.css';
 
 export default async function Header() {
   noStore();
-  const [user, scscGlobalStatus] = await Promise.all([fetchUser(), fetchSCSCGlobalStatus()]);
+  const scscGlobalStatus = await fetchSCSCGlobalStatus();
 
   return (
     <div>
@@ -19,11 +19,11 @@ export default async function Header() {
             semester={scscGlobalStatus ? scscGlobalStatus.semester : null}
           />
 
-          <HeaderCenter user={user} />
+          <HeaderCenter />
 
           <div id="HeaderRight">
-            <HeaderRight user={user} />
-            <MobileMenuList user={user} />
+            <HeaderRight />
+            <MobileMenuList />
           </div>
         </div>
       </div>
