@@ -2,129 +2,156 @@
 
 import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  minExecutiveLevel,
+  presidentEmails,
+  vicePresidentEmails,
+  excludedExecutiveEmails,
+} from '@/util/constants';
 
-const executives = [
-  {
-    name: '한성재',
-    role: '회장',
-    image: '/xctvs/han-sung-jae.png',
-    description: '그는 신입니다.',
-  },
-  {
-    name: '김지훈',
-    role: '부회장',
-    image: '/xctvs/kim-ji-hoon.png',
-    description: '그 역시 신입니다.',
-  },
-  {
-    name: '정연호',
-    role: '임원',
-    image: '/xctvs/jeong-yeon-ho.png',
-    description: '그 또한 신입니다.',
-  },
-  {
-    name: '김재희',
-    role: '임원',
-    image: '/xctvs/kim-jae-hee.png',
-    description: '마이 경제입니다.',
-  },
-  {
-    name: '신지환',
-    role: '임원',
-    image: '/xctvs/shin-ji-hwan.png',
-    description: 'GOAT',
-  },
-  {
-    name: '신효재',
-    role: '임원',
-    image: '/xctvs/shin-hyo-jae.png',
-    description: 'GOAT',
-  },
-  {
-    name: '김건우',
-    role: '임원',
-    image: '/xctvs/kim-geon-woo.png',
-    description: '기 습 숭 배',
-  },
-  {
-    name: '오현우',
-    role: '임원',
-    image: '/xctvs/o-hyeon-woo.png',
-    description: '파이어펀치! 파이어펀치!',
-  },
-  {
-    name: '한지후',
-    role: '임원',
-    image: '/xctvs/han-ji-hoo.png',
-    description: '물감비',
-  },
-  {
-    name: '허유민',
-    role: '임원',
-    image: '/xctvs/heo-yoo-min.png',
-    description: 'goat',
-  },
-  {
-    name: '박상혁',
-    role: '임원',
-    image: '/xctvs/park-sang-hyeok.png',
-    description: '잘생김',
-  },
-  {
-    name: '이태윤',
-    role: '임원',
-    image: '/xctvs/lee-tae-yoon.png',
-    description: 'JOAT',
-  },
-  {
-    name: '강명석',
-    role: '임원',
-    image: '/xctvs/kang-myeong-suk.png',
-    description: '그 분',
-  },
-];
+function upgradeGoogleAvatar(url) {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
+    if (!host.includes('googleusercontent.com')) return url;
+    let s = url;
+    s = s.replace(/([?&]sz=)(\d+)/i, '$1' + 512);
+    s = s.replace(/=s\d+(?:-c)?(?=$|[?#])/i, '=s512-c');
+    if (!/[?&]sz=\d+/i.test(s) && !/=s\d+(?:-c)?/i.test(s))
+      s += (s.includes('?') ? '&' : '?') + 'sz=512';
+    return s;
+  } catch {
+    return url;
+  }
+}
+
+function pickProfileSrc(val) {
+  const raw = String(val || '').trim();
+  if (!raw) return '/opengraph.png';
+  if (/^https?:\/\//i.test(raw)) return upgradeGoogleAvatar(raw);
+  return raw.startsWith('/') ? raw : `/${raw}`;
+}
+
+function roleDisplayByEmail(email) {
+  const e = String(email || '').toLowerCase();
+  if (presidentEmails.map((x) => x.toLowerCase()).includes(e)) return '회장';
+  if (vicePresidentEmails.map((x) => x.toLowerCase()).includes(e)) return '부회장';
+  return '임원';
+}
+
+function toNumberOrNull(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function extractLevel(u) {
+  const candidates = [u?.role_level, u?.roleLevel, u?.level, u?.role?.level, u?.role];
+  for (const c of candidates) {
+    const n = toNumberOrNull(c);
+    if (n !== null) return n;
+  }
+  const names = [
+    String(u?.role_name || '').toLowerCase(),
+    String(u?.role?.name || '').toLowerCase(),
+    String(u?.user_role || '').toLowerCase(),
+  ];
+  if (names.some((s) => s === 'president')) return 1000;
+  if (names.some((s) => s === 'vice_president' || s === 'vice-president')) return 900;
+  if (names.some((s) => s === 'executive' || s === 'admin' || s === 'manager'))
+    return minExecutiveLevel;
+  return 0;
+}
+
+function normalizeUsers(data) {
+  const arr = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.items)
+      ? data.items
+      : Array.isArray(data?.users)
+        ? data.users
+        : [];
+  return arr.map((u) => {
+    const email = u?.email || u?.mail || u?.user_email || '';
+    const name = u?.name || u?.username || u?.display_name || u?.full_name || email || '';
+    const id = u?.id || u?.user_id || u?.uid || email || name;
+    const pic = u?.profile_picture ?? u?.profileImage ?? u?.photo_url ?? u?.avatar_url ?? null;
+    const level = extractLevel(u);
+    return { id, name, email, level, raw: u, image: pickProfileSrc(pic) };
+  });
+}
 
 export default function ExecutivesClient() {
+  const [people, setPeople] = useState([]);
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const total = executives.length;
   const autoRef = useRef();
 
-  const prev = () => {
-    setCenterIndex((prev) => (prev - 1 + total) % total);
-  };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/users', { credentials: 'include', cache: 'no-store' });
+        if (!res.ok) throw new Error('failed');
+        const json = await res.json();
 
-  const next = () => {
-    setCenterIndex((prev) => (prev + 1) % total);
-  };
+        const excludedSet = new Set(
+          excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
+        );
+        const base = normalizeUsers(json).filter(
+          (u) => !excludedSet.has(String(u.email || '').toLowerCase()),
+        );
+
+        const filtered = base.filter((u) => u.level >= minExecutiveLevel);
+
+        const mapped = filtered.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          roleNum: u.level,
+          role: roleDisplayByEmail(u.email),
+          image: u.image,
+        }));
+
+        const prez = mapped.filter((p) => p.role === '회장');
+        const vprez = mapped.filter((p) => p.role === '부회장');
+        const others = mapped
+          .filter((p) => p.role === '임원')
+          .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+        setPeople([...prez, ...vprez, ...others]);
+        setCenterIndex(0);
+      } catch {
+        setPeople([]);
+      }
+    };
+    load();
+  }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
-    if (!hovered && !isMobile) {
-      autoRef.current = setInterval(() => {
-        next();
-      }, 4000);
+    if (!hovered && !isMobile && people.length > 1) {
+      autoRef.current = setInterval(() => setCenterIndex((p) => (p + 1) % people.length), 4000);
     }
     return () => clearInterval(autoRef.current);
-  }, [hovered, isMobile]);
+  }, [hovered, isMobile, people.length]);
 
   const handlers = useSwipeable({
-    onSwipedLeft: next,
-    onSwipedRight: prev,
+    onSwipedLeft: () => setCenterIndex((p) => (people.length ? (p + 1) % people.length : 0)),
+    onSwipedRight: () =>
+      setCenterIndex((p) => (people.length ? (p - 1 + people.length) % people.length : 0)),
     trackMouse: true,
   });
 
+  const total = people.length;
   const positionClass = (idx) => {
+    if (!total) return 'hidden';
     const offset = (idx - centerIndex + total) % total;
     if (offset === 0) return 'center';
     if (offset === 1 || offset === -total + 1) return 'right-1';
@@ -137,17 +164,20 @@ export default function ExecutivesClient() {
   if (isMobile) {
     return (
       <div className="ExecutiveMasonry">
-        {executives.map((person, i) => (
-          <div className="ExecutiveCard" key={i}>
+        {people.map((person, i) => (
+          <div className="ExecutiveCard" key={person.id || i}>
             <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
-              <div className="ExecutiveOverlay">
-                <p className="ExecutiveDescription">{person.description}</p>
-              </div>
+              <Image
+                src={person.image}
+                alt={person.name}
+                fill
+                className="ExecutiveImage"
+                sizes="(max-width: 768px) 160px, 200px"
+                quality={90}
+              />
             </div>
             <h3>{person.name}</h3>
             <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
           </div>
         ))}
       </div>
@@ -161,32 +191,30 @@ export default function ExecutivesClient() {
       onMouseLeave={() => setHovered(false)}
       {...handlers}
     >
-      {/*<button className="ExecutiveArrow left" onClick={prev}>
-        ◀
-      </button>*/}
       <div className="ExecutiveCarouselCentered">
-        {executives.map((person, idx) => (
+        {people.map((person, idx) => (
           <div
             className={`ExecutiveCard ${positionClass(idx)}`}
-            key={idx}
-            style={{
-              transition: 'transform 0.6s ease, opacity 0.6s ease',
-            }}
+            key={person.id || idx}
+            style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
           >
             <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
+              <Image
+                src={person.image}
+                alt={person.name}
+                fill
+                className="ExecutiveImage"
+                sizes="(max-width: 768px) 160px, 200px"
+                quality={90}
+              />
             </div>
             <h3>{person.name}</h3>
             <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
           </div>
         ))}
       </div>
-      {/*<button className="ExecutiveArrow right" onClick={next}>
-        ▶
-      </button>*/}
       <div className="ExecutiveDots">
-        {executives.map((_, i) => (
+        {people.map((_, i) => (
           <div
             key={i}
             className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}

@@ -11,11 +11,11 @@ export default function HeaderRight() {
 
   useEffect(() => {
     fetchUserClient().then(setUser);
-  }, [])
+  }, []);
 
   useEffect(() => {
     setIsExecutive(user?.role >= minExecutiveLevel);
-  }, [user])
+  }, [user]);
 
   return (
     <div>
