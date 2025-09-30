@@ -82,9 +82,9 @@ export default function MyProfileClient() {
 
   return (
     <div>
-      <div className="main-logo-wrapper">
+      <div className="main-logo-wrapper__mypage">
         <p className="main-logo-description">My Page</p>
-        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo logo" />
+        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo__mypage logo" />
       </div>
       <div className="user-profile-wrapper">
         {user ? (
