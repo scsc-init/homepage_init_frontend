@@ -3,18 +3,11 @@
 
 import './ToggleSwitch.css';
 
-export default function ToggleSwitch({
-  checked,
-  value: valueProp,
-  onChange,
-  className = '',
-  ...rest
-}) {
+export default function ToggleSwitch({ checked, value: valueProp, onChange, ...rest }) {
   const isOn = typeof checked !== 'undefined' ? !!checked : !!valueProp;
-  const labelClass = ['switch switch--form', className].filter(Boolean).join(' ');
 
   return (
-    <label className={labelClass} title={isOn ? '켜짐' : '꺼짐'}>
+    <label className="switch switch--form" title={isOn ? '켜짐' : '꺼짐'}>
       <input
         type="checkbox"
         checked={isOn}
