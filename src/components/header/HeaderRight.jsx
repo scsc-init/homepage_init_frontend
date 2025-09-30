@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { fetchUserClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
 
 export default function HeaderRight() {
@@ -9,12 +10,7 @@ export default function HeaderRight() {
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch('/api/user/profile');
-      if (res.ok) setUser(await res.json());
-      else setUser(null);
-    }
-    fetchUser();
+    fetchUserClient().then(setUser);
   }, [])
 
   useEffect(() => {

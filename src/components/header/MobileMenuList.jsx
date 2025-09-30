@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { fetchUserClient } from '@/util/fetchClientData';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 
 function MobileExecutiveButton() {
@@ -9,12 +10,7 @@ function MobileExecutiveButton() {
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch('/api/user/profile');
-      if (res.ok) setUser(await res.json());
-      else setUser(null);
-    }
-    fetchUser();
+    fetchUserClient().then(setUser);
   }, [])
 
   useEffect(() => {

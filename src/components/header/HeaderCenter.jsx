@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
+import { fetchUserClient } from '@/util/fetchClientData';
 import { headerMenuData } from '@/util/constants';
 
 export default function HeaderCenter() {
@@ -14,12 +15,7 @@ export default function HeaderCenter() {
   }, []);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch('/api/user/profile');
-      if (res.ok) setUser(await res.json());
-      else setUser(null);
-    }
-    fetchUser();
+    fetchUserClient().then(setUser);
   }, [])
 
   const handleMouseEnter = (index) => {
