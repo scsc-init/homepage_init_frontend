@@ -3,7 +3,7 @@
 
 import './ToggleSwitch.css';
 
-export default function ToggleSwitch({ checked, value: valueProp, onChange, ...rest }) {
+export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
   const isOn = typeof checked !== 'undefined' ? !!checked : !!valueProp;
 
   return (
@@ -12,7 +12,6 @@ export default function ToggleSwitch({ checked, value: valueProp, onChange, ...r
         type="checkbox"
         checked={isOn}
         onChange={(e) => onChange?.(e.target.checked)}
-        {...rest}
       />
       <span className="slider" aria-hidden="true" />
     </label>
