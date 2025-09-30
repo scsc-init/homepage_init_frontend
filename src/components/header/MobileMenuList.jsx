@@ -1,11 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { fetchUserClient } from '@/util/fetchClientData';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 
-function MobileExecutiveButton({ user }) {
-  const isExecutive = user?.role >= minExecutiveLevel;
+function MobileExecutiveButton() {
+  const [user, setUser] = useState(undefined);
+  const [isExecutive, setIsExecutive] = useState(false);
+
+  useEffect(() => {
+    fetchUserClient().then(setUser);
+  }, [])
+
+  useEffect(() => {
+    setIsExecutive(user?.role >= minExecutiveLevel);
+  }, [user])
 
   if (user === undefined || !user) return null;
 

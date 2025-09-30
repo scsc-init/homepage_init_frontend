@@ -1,9 +1,21 @@
+'use client';
+
 import Link from 'next/link';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { fetchUserClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
 
-export default function HeaderRight({ user }) {
-  const isExecutive = user?.role >= minExecutiveLevel;
+export default function HeaderRight() {
+  const [user, setUser] = useState(undefined);
+  const [isExecutive, setIsExecutive] = useState(false);
+
+  useEffect(() => {
+    fetchUserClient().then(setUser);
+  }, [])
+
+  useEffect(() => {
+    setIsExecutive(user?.role >= minExecutiveLevel);
+  }, [user])
 
   return (
     <div>

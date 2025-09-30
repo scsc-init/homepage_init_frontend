@@ -2,6 +2,7 @@
 @import '@radix-ui/colors/green.css';
 @import '@/styles/theme.css';
 
+
 #EmailNotice.error,
 #EmailCodeNotice.error,
 #PasswordNotice.error,
@@ -24,15 +25,6 @@
 .SignupSuccessIcon {
   width: 1.2rem;
   height: 1.2rem;
-}
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow-x: hidden;
-  max-height: 100%;
-  overflow-y: hidden;
 }
 
 #SignupContainer {
@@ -154,31 +146,32 @@ body {
   margin-top: 0.5rem;
 }
 
-.main-logo {
+/* 로고 크기 조정 */
+.main-logo__login {
   position: relative;
-  width: 40vw;
-  max-width: 300px;
+  width: 30vw;
+  max-width: 220px;
   height: auto;
 }
 
-.main-subtitle {
+.main-subtitle__login {
   margin-top: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--color-text-subtle);
   font-weight: 400;
   line-height: 1.4;
-  width: 40vw;
-  max-width: 200px;
+  width: 36vw;
+  max-width: 180px;
 }
 
-.main-logo-wrapper {
+.main-logo-wrapper__login {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   z-index: 4;
-  margin-top: 5vh;
-  margin-bottom: 6vh;
+  margin-top: 4vh;
+  margin-bottom: 5vh;
   position: relative;
 }
 
@@ -197,7 +190,6 @@ body {
   position: relative;
 }
 
-/* 커스텀 구글 로그인 버튼 */
 .GoogleLoginBtn {
   width: 100%;
   max-width: 360px;
@@ -267,7 +259,6 @@ body {
   color: var(--red-10);
 }
 
-/* 다크모드 대응 */
 .dark .GoogleSignupCard {
   background-color: var(--executive-card-bg);
   box-shadow: 0 4px 20px var(--executive-card-shadow);

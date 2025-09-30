@@ -1,8 +1,9 @@
+// src/app/us/login/AuthClient.jsx
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession, signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import './page.css';
 import * as validator from './validator';
 
@@ -41,6 +42,20 @@ function log(event, data = {}) {
   } catch {}
 }
 
+async function wait(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+async function ensureCookieReady() {
+  for (let i = 0; i < 6; i++) {
+    try {
+      const r = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
+      if (r.ok) return true;
+    } catch {}
+    await wait(150);
+  }
+  return false;
+}
+
 export default function LoginPage() {
   const { data: session, status } = useSession();
   const [stage, setStage] = useState(0);
@@ -61,7 +76,6 @@ export default function LoginPage() {
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
-  const router = useRouter();
   const [authLoading, setAuthLoading] = useState(false);
   const [signupBusy, setSignupBusy] = useState(false);
 
@@ -91,9 +105,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     (async () => {
-      const prof = await fetch('/api/user/profile', { cache: 'no-store' });
-      if (prof.status === 200) {
-        router.replace('/about/welcome');
+      let prof = null;
+      try {
+        prof = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
+      } catch {}
+      if (prof && prof.status === 200) {
+        window.location.replace('/');
         return;
       }
 
@@ -104,10 +121,19 @@ export default function LoginPage() {
 
       const email = (session?.user?.email || '').toLowerCase();
       if (!email) return;
+      if (!validator.email(email)) {
+        alert('SNU 구글 계정(@snu.ac.kr)으로만 로그인할 수 있습니다.');
+        try {
+          await signOut({ redirect: false });
+        } catch {}
+        setStage(0);
+        return;
+      }
 
       const loginRes = await fetch('/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email }),
       });
 
@@ -116,9 +142,11 @@ export default function LoginPage() {
         await fetch('/api/auth/app-jwt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ jwt }),
         });
-        router.replace('/about/welcome');
+        await ensureCookieReady();
+        window.location.replace('/');
         return;
       }
 
@@ -133,13 +161,13 @@ export default function LoginPage() {
 
       setStage(0);
     })();
-  }, [router, status, session, isOAuthReturn]);
+  }, [status, session, isOAuthReturn]);
 
   useEffect(() => {
     if (stage !== 4) return;
     const fetchMajors = async () => {
       try {
-        const res = await fetch(`/api/majors`);
+        const res = await fetch(`/api/majors`, { credentials: 'include' });
         const data = await res.json();
         setMajors(data);
         log('majors_loaded', { count: Array.isArray(data) ? data.length : 0 });
@@ -159,6 +187,7 @@ export default function LoginPage() {
     const createRes = await fetch(`/api/user/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({
         email,
         name: form.name,
@@ -177,7 +206,7 @@ export default function LoginPage() {
         detail: createData?.detail || null,
       });
       alert(`유저 생성 실패: ${createData.detail}`);
-      router.push('/');
+      window.location.replace('/');
       return;
     }
 
@@ -186,6 +215,7 @@ export default function LoginPage() {
     const loginRes = await fetch(`/api/user/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ email }),
     });
     if (!loginRes.ok) {
@@ -194,18 +224,13 @@ export default function LoginPage() {
     }
     const { jwt } = await loginRes.json();
 
-    try {
-      await fetch('/api/auth/app-jwt', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jwt }),
-      });
-      log('stored_app_jwt_cookie_after_signup');
-    } catch {
-      log('store_jwt_cookie_failed_after_signup');
-    }
-
-    log('redirect_after_signup', { to: '/about/welcome' });
+    await fetch('/api/auth/app-jwt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ jwt }),
+    });
+    await ensureCookieReady();
     window.location.replace('/about/welcome');
   };
 
@@ -214,9 +239,9 @@ export default function LoginPage() {
       <div className="GoogleSignupCard">
         {stage === 0 && (
           <div>
-            <div className="main-logo-wrapper">
-              <img src="/main/main-logo.png" alt="Main Logo" className="main-logo logo" />
-              <div className="main-subtitle">Seoul National University Computer Study Club</div>
+            <div className="main-logo-wrapper__login">
+              <img src="/main/main-logo.png" alt="Main Logo" className="main-logo__login logo" />
+              <div className="main-subtitle__login">Seoul National University Computer Study Club</div>
             </div>
             <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
             <div className="google-signin-button-wrapper">
