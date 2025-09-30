@@ -21,7 +21,7 @@
 
 #HeaderLeft,
 #HeaderRight {
-  flex: 0 0 auto;
+  flex: 0 0 20%;
   display: flex;
   align-items: center;
   min-width: 12rem;
@@ -57,7 +57,7 @@
 .HeaderRight__main {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .HeaderRight__executive {
@@ -203,17 +203,19 @@
 }
 
 @media (max-width: 768px) {
+  #HeaderLeft,
+  #HeaderRight {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
   #HeaderCenter {
     display: none;
   }
 
   .HeaderRight__loading {
     width: auto;
-  }
-
-  #HeaderRight {
-    min-width: auto;
-    justify-content: flex-start;
   }
 
   .HeaderRight__executive {
