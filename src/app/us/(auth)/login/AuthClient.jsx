@@ -45,12 +45,13 @@ function log(event, data = {}) {
 async function wait(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
-
 async function ensureCookieReady() {
-  for (let i = 0; i < 5; i++) {
-    const r = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
-    if (r.ok) return true;
-    await wait(120);
+  for (let i = 0; i < 6; i++) {
+    try {
+      const r = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
+      if (r.ok) return true;
+    } catch {}
+    await wait(150);
   }
   return false;
 }
@@ -104,11 +105,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     (async () => {
-      const prof = await fetch('/api/user/profile', {
-        cache: 'no-store',
-        credentials: 'include',
-      });
-      if (prof.status === 200) {
+      let prof = null;
+      try {
+        prof = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
+      } catch {}
+      if (prof && prof.status === 200) {
         window.location.replace('/');
         return;
       }
