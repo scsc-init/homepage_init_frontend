@@ -7,10 +7,7 @@ const nextConfig = {
       'lh5.googleusercontent.com',
       'lh6.googleusercontent.com',
     ],
-    remotePatterns: [
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      { protocol: 'https', hostname: '**.googleusercontent.com' },
-    ],
+    remotePatterns: [{ protocol: 'https', hostname: '**.googleusercontent.com' }],
   },
   webpack: (config) => {
     config.module.rules.push({

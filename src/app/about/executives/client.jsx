@@ -1,20 +1,18 @@
 'use client';
 
-import Image from 'next/image';
-import { useSwipeable } from 'react-swipeable';
 import { useEffect, useRef, useState } from 'react';
 import {
   minExecutiveLevel,
   presidentEmails,
   vicePresidentEmails,
   excludedExecutiveEmails,
+  DEFAULT_EXECUTIVE_PFP,
 } from '@/util/constants';
 
 function upgradeGoogleAvatar(url) {
   try {
     const u = new URL(url);
-    const host = u.hostname.toLowerCase();
-    if (!host.includes('googleusercontent.com')) return url;
+    if (!u.hostname.toLowerCase().includes('googleusercontent.com')) return url;
     let s = url;
     s = s.replace(/([?&]sz=)(\d+)/i, '$1' + 512);
     s = s.replace(/=s\d+(?:-c)?(?=$|[?#])/i, '=s512-c');
@@ -26,11 +24,24 @@ function upgradeGoogleAvatar(url) {
   }
 }
 
-function pickProfileSrc(val) {
-  const raw = String(val || '').trim();
-  if (!raw) return '/opengraph.png';
-  if (/^https?:\/\//i.test(raw)) return upgradeGoogleAvatar(raw);
-  return raw.startsWith('/') ? raw : `/${raw}`;
+function toProxyStaticPath(raw) {
+  // DB에 들어있는 값이 "static/image/pfps/<file>.jpg" 형태
+  // → Next 프록시 "/api/static/image/pfps/<file>.jpg" 로 변환
+  const s = String(raw || '').replace(/^\/+/, '');
+  if (!s) return DEFAULT_EXECUTIVE_PFP;
+  if (!s.startsWith('static/image/')) return DEFAULT_EXECUTIVE_PFP;
+  return `/api/${s}`.replace(/^\/api\/static\/image\//, '/api/static/image/');
+}
+
+function resolveProfileImage(u) {
+  const raw = u?.profile_picture;
+  if (!raw) return DEFAULT_EXECUTIVE_PFP;
+
+  // 외부 URL(구글 프사 등)
+  if (u?.profile_picture_is_url) return upgradeGoogleAvatar(String(raw));
+
+  // 내부 파일형: static/image/... → 프록시 라우트로
+  return toProxyStaticPath(raw);
 }
 
 function roleDisplayByEmail(email) {
@@ -40,77 +51,69 @@ function roleDisplayByEmail(email) {
   return '임원';
 }
 
-function toNumberOrNull(v) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
-function extractLevel(u) {
-  const candidates = [u?.role_level, u?.roleLevel, u?.level, u?.role?.level, u?.role];
-  for (const c of candidates) {
-    const n = toNumberOrNull(c);
-    if (n !== null) return n;
-  }
-  const names = [
-    String(u?.role_name || '').toLowerCase(),
-    String(u?.role?.name || '').toLowerCase(),
-    String(u?.user_role || '').toLowerCase(),
-  ];
-  if (names.some((s) => s === 'president')) return 1000;
-  if (names.some((s) => s === 'vice_president' || s === 'vice-president')) return 900;
-  if (names.some((s) => s === 'executive' || s === 'admin' || s === 'manager'))
-    return minExecutiveLevel;
-  return 0;
-}
-
-function normalizeUsers(data) {
-  const arr = Array.isArray(data)
-    ? data
-    : Array.isArray(data?.items)
-      ? data.items
-      : Array.isArray(data?.users)
-        ? data.users
-        : [];
-  return arr.map((u) => {
-    const email = u?.email || u?.mail || u?.user_email || '';
-    const name = u?.name || u?.username || u?.display_name || u?.full_name || email || '';
-    const id = u?.id || u?.user_id || u?.uid || email || name;
-    const pic = u?.profile_picture ?? u?.profileImage ?? u?.photo_url ?? u?.avatar_url ?? null;
-    const level = extractLevel(u);
-    return { id, name, email, level, raw: u, image: pickProfileSrc(pic) };
-  });
+function normUser(u) {
+  const email = u?.email || '';
+  const name = u?.name || email || '';
+  const id = u?.id || email || name;
+  const level = Number.isFinite(Number(u?.role)) ? Number(u.role) : 0;
+  const image = resolveProfileImage(u);
+  return { id, name, email, level, image };
 }
 
 export default function ExecutivesClient() {
   const [people, setPeople] = useState([]);
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const autoRef = useRef();
 
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/users', { credentials: 'include', cache: 'no-store' });
-        if (!res.ok) throw new Error('failed');
-        const json = await res.json();
+        const [execRes, prezRes] = await Promise.all([
+          fetch('/api/users?user_role=executive', {
+            credentials: 'include',
+            cache: 'no-store',
+          }),
+          fetch('/api/users?user_role=president', {
+            credentials: 'include',
+            cache: 'no-store',
+          }),
+        ]);
+        if (!execRes.ok && !prezRes.ok) throw new Error('failed');
+        const [execJson, prezJson] = await Promise.all([
+          execRes.ok ? execRes.json() : [],
+          prezRes.ok ? prezRes.json() : [],
+        ]);
 
+        const raw = [
+          ...(Array.isArray(execJson) ? execJson : []),
+          ...(Array.isArray(prezJson) ? prezJson : []),
+        ];
         const excludedSet = new Set(
           excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
         );
-        const base = normalizeUsers(json).filter(
-          (u) => !excludedSet.has(String(u.email || '').toLowerCase()),
-        );
+        const normalized = raw
+          .map(normUser)
+          .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
+          .filter((u) => u.level >= minExecutiveLevel);
 
-        const filtered = base.filter((u) => u.level >= minExecutiveLevel);
+        const dedup = [];
+        const seen = new Set();
+        for (const u of normalized) {
+          const key = u.id || u.email;
+          if (!seen.has(key)) {
+            seen.add(key);
+            dedup.push(u);
+          }
+        }
 
-        const mapped = filtered.map((u) => ({
+        const mapped = dedup.map((u) => ({
           id: u.id,
           name: u.name,
           email: u.email,
           roleNum: u.level,
           role: roleDisplayByEmail(u.email),
-          image: u.image,
+          image: u.image || DEFAULT_EXECUTIVE_PFP,
         }));
 
         const prez = mapped.filter((p) => p.role === '회장');
@@ -129,25 +132,11 @@ export default function ExecutivesClient() {
   }, []);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (!hovered && !isMobile && people.length > 1) {
+    if (!hovered && people.length > 1) {
       autoRef.current = setInterval(() => setCenterIndex((p) => (p + 1) % people.length), 4000);
     }
     return () => clearInterval(autoRef.current);
-  }, [hovered, isMobile, people.length]);
-
-  const handlers = useSwipeable({
-    onSwipedLeft: () => setCenterIndex((p) => (people.length ? (p + 1) % people.length : 0)),
-    onSwipedRight: () =>
-      setCenterIndex((p) => (people.length ? (p - 1 + people.length) % people.length : 0)),
-    trackMouse: true,
-  });
+  }, [hovered, people.length]);
 
   const total = people.length;
   const positionClass = (idx) => {
@@ -161,19 +150,57 @@ export default function ExecutivesClient() {
     return 'hidden';
   };
 
-  if (isMobile) {
-    return (
+  return (
+    <>
+      <div
+        className="ExecutiveCarouselWrapper"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div className="ExecutiveCarouselCentered">
+          {people.map((person, idx) => (
+            <div
+              className={`ExecutiveCard ${positionClass(idx)}`}
+              key={person.id || idx}
+              style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
+            >
+              <div className="ExecutiveImageWrapper">
+                <img
+                  src={person.image || DEFAULT_EXECUTIVE_PFP}
+                  alt={person.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="ExecutiveImage"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <h3>{person.name}</h3>
+              <p className="ExecutiveRole">{person.role}</p>
+            </div>
+          ))}
+        </div>
+        <div className="ExecutiveDots">
+          {people.map((_, i) => (
+            <div
+              key={i}
+              className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
+              onClick={() => setCenterIndex(i)}
+            />
+          ))}
+        </div>
+      </div>
+
       <div className="ExecutiveMasonry">
         {people.map((person, i) => (
           <div className="ExecutiveCard" key={person.id || i}>
             <div className="ExecutiveImageWrapper">
-              <Image
-                src={person.image}
+              <img
+                src={person.image || DEFAULT_EXECUTIVE_PFP}
                 alt={person.name}
-                fill
+                loading="lazy"
+                decoding="async"
                 className="ExecutiveImage"
-                sizes="(max-width: 768px) 160px, 200px"
-                quality={90}
+                referrerPolicy="no-referrer"
               />
             </div>
             <h3>{person.name}</h3>
@@ -181,47 +208,6 @@ export default function ExecutivesClient() {
           </div>
         ))}
       </div>
-    );
-  }
-
-  return (
-    <div
-      className="ExecutiveCarouselWrapper"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      {...handlers}
-    >
-      <div className="ExecutiveCarouselCentered">
-        {people.map((person, idx) => (
-          <div
-            className={`ExecutiveCard ${positionClass(idx)}`}
-            key={person.id || idx}
-            style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
-          >
-            <div className="ExecutiveImageWrapper">
-              <Image
-                src={person.image}
-                alt={person.name}
-                fill
-                className="ExecutiveImage"
-                sizes="(max-width: 768px) 160px, 200px"
-                quality={90}
-              />
-            </div>
-            <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-          </div>
-        ))}
-      </div>
-      <div className="ExecutiveDots">
-        {people.map((_, i) => (
-          <div
-            key={i}
-            className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
-            onClick={() => setCenterIndex(i)}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }
