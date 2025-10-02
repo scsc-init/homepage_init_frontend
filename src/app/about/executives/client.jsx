@@ -8,35 +8,7 @@ import {
   excludedExecutiveEmails,
   DEFAULT_EXECUTIVE_PFP,
 } from '@/util/constants';
-
-function upgradeGoogleAvatar(url) {
-  try {
-    const u = new URL(url);
-    if (!u.hostname.toLowerCase().includes('googleusercontent.com')) return url;
-    let s = url;
-    s = s.replace(/([?&]sz=)(\d+)/i, '$1' + 512);
-    s = s.replace(/=s\d+(?:-c)?(?=$|[?#])/i, '=s512-c');
-    if (!/[?&]sz=\d+/i.test(s) && !/=s\d+(?:-c)?/i.test(s))
-      s += (s.includes('?') ? '&' : '?') + 'sz=512';
-    return s;
-  } catch {
-    return url;
-  }
-}
-
-function toProxyStaticPath(raw) {
-  const s = String(raw || '').replace(/^\/+/, '');
-  if (!s) return DEFAULT_EXECUTIVE_PFP;
-  if (!s.startsWith('static/image/')) return DEFAULT_EXECUTIVE_PFP;
-  return `/api/${s}`.replace(/^\/api\/static\/image\//, '/api/static/image/');
-}
-
-function resolveProfileImage(u) {
-  const raw = u?.profile_picture;
-  if (!raw) return DEFAULT_EXECUTIVE_PFP;
-  if (u?.profile_picture_is_url) return upgradeGoogleAvatar(String(raw));
-  return toProxyStaticPath(raw);
-}
+import { resolveProfileImage } from '@/util/profileImage';
 
 function roleDisplayByEmail(email) {
   const e = String(email || '').toLowerCase();
@@ -50,7 +22,7 @@ function normUser(u) {
   const name = u?.name || email || '';
   const id = u?.id || email || name;
   const level = Number.isFinite(Number(u?.role)) ? Number(u.role) : 0;
-  const image = resolveProfileImage(u);
+  const image = resolveProfileImage(u, DEFAULT_EXECUTIVE_PFP);
   return { id, name, email, level, image };
 }
 
@@ -122,6 +94,7 @@ export default function ExecutivesClient() {
         setPeople([]);
       }
     };
+
     load();
   }, []);
 
@@ -136,6 +109,7 @@ export default function ExecutivesClient() {
   }, [hovered, people.length]);
 
   const total = people.length;
+
   const positionClass = (idx) => {
     if (!total) return 'hidden';
     const offset = (idx - centerIndex + total) % total;
