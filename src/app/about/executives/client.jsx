@@ -1,130 +1,117 @@
 'use client';
 
-import Image from 'next/image';
-import { useSwipeable } from 'react-swipeable';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  minExecutiveLevel,
+  presidentEmails,
+  vicePresidentEmails,
+  excludedExecutiveEmails,
+  DEFAULT_EXECUTIVE_PFP,
+} from '@/util/constants';
+import { resolveProfileImage } from '@/util/profileImage';
 
-const executives = [
-  {
-    name: '한성재',
-    role: '회장',
-    image: '/xctvs/han-sung-jae.png',
-    description: '그는 신입니다.',
-  },
-  {
-    name: '김지훈',
-    role: '부회장',
-    image: '/xctvs/kim-ji-hoon.png',
-    description: '그 역시 신입니다.',
-  },
-  {
-    name: '정연호',
-    role: '임원',
-    image: '/xctvs/jeong-yeon-ho.png',
-    description: '그 또한 신입니다.',
-  },
-  {
-    name: '김재희',
-    role: '임원',
-    image: '/xctvs/kim-jae-hee.png',
-    description: '마이 경제입니다.',
-  },
-  {
-    name: '신지환',
-    role: '임원',
-    image: '/xctvs/shin-ji-hwan.png',
-    description: 'GOAT',
-  },
-  {
-    name: '신효재',
-    role: '임원',
-    image: '/xctvs/shin-hyo-jae.png',
-    description: 'GOAT',
-  },
-  {
-    name: '김건우',
-    role: '임원',
-    image: '/xctvs/kim-geon-woo.png',
-    description: '기 습 숭 배',
-  },
-  {
-    name: '오현우',
-    role: '임원',
-    image: '/xctvs/o-hyeon-woo.png',
-    description: '파이어펀치! 파이어펀치!',
-  },
-  {
-    name: '한지후',
-    role: '임원',
-    image: '/xctvs/han-ji-hoo.png',
-    description: '물감비',
-  },
-  {
-    name: '허유민',
-    role: '임원',
-    image: '/xctvs/heo-yoo-min.png',
-    description: 'goat',
-  },
-  {
-    name: '박상혁',
-    role: '임원',
-    image: '/xctvs/park-sang-hyeok.png',
-    description: '잘생김',
-  },
-  {
-    name: '이태윤',
-    role: '임원',
-    image: '/xctvs/lee-tae-yoon.png',
-    description: 'JOAT',
-  },
-  {
-    name: '강명석',
-    role: '임원',
-    image: '/xctvs/kang-myeong-suk.png',
-    description: '그 분',
-  },
-];
+function roleDisplayByEmail(email) {
+  const e = String(email || '').toLowerCase();
+  if (presidentEmails.map((x) => x.toLowerCase()).includes(e)) return '회장';
+  if (vicePresidentEmails.map((x) => x.toLowerCase()).includes(e)) return '부회장';
+  return '임원';
+}
+
+function normUser(u) {
+  const email = u?.email || '';
+  const name = u?.name || email || '';
+  const id = u?.id || email || name;
+  const level = Number.isFinite(Number(u?.role)) ? Number(u.role) : 0;
+  const image = resolveProfileImage(u, DEFAULT_EXECUTIVE_PFP);
+  return { id, name, email, level, image };
+}
 
 export default function ExecutivesClient() {
+  const [people, setPeople] = useState([]);
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const total = executives.length;
   const autoRef = useRef();
 
-  const prev = () => {
-    setCenterIndex((prev) => (prev - 1 + total) % total);
-  };
-
-  const next = () => {
-    setCenterIndex((prev) => (prev + 1) % total);
-  };
-
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const load = async () => {
+      try {
+        const [execRes, prezRes] = await Promise.all([
+          fetch('/api/users?user_role=executive', { credentials: 'include', cache: 'no-store' }),
+          fetch('/api/users?user_role=president', { credentials: 'include', cache: 'no-store' }),
+        ]);
+
+        if (!execRes.ok && !prezRes.ok) throw new Error('failed');
+
+        const [execJson, prezJson] = await Promise.all([
+          execRes.ok ? execRes.json() : [],
+          prezRes.ok ? prezRes.json() : [],
+        ]);
+
+        if (!execRes.ok || !prezRes.ok) {
+          console.warn('Partial executive data load', { execOk: execRes.ok, prezOk: prezRes.ok });
+        }
+
+        const raw = [
+          ...(Array.isArray(execJson) ? execJson : []),
+          ...(Array.isArray(prezJson) ? prezJson : []),
+        ];
+        const excludedSet = new Set(
+          excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
+        );
+        const normalized = raw
+          .map(normUser)
+          .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
+          .filter((u) => u.level >= minExecutiveLevel);
+
+        const dedup = [];
+        const seen = new Set();
+        for (const u of normalized) {
+          const key = u.id || u.email;
+          if (!seen.has(key)) {
+            seen.add(key);
+            dedup.push(u);
+          }
+        }
+
+        const mapped = dedup.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          roleNum: u.level,
+          role: roleDisplayByEmail(u.email),
+          image: u.image || DEFAULT_EXECUTIVE_PFP,
+        }));
+
+        const prez = mapped.filter((p) => p.role === '회장');
+        const vprez = mapped.filter((p) => p.role === '부회장');
+        const others = mapped
+          .filter((p) => p.role === '임원')
+          .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+        setPeople([...prez, ...vprez, ...others]);
+        setCenterIndex(0);
+      } catch {
+        setPeople([]);
+      }
     };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    load();
   }, []);
 
   useEffect(() => {
-    if (!hovered && !isMobile) {
-      autoRef.current = setInterval(() => {
-        next();
-      }, 4000);
+    if (!hovered && people.length > 1) {
+      autoRef.current = setInterval(
+        () => setCenterIndex((p) => (p + 1) % people.length),
+        4000
+      );
     }
     return () => clearInterval(autoRef.current);
-  }, [hovered, isMobile]);
+  }, [hovered, people.length]);
 
-  const handlers = useSwipeable({
-    onSwipedLeft: next,
-    onSwipedRight: prev,
-    trackMouse: true,
-  });
+  const total = people.length;
 
   const positionClass = (idx) => {
+    if (!total) return 'hidden';
     const offset = (idx - centerIndex + total) % total;
     if (offset === 0) return 'center';
     if (offset === 1 || offset === -total + 1) return 'right-1';
@@ -134,66 +121,64 @@ export default function ExecutivesClient() {
     return 'hidden';
   };
 
-  if (isMobile) {
-    return (
-      <div className="ExecutiveMasonry">
-        {executives.map((person, i) => (
-          <div className="ExecutiveCard" key={i}>
-            <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
-              <div className="ExecutiveOverlay">
-                <p className="ExecutiveDescription">{person.description}</p>
-              </div>
-            </div>
-            <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="ExecutiveCarouselWrapper"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      {...handlers}
-    >
-      {/*<button className="ExecutiveArrow left" onClick={prev}>
-        ◀
-      </button>*/}
-      <div className="ExecutiveCarouselCentered">
-        {executives.map((person, idx) => (
-          <div
-            className={`ExecutiveCard ${positionClass(idx)}`}
-            key={idx}
-            style={{
-              transition: 'transform 0.6s ease, opacity 0.6s ease',
-            }}
-          >
+    <>
+      <div
+        className="ExecutiveCarouselWrapper"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div className="ExecutiveCarouselCentered">
+          {people.map((person, idx) => (
+            <div
+              className={`ExecutiveCard ${positionClass(idx)}`}
+              key={person.id || idx}
+              style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
+            >
+              <div className="ExecutiveImageWrapper">
+                <img
+                  src={person.image || DEFAULT_EXECUTIVE_PFP}
+                  alt={person.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="ExecutiveImage"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <h3>{person.name}</h3>
+              <p className="ExecutiveRole">{person.role}</p>
+            </div>
+          ))}
+        </div>
+        <div className="ExecutiveDots">
+          {people.map((_, i) => (
+            <div
+              key={i}
+              className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
+              onClick={() => setCenterIndex(i)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="ExecutiveMasonry">
+        {people.map((person, i) => (
+          <div className="ExecutiveCard" key={person.id || i}>
             <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
+              <img
+                src={person.image || DEFAULT_EXECUTIVE_PFP}
+                alt={person.name}
+                loading="lazy"
+                decoding="async"
+                className="ExecutiveImage"
+                referrerPolicy="no-referrer"
+              />
             </div>
             <h3>{person.name}</h3>
             <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
           </div>
         ))}
       </div>
-      {/*<button className="ExecutiveArrow right" onClick={next}>
-        ▶
-      </button>*/}
-      <div className="ExecutiveDots">
-        {executives.map((_, i) => (
-          <div
-            key={i}
-            className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
-            onClick={() => setCenterIndex(i)}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }

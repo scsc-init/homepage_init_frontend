@@ -16,7 +16,7 @@ export default function HeaderCenter() {
 
   useEffect(() => {
     fetchUserClient().then(setUser);
-  }, [])
+  }, []);
 
   const handleMouseEnter = (index) => {
     clearTimeout(timeoutRef.current);

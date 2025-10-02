@@ -11,11 +11,11 @@ function MobileExecutiveButton() {
 
   useEffect(() => {
     fetchUserClient().then(setUser);
-  }, [])
+  }, []);
 
   useEffect(() => {
     setIsExecutive(user?.role >= minExecutiveLevel);
-  }, [user])
+  }, [user]);
 
   if (user === undefined || !user) return null;
 

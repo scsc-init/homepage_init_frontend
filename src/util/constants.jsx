@@ -187,3 +187,19 @@ export function utc2kst(date) {
     second: 'numeric',
   });
 }
+
+/** 회장 이메일 */
+export const presidentEmails = ['sungjae0506@snu.ac.kr'];
+
+/** 부회장 이메일 */
+export const vicePresidentEmails = ['lycoris1600@snu.ac.kr'];
+
+/** 임원진 페이지에서 제외할 이메일 목록 */
+export const excludedExecutiveEmails = [
+  'bot@discord.com',
+  'deposit.app@scsc.dev',
+  'tteokgook1@snu.ac.kr',
+  '1n1tial@snu.ac.kr',
+];
+
+export const DEFAULT_EXECUTIVE_PFP = '/main/deafult-pfp.png';
