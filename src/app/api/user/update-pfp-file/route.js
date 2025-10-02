@@ -7,7 +7,7 @@ import { getApiSecret } from '@/util/getApiSecret';
 
 export async function POST(request) {
   const cookieStore = cookies();
-  const jwt = cookieStore.get('app_jwt')?.value || '';
+  const jwt = cookieStore.get('app_jwt')?.value || null;
 
   const formData = await request.formData();
 
@@ -15,7 +15,7 @@ export async function POST(request) {
     method: 'POST',
     headers: {
       'x-api-secret': getApiSecret(),
-      ...(jwt ? { 'x-jwt': jwt, Authorization: `Bearer ${jwt}` } : {}),
+      ...(jwt ? { 'x-jwt': jwt } : {}),
     },
     body: formData,
     cache: 'no-store',

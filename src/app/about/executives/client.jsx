@@ -25,8 +25,6 @@ function upgradeGoogleAvatar(url) {
 }
 
 function toProxyStaticPath(raw) {
-  // DB에 들어있는 값이 "static/image/pfps/<file>.jpg" 형태
-  // → Next 프록시 "/api/static/image/pfps/<file>.jpg" 로 변환
   const s = String(raw || '').replace(/^\/+/, '');
   if (!s) return DEFAULT_EXECUTIVE_PFP;
   if (!s.startsWith('static/image/')) return DEFAULT_EXECUTIVE_PFP;
@@ -36,11 +34,7 @@ function toProxyStaticPath(raw) {
 function resolveProfileImage(u) {
   const raw = u?.profile_picture;
   if (!raw) return DEFAULT_EXECUTIVE_PFP;
-
-  // 외부 URL(구글 프사 등)
   if (u?.profile_picture_is_url) return upgradeGoogleAvatar(String(raw));
-
-  // 내부 파일형: static/image/... → 프록시 라우트로
   return toProxyStaticPath(raw);
 }
 
@@ -70,20 +64,20 @@ export default function ExecutivesClient() {
     const load = async () => {
       try {
         const [execRes, prezRes] = await Promise.all([
-          fetch('/api/users?user_role=executive', {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-          fetch('/api/users?user_role=president', {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
+          fetch('/api/users?user_role=executive', { credentials: 'include', cache: 'no-store' }),
+          fetch('/api/users?user_role=president', { credentials: 'include', cache: 'no-store' }),
         ]);
+
         if (!execRes.ok && !prezRes.ok) throw new Error('failed');
+
         const [execJson, prezJson] = await Promise.all([
           execRes.ok ? execRes.json() : [],
           prezRes.ok ? prezRes.json() : [],
         ]);
+
+        if (!execRes.ok || !prezRes.ok) {
+          console.warn('Partial executive data load', { execOk: execRes.ok, prezOk: prezRes.ok });
+        }
 
         const raw = [
           ...(Array.isArray(execJson) ? execJson : []),
@@ -133,7 +127,10 @@ export default function ExecutivesClient() {
 
   useEffect(() => {
     if (!hovered && people.length > 1) {
-      autoRef.current = setInterval(() => setCenterIndex((p) => (p + 1) % people.length), 4000);
+      autoRef.current = setInterval(
+        () => setCenterIndex((p) => (p + 1) % people.length),
+        4000
+      );
     }
     return () => clearInterval(autoRef.current);
   }, [hovered, people.length]);
