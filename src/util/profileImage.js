@@ -1,5 +1,9 @@
 import { DEFAULT_EXECUTIVE_PFP } from '@/util/constants';
 
+/**
+ * @param {string} url Source image URL
+ * @returns {string} URL with high-resolution parameters applied when applicable
+ */
 export function upgradeGoogleAvatar(url) {
   try {
     const u = new URL(url);
@@ -16,6 +20,11 @@ export function upgradeGoogleAvatar(url) {
   }
 }
 
+/**
+ * @param {string} raw Path stored in DB
+ * @param {string} [fallback=DEFAULT_EXECUTIVE_PFP] Fallback image when invalid
+ * @returns {string} Proxied image path or fallback
+ */
 export function toProxyStaticPath(raw, fallback = DEFAULT_EXECUTIVE_PFP) {
   const s = String(raw || '').replace(/^\/+/, '');
   if (!s) return fallback;
@@ -23,6 +32,11 @@ export function toProxyStaticPath(raw, fallback = DEFAULT_EXECUTIVE_PFP) {
   return `/api/${s}`.replace(/^\/api\/static\/image\//, '/api/static/image/');
 }
 
+/**
+ * @param {{ profile_picture?: string, profile_picture_is_url?: boolean }} user User object
+ * @param {string} [fallback=DEFAULT_EXECUTIVE_PFP] Fallback image when invalid
+ * @returns {string} Final profile image URL
+ */
 export function resolveProfileImage(user, fallback = DEFAULT_EXECUTIVE_PFP) {
   const raw = user?.profile_picture;
   if (!raw) return fallback;
