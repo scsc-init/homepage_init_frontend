@@ -2,7 +2,6 @@
 @import '@radix-ui/colors/green.css';
 @import '@/styles/theme.css';
 
-
 #EmailNotice.error,
 #EmailCodeNotice.error,
 #PasswordNotice.error,

@@ -240,8 +240,14 @@ export default function LoginPage() {
         {stage === 0 && (
           <div>
             <div className="main-logo-wrapper__login">
-              <img src="/main/main-logo.png" alt="Main Logo" className="main-logo__login logo" />
-              <div className="main-subtitle__login">Seoul National University Computer Study Club</div>
+              <img
+                src="/main/main-logo.png"
+                alt="Main Logo"
+                className="main-logo__login logo"
+              />
+              <div className="main-subtitle__login">
+                Seoul National University Computer Study Club
+              </div>
             </div>
             <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
             <div className="google-signin-button-wrapper">
