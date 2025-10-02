@@ -1,5 +1,5 @@
 // src/app/executive/EntryRow.jsx (CLIENT)
-import { SEMESTER_MAP } from '@/util/constants';
+import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 
 export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) {
   return (
@@ -32,10 +32,10 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           value={entry.status}
           onChange={(e) => onChange(entry.id, 'status', e.target.value)}
         >
-          <option value="surveying">설문중</option>
-          <option value="recruiting">모집중</option>
-          <option value="active">활동중</option>
-          <option value="inactive">비활성</option>
+          <option value="surveying">{STATUS_MAP.surveying}</option>
+          <option value="recruiting">{STATUS_MAP.recruiting}</option>
+          <option value="active">{STATUS_MAP.active}</option>
+          <option value="inactive">{STATUS_MAP.inactive}</option>
         </select>
       </td>
       <td className="adm-td">
@@ -58,6 +58,16 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           <option value={2}>{SEMESTER_MAP[2]}학기</option>
           <option value={3}>{SEMESTER_MAP[3]}학기</option>
           <option value={4}>{SEMESTER_MAP[4]}학기</option>
+        </select>
+      </td>
+      <td className="adm-td">
+        <select
+          className="adm-select"
+          value={entry.members}
+        >
+          {entry.members.map((m) => (
+            <option key={m.id}>{m.user.name}</option>
+          ))}
         </select>
       </td>
       <td className="adm-td">

@@ -1,0 +1,134 @@
+/* src/styles/admin.css */
+.admin-panel {
+  padding: 2rem;
+  background: var(--background-color);
+  color: var(--color-text-body);
+}
+
+.admin-panel h2 {
+  margin: 2rem 0 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.admin-panel a {
+  color: var(--color-text-body);
+  text-decoration: underline;
+}
+
+.adm-section {
+  margin-bottom: 2rem;
+}
+.adm-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Card wrapper */
+.adm-table-wrap {
+  background: var(--executive-card-bg);
+  border: 1px solid var(--color-button-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  overflow: hidden;
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.adm-th {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-button-border);
+  background: var(--box-color);
+  color: var(--color-text-body);
+}
+.adm-td {
+  padding: 8px;
+  border-top: 1px solid var(--color-button-border);
+  vertical-align: middle;
+}
+
+/* Controls */
+.adm-input,
+.adm-select,
+.adm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-surface-light);
+  color: var(--color-text-body);
+}
+
+.adm-textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.adm-button {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adm-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.adm-button.outline {
+  background: transparent;
+  color: var(--color-text-body);
+}
+
+/* Modal */
+.adm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+}
+.adm-modal-card {
+  background: var(--executive-card-bg);
+  color: var(--color-text-body);
+  padding: 2rem;
+  border-radius: 12px;
+  width: min(420px, 90vw);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.adm-pre {
+  background: var(--color-surface-light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  overflow: auto;
+}
+
+/* Utilities */
+.adm-flex {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.dark .adm-th {
+  background: var(--color-surface-light);
+}
+.adm-td .adm-input,
+.adm-td .adm-select {
+  min-width: 8rem;
+}

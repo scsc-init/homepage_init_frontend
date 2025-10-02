@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import EntryRow from './EntryRow.jsx';
+import EntryRow from '@/components/EntryRow.jsx';
 
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);

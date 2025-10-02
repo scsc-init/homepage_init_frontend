@@ -1,7 +1,5 @@
 // src/app/executive/page.jsx
 import ArticleList from './ArticleList';
-import SigList from './SigList';
-import PigList from './PigList';
 import MajorList from './MajorList';
 import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
@@ -51,14 +49,14 @@ export default async function AdminPanel() {
         </div>
 
         <h2>SIG 관리</h2>
-        <div className="adm-section">
-          <SigList sigs={sigs} />
-        </div>
+        <p>
+          <Link href="/executive/sig">SIG 관리 페이지로 이동</Link>
+        </p>
 
         <h2>PIG 관리</h2>
-        <div className="adm-section">
-          <PigList pigs={pigs} />
-        </div>
+        <p>
+          <Link href="/executive/pig">PIG 관리 페이지로 이동</Link>
+        </p>
 
         <h2>Scsc status 관리</h2>
         <div className="adm-section">

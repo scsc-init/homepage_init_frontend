@@ -1,7 +1,13 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
 
+
 export async function fetchUser() {
   const res = await handleApiRequest('GET', `/api/user/profile`);
+  return res.ok ? await res.json() : null;
+}
+
+export async function fetchUsers() {
+  const res = await handleApiRequest('GET', `/api/users`);
   return res.ok ? await res.json() : null;
 }
 
@@ -19,14 +25,15 @@ export async function fetchSigs() {
   const res = await handleApiRequest('GET', `/api/sigs`);
   if (!res.ok) return;
   const sigsRaw = await res.json();
-  const sigsWithContent = await Promise.all(
+  const sigsWithContentMembers = await Promise.all(
     sigsRaw.map(async (sig) => {
-      const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
+      const [articleRes, membersRes] = await Promise.all([handleApiRequest('GET', `/api/article/${sig.content_id}`), handleApiRequest('GET', `/api/sig/${sig.id}/members`)]);
       const article = articleRes.ok ? await articleRes.json() : { content: '' };
-      return { ...sig, content: article.content };
+      const members = membersRes.ok ? await membersRes.json() : [];
+      return { ...sig, content: article.content, members: members };
     }),
   );
-  return sigsWithContent;
+  return sigsWithContentMembers;
 }
 
 export async function fetchPigs() {
