@@ -28,7 +28,6 @@ export default function EditSigClient({ sigId }) {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { isDirty },
   } = useForm({
     defaultValues: {

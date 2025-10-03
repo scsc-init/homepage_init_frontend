@@ -18,7 +18,7 @@ function InAppBrowserOutButton() {
     if (useragt.match(/kakaotalk|line/i)) {
       setIsRedirectPossible(true);
     }
-  }, []);
+  }, [useragt]);
 
   const onClick = () => {
     const target_url = window.location.href;
@@ -45,6 +45,7 @@ function InAppBrowserOutButton() {
             width="12px"
             height="12px"
             className="ico"
+            alt="arrow button"
           ></img>{' '}
           ) 클릭 &rarr; 외부 브라우저로 열기
         </p>

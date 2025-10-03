@@ -50,7 +50,7 @@ export default function MyProfileClient() {
         setUser(userData);
         const resMajor = await fetch(`/api/major/${userData.major_id}`);
         setMajors(await resMajor.json());
-      } catch (e) {
+      } catch (_err) {
         await onAuthFail();
         router.push('/us/login');
       }
