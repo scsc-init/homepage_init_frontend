@@ -9,7 +9,9 @@ import '../page.css';
 export default async function ExecutiveUserPage() {
   const [users, majors] = await Promise.all([fetchUsers(), fetchMajors()]);
   const safeUsers = Array.isArray(users) ? users : [];
-  const usersSortedByRole = Array.from(new Map(safeUsers.map((user) => [user.id, user])).values());
+  const usersSortedByRole = Array.from(
+    new Map(safeUsers.map((user) => [user.id, user])).values(),
+  );
   usersSortedByRole.sort((a, b) => a.role - b.role);
 
   return (
