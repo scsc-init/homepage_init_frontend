@@ -2,14 +2,12 @@
 import React, { useState } from 'react';
 
 
-export default function SigMembersPanel({ sigs: sigsDefault, users: usersDefault }) {
-  const [sigs, setSigs] = useState(sigsDefault ?? []);
+export default function SigMembersPanel({ sigs, users }) {
   const [filteredSigs, setFilteredSigs] = useState([]);
   const [selectedSig, setSelectedSig] = useState(null);
   const [sigFilter, setSigFilter] = useState({
     title: '',
   });
-  const [users, setUsers] = useState(usersDefault ?? []);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [userFilter, setUserFilter] = useState({
     name: '',
@@ -56,42 +54,66 @@ export default function SigMembersPanel({ sigs: sigsDefault, users: usersDefault
 
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
-    const res = await fetch(`/api/executive/sig/${selectedSig.id}/member/join`, {
+    const res = await fetch(`/api/sig/${selectedSig.id}/member/join/executive`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         user_id: u.id
       }),
     });
-    if (res.status === 204) {setMembers((prev) => ([ ...prev, {'user_id': u.id, 'user': {'id':u.id, 'email': u.email, 'name': u.name}} ])); alert('저장 완료');}
+    if (res.status === 204) {
+      setMembers((prev) => ([ ...prev, {'user_id': u.id, 'user': {'id': u.id, 'email': u.email, 'name': u.name}} ])); 
+      alert('저장 완료');
+      const matches = (m) =>
+        (!memberFilter.name || lower(m.user.name).includes(lower(memberFilter.name))) &&
+        (!memberFilter.email || lower(m.user.email).includes(lower(memberFilter.email)));
+      setFilteredMembers([ ...members, {'user_id': u.id, 'user': {'id': u.id, 'email': u.email, 'name': u.name}} ].filter(matches));
+    }
     else alert('저장 실패: ' + res.status);
     setUserLoading((prev) => ({ ...prev, [u.id]: false }));
   };
 
-  const handleDeleteMember = async (m) => {
-    setMemberLoading((prev) => ({ ...prev, [m.user_id]: true }));
+  const handleDeleteMember = async (member) => {
+    setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    const res = await fetch(`/api/executive/sig/${selectedSig.id}/member/leave`, {
+    const res = await fetch(`/api/sig/${selectedSig.id}/member/leave/executive`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        user_id: m.user_id,
+        user_id: member.user_id,
       }),
     });
-    if (res.status === 204) {setMembers((prev) => prev.filter((m) => m.user_id !== id)); alert('저장 완료');}
+    if (res.status === 204) {
+      setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
+      alert('저장 완료');
+      setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
+    }
     else alert('삭제 실패: ' + res.status);
-    setMemberLoading((prev) => ({ ...prev, [m.user_id]: false }));
+    setMemberLoading((prev) => ({ ...prev, [member.user_id]: false }));
   };
 
   return (
     <div className="adm-table-wrap">
-      <h3>SIG 이름으로 검색: </h3>
-      <input
-        className="adm-input"
-        value={sigFilter.title}
-        onChange={(e) => updateSigFilterCriteria('title', e.target.value)}
-      />
+      <div className=''>
+        <h3>SIG 이름으로 검색: </h3>
+        <input
+          className="adm-input"
+          value={sigFilter.title}
+          onChange={(e) => updateSigFilterCriteria('title', e.target.value)}
+        />
+      </div>
       <table className="adm-table">
+        <thead>
+          <tr>
+            <th className="adm-th">ID</th>
+            <th className="adm-th">이름</th>
+            <th className="adm-th">상태</th>
+            <th className="adm-th">연도</th>
+            <th className="adm-th">학기</th>
+            <th className="adm-th">구성원</th>
+            <th className="adm-th">작업</th>
+          </tr>
+        </thead>
         <tbody>
           {filteredSigs.map((sig) => (
             <tr key={sig.id}>
@@ -124,6 +146,8 @@ export default function SigMembersPanel({ sigs: sigsDefault, users: usersDefault
       </table>
       {selectedSig && (
         <div>
+          <hr></hr>
+          <h3>{selectedSig.title}</h3>
           <h4>SIG 구성원 추가</h4>
           <table className="adm-table">
             <thead>
@@ -158,6 +182,7 @@ export default function SigMembersPanel({ sigs: sigsDefault, users: usersDefault
                     <button
                       className="adm-button"
                       onClick={() => handleAddMember(u)}
+                      disabled={userLoading[u.id]}
                     >
                       추가
                     </button>
@@ -200,6 +225,7 @@ export default function SigMembersPanel({ sigs: sigsDefault, users: usersDefault
                     <button
                       className="adm-button"
                       onClick={() => handleDeleteMember(m)}
+                      disabled={memberLoading[m.user_id]}
                     >
                       삭제
                     </button>
