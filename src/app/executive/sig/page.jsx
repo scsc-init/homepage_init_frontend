@@ -10,13 +10,13 @@ export default async function ExecutiveSigPage() {
 
   return (
     <WithAuthorization>
-      <div className={styles["admin-panel"]}>
+      <div className={styles['admin-panel']}>
         <h2>SIG 관리</h2>
-        <div className={styles["adm-section"]}>
+        <div className={styles['adm-section']}>
           <SigList sigs={Array.isArray(sigs) ? sigs : []} />
         </div>
         <h2>SIG 구성원 관리</h2>
-        <div className={styles["adm-section"]}>
+        <div className={styles['adm-section']}>
           <SigMembersPanel
             sigs={Array.isArray(sigs) ? sigs : []}
             users={Array.isArray(users) ? users : []}

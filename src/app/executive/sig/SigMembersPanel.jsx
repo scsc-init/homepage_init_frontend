@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import styles from '../igpage.module.css';
 
-
 function SigSelect({
   sigFilter,
   filteredSigs,
@@ -13,45 +12,45 @@ function SigSelect({
   setFilteredMembers,
 }) {
   return (
-    <div className={styles["adm-table-wrap"]}>
+    <div className={styles['adm-table-wrap']}>
       <div>
         <h3>SIG 이름으로 검색: </h3>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={sigFilter.title}
           onChange={(e) => updateSigFilterCriteria('title', e.target.value)}
         />
       </div>
-      <table className={styles["adm-table"]}>
+      <table className={styles['adm-table']}>
         <thead>
           <tr>
-            <th className={styles["adm-th"]}>ID</th>
-            <th className={styles["adm-th"]}>이름</th>
-            <th className={styles["adm-th"]}>상태</th>
-            <th className={styles["adm-th"]}>연도</th>
-            <th className={styles["adm-th"]}>학기</th>
-            <th className={styles["adm-th"]}>구성원</th>
-            <th className={styles["adm-th"]}>작업</th>
+            <th className={styles['adm-th']}>ID</th>
+            <th className={styles['adm-th']}>이름</th>
+            <th className={styles['adm-th']}>상태</th>
+            <th className={styles['adm-th']}>연도</th>
+            <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>구성원</th>
+            <th className={styles['adm-th']}>작업</th>
           </tr>
         </thead>
         <tbody>
           {filteredSigs.map((sig) => (
             <tr key={sig.id}>
-              <td className={styles["adm-td"]}>{sig.id}</td>
-              <td className={styles["adm-td"]}>{sig.title}</td>
-              <td className={styles["adm-td"]}>{sig.status}</td>
-              <td className={styles["adm-td"]}>{sig.year}</td>
-              <td className={styles["adm-td"]}>{sig.semester}</td>
-              <td className={styles["adm-td"]}>
-                <select className={styles["adm-select"]} value={''}>
+              <td className={styles['adm-td']}>{sig.id}</td>
+              <td className={styles['adm-td']}>{sig.title}</td>
+              <td className={styles['adm-td']}>{sig.status}</td>
+              <td className={styles['adm-td']}>{sig.year}</td>
+              <td className={styles['adm-td']}>{sig.semester}</td>
+              <td className={styles['adm-td']}>
+                <select className={styles['adm-select']} value={''}>
                   {sig.members.map((m) => (
                     <option key={m.user_id}>{m.user.name}</option>
                   ))}
                 </select>
               </td>
-              <td className={styles["adm-td"]}>
+              <td className={styles['adm-td']}>
                 <button
-                  className={styles["adm-button"]}
+                  className={styles['adm-button']}
                   onClick={() => {
                     setSelectedSig(sig);
                     setMembers(sig.members);
@@ -79,24 +78,24 @@ function SigMemberAdd({
   return (
     <div>
       <h4>SIG 구성원 추가</h4>
-      <table className={styles["adm-table"]}>
+      <table className={styles['adm-table']}>
         <thead>
           <tr>
-            <th className={styles["adm-th"]}>이름</th>
-            <th className={styles["adm-th"]}>이메일</th>
-            <th className={styles["adm-th"]}>작업</th>
+            <th className={styles['adm-th']}>이름</th>
+            <th className={styles['adm-th']}>이메일</th>
+            <th className={styles['adm-th']}>작업</th>
           </tr>
           <tr>
-            <td className={styles["adm-td"]}>
+            <td className={styles['adm-td']}>
               <input
-                className={styles["adm-input"]}
+                className={styles['adm-input']}
                 value={userFilter.name}
                 onChange={(e) => updateUserFilterCriteria('name', e.target.value)}
               />
             </td>
-            <td className={styles["adm-td"]}>
+            <td className={styles['adm-td']}>
               <input
-                className={styles["adm-input"]}
+                className={styles['adm-input']}
                 value={userFilter.email}
                 onChange={(e) => updateUserFilterCriteria('email', e.target.value)}
               />
@@ -106,11 +105,11 @@ function SigMemberAdd({
         <tbody>
           {filteredUsers.map((u) => (
             <tr key={u.id}>
-              <td className={styles["adm-td"]}>{u.name}</td>
-              <td className={styles["adm-td"]}>{u.email}</td>
-              <td className={styles["adm-td"]}>
+              <td className={styles['adm-td']}>{u.name}</td>
+              <td className={styles['adm-td']}>{u.email}</td>
+              <td className={styles['adm-td']}>
                 <button
-                  className={styles["adm-button"]}
+                  className={styles['adm-button']}
                   onClick={() => handleAddMember(u)}
                   disabled={userLoading[u.id]}
                 >
@@ -135,24 +134,24 @@ function SigMemberDelete({
   return (
     <div>
       <h4>SIG 구성원 삭제</h4>
-      <table className={styles["adm-table"]}>
+      <table className={styles['adm-table']}>
         <thead>
           <tr>
-            <th className={styles["adm-th"]}>이름</th>
-            <th className={styles["adm-th"]}>이메일</th>
-            <th className={styles["adm-th"]}>작업</th>
+            <th className={styles['adm-th']}>이름</th>
+            <th className={styles['adm-th']}>이메일</th>
+            <th className={styles['adm-th']}>작업</th>
           </tr>
           <tr>
-            <td className={styles["adm-td"]}>
+            <td className={styles['adm-td']}>
               <input
-                className={styles["adm-input"]}
+                className={styles['adm-input']}
                 value={memberFilter.name}
                 onChange={(e) => updateMemberFilterCriteria('name', e.target.value)}
               />
             </td>
-            <td className={styles["adm-td"]}>
+            <td className={styles['adm-td']}>
               <input
-                className={styles["adm-input"]}
+                className={styles['adm-input']}
                 value={memberFilter.email}
                 onChange={(e) => updateMemberFilterCriteria('email', e.target.value)}
               />
@@ -162,11 +161,11 @@ function SigMemberDelete({
         <tbody>
           {filteredMembers.map((m) => (
             <tr key={m.user_id}>
-              <td className={styles["adm-td"]}>{m.user.name}</td>
-              <td className={styles["adm-td"]}>{m.user.email}</td>
-              <td className={styles["adm-td"]}>
+              <td className={styles['adm-td']}>{m.user.name}</td>
+              <td className={styles['adm-td']}>{m.user.email}</td>
+              <td className={styles['adm-td']}>
                 <button
-                  className={styles["adm-button"]}
+                  className={styles['adm-button']}
                   onClick={() => handleDeleteMember(m)}
                   disabled={memberLoading[m.user_id]}
                 >
@@ -297,7 +296,7 @@ export default function SigMembersPanel({ sigs, users }) {
         setMembers={setMembers}
         setFilteredMembers={setFilteredMembers}
       />
-      <div className={styles["adm-table-wrap"]}>
+      <div className={styles['adm-table-wrap']}>
         {selectedSig && (
           <div>
             <hr></hr>

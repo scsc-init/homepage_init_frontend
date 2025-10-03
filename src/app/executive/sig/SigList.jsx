@@ -8,37 +8,37 @@ import styles from '../igpage.module.css';
 function SigFilterRow({ filter, updateFilterCriteria }) {
   return (
     <tr>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={filter.id}
           onChange={(e) => updateFilterCriteria('id', e.target.value)}
         />
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={filter.title}
           onChange={(e) => updateFilterCriteria('title', e.target.value)}
         />
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={filter.description}
           onChange={(e) => updateFilterCriteria('description', e.target.value)}
         />
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={filter.content}
           onChange={(e) => updateFilterCriteria('content', e.target.value)}
         />
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <select
-          className={styles["adm-select"]}
+          className={styles['adm-select']}
           value={filter.status}
           onChange={(e) => updateFilterCriteria('status', e.target.value)}
         >
@@ -50,16 +50,16 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           ))}
         </select>
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={filter.year}
           onChange={(e) => updateFilterCriteria('year', e.target.value)}
         />
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <select
-          className={styles["adm-select"]}
+          className={styles['adm-select']}
           value={filter.semester}
           onChange={(e) => updateFilterCriteria('semester', e.target.value)}
         >
@@ -71,9 +71,9 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           ))}
         </select>
       </td>
-      <td className={styles["adm-td"]}>
+      <td className={styles['adm-td']}>
         <input
-          className={styles["adm-input"]}
+          className={styles['adm-input']}
           value={filter.member}
           onChange={(e) => updateFilterCriteria('member', e.target.value)}
         />
@@ -165,19 +165,19 @@ export default function SigList({ sigs: sigsDefault }) {
   };
 
   return (
-    <div className={styles["adm-table-wrap"]}>
-      <table className={styles["adm-table"]}>
+    <div className={styles['adm-table-wrap']}>
+      <table className={styles['adm-table']}>
         <thead>
-          <tr className={styles["adm-tr"]}>
-            <th className={styles["adm-th"]}>ID</th>
-            <th className={styles["adm-th"]}>이름</th>
-            <th className={styles["adm-th"]}>설명</th>
-            <th className={styles["adm-th"]}>내용</th>
-            <th className={styles["adm-th"]}>상태</th>
-            <th className={styles["adm-th"]}>연도</th>
-            <th className={styles["adm-th"]}>학기</th>
-            <th className={styles["adm-th"]}>구성원</th>
-            <th className={styles["adm-th"]}>작업</th>
+          <tr className={styles['adm-tr']}>
+            <th className={styles['adm-th']}>ID</th>
+            <th className={styles['adm-th']}>이름</th>
+            <th className={styles['adm-th']}>설명</th>
+            <th className={styles['adm-th']}>내용</th>
+            <th className={styles['adm-th']}>상태</th>
+            <th className={styles['adm-th']}>연도</th>
+            <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>구성원</th>
+            <th className={styles['adm-th']}>작업</th>
           </tr>
           <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
         </thead>
