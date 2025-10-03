@@ -7,8 +7,6 @@ import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import {
   fetchBoards,
-  fetchSigs,
-  fetchPigs,
   fetchSCSCGlobalStatus,
   fetchMajors,
   fetchDiscordBotStatus,
@@ -16,10 +14,8 @@ import {
 import './page.css';
 
 export default async function AdminPanel() {
-  const [boards, sigs, pigs, scscGlobalStatus, majors, discordBotStatus] = await Promise.all([
+  const [boards, scscGlobalStatus, majors, discordBotStatus] = await Promise.all([
     fetchBoards([3, 4, 5, 6]),
-    fetchSigs(),
-    fetchPigs(),
     fetchSCSCGlobalStatus(),
     fetchMajors(),
     fetchDiscordBotStatus(),

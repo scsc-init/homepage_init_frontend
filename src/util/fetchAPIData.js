@@ -42,14 +42,18 @@ export async function fetchPigs() {
   const res = await handleApiRequest('GET', `/api/pigs`);
   if (!res.ok) return;
   const pigsRaw = await res.json();
-  const pigsWithContent = await Promise.all(
+  const pigsWithContentMembers = await Promise.all(
     pigsRaw.map(async (pig) => {
-      const articleRes = await handleApiRequest('GET', `/api/article/${pig.content_id}`);
+      const [articleRes, membersRes] = await Promise.all([
+        handleApiRequest('GET', `/api/article/${pig.content_id}`),
+        handleApiRequest('GET', `/api/pig/${pig.id}/members`),
+      ]);
       const article = articleRes.ok ? await articleRes.json() : { content: '' };
-      return { ...pig, content: article.content };
+      const members = membersRes.ok ? await membersRes.json() : [];
+      return { ...pig, content: article.content, members: members };
     }),
   );
-  return pigsWithContent;
+  return pigsWithContentMembers;
 }
 
 export async function fetchMajors() {
