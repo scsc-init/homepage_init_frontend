@@ -54,7 +54,7 @@ export default function SigMembersPanel({ sigs, users }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetch(`/api/sig/${selectedSig.id}/member/join/executive`, {
+      const res = await fetch(`/api/executive/sig/${selectedSig.id}/member/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -84,7 +84,7 @@ export default function SigMembersPanel({ sigs, users }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetch(`/api/sig/${selectedSig.id}/member/leave/executive`, {
+      const res = await fetch(`/api/executive/sig/${selectedSig.id}/member/leave`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

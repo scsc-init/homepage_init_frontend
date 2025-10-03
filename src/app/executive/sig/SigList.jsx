@@ -39,7 +39,7 @@ export default function SigList({ sigs: sigsDefault }) {
       (!newFilter.year || lower(sig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(sig.semester).toString() === newFilter.semester) &&
       (!newFilter.member ||
-        sig.members.map((m) => m.user.name).includes(lower(newFilter.member)));
+        sig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member))));
     setFilteredSigs(sigs.filter(matches));
   };
 
@@ -62,8 +62,9 @@ export default function SigList({ sigs: sigsDefault }) {
       else alert('저장 실패: ' + res.status);
     } catch (err) {
       alert('저장 실패: 네트워크 오류');
+    } finally {
+      setSaving((prev) => ({ ...prev, [sig.id]: false }));
     }
-    setSaving((prev) => ({ ...prev, [sig.id]: false }));
   };
 
   const handleDelete = async (id) => {
@@ -79,8 +80,9 @@ export default function SigList({ sigs: sigsDefault }) {
       } else alert('삭제 실패: ' + res.status);
     } catch (err) {
       alert('저장 실패: 네트워크 오류');
+    } finally {
+      setSaving((prev) => ({ ...prev, [id]: false }));
     }
-    setSaving((prev) => ({ ...prev, [id]: false }));
   };
 
   return (

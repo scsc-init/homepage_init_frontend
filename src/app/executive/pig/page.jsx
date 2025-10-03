@@ -13,11 +13,11 @@ export default async function ExecutivePigPage() {
       <div className="admin-panel">
         <h2>PIG 관리</h2>
         <div className="adm-section">
-          <PigList pigs={pigs} />
+          <PigList pigs={Array.isArray(pigs) ? pigs : []} />
         </div>
         <h2>PIG 구성원 관리</h2>
         <div className="adm-section">
-          <PigMembersPanel pigs={pigs} users={users} />
+          <PigMembersPanel pigs={Array.isArray(pigs) ? pigs : []} users={Array.isArray(users) ? users : []} />
         </div>
       </div>
     </WithAuthorization>

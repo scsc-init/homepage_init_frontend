@@ -13,11 +13,11 @@ export default async function ExecutiveSigPage() {
       <div className="admin-panel">
         <h2>SIG 관리</h2>
         <div className="adm-section">
-          <SigList sigs={sigs} />
+          <SigList sigs={Array.isArray(sigs) ? sigs : []} />
         </div>
         <h2>SIG 구성원 관리</h2>
         <div className="adm-section">
-          <SigMembersPanel sigs={sigs} users={users} />
+          <SigMembersPanel sigs={Array.isArray(sigs) ? sigs : []} users={Array.isArray(users) ? users : []} />
         </div>
       </div>
     </WithAuthorization>

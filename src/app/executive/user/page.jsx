@@ -8,8 +8,8 @@ import '../page.css';
 
 export default async function ExecutiveUserPage() {
   const [users, majors] = await Promise.all([fetchUsers(), fetchMajors()]);
-
-  const usersSortedByRole = Array.from(new Map(users.map((user) => [user.id, user])).values());
+  const safeUsers = Array.isArray(users) ? users : [];
+  const usersSortedByRole = Array.from(new Map(safeUsers.map((user) => [user.id, user])).values());
   usersSortedByRole.sort((a, b) => a.role - b.role);
 
   return (
@@ -23,7 +23,7 @@ export default async function ExecutiveUserPage() {
           <EnrollManagementPanel />
         </div>
         <div className="adm-section">
-          <OldboyManageMentPanel users={usersSortedByRole ?? []} />
+          <OldboyManageMentPanel users={usersSortedByRole} />
         </div>
       </div>
     </WithAuthorization>

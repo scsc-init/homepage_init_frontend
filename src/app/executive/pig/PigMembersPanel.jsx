@@ -54,7 +54,7 @@ export default function PigMembersPanel({ pigs, users }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetch(`/api/pig/${selectedPig.id}/member/join/executive`, {
+      const res = await fetch(`/api/executive/pig/${selectedPig.id}/member/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -84,7 +84,7 @@ export default function PigMembersPanel({ pigs, users }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetch(`/api/pig/${selectedPig.id}/member/leave/executive`, {
+      const res = await fetch(`/api/executive/pig/${selectedPig.id}/member/leave`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

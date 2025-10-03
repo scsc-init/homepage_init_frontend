@@ -39,7 +39,7 @@ export default function PigList({ pigs: pigsDefault }) {
       (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
       (!newFilter.member ||
-        pig.members.map((m) => m.user.name).includes(lower(newFilter.member)));
+        pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member))));
     setFilteredPigs(pigs.filter(matches));
   };
 
@@ -62,8 +62,9 @@ export default function PigList({ pigs: pigsDefault }) {
       else alert('저장 실패: ' + res.status);
     } catch (err) {
       alert('저장 실패: 네트워크 오류');
+    } finally {
+      setSaving((prev) => ({ ...prev, [pig.id]: false }));
     }
-    setSaving((prev) => ({ ...prev, [pig.id]: false }));
   };
 
   const handleDelete = async (id) => {
@@ -79,8 +80,9 @@ export default function PigList({ pigs: pigsDefault }) {
       } else alert('삭제 실패: ' + res.status);
     } catch (err) {
       alert('저장 실패: 네트워크 오류');
+    } finally {
+      setSaving((prev) => ({ ...prev, [id]: false }));
     }
-    setSaving((prev) => ({ ...prev, [id]: false }));
   };
 
   return (
