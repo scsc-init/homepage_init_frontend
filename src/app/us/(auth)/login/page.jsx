@@ -1,12 +1,12 @@
 // /app/us/login/page.jsx
 
-import AuthClient from "./AuthClient";
+import AuthClient from './AuthClient';
 
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
 
 export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   const discordLogin = async () => {
@@ -20,6 +20,6 @@ export default async function Page() {
     else console.log(`봇 로그인 실패: ${await res.text()}`);
   };
   await discordLogin();
-  
+
   return <AuthClient />;
 }

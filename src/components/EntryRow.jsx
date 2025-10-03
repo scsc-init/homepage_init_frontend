@@ -61,10 +61,7 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
         </select>
       </td>
       <td className="adm-td">
-        <select
-          className="adm-select"
-          value={entry.members}
-        >
+        <select className="adm-select">
           {entry.members.map((m) => (
             <option key={m.id}>{m.user.name}</option>
           ))}

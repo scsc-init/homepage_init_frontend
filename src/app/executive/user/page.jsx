@@ -3,7 +3,7 @@ import WithAuthorization from '@/components/WithAuthorization';
 import UserList from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
-import { fetchUsers, fetchMajors } from '@/util/fetchAPIData'
+import { fetchUsers, fetchMajors } from '@/util/fetchAPIData';
 import '../page.css';
 
 export default async function ExecutiveUserPage() {

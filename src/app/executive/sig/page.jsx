@@ -1,8 +1,8 @@
 // src/app/executive/sig/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import SigList from './SigList';
-import SigMembersPanel from './SigMembersPanel'
-import { fetchSigs, fetchUsers } from '@/util/fetchAPIData'; 
+import SigMembersPanel from './SigMembersPanel';
+import { fetchSigs, fetchUsers } from '@/util/fetchAPIData';
 import '../page.css';
 
 export default async function ExecutiveSigPage() {

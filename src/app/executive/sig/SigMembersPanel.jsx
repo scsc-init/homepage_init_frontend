@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 
-
 export default function SigMembersPanel({ sigs, users }) {
   const [filteredSigs, setFilteredSigs] = useState([]);
   const [selectedSig, setSelectedSig] = useState(null);
@@ -27,7 +26,7 @@ export default function SigMembersPanel({ sigs, users }) {
     setSigFilter(newFilter);
     const lower = (v) => v?.toString().toLowerCase() || '';
     const matches = (sig) =>
-      (newFilter.title && lower(sig.title).includes(lower(newFilter.title)));
+      newFilter.title && lower(sig.title).includes(lower(newFilter.title));
     setFilteredSigs(sigs.filter(matches));
   };
 
@@ -54,47 +53,63 @@ export default function SigMembersPanel({ sigs, users }) {
 
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
-    const res = await fetch(`/api/sig/${selectedSig.id}/member/join/executive`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: u.id
-      }),
-    });
-    if (res.status === 204) {
-      setMembers((prev) => ([ ...prev, {'user_id': u.id, 'user': {'id': u.id, 'email': u.email, 'name': u.name}} ])); 
-      alert('저장 완료');
-      const matches = (m) =>
-        (!memberFilter.name || lower(m.user.name).includes(lower(memberFilter.name))) &&
-        (!memberFilter.email || lower(m.user.email).includes(lower(memberFilter.email)));
-      setFilteredMembers([ ...members, {'user_id': u.id, 'user': {'id': u.id, 'email': u.email, 'name': u.name}} ].filter(matches));
+    try {
+      const res = await fetch(`/api/sig/${selectedSig.id}/member/join/executive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: u.id,
+        }),
+      });
+      if (res.status === 204) {
+        const newMember = { user_id: u.id, user: { id: u.id, email: u.email, name: u.name } };
+        setMembers((prev) => [...prev, newMember]);
+        const lower = (v) => v?.toString().toLowerCase() || '';
+        const matches = (m) =>
+          (!memberFilter.name || lower(m.user.name).includes(lower(memberFilter.name))) &&
+          (!memberFilter.email || lower(m.user.email).includes(lower(memberFilter.email)));
+        setFilteredMembers((prev) => [...prev, newMember].filter(matches));
+        alert('저장 완료');
+      } else {
+        alert('저장 실패: ' + res.status);
+      }
+    } catch (error) {
+      console.error('Add member failed:', error);
+      alert('저장 실패: 네트워크 오류');
+    } finally {
+      setUserLoading((prev) => ({ ...prev, [u.id]: false }));
     }
-    else alert('저장 실패: ' + res.status);
-    setUserLoading((prev) => ({ ...prev, [u.id]: false }));
   };
 
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-    const res = await fetch(`/api/sig/${selectedSig.id}/member/leave/executive`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: member.user_id,
-      }),
-    });
-    if (res.status === 204) {
-      setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
-      alert('저장 완료');
-      setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
+    try {
+      const res = await fetch(`/api/sig/${selectedSig.id}/member/leave/executive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: member.user_id,
+        }),
+      });
+      if (res.status === 204) {
+        setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
+        setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
+        alert('삭제 완료');
+      } else {
+        const error = await res.json().catch(() => ({ message: 'Unknown error' }));
+        alert(`삭제 실패: ${error.message || res.status}`);
+      }
+    } catch (error) {
+      console.error('Delete member failed:', error);
+      alert('삭제 실패: 네트워크 오류');
+    } finally {
+      setMemberLoading((prev) => ({ ...prev, [member.user_id]: false }));
     }
-    else alert('삭제 실패: ' + res.status);
-    setMemberLoading((prev) => ({ ...prev, [member.user_id]: false }));
   };
 
   return (
     <div className="adm-table-wrap">
-      <div className=''>
+      <div className="">
         <h3>SIG 이름으로 검색: </h3>
         <input
           className="adm-input"
@@ -123,10 +138,7 @@ export default function SigMembersPanel({ sigs, users }) {
               <td className="adm-td">{sig.year}</td>
               <td className="adm-td">{sig.semester}</td>
               <td className="adm-td">
-                <select
-                  className="adm-select"
-                  value={sig.members}
-                >
+                <select className="adm-select" value={''}>
                   {sig.members.map((m) => (
                     <option key={m.user_id}>{m.user.name}</option>
                   ))}
@@ -135,7 +147,11 @@ export default function SigMembersPanel({ sigs, users }) {
               <td className="adm-td">
                 <button
                   className="adm-button"
-                  onClick={() => {setSelectedSig(sig); setMembers(sig.members); setFilteredMembers(sig.members);}}
+                  onClick={() => {
+                    setSelectedSig(sig);
+                    setMembers(sig.members);
+                    setFilteredMembers(sig.members);
+                  }}
                 >
                   선택
                 </button>

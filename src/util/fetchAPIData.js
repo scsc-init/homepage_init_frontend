@@ -1,6 +1,5 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
 
-
 export async function fetchUser() {
   const res = await handleApiRequest('GET', `/api/user/profile`);
   return res.ok ? await res.json() : null;
@@ -27,7 +26,10 @@ export async function fetchSigs() {
   const sigsRaw = await res.json();
   const sigsWithContentMembers = await Promise.all(
     sigsRaw.map(async (sig) => {
-      const [articleRes, membersRes] = await Promise.all([handleApiRequest('GET', `/api/article/${sig.content_id}`), handleApiRequest('GET', `/api/sig/${sig.id}/members`)]);
+      const [articleRes, membersRes] = await Promise.all([
+        handleApiRequest('GET', `/api/article/${sig.content_id}`),
+        handleApiRequest('GET', `/api/sig/${sig.id}/members`),
+      ]);
       const article = articleRes.ok ? await articleRes.json() : { content: '' };
       const members = membersRes.ok ? await membersRes.json() : [];
       return { ...sig, content: article.content, members: members };

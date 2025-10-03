@@ -32,58 +32,72 @@ export default function SigList({ sigs: sigsDefault }) {
     const matches = (sig) =>
       (!newFilter.id || lower(sig.id).includes(lower(newFilter.id))) &&
       (!newFilter.title || lower(sig.title).includes(lower(newFilter.title))) &&
-      (!newFilter.description || lower(sig.description).includes(lower(newFilter.description))) &&
+      (!newFilter.description ||
+        lower(sig.description).includes(lower(newFilter.description))) &&
       (!newFilter.content || lower(sig.content).includes(lower(newFilter.content))) &&
       (!newFilter.status || sig.status.toString() === newFilter.status.toString()) &&
       (!newFilter.year || lower(sig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(sig.semester).toString() === newFilter.semester) &&
-      (!newFilter.member || sig.members.map((m) => (m.user.name)).includes(lower(newFilter.member)));
+      (!newFilter.member ||
+        sig.members.map((m) => m.user.name).includes(lower(newFilter.member)));
     setFilteredSigs(sigs.filter(matches));
   };
 
   const handleSave = async (sig) => {
     setSaving((prev) => ({ ...prev, [sig.id]: true }));
-    const res = await fetch(`/api/executive/sig/${sig.id}/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: sig.title,
-        description: sig.description,
-        content: sig.content,
-        status: sig.status,
-        year: sig.year,
-        semester: sig.semester,
-      }),
-    });
-    if (res.status === 204) alert('저장 완료');
-    else alert('저장 실패: ' + res.status);
+    try {
+      const res = await fetch(`/api/executive/sig/${sig.id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: sig.title,
+          description: sig.description,
+          content: sig.content,
+          status: sig.status,
+          year: sig.year,
+          semester: sig.semester,
+        }),
+      });
+      if (res.status === 204) alert('저장 완료');
+      else alert('저장 실패: ' + res.status);
+    } catch (err) {
+      alert('저장 실패: 네트워크 오류');
+    }
     setSaving((prev) => ({ ...prev, [sig.id]: false }));
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-    const res = await fetch(`/api/executive/sig/${id}/delete`, {
-      method: 'POST',
-    });
-    if (res.status === 204) setSigs((prev) => prev.filter((s) => s.id !== id));
-    else alert('삭제 실패: ' + res.status);
+    setSaving((prev) => ({ ...prev, [id]: true }));
+    try {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      const res = await fetch(`/api/executive/sig/${id}/delete`, {
+        method: 'POST',
+      });
+      if (res.status === 204) {
+        setSigs((prev) => prev.filter((s) => s.id !== id));
+        setFilteredSigs((prev) => prev.filter((s) => s.id !== id));
+      } else alert('삭제 실패: ' + res.status);
+    } catch (err) {
+      alert('저장 실패: 네트워크 오류');
+    }
+    setSaving((prev) => ({ ...prev, [id]: false }));
   };
 
   return (
     <div className="adm-table-wrap">
       <table className="adm-table">
         <thead>
-            <tr>
-              <th className="adm-th">ID</th>
-              <th className="adm-th">이름</th>
-              <th className="adm-th">설명</th>
-              <th className="adm-th">내용</th>
-              <th className="adm-th">상태</th>
-              <th className="adm-th">연도</th>
-              <th className="adm-th">학기</th>
-              <th className="adm-th">구성원</th>
-              <th className="adm-th">작업</th>
-            </tr>
+          <tr>
+            <th className="adm-th">ID</th>
+            <th className="adm-th">이름</th>
+            <th className="adm-th">설명</th>
+            <th className="adm-th">내용</th>
+            <th className="adm-th">상태</th>
+            <th className="adm-th">연도</th>
+            <th className="adm-th">학기</th>
+            <th className="adm-th">구성원</th>
+            <th className="adm-th">작업</th>
+          </tr>
           <tr>
             <td className="adm-td">
               <input
