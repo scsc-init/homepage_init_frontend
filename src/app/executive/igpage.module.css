@@ -44,6 +44,7 @@
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid var(--color-button-border);
+  background: var(--box-color);
   color: var(--color-text-body);
 }
 .adm-td {
@@ -123,7 +124,7 @@
   gap: 0.5rem;
   align-items: center;
 }
-.dark .adm-th {
+:global(.dark) .adm-th {
   background: var(--color-surface-light);
 }
 .adm-td .adm-input,
