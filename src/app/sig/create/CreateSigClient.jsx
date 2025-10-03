@@ -11,7 +11,6 @@ export default function CreateSigClient() {
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const [editorKey, setEditorKey] = useState(0);
 
   const saved = typeof window !== 'undefined' ? sessionStorage.getItem('sigForm') : null;
   const parsed = saved ? JSON.parse(saved) : null;
@@ -132,7 +131,7 @@ export default function CreateSigClient() {
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           Editor={Editor}
-          editorKey={editorKey}
+          editorKey={0}
           isCreate={true}
         />
       </div>

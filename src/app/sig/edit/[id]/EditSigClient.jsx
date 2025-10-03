@@ -97,6 +97,8 @@ export default function EditSigClient({ sigId }) {
   }, [isDirty, router]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
+
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
@@ -161,7 +163,7 @@ export default function EditSigClient({ sigId }) {
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">SIG 수정</h1>
       </div>
-      <div className="CreateSigCard">
+      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <SigForm
           register={register}
           control={control}

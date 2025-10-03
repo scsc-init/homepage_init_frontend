@@ -34,7 +34,6 @@ async function onAuthFail() {
 
 export default function MyProfileClient() {
   const [user, setUser] = useState(null);
-  const [majors, setMajors] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,8 +47,6 @@ export default function MyProfileClient() {
         }
         const userData = await resUser.json();
         setUser(userData);
-        const resMajor = await fetch(`/api/major/${userData.major_id}`);
-        setMajors(await resMajor.json());
       } catch (_err) {
         await onAuthFail();
         router.push('/us/login');

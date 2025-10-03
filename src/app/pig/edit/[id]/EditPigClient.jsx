@@ -97,6 +97,8 @@ export default function EditPigClient({ pigId }) {
   }, [isDirty, router]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
+
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
@@ -161,7 +163,7 @@ export default function EditPigClient({ pigId }) {
       <div className="CreatePigHeader">
         <h1 className="CreatePigTitle">PIG 수정</h1>
       </div>
-      <div className="CreatePigCard">
+      <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
         <PigForm
           register={register}
           control={control}
