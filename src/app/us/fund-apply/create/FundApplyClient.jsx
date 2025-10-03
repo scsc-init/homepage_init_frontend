@@ -39,6 +39,13 @@ const PLACEHOLDER = {
 회식을 증빙할 수 있는 사진을 첨부하여야 합니다. 사진에는 모든 회식참여 인원이 보여야 합니다.
 지원금액을 증빙할 수 있는 영수증을 첨부하여야 합니다. 부득이하게 영수증을 챙기지 못했을 경우, 신용카드 출금내역으로 갈음할 수 있습니다.
 회식 날짜는 사전에 조율했음을 밝힐 수 있는 자료 (카카오톡 메세지 등)을 첨부해야 합니다. 공개된 디스코드 채팅에서 날짜를 조율했을 경우, 생략가능합니다.`,
+  pair: `아래 항목을 참고해 상세 내용을 작성해주세요.
+
+짝선짝후 조 내에서 밥약이 이루어질 경우 식사비용을 지원합니다.
+지원 한도: 회원 당 누적 10,000원.
+ 회식을 진행한 인원을 밝혀야 합니다.
+ 회식을 증빙할 수 있는 사진을 첨부하여야 합니다. 사진에는 모든 회식참여 인원이 보여야 합니다.
+ 지원금액을 증빙할 수 있는 영수증을 첨부하여야 합니다. 부득이하게 영수증을 챙기지 못했을 경우, 신용카드 출금내역으로 갈음할 수 있습니다.`,
 };
 
 export default function FundApplyClient({ boardInfo, sigs, pigs }) {
@@ -48,6 +55,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
       orgCategory: '',
       target: '',
       contestName: '',
+      pairBefore: '',
+      pairAfter: '',
       amount: '',
       editor: '',
       checked: false,
@@ -59,6 +68,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const applyType = watch('applyType');
   const orgCategory = watch('orgCategory');
   const contestName = watch('contestName');
+  const pairBefore = watch('pairBefore');
+  const pairAfter = watch('pairAfter');
   const isChecked = watch('checked');
 
   const [user, setUser] = useState(null);
@@ -71,7 +82,11 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
   const step1Done = !!applyType;
   const step2Done =
-    applyType === 'contest' ? contestName.trim().length > 0 : orgCategory && !!watch('target');
+    applyType === 'contest'
+      ? contestName.trim().length > 0
+      : applyType === 'pair'
+        ? pairBefore.trim().length > 0 && pairAfter.trim().length > 0
+        : orgCategory && !!watch('target');
   const step3Ready = step1Done && step2Done;
 
   useEffect(() => {
@@ -91,16 +106,26 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   }, [orgCategory, sigs, pigs]);
 
   useEffect(() => {
-    if (applyType === 'contest') {
+    if (applyType === 'contest' || applyType === 'pair') {
       setValue('orgCategory', '');
       setValue('target', '');
     } else {
       setValue('contestName', '');
+      setValue('pairBefore', '');
+      setValue('pairAfter', '');
     }
   }, [applyType, setValue]);
 
   const typeLabel = (t) =>
-    t === 'contest' ? '대회 참여 지원금' : t === 'fund' ? 'SIG/PIG 지원금' : 'SIG/PIG 회식비';
+    t === 'contest'
+      ? '대회 참여 지원금'
+      : t === 'fund'
+        ? 'SIG/PIG 지원금'
+        : t === 'meal'
+          ? 'SIG/PIG 회식비'
+          : t === 'pair'
+            ? '짝선짝후 지원금'
+            : '';
 
   const normalizeLF = (s) => (s ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   const fmtNumber = (n) => new Intl.NumberFormat('ko-KR').format(Number(n || 0));
@@ -115,7 +140,9 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     const targetDisplay =
       data.applyType === 'contest'
         ? data.contestName
-        : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
+        : data.applyType === 'pair'
+          ? `${data.pairBefore} / ${data.pairAfter}`
+          : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
 
     const metaLines = [
       `**신청 유형**: ${tLabel}`,
@@ -166,7 +193,9 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
         ? PLACEHOLDER.fund
         : applyType === 'meal'
           ? PLACEHOLDER.meal
-          : '';
+          : applyType === 'pair'
+            ? PLACEHOLDER.pair
+            : '';
   const hasContent = (content || '').replace(/\s|#/g, '').length > 0;
 
   const updateMinHeight = () => {
@@ -197,7 +226,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
   if (!boardInfo?.id) return null;
 
-  const disableOrgSelects = applyType === 'contest';
+  const disableOrgSelects = applyType === 'contest' || applyType === 'pair';
 
   return (
     <div className="CreateSigContainer">
@@ -219,6 +248,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
               <option value="contest">대회 참여 지원금</option>
               <option value="fund">SIG/PIG 지원금</option>
               <option value="meal">SIG/PIG 회식비</option>
+              <option value="pair">짝선짝후 지원금</option>
             </select>
           </div>
 
@@ -233,6 +263,27 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                     placeholder="ex) ICPC 본선"
                     className="C_Input"
                   />
+                </div>
+              ) : applyType === 'pair' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="C_Label">짝선 이름</label>
+                    <input
+                      type="text"
+                      {...register('pairBefore', { required: true })}
+                      placeholder="짝선 이름"
+                      className="C_Input"
+                    />
+                  </div>
+                  <div>
+                    <label className="C_Label">짝후 이름</label>
+                    <input
+                      type="text"
+                      {...register('pairAfter', { required: true })}
+                      placeholder="짝후 이름"
+                      className="C_Input"
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

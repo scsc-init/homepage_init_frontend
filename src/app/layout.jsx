@@ -1,17 +1,17 @@
 import { Noto_Sans_KR } from 'next/font/google';
 import './global.css';
-import HeaderWrapper from './HeaderWrapper';
+import Header from './Header';
+import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
-import dynamic from 'next/dynamic';
 import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
 
-const FooterWrapper = dynamic(() => import('@/app/FooterWrapper'), { ssr: false });
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
 export const metadata = {
   title: { default: 'SCSC: 서울대 컴퓨터 연구회', template: '%s | SCSC' },
-  description: '서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다.',
+  description:
+    '서울대학교 컴퓨터 연구회 SCSC의 공식 홈페이지입니다. SCSC는 SIG(Special Interested Group) 또는 PIG를 통해 스터디와 연구를 진행합니다. 이에 더해 SCSC는, SKYST 대회 진행 및 세미나 운영을 진행하고 있습니다.',
   openGraph: {
     title: '서울대학교 SCSC',
     description:
@@ -60,12 +60,12 @@ export default function RootLayout({ children }) {
       </head>
       <body className={noto_sans_kr.className}>
         <div id="RootContainer">
-          <HeaderWrapper />
+          <Header />
           <main id="MainContent">
             <Providers>{children}</Providers>
           </main>
           <ThemeToggle initialDark={initialDark} />
-          <FooterWrapper />
+          <Footer />
         </div>
       </body>
     </html>

@@ -21,14 +21,10 @@
 
 #HeaderLeft,
 #HeaderRight {
-  flex: 0 0 auto;
+  flex: 0 0 20%;
   display: flex;
   align-items: center;
-}
-
-#HeaderRight {
-  justify-content: flex-end;
-  min-width: 8rem;
+  min-width: 12rem;
 }
 
 #HeaderCenter {
@@ -36,6 +32,55 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#HeaderRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  min-width: 8rem;
+  white-space: nowrap;
+  height: 2rem;
+}
+
+.HeaderRight__loading {
+  width: 12rem;
+  height: 2rem;
+}
+
+.HeaderRight__login {
+  display: flex;
+  align-items: center;
+}
+
+.HeaderRight__main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.HeaderRight__executive {
+  font-size: 0.875rem;
+}
+
+.HeaderRight__user {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  overflow: hidden;
+}
+
+.toAdminPageButton {
+  text-decoration: none;
+  color: var(--header-foreground-color);
+}
+
+#HeaderUserName {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 5rem;
+  white-space: nowrap;
 }
 
 #HeaderMenuList {
@@ -102,8 +147,10 @@
   margin-bottom: 0.25rem;
 }
 
-.HeaderMenuContent button {
+.HeaderMenuContent a {
+  display: inline-block;
   background: none;
+  text-decoration: none;
   border: none;
   font-size: 0.95rem;
   color: var(--header-foreground-color);
@@ -115,7 +162,7 @@
   transition: background-color 0.15s ease;
 }
 
-.HeaderMenuContent button:hover {
+.HeaderMenuContent a:hover {
   background-color: var(--foreground-color);
   color: var(--background-color);
 }
@@ -134,109 +181,150 @@
   color: var(--header-foreground-color);
 }
 
+#HeaderUserLogin {
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
 #HeaderUser button:hover {
   color: var(--foreground-color);
 }
 
-.HamburgerButton {
-  background-color: var(--header-background-color);
-  border: 1px solid var(--header-border-color);
-  border-radius: 0.5rem;
-  font-size: 1.5rem;
-  color: var(--header-foreground-color);
-  padding: 0.4rem 0.6rem;
-  transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.HamburgerButton:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
 .MobileMenuWrapper {
-  position: absolute;
-  top: 3.5rem;
-  left: 0;
-  width: 100%;
-  z-index: 999;
-  background-color: var(--background-color);
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
+  display: none;
 }
 
-.MobileMenuWrapper.open {
-  max-height: 1000px;
+.HamburgerButton {
+  display: none;
 }
 
-.MobileMenu {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  background-color: var(--header-background-color);
-  padding: 1rem 2rem;
-  border-top: 1px solid var(--header-border-color);
-  box-shadow: 0 4px 12px var(--header-shadow-color);
+#HeaderSpacer {
+  height: 3.5rem;
 }
 
-.MobileMenuList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+@media (max-width: 768px) {
+  #HeaderLeft,
+  #HeaderRight {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
 
-.MobileMenuItem {
-  display: flex;
-  flex-direction: column;
-}
+  #HeaderCenter {
+    display: none;
+  }
 
-.MobileMenuTrigger,
-.MobileSubMenu button {
-  background: none;
-  border: none;
-  padding: 0.75rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: left;
-  color: var(--header-foreground-color);
-  cursor: pointer;
-  display: block;
-  width: 100%;
-  border-radius: 0.5rem;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-}
+  .HeaderRight__loading {
+    width: auto;
+  }
 
-.MobileMenuTrigger:hover,
-.MobileSubMenu button:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
-}
+  .HeaderRight__executive {
+    display: none;
+  }
 
-.MobileSubMenu {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
+  .HamburgerButton {
+    display: block;
+    background-color: var(--header-background-color);
+    border: 1px solid var(--header-border-color);
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    color: var(--header-foreground-color);
+    padding: 0.4rem 0.6rem;
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
 
-.MobileSubMenu.open {
-  max-height: 400px;
-}
+  .HamburgerButton:hover {
+    background-color: var(--foreground-color);
+    color: var(--background-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
 
-.MobileSubMenu ul {
-  list-style: none;
-  margin: 0.5rem 0 0 0;
-  padding-left: 1rem;
-}
+  .MobileMenuWrapper {
+    display: block;
+    position: absolute;
+    top: 3.5rem;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background-color: var(--background-color);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
 
-.MobileSubMenu li {
-  margin-bottom: 0.25rem;
-}
+  .MobileMenuWrapper.open {
+    max-height: 1000px;
+  }
 
-.toAdminPageButton {
-  color: var(--header-foreground-color);
+  .MobileMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: var(--header-background-color);
+    padding: 1rem 2rem;
+    border-top: 1px solid var(--header-border-color);
+    box-shadow: 0 4px 12px var(--header-shadow-color);
+  }
+
+  .MobileMenuList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .MobileMenuItem {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .MobileMenuTrigger,
+  .MobileSubMenu a {
+    background: none;
+    border: none;
+    padding: 0.75rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    color: var(--header-foreground-color);
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    border-radius: 0.5rem;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .MobileSubMenu a {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .MobileMenuTrigger:hover,
+  .MobileSubMenu a:hover {
+    background-color: var(--foreground-color);
+    color: var(--background-color);
+  }
+
+  .MobileSubMenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .MobileSubMenu.open {
+    max-height: 400px;
+  }
+
+  .MobileSubMenu ul {
+    list-style: none;
+    margin: 0.5rem 0 0 0;
+    padding-left: 1rem;
+  }
+
+  .MobileSubMenu li {
+    margin-bottom: 0.25rem;
+  }
 }
