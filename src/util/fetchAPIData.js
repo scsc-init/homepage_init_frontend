@@ -5,6 +5,11 @@ export async function fetchUser() {
   return res.ok ? await res.json() : null;
 }
 
+export async function fetchUsers() {
+  const res = await handleApiRequest('GET', `/api/users`);
+  return res.ok ? await res.json() : null;
+}
+
 export async function fetchBoards(targetBoardIds) {
   const boardResults = await Promise.all(
     targetBoardIds.map(async (id) => {
@@ -19,28 +24,36 @@ export async function fetchSigs() {
   const res = await handleApiRequest('GET', `/api/sigs`);
   if (!res.ok) return;
   const sigsRaw = await res.json();
-  const sigsWithContent = await Promise.all(
+  const sigsWithContentMembers = await Promise.all(
     sigsRaw.map(async (sig) => {
-      const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
+      const [articleRes, membersRes] = await Promise.all([
+        handleApiRequest('GET', `/api/article/${sig.content_id}`),
+        handleApiRequest('GET', `/api/sig/${sig.id}/members`),
+      ]);
       const article = articleRes.ok ? await articleRes.json() : { content: '' };
-      return { ...sig, content: article.content };
+      const members = membersRes.ok ? await membersRes.json() : [];
+      return { ...sig, content: article.content, members: members };
     }),
   );
-  return sigsWithContent;
+  return sigsWithContentMembers;
 }
 
 export async function fetchPigs() {
   const res = await handleApiRequest('GET', `/api/pigs`);
   if (!res.ok) return;
   const pigsRaw = await res.json();
-  const pigsWithContent = await Promise.all(
+  const pigsWithContentMembers = await Promise.all(
     pigsRaw.map(async (pig) => {
-      const articleRes = await handleApiRequest('GET', `/api/article/${pig.content_id}`);
+      const [articleRes, membersRes] = await Promise.all([
+        handleApiRequest('GET', `/api/article/${pig.content_id}`),
+        handleApiRequest('GET', `/api/pig/${pig.id}/members`),
+      ]);
       const article = articleRes.ok ? await articleRes.json() : { content: '' };
-      return { ...pig, content: article.content };
+      const members = membersRes.ok ? await membersRes.json() : [];
+      return { ...pig, content: article.content, members: members };
     }),
   );
-  return pigsWithContent;
+  return pigsWithContentMembers;
 }
 
 export async function fetchMajors() {

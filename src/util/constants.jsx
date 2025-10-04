@@ -21,6 +21,13 @@ export const oldboyLevel = 400;
  */
 export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 
+export const STATUS_MAP = {
+  inactive: '비활성',
+  surveying: '설문중',
+  recruiting: '모집중',
+  active: '활동중',
+};
+
 /**
  * Returns the first valid string among the provided values.
  *

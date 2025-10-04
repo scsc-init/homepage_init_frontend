@@ -1,7 +1,5 @@
 // src/app/executive/page.jsx
 import ArticleList from './ArticleList';
-import SigList from './SigList';
-import PigList from './PigList';
 import MajorList from './MajorList';
 import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
@@ -9,8 +7,6 @@ import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import {
   fetchBoards,
-  fetchSigs,
-  fetchPigs,
   fetchSCSCGlobalStatus,
   fetchMajors,
   fetchDiscordBotStatus,
@@ -18,10 +14,8 @@ import {
 import './page.css';
 
 export default async function AdminPanel() {
-  const [boards, sigs, pigs, scscGlobalStatus, majors, discordBotStatus] = await Promise.all([
+  const [boards, scscGlobalStatus, majors, discordBotStatus] = await Promise.all([
     fetchBoards([3, 4, 5, 6]),
-    fetchSigs(),
-    fetchPigs(),
     fetchSCSCGlobalStatus(),
     fetchMajors(),
     fetchDiscordBotStatus(),
@@ -51,14 +45,14 @@ export default async function AdminPanel() {
         </div>
 
         <h2>SIG 관리</h2>
-        <div className="adm-section">
-          <SigList sigs={sigs} />
-        </div>
+        <p>
+          <Link href="/executive/sig">SIG 관리 페이지로 이동</Link>
+        </p>
 
         <h2>PIG 관리</h2>
-        <div className="adm-section">
-          <PigList pigs={pigs} />
-        </div>
+        <p>
+          <Link href="/executive/pig">PIG 관리 페이지로 이동</Link>
+        </p>
 
         <h2>Scsc status 관리</h2>
         <div className="adm-section">
