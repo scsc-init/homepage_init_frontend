@@ -1,74 +1,18 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import SigJoinLeaveButton from './SigJoinLeaveButton';
 import EditSigButton from './EditSigButton';
 import SigDeleteButton from './SigDeleteButton';
 import SigMembers from './SigMembers';
 import SigContents from './SigContents';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 
-export default function SigClient({ sig, members, articleId, sigId }) {
-  const router = useRouter();
-  const [checking, setChecking] = useState(true);
-  const [me, setMe] = useState(null);
-  const [content, setContent] = useState('');
-
-  const isMember = useMemo(() => {
-    if (!me) return false;
-    return members.some((m) => (m?.id ?? m?.user_id) === me?.id);
-  }, [me, members]);
-
-  const canEdit = useMemo(() => {
-    if (!me) return false;
-    const roleOk = typeof me?.role === 'number' && me.role >= minExecutiveLevel;
-    const ownerOk = !!sig?.owner && sig.owner === me.id;
-    return roleOk || ownerOk;
-  }, [me, sig]);
-
-  const isOwner = useMemo(() => {
-    if (!me) return false;
-    const ownerOk = !!sig?.owner && sig.owner === me.id;
-    return ownerOk;
-  }, [me, sig]);
-
-  const semesterLabel = useMemo(() => {
-    const key = Number(sig?.semester);
-    return SEMESTER_MAP[key] ?? `${sig?.semester}`;
-  }, [sig?.semester]);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const [meRes, articleRes] = await Promise.all([
-          fetch('/api/user/profile', { cache: 'no-store' }),
-          fetch(`/api/article/${articleId}`, { cache: 'no-store' }),
-        ]);
-        if (meRes.status === 401 || !meRes.ok || !articleRes.ok) {
-          router.replace('/us/login');
-          return;
-        }
-        const [meData, article] = await Promise.all([meRes.json(), articleRes.json()]);
-        if (!cancelled) {
-          setMe(meData);
-          setContent(article?.content ?? '');
-          setChecking(false);
-        }
-      } catch {
-        if (!cancelled) router.replace('/us/login');
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [articleId, router]);
-
-  if (checking) {
-    return <LoadingSpinner />;
-  }
+export default function SigClient({ sig, members, articleContent, me, sigId }) {
+  const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
+  const canEdit =
+    !!me && ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || sig?.owner === me?.id);
+  const isOwner = !!me && sig?.owner === me?.id;
+  const semesterLabel = SEMESTER_MAP[Number(sig?.semester)] ?? `${sig?.semester}`;
 
   return (
     <div className="SigDetailContainer">
@@ -85,7 +29,7 @@ export default function SigClient({ sig, members, articleId, sigId }) {
         <SigDeleteButton sigId={sigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="SigDivider" />
-      <SigContents content={content} />
+      <SigContents content={articleContent} />
       <hr />
       <SigMembers owner={sig?.owner} members={members} />
     </div>
