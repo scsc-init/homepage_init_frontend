@@ -1,28 +1,23 @@
-import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import SigListClient from './SigListClient';
 import './page.css';
+import { fetchSigs, fetchUser } from '@/util/fetchAPIData';
+
 export const metadata = { title: 'SIG' };
 
 export default async function SigListPage() {
-  const res = await fetch(`${getBaseUrl()}/api/sigs`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
+  const sigs = await fetchSigs();
+  const me = await fetchUser();
 
-  if (!res.ok) {
+  if (!Array.isArray(sigs)) {
     return <div>시그 정보를 불러올 수 없습니다.</div>;
   }
-
-  const sigs = await res.json();
-  if (!Array.isArray(sigs)) return <div>로딩중...</div>;
 
   const allowed = new Set(['surveying', 'recruiting', 'active']);
   const visibleSigs = sigs.filter((s) => allowed.has(s.status));
 
   return (
     <div id="SigListContainer">
-      <SigListClient sigs={visibleSigs} />
+      <SigListClient sigs={visibleSigs} myId={me?.id ? String(me.id) : ''} />
     </div>
   );
 }
