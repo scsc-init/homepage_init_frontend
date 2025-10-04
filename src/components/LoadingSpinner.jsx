@@ -37,7 +37,7 @@ export default function LoadingSpinner() {
   useEffect(() => {
     let i = 0;
     const typing = setInterval(() => {
-      setDisplayed((prev) => {
+      setDisplayed(() => {
         const next = sampleCode.slice(0, i++);
         if (i > sampleCode.length) clearInterval(typing);
         return next;

@@ -41,10 +41,6 @@ export default function FaqList() {
   const [openIdx, setOpenIdx] = useState(null);
   const contentRefs = useRef([]);
 
-  const toggle = (idx) => {
-    setOpenIdx((prev) => (prev === idx ? null : idx));
-  };
-
   return (
     <div id="HomeFQAContainer">
       <h2>자주 묻는 질문</h2>

@@ -1,4 +1,3 @@
-import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
 import ReactMarkdown from 'react-markdown';
 import './page.css';
 

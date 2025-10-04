@@ -1,20 +1,7 @@
 import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
-import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
-
-async function fetchDiscordInviteLink() {
-  const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
-  if (res.ok) {
-    const resData = await res.json();
-    return resData.result.invite_url;
-  }
-}
 
 export default async function Contact() {
   const thisYear = new Date().getFullYear();
