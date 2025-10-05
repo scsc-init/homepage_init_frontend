@@ -161,6 +161,6 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 
 ### Add pre-commit(husky)
 
-코드 통일성을 위해 `eslint`와 `prettier`를 사용하고 있습니다. 
+코드 통일성을 위해 `eslint`와 `prettier`를 사용하고 있습니다.
 
-현재 lint 작업이 `husky`에서 pre-commit으로 수행되고 있으므로, commit 후 다시 commit을 해야 할 수 있습니다. [via PR#229](https://github.com/scsc-init/homepage_init_frontend/pull/229).  
+현재 lint 작업이 `husky`에서 pre-commit으로 수행되고 있으므로, commit 후 다시 commit을 해야 할 수 있습니다. [via PR#229](https://github.com/scsc-init/homepage_init_frontend/pull/229).
