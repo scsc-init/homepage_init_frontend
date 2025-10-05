@@ -156,3 +156,11 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 
 /util/constatns.jsx에 프론트에서 설정해야할 변수와 값들이 있습니다. 수정할 필요가 있다면 백엔드와 협의해 작성해주세요.
 파일 상단의 주석을 참고해 수정해주세요.
+
+## Migration details for devs
+
+### Add pre-commit(husky)
+
+`husky`로 prettier과 lint를 pre-commit으로 수행되도록 하였습니다. ([via Pull#229](https://github.com/scsc-init/homepage_init_frontend/pull/229))
+
+`npm i`를 실행하여 `husky`를 설치하면 됩니다.
