@@ -1,7 +1,7 @@
 import EditSigClient from './EditSigClient';
 import './page.css';
 import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchUser as fetchMe } from '@/util/fetchAPIData';
+import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export const metadata = { title: 'SIG' };

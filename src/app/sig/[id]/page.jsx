@@ -4,7 +4,7 @@ import SigClient from './SigClient';
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
-import { fetchUser } from '@/util/fetchAPIData';
+import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }) {
 export default async function SigDetailPage({ params }) {
   const { id } = params;
 
-  const me = await fetchUser();
+  const me = await fetchMe();
   if (!me?.id) redirect('/us/login');
 
   const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);

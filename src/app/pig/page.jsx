@@ -1,12 +1,12 @@
 import PigListClient from './PigListClient';
 import './page.css';
-import { fetchPigs, fetchUser } from '@/util/fetchAPIData';
+import { fetchPigs, fetchMe } from '@/util/fetchAPIData';
 
 export const metadata = { title: 'PIG' };
 
 export default async function PigListPage() {
   const pigs = await fetchPigs();
-  const me = await fetchUser();
+  const me = await fetchMe();
 
   if (!Array.isArray(pigs)) {
     return <div>피그 정보를 불러올 수 없습니다.</div>;

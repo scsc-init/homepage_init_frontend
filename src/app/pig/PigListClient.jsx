@@ -53,3 +53,4 @@ export default function PigListClient({ pigs, myId }) {
     </>
   );
 }
+
