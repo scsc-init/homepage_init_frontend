@@ -1,14 +1,14 @@
 import EditSigClient from './EditSigClient';
 import './page.css';
 import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchUser } from '@/util/fetchAPIData';
+import { fetchUser as fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export const metadata = { title: 'SIG' };
 
 export default async function EditSigPage({ params }) {
   const { id } = params;
-  const me = await fetchUser();
+  const me = await fetchMe();
   if (!me?.id) redirect('/us/login');
 
   const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);

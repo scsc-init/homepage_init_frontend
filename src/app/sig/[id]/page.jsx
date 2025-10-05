@@ -3,13 +3,18 @@ import './page.css';
 import SigClient from './SigClient';
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
 import { fetchUser } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { id } = params;
   try {
-    const res = await handleApiRequest('GET', `/api/sig/${id}`);
+    const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
+      method: 'GET',
+      headers: { 'x-api-secret': getApiSecret() },
+      cache: 'no-store',
+    });
     if (!res.ok) throw new Error();
     const sig = await res.json();
     return {

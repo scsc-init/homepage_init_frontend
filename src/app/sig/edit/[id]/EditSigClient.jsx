@@ -15,7 +15,7 @@ function useMounted() {
 
 export default function EditSigClient({ sigId, me, sig, article }) {
   const router = useRouter();
-  const user = me;
+  const currentUser = me;
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
@@ -66,7 +66,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
   }, [isDirty, router]);
 
   useEffect(() => {
-    if (sig && article && mounted) {
+    if (sig && article && mounted && !isDirty) {
       reset({
         title: sig.title ?? '',
         description: sig.description ?? '',
@@ -76,20 +76,20 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       });
       setEditorKey((k) => k + 1);
     }
-  }, [sig, article, mounted, reset]);
+  }, [sig, article, mounted, isDirty, reset]);
 
   const onSubmit = async (data) => {
-    if (!user) {
+    if (!currentUser) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
-    } else if (!user.discord_id) {
+    } else if (!currentUser.discord_id) {
       if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?')) return;
     }
     setSubmitting(true);
 
     try {
       const res = await fetch(
-        user.role >= minExecutiveLevel
+        currentUser.role >= minExecutiveLevel
           ? `/api/sig/${sigId}/update/executive`
           : `/api/sig/${sigId}/update`,
         {

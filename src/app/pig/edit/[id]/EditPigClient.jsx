@@ -13,13 +13,11 @@ function useMounted() {
   return mounted;
 }
 
-export default function EditPigClient({ pigId }) {
+export default function EditPigClient({ pigId, me, pig, article }) {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const currentUser = me;
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const [pig, setPig] = useState(null);
-  const [article, setArticle] = useState(null);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
 
@@ -39,36 +37,6 @@ export default function EditPigClient({ pigId }) {
       is_rolling_admission: false,
     },
   });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
-      if (res.ok) setUser(await res.json());
-      else router.push('/us/login');
-    };
-    fetchProfile();
-
-    const fetchPigData = async () => {
-      const res = await fetch(`/api/pig/${pigId}`);
-      if (!res.ok) {
-        alert('피그 정보를 불러오지 못했습니다.');
-        router.push('/pig');
-        return;
-      }
-      const pig = await res.json();
-      setPig(pig);
-
-      const articleRes = await fetch(`/api/article/${pig.content_id}`);
-      if (!articleRes.ok) {
-        alert('피그 정보를 불러오지 못했습니다.');
-        router.push('/pig');
-        return;
-      }
-      const article = await articleRes.json();
-      setArticle(article);
-    };
-    fetchPigData();
-  }, [router, pigId]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -97,19 +65,31 @@ export default function EditPigClient({ pigId }) {
     };
   }, [isDirty, router]);
 
+  useEffect(() => {
+    if (pig && article && mounted && !isDirty) {
+      reset({
+        title: pig.title ?? '',
+        description: pig.description ?? '',
+        editor: article.content ?? '',
+        should_extend: pig.should_extend ?? false,
+        is_rolling_admission: pig.is_rolling_admission ?? false,
+      });
+      setEditorKey((k) => k + 1);
+    }
+  }, [pig, article, mounted, isDirty, reset]);
+
   const onSubmit = async (data) => {
-    if (!user) {
+    if (!currentUser) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
-    } else if (!user.discord_id) {
-      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
-        return;
+    } else if (!currentUser.discord_id) {
+      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?')) return;
     }
     setSubmitting(true);
 
     try {
       const res = await fetch(
-        user.role >= minExecutiveLevel
+        currentUser.role >= minExecutiveLevel
           ? `/api/pig/${pigId}/update/executive`
           : `/api/pig/${pigId}/update`,
         {
@@ -143,19 +123,6 @@ export default function EditPigClient({ pigId }) {
       setSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (pig && article && mounted) {
-      reset({
-        title: pig.title ?? '',
-        description: pig.description ?? '',
-        editor: article.content ?? '',
-        should_extend: pig.should_extend ?? false,
-        is_rolling_admission: pig.is_rolling_admission ?? false,
-      });
-      setEditorKey((k) => k + 1);
-    }
-  }, [pig, article, mounted, reset]);
 
   return (
     <div className="CreatePigContainer">
