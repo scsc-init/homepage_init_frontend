@@ -24,7 +24,7 @@ export default function HeaderRight() {
       {user === null && (
         <div className="HeaderRight__login">
           <Link href={'/us/login'} id="HeaderUserLogin" className="unset">
-            로그인
+            동아리 가입 / 로그인
           </Link>
         </div>
       )}
