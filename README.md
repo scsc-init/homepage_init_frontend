@@ -5,7 +5,7 @@ Google OAuth 2.0 기반 사용자 인증, SIG/PIG 생성, 게시판 기능 및 �
 
 > 작성일: 2025-05-12
 >
-> 최신개정일 : 2025-09-22
+> 최신개정일 : 2025-10-05
 >
 > 작성자 : 이한경 윤영우 강명석 박성현
 >
@@ -161,6 +161,6 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 
 ### Add pre-commit(husky)
 
-`husky`로 prettier과 lint를 pre-commit으로 수행되도록 하였습니다. ([via Pull#229](https://github.com/scsc-init/homepage_init_frontend/pull/229))
+코드 통일성을 위해 `eslint`와 `prettier`를 사용하고 있습니다. 
 
-`npm i`를 실행하여 `husky`를 설치하면 됩니다.
+현재 lint 작업이 `husky`에서 pre-commit으로 수행되고 있으므로, commit 후 다시 commit을 해야 할 수 있습니다. [via PR#229](https://github.com/scsc-init/homepage_init_frontend/pull/229).  
