@@ -16,9 +16,7 @@ export default function SigListClient({ sigs, myId }) {
   });
 
   const myOwnedSigIds = new Set(
-    sigs
-      .filter((sig) => sig?.owner && String(sig.owner) === myId)
-      .map((sig) => String(sig.id)),
+    sigs.filter((sig) => sig?.owner && String(sig.owner) === myId).map((sig) => String(sig.id)),
   );
 
   return (

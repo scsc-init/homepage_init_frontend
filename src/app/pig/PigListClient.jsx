@@ -16,9 +16,7 @@ export default function PigListClient({ pigs, myId }) {
   });
 
   const myOwnedPigIds = new Set(
-    pigs
-      .filter((pig) => pig?.owner && String(pig.owner) === myId)
-      .map((pig) => String(pig.id)),
+    pigs.filter((pig) => pig?.owner && String(pig.owner) === myId).map((pig) => String(pig.id)),
   );
 
   return (

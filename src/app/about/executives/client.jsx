@@ -36,8 +36,14 @@ export default function ExecutivesClient() {
     const load = async () => {
       try {
         const [execRes, prezRes] = await Promise.all([
-          fetch('/api/users?user_role=executive', { credentials: 'include', cache: 'no-store' }),
-          fetch('/api/users?user_role=president', { credentials: 'include', cache: 'no-store' }),
+          fetch('/api/users?user_role=executive', {
+            credentials: 'include',
+            cache: 'no-store',
+          }),
+          fetch('/api/users?user_role=president', {
+            credentials: 'include',
+            cache: 'no-store',
+          }),
         ]);
 
         if (!execRes.ok && !prezRes.ok) throw new Error('failed');
@@ -48,7 +54,10 @@ export default function ExecutivesClient() {
         ]);
 
         if (!execRes.ok || !prezRes.ok) {
-          console.warn('Partial executive data load', { execOk: execRes.ok, prezOk: prezRes.ok });
+          console.warn('Partial executive data load', {
+            execOk: execRes.ok,
+            prezOk: prezRes.ok,
+          });
         }
 
         const raw = [
@@ -100,10 +109,7 @@ export default function ExecutivesClient() {
 
   useEffect(() => {
     if (!hovered && people.length > 1) {
-      autoRef.current = setInterval(
-        () => setCenterIndex((p) => (p + 1) % people.length),
-        4000
-      );
+      autoRef.current = setInterval(() => setCenterIndex((p) => (p + 1) % people.length), 4000);
     }
     return () => clearInterval(autoRef.current);
   }, [hovered, people.length]);

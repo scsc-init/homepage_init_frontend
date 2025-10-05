@@ -83,7 +83,8 @@ export default function EditPigClient({ pigId, me, pig, article }) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
     } else if (!currentUser.discord_id) {
-      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?')) return;
+      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
+        return;
     }
     setSubmitting(true);
 

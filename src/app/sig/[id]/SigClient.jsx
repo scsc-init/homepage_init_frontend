@@ -10,7 +10,8 @@ import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/uti
 export default function SigClient({ sig, members, articleContent, me, sigId }) {
   const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
   const canEdit =
-    !!me && ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || sig?.owner === me?.id);
+    !!me &&
+    ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || sig?.owner === me?.id);
   const isOwner = !!me && sig?.owner === me?.id;
   const semesterLabel = SEMESTER_MAP[Number(sig?.semester)] ?? `${sig?.semester}`;
 

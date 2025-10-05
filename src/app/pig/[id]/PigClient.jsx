@@ -10,7 +10,8 @@ import { is_pigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/uti
 export default function PigClient({ pig, members, articleContent, me, pigId }) {
   const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
   const canEdit =
-    !!me && ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || pig?.owner === me?.id);
+    !!me &&
+    ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || pig?.owner === me?.id);
   const isOwner = !!me && pig?.owner === me?.id;
   const semesterLabel = SEMESTER_MAP[Number(pig?.semester)] ?? `${pig?.semester}`;
 
