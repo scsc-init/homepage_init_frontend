@@ -1,55 +1,56 @@
 // src/app/executive/EntryRow.jsx (CLIENT)
-import { SEMESTER_MAP } from '@/util/constants';
+import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
+import styles from './igpage.module.css';
 
 export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) {
   return (
     <tr key={entry.id}>
-      <td className="adm-td">{entry.id}</td>
-      <td className="adm-td">
+      <td className={styles['adm-td']}>{entry.id}</td>
+      <td className={styles['adm-td']}>
         <input
-          className="adm-input"
+          className={styles['adm-input']}
           value={entry.title}
           onChange={(e) => onChange(entry.id, 'title', e.target.value)}
         />
       </td>
-      <td className="adm-td">
+      <td className={styles['adm-td']}>
         <input
-          className="adm-input"
+          className={styles['adm-input']}
           value={entry.description}
           onChange={(e) => onChange(entry.id, 'description', e.target.value)}
         />
       </td>
-      <td className="adm-td">
+      <td className={styles['adm-td']}>
         <textarea
-          className="adm-textarea"
+          className={styles['adm-textarea']}
           value={entry.content ?? ''}
           onChange={(e) => onChange(entry.id, 'content', e.target.value)}
         />
       </td>
-      <td className="adm-td">
+      <td className={styles['adm-td']}>
         <select
-          className="adm-select"
+          className={styles['adm-select']}
           value={entry.status}
           onChange={(e) => onChange(entry.id, 'status', e.target.value)}
         >
-          <option value="surveying">설문중</option>
-          <option value="recruiting">모집중</option>
-          <option value="active">활동중</option>
-          <option value="inactive">비활성</option>
+          <option value="surveying">{STATUS_MAP.surveying}</option>
+          <option value="recruiting">{STATUS_MAP.recruiting}</option>
+          <option value="active">{STATUS_MAP.active}</option>
+          <option value="inactive">{STATUS_MAP.inactive}</option>
         </select>
       </td>
-      <td className="adm-td">
+      <td className={styles['adm-td']}>
         <input
-          className="adm-input"
+          className={styles['adm-input']}
           type="number"
           value={entry.year}
           onChange={(e) => onChange(entry.id, 'year', Number(e.target.value))}
           disabled
         />
       </td>
-      <td className="adm-td">
+      <td className={styles['adm-td']}>
         <select
-          className="adm-select"
+          className={styles['adm-select']}
           value={entry.semester}
           onChange={(e) => onChange(entry.id, 'semester', Number(e.target.value))}
           disabled
@@ -60,16 +61,26 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           <option value={4}>{SEMESTER_MAP[4]}학기</option>
         </select>
       </td>
-      <td className="adm-td">
-        <div className="adm-flex">
+      <td className={styles['adm-td']}>
+        <select className={styles['adm-select']}>
+          {entry.members.map((m) => (
+            <option key={m.id}>{m.user.name}</option>
+          ))}
+        </select>
+      </td>
+      <td className={styles['adm-td']}>
+        <div className={styles['adm-flex']}>
           <button
-            className="adm-button"
+            className={styles['adm-button']}
             onClick={() => onSave(entry)}
             disabled={saving[entry.id]}
           >
             저장
           </button>
-          <button className="adm-button outline" onClick={() => onDelete(entry.id)}>
+          <button
+            className={`${styles['adm-button']} ${styles['outline']}`}
+            onClick={() => onDelete(entry.id)}
+          >
             삭제
           </button>
         </div>
