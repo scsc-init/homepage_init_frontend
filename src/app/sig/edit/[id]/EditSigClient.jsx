@@ -25,7 +25,6 @@ export default function EditSigClient({ sigId, me, sig, article }) {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -78,6 +77,8 @@ export default function EditSigClient({ sigId, me, sig, article }) {
   }, [sig, article, mounted, isDirty, reset]);
 
   const onSubmit = async (data) => {
+    if (submitting) return;
+
     if (!me) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
@@ -129,7 +130,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">SIG 수정</h1>
       </div>
-      <div className="CreateSigCard">
+      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <SigForm
           register={register}
           control={control}

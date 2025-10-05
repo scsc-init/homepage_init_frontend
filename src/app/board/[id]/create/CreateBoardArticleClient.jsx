@@ -64,7 +64,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty]);
+  }, [router, isDirty]);
 
   const onSubmit = async (data) => {
     if (submitting) return;

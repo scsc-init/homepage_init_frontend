@@ -139,7 +139,7 @@ export default function PigList({ pigs: pigsDefault }) {
       });
       if (res.status === 204) alert('저장 완료');
       else alert('저장 실패: ' + res.status);
-    } catch (err) {
+    } catch {
       alert('저장 실패: 네트워크 오류');
     } finally {
       setSaving((prev) => ({ ...prev, [pig.id]: false }));
@@ -157,7 +157,7 @@ export default function PigList({ pigs: pigsDefault }) {
         setPigs((prev) => prev.filter((p) => p.id !== id));
         setFilteredPigs((prev) => prev.filter((p) => p.id !== id));
       } else alert('삭제 실패: ' + res.status);
-    } catch (err) {
+    } catch {
       alert('저장 실패: 네트워크 오류');
     } finally {
       setSaving((prev) => ({ ...prev, [id]: false }));

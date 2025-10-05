@@ -12,12 +12,12 @@ export default function SigContents({ content }) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
         components={{
-          h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
-          h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
-          p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
-          li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
-          code: ({ node, ...props }) => <code className="mdx-inline-code" {...props} />,
-          pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
+          h1: ({ _node, ...props }) => <h1 className="mdx-h1" {...props} />,
+          h2: ({ _node, ...props }) => <h2 className="mdx-h2" {...props} />,
+          p: ({ _node, ...props }) => <p className="mdx-p" {...props} />,
+          li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
+          code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
+          pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
         }}
       >
         {content || ''}

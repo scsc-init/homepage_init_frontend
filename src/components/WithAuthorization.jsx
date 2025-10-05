@@ -20,7 +20,6 @@ export default function WithAuthorization({ children }) {
         });
 
         if (!res.ok) {
-          const errorText = await res.text();
           return setAllowed(false);
         }
 
@@ -28,7 +27,7 @@ export default function WithAuthorization({ children }) {
 
         const access = typeof data.role === 'number' && data.role >= 500;
         if (!done) setAllowed(access);
-      } catch (err) {
+      } catch (_err) {
         if (!done) setAllowed(false);
       }
     };
