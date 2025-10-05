@@ -1,36 +1,22 @@
 import 'highlight.js/styles/github.css';
-import { getApiSecret } from '@/util/getApiSecret';
-import { getBaseUrl } from '@/util/getBaseUrl';
 import './page.css';
 import SigClient from './SigClient';
+import { handleApiRequest } from '@/app/api/apiWrapper';
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
+import { fetchMe } from '@/util/fetchAPIData';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { id } = params;
   try {
-    const sigRes = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
+    const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
+      method: 'GET',
       headers: { 'x-api-secret': getApiSecret() },
       cache: 'no-store',
     });
-    if (!sigRes.ok) {
-      return {
-        title: 'SIG | SCSC',
-        openGraph: {
-          title: 'SIG | SCSC',
-          url: `${getBaseUrl()}/sig/${id}`,
-          siteName: 'SCSC',
-          images: [
-            {
-              url: '/opengraph.png',
-              width: 1200,
-              height: 630,
-              alt: 'SCSC Logo',
-            },
-          ],
-          type: 'article',
-        },
-      };
-    }
-    const sig = await sigRes.json();
+    if (!res.ok) throw new Error();
+    const sig = await res.json();
     return {
       title: sig.title,
       description: sig.description || 'SIG 상세 페이지',
@@ -66,21 +52,29 @@ export async function generateMetadata({ params }) {
 export default async function SigDetailPage({ params }) {
   const { id } = params;
 
-  const sigRes = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
+  const me = await fetchMe();
+  if (!me?.id) redirect('/us/login');
+
+  const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
     return <div className="p-6 text-center text-red-600">존재하지 않는 SIG입니다.</div>;
   }
   const sig = await sigRes.json();
 
-  const membersRes = await fetch(`${getBaseUrl()}/api/sig/${id}/members`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
+  const membersRes = await handleApiRequest('GET', `/api/sig/${id}/members`);
   const rawMembers = membersRes.ok ? await membersRes.json() : [];
   const members = Array.isArray(rawMembers) ? rawMembers.map((m) => m.user ?? m) : [];
 
-  return <SigClient sig={sig} members={members} articleId={sig.content_id} sigId={id} />;
+  const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
+  const article = articleRes.ok ? await articleRes.json() : { content: '' };
+
+  return (
+    <SigClient
+      sig={sig}
+      members={members}
+      articleContent={article.content}
+      me={me}
+      sigId={id}
+    />
+  );
 }
