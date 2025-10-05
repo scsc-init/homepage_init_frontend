@@ -5,7 +5,7 @@ import EditPigButton from './EditPigButton';
 import PigDeleteButton from './PigDeleteButton';
 import PigMembers from './PigMembers';
 import PigContents from './PigContents';
-import { is_pigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
+import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 
 export default function PigClient({ pig, members, articleContent, me, pigId }) {
   const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
@@ -23,7 +23,7 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
       </p>
       <p className="PigDescription">{pig.description}</p>
       <div className="PigActionRow">
-        {is_pigpig_join_available(pig.status, pig.is_rolling_admission) && (
+        {is_sigpig_join_available(pig.status, pig.is_rolling_admission) && (
           <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
         )}
         <EditPigButton pigId={pigId} canEdit={canEdit} />
