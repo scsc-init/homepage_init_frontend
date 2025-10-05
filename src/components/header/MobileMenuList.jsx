@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
-import { useEffect } from 'react';
 import { fetchUserClient } from '@/util/fetchClientData';
 
 function MobileExecutiveButton() {
@@ -23,7 +22,7 @@ function MobileExecutiveButton() {
   if (isExecutive) {
     return (
       <Link
-        href={'/executive'}
+        href="/executive"
         className="unset toAdminPageButton"
         style={{
           fontSize: '0.875rem',
@@ -45,6 +44,8 @@ export default function MobileMenuList() {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const closeMenu = () => setMobileMenuOpen(false);
+
   return (
     <div>
       <button className="HamburgerButton" onClick={() => setMobileMenuOpen((prev) => !prev)}>
@@ -54,15 +55,7 @@ export default function MobileMenuList() {
         <div className="MobileMenu">
           <ul className="MobileMenuList">
             {headerMenuData.map((menu, index) => {
-              const items = (menu.items || []).filter(
-                (item) =>
-                  !(
-                    item?.url === '/us/login' ||
-                    String(item?.label || '')
-                      .toLowerCase()
-                      .includes('join')
-                  ),
-              );
+              const items = menu.items || [];
               if (!items.length) return null;
 
               return (
@@ -79,7 +72,9 @@ export default function MobileMenuList() {
                     <ul>
                       {items.map((item) => (
                         <li key={item.label}>
-                          <Link href={item.url}>{item.label}</Link>
+                          <Link href={item.url} onClick={closeMenu}>
+                            {item.label}
+                          </Link>
                         </li>
                       ))}
                     </ul>

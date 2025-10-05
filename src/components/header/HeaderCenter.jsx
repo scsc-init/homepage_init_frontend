@@ -25,15 +25,7 @@ export default function HeaderCenter() {
     <div id="HeaderCenter">
       <ul id="HeaderMenuList">
         {headerMenuData.map((menu, index) => {
-          const items = (menu.items || []).filter(
-            (item) =>
-              !(
-                item?.url === '/us/login' ||
-                String(item?.label || '')
-                  .toLowerCase()
-                  .includes('join')
-              ),
-          );
+          const items = menu.items || [];
           if (!items.length) return null;
 
           return (
