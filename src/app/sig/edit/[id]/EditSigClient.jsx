@@ -15,7 +15,6 @@ function useMounted() {
 
 export default function EditSigClient({ sigId, me, sig, article }) {
   const router = useRouter();
-  const currentUser = me;
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
@@ -79,10 +78,10 @@ export default function EditSigClient({ sigId, me, sig, article }) {
   }, [sig, article, mounted, isDirty, reset]);
 
   const onSubmit = async (data) => {
-    if (!currentUser) {
+    if (!me) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
-    } else if (!currentUser.discord_id) {
+    } else if (!me.discord_id) {
       if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
     }
@@ -90,7 +89,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
 
     try {
       const res = await fetch(
-        currentUser.role >= minExecutiveLevel
+        me.role >= minExecutiveLevel
           ? `/api/sig/${sigId}/update/executive`
           : `/api/sig/${sigId}/update`,
         {
