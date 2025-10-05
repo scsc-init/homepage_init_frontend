@@ -33,8 +33,8 @@ export default function PigListClient({ pigs, myId }) {
 
       <div id="PigList">
         {sortedPigs.map((pig) => {
-          const sid = String(pig.id);
-          const isMine = myOwnedPigIds.has(sid);
+          const pid = String(pig.id);
+          const isMine = myOwnedPigIds.has(pid);
           return (
             <Link key={pig.id} href={`/pig/${pig.id}`} className="pigLink">
               <div className={`pigCard ${isMine ? 'isMine' : ''}`}>
