@@ -8,7 +8,7 @@ export default function JoinButton() {
   const ref = useRef();
 
   useEffect(() => {
-    fetch('/api/user/profile', { cache: 'no-store' })
+    fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' })
       .then((r) => {
         if (r.ok) setMode('member');
         else setMode('guest');
