@@ -49,7 +49,7 @@ export default function JoinButton() {
     <div className="ActivityBlock FadeInBlock" id="JoinUsSection">
       <div className="SectionHeader">WELCOME:</div>
       <p className="JoinDescription">
-        입금 안내와 카카오톡 참여 링크는 환영 페이지에서 확인할 수 있습니다.
+        입금 안내와 카카오톡/디스코드 참여 링크는 환영 페이지에서 확인할 수 있습니다.
       </p>
       <a href="/about/welcome" className="JoinButton" ref={ref} onMouseEnter={handleMouseEnter}>
         환영 페이지로 이동

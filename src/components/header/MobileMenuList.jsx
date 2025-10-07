@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 import { fetchUserClient } from '@/util/fetchClientData';
 
@@ -14,7 +15,7 @@ function MobileExecutiveButton() {
   }, []);
 
   useEffect(() => {
-    setIsExecutive(user?.role >= minExecutiveLevel);
+    setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);
 
   if (user === undefined || !user) return null;
@@ -43,8 +44,14 @@ function MobileExecutiveButton() {
 export default function MobileMenuList() {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const closeMenu = () => setMobileMenuOpen(false);
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    setMobileMenuOpen(false);
+    setOpenedMenuIndex(null);
+  }, [pathname, searchParams]);
 
   return (
     <div>
@@ -72,9 +79,7 @@ export default function MobileMenuList() {
                     <ul>
                       {items.map((item) => (
                         <li key={item.label}>
-                          <Link href={item.url} onClick={closeMenu}>
-                            {item.label}
-                          </Link>
+                          <Link href={item.url}>{item.label}</Link>
                         </li>
                       ))}
                     </ul>
