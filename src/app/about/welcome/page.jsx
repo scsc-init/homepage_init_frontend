@@ -29,13 +29,13 @@ export default async function Contact() {
               <a href={DISCORD_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 디스코드 서버 링크
               </a>
-                <CopyButton link = {DISCORD_INVITE_LINK} />
+              <CopyButton link={DISCORD_INVITE_LINK} />
             </h3>
             <h3>
               <a href={KAKAO_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 카카오톡 팀 채팅방
               </a>
-                <CopyButton link = {KAKAO_INVITE_LINK} />
+              <CopyButton link={KAKAO_INVITE_LINK} />
             </h3>
             <h3>{DEPOSIT_ACC}</h3>
 
