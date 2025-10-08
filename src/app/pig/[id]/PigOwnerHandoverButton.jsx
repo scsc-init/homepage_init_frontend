@@ -98,7 +98,7 @@ export default function PigOwnerHandoverButton({ pigId, canChange, isOwner, memb
                   key={m.id}
                   disabled={pending}
                   aria-busy={pending}
-                  className={m.id === owner ? "PigMemberMenu button" : "none"}
+                  className={m.id === owner ? 'PigMemberMenu button' : 'none'}
                   onClick={() => handoverOwner(m)}
                 >
                   To {m.name}

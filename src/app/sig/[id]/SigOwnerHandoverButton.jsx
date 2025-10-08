@@ -98,7 +98,7 @@ export default function SigOwnerHandoverButton({ sigId, canChange, isOwner, memb
                   key={m.id}
                   disabled={pending}
                   aria-busy={pending}
-                  className={m.id === owner ? "SigMemberMenu button" : "none"}
+                  className={m.id === owner ? 'SigMemberMenu button' : 'none'}
                   onClick={() => handoverOwner(m)}
                 >
                   To {m.name}
