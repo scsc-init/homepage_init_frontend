@@ -327,6 +327,66 @@ body {
   border-style: solid;
 }
 
+.SigMemberDropdown {
+  position: relative;
+}
+
+.SigMemberBtn {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.SigMemberBtn:hover {
+  background-color: var(--color-button-hover-bg);
+  transform: translateY(-1px);
+}
+
+.SigMemberMenu {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--color-text-subtle);
+  border-radius: 0.625rem;
+  overflow: hidden;
+   padding: 0.4rem 0.5rem;
+  z-index: 10;
+}
+
+.SigMemberMenu.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.SigMemberMenu button {
+  padding: 0.5rem 1rem;
+  background: transparent;  
+  border: none;
+  text-align: center;
+  color: var(--color-text-body);
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.15s ease;
+  border-radius: 0.625rem;
+}
+
+.SigMemberMenu button:hover {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
+}
+
+.fixed-width {
+  width: 7.5rem;
+  text-align: center;
+}
+
 @media (max-width: 560px) {
   .SigActionRow {
     flex-direction: column;

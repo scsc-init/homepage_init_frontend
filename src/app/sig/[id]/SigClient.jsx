@@ -6,6 +6,7 @@ import SigJoinLeaveButton from './SigJoinLeaveButton';
 import EditSigButton from './EditSigButton';
 import SigDeleteButton from './SigDeleteButton';
 import SigMembers from './SigMembers';
+import SigLeaderChangeButton from './SigLeaderChangeButton';
 import SigContents from './SigContents';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
@@ -91,6 +92,7 @@ export default function SigClient({ sig, members, articleId, sigId }) {
           <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />
         )}
         <EditSigButton sigId={sigId} canEdit={canEdit} />
+        <SigLeaderChangeButton sigId={sigId} canChange={canEdit} isOwner={isOwner} members={members} owner={sig.owner} />
         <SigDeleteButton sigId={sigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="SigDivider" />
