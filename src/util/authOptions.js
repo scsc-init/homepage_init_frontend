@@ -13,7 +13,11 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account }) {
+      if (!account?.id_token) {
+        return '/us/login?error=default';
+      }
+
       if (!user?.email || !user?.name) {
         return '/us/login?error=no_information';
       }
@@ -28,6 +32,7 @@ export const authOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-secret': getApiSecret() },
           body: JSON.stringify({
+            id_token: account.id_token,
             email: user.email,
           }),
           cache: 'no-store',
@@ -59,6 +64,8 @@ export const authOptions = {
           maxAge: 60 * 60 * 24 * 7,
         });
 
+        user.registered = true;
+
         return true;
       }
 
@@ -67,6 +74,23 @@ export const authOptions = {
       }
 
       return '/us/login?error=default';
+    },
+    async jwt({ token, account, user }) {
+      if (user) {
+        token.registered = user.registered || false;
+      }
+      if (account) {
+        token.id_token = account.id_token || null;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.registered = token.registered || null;
+        session.id_token = token.id_token || null;
+      }
+      return session;
     },
   },
   pages: { signIn: '/us/login' },

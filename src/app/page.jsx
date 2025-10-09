@@ -1,5 +1,6 @@
 import './page.css';
 import { MainLogo } from './checkInAppBrowser';
+import RefreshJWTClient from './RefreshJWTClient';
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
           className="overlay-image right logo"
         />
       </div>
+      <RefreshJWTClient />
 
       {/* 메인 로고 */}
       {/* <div className="main-logo-wrapper">

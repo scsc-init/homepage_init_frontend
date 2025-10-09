@@ -98,6 +98,7 @@ export default function AuthClient({ session }) {
         status: 'pending',
         profile_picture: form.profile_picture_url,
         profile_picture_is_url: true,
+        id_token: session.id_token,
       }),
     });
     if (createRes.status !== 201) {
@@ -117,45 +118,18 @@ export default function AuthClient({ session }) {
 
     log('signup_create_success');
 
-    const loginRes = await fetch(`/api/user/login`, {
+    const loginRes = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ email }),
-    });
-    if (!loginRes.ok) {
-      log('signup_login_failed', { status: loginRes.status });
-      alert('로그인에 실패했습니다. 다시 시도해주세요.');
-      return;
-    }
-    let jwt;
-    try {
-      const data = await loginRes.json();
-      jwt = data.jwt;
-    } catch (error) {
-      log('signup_login_parse_failed', { error: String(error) });
-      alert('로그인 응답 처리에 실패했습니다. 다시 시도해주세요.');
-      return;
-    }
-
-    if (!jwt) {
-      log('signup_login_no_jwt');
-      alert('로그인 정보가 올바르지 않습니다. 다시 시도해주세요.');
-      return;
-    }
-
-    const cookieRes = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ jwt }),
+      body: JSON.stringify({ email, id_token: session.id_token }),
     });
 
-    if (cookieRes.ok) {
-      log('signup_complete');
+    if (loginRes.ok) {
+      log('login_complete');
       window.location.href = '/about/welcome';
     } else {
-      log('signup_cookie_failed', { status: cookieRes.status });
+      log('login_failed');
       alert('로그인에 실패했습니다. 다시 시도해주세요.');
       return;
     }

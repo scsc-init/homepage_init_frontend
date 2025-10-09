@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
@@ -54,9 +54,13 @@ export default function AuthClient() {
       default:
         alert('로그인이 실패했습니다. 다시 시도해주세요.');
     }
-    const url = new URL(window.location.href);
-    url.searchParams.delete('error');
-    router.replace(url.pathname + url.search);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('error');
+      router.replace(url.pathname + url.search);
+    } catch {
+      router.replace('/us/login');
+    }
   }, [error, router]);
 
   useEffect(() => {
@@ -98,11 +102,16 @@ export default function AuthClient() {
           <button
             type="button"
             className={styles['GoogleLoginBtn']}
-            onClick={() => {
+            onClick={async () => {
               if (authLoading) return;
               setAuthLoading(true);
               log('click_login_button', { provider: 'google' });
-              signIn('google', { callbackUrl: '/us/register' });
+              const res = await signIn('google', { redirect: false });
+              if (res?.ok) {
+                const session = await getSession();
+                if (session.registered) router.replace('/');
+                else router.replace('/us/register');
+              }
             }}
             disabled={inAppWarning || authLoading}
             aria-disabled={inAppWarning || authLoading}

@@ -11,7 +11,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function RegisterPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email || !session?.user?.name) redirect('/us/login');
+  if (!session?.user?.email || !session?.user?.name || !session?.id_token)
+    redirect('/us/login');
   const res = await fetch(`${getBaseUrl()}/api/user/login`, {
     method: 'POST',
     headers: {
@@ -20,6 +21,7 @@ export default async function RegisterPage() {
     },
     body: JSON.stringify({
       email: session.user.email,
+      id_token: session.id_token,
     }),
   });
   if (res.status === 200) {

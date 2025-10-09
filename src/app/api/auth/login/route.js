@@ -1,13 +1,26 @@
 import { NextResponse } from 'next/server';
+import { handleApiRequest } from '@/app/api/apiWrapper';
 
-export async function POST(req) {
-  const { jwt } = await req.json();
+export async function POST(request) {
+  const res = await handleApiRequest('POST', '/api/user/login', {}, request);
 
-  if (!jwt) return NextResponse.json({ error: 'Missing jwt' }, { status: 400 });
+  if (!res.ok) {
+    return NextResponse.json({ error: 'login failed' }, { status: 400 });
+  }
 
-  const res = NextResponse.json({ success: true });
+  let jwt;
+  try {
+    const data = await res.json();
+    jwt = data.jwt;
+  } catch {
+    return NextResponse.json({ error: 'login failed' }, { status: 400 });
+  }
 
-  res.cookies.set('app_jwt', jwt, {
+  if (!jwt) return NextResponse.json({ error: 'login failed' }, { status: 400 });
+
+  const response = NextResponse.json({ success: true });
+
+  response.cookies.set('app_jwt', jwt, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -15,5 +28,5 @@ export async function POST(req) {
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  return res;
+  return response;
 }
