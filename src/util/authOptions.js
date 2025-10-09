@@ -14,7 +14,7 @@ export const authOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
-      if (!user || !user.email || !user.name) {
+      if (!user?.email || !user?.name) {
         return '/us/login?error=no_information';
       }
 

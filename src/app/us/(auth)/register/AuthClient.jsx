@@ -2,7 +2,10 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import './page.css';
+import '@/styles/theme.css';
+import styles from '../page.module.css';
+import '@radix-ui/colors/red.css';
+import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
 
 function cleanName(raw) {
@@ -159,8 +162,8 @@ export default function AuthClient({ session }) {
   };
 
   return (
-    <div id="GoogleSignupContainer">
-      <div className="GoogleSignupCard">
+    <div id={styles['GoogleSignupContainer']}>
+      <div className={styles['GoogleSignupCard']}>
         {stage === 1 && (
           <div style={{ boxSizing: 'border-box', marginTop: '10vh' }}>
             <input
@@ -291,7 +294,7 @@ export default function AuthClient({ session }) {
                   ))}
               </select>
             </div>
-            <p className="PolicyLink agree">
+            <p className={`${styles.PolicyLink} ${styles.agree}`}>
               회원 가입 시{' '}
               <a
                 href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
@@ -304,7 +307,7 @@ export default function AuthClient({ session }) {
             </p>
             <button
               type="button"
-              className={`SignupBtn ${signupBusy ? 'is-disabled' : ''}`}
+              className={`${styles.SignupBtn} ${signupBusy ? styles['is-disabled'] : ''}`}
               onClick={async () => {
                 if (signupBusy) return;
                 setSignupBusy(true);

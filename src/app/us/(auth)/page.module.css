@@ -1,6 +1,5 @@
-@import '@radix-ui/colors/red.css';
-@import '@radix-ui/colors/green.css';
-@import '@/styles/theme.css';
+
+/* @import '@/styles/theme.css'; */
 
 #EmailNotice.error,
 #EmailCodeNotice.error,
@@ -258,33 +257,33 @@
   color: var(--red-10);
 }
 
-.dark .GoogleSignupCard {
+:global(.dark) .GoogleSignupCard {
   background-color: var(--executive-card-bg);
   box-shadow: 0 4px 20px var(--executive-card-shadow);
 }
 
-.dark .GoogleSignupCard h2 {
+:global(.dark) .GoogleSignupCard h2 {
   color: var(--color-text-body);
 }
 
-.dark .GoogleSignupCard input,
-.dark .GoogleSignupCard select {
+:global(.dark) .GoogleSignupCard input,
+:global(.dark) .GoogleSignupCard select {
   background-color: var(--color-surface-light);
   color: var(--color-text-body);
   border: 1px solid var(--color-button-border);
 }
 
-.dark .GoogleSignupCard input:disabled {
+:global(.dark) .GoogleSignupCard input:disabled {
   background-color: #3a3a3a;
   color: var(--color-text-subtle);
 }
 
-.dark .GoogleSignupCard button {
+:global(.dark) .GoogleSignupCard button {
   background-color: var(--color-button-bg);
   color: white;
 }
 
-.dark .GoogleSignupCard button:hover {
+:global(.dark) .GoogleSignupCard button:hover {
   background-color: #368aa0;
 }
 
@@ -292,20 +291,20 @@
   color: var(--color-text-subtle);
 }
 
-.dark .main-subtitle {
+:global(.dark) .main-subtitle {
   color: var(--color-text-subtle);
 }
 
-.dark .login-description {
+:global(.dark) .login-description {
   color: var(--color-text-body);
 }
 
-.dark .GoogleLoginBtn {
+:global(.dark) .GoogleLoginBtn {
   background: var(--color-surface);
   border: 1px solid var(--color-button-border);
   color: var(--color-text-body);
 }
-.dark .GoogleLoginBtn:hover {
+:global(.dark) .GoogleLoginBtn:hover {
   background: var(--color-surface-light);
 }
 
@@ -325,6 +324,6 @@
   text-decoration: underline;
 }
 
-.dark .agree {
+:global(.dark) .agree {
   color: var(--color-surface-light);
 }

@@ -4,7 +4,10 @@
 import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import './page.css';
+import '@radix-ui/colors/red.css';
+import '@radix-ui/colors/green.css';
+import '@/styles/theme.css';
+import styles from '../page.module.css';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -78,19 +81,23 @@ export default function AuthClient() {
   }, []);
 
   return (
-    <div id="GoogleSignupContainer">
-      <div className="GoogleSignupCard">
-        <div className="main-logo-wrapper__login">
-          <img src="/main/main-logo.png" alt="Main Logo" className="main-logo__login logo" />
-          <div className="main-subtitle__login">
+    <div id={styles['GoogleSignupContainer']}>
+      <div className={styles['GoogleSignupCard']}>
+        <div className={styles['main-logo-wrapper__login']}>
+          <img
+            src="/main/main-logo.png"
+            alt="Main Logo"
+            className={`${styles['main-logo__login']} logo`}
+          />
+          <div className={styles['main-subtitle__login']}>
             Seoul National University Computer Study Club
           </div>
         </div>
-        <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
-        <div className="google-signin-button-wrapper">
+        <p className={styles['login-description']}>SNU 구글 계정으로 로그인/회원가입</p>
+        <div className={styles['google-signin-button-wrapper']}>
           <button
             type="button"
-            className="GoogleLoginBtn"
+            className={styles['GoogleLoginBtn']}
             onClick={() => {
               if (authLoading) return;
               setAuthLoading(true);
@@ -100,7 +107,7 @@ export default function AuthClient() {
             disabled={inAppWarning || authLoading}
             aria-disabled={inAppWarning || authLoading}
           >
-            <span className="GoogleIcon" aria-hidden="true">
+            <span className={styles['GoogleIcon']} aria-hidden="true">
               <svg viewBox="0 0 48 48">
                 <path d="M24 9.5c3.7 0 7 1.3 9.6 3.8l6.4-6.4C36.3 3 30.6 1 24 1 14.7 1 6.7 6.3 2.9 14.1l7.9 6.1C12.4 14.9 17.7 9.5 24 9.5z" />
                 <path d="M46.5 24c0-1.6-.2-3.1-.5-4.5H24v9h12.6c-.5 2.7-2.1 5-4.5 6.5l7.1 5.5C43.9 36.9 46.5 30.9 46.5 24z" />
@@ -108,10 +115,10 @@ export default function AuthClient() {
                 <path d="M24 47c6.5 0 12.1-2.1 16.1-5.8l-7.1-5.5c-2 1.3-4.6 2.1-9 2.1-6.3 0-11.6-5.4-13.2-10.2l-7.9 6.1C6.7 41.7 14.7 47 24 47z" />
               </svg>
             </span>
-            <span className="GoogleLoginText">Google 계정으로 로그인</span>
+            <span className={styles['GoogleLoginText']}>Google 계정으로 로그인</span>
           </button>
           {inAppWarning && (
-            <p className="InAppWarning">
+            <p className={styles['InAppWarning']}>
               인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로 다시 열어주세요.
             </p>
           )}
