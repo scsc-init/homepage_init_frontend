@@ -332,6 +332,9 @@ body {
 }
 
 .SigMemberBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   padding: 0.6rem 0.8rem;
@@ -340,6 +343,7 @@ body {
   cursor: pointer;
   border: none;
   transition: background-color 0.2s ease;
+  min-width: 0;
 }
 
 .SigMemberBtn:hover {
@@ -348,7 +352,7 @@ body {
 }
 
 .SigMemberMenu {
-  display: none;
+  display: flex;
   position: absolute;
   top: 110%;
   left: 0;
@@ -366,6 +370,9 @@ body {
 }
 
 .SigMemberMenu button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   background: transparent;
   border: none;
@@ -393,6 +400,14 @@ body {
     align-items: stretch;
   }
   .SigButton {
+    width: 100%;
+    max-width: 100%;
+  }
+  .SigMemberBtn {
+    width: 100%;
+    max-width: 100%;
+  }
+  .SigMemberMenu {
     width: 100%;
     max-width: 100%;
   }
