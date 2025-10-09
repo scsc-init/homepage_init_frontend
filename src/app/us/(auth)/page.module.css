@@ -288,7 +288,7 @@
   color: var(--color-text-subtle);
 }
 
-:global(.dark) .main-subtitle {
+:global(.dark) .main-subtitle__login {
   color: var(--color-text-subtle);
 }
 
