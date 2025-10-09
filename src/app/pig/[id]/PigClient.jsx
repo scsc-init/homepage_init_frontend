@@ -92,13 +92,9 @@ export default function PigClient({ pig, members, articleId, pigId }) {
           <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
         )}
         <EditPigButton pigId={pigId} canEdit={canEdit} />
-        <PigOwnerHandoverButton
-          pigId={pigId}
-          canChange={canEdit}
-          isOwner={isOwner}
-          members={members}
-          owner={pig.owner}
-        />
+        {isOwner || (typeof me?.role === 'number' && me.role >= minExecutiveLevel) ? (
+          <PigOwnerHandoverButton pigId={pigId} members={members} owner={pig.owner} />
+        ) : null}
         <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="PigDivider" />

@@ -3,23 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-export default function PigOwnerHandoverButton({ pigId, canChange, isOwner, members, owner }) {
+export default function PigOwnerHandoverButton({ pigId, members, owner }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
   const memberData = Array.isArray(members) ? members : [];
   const count = memberData.length;
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
-  let newOwner = owner;
-
-  const ensureJwt = () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.replace('/us/login');
-    }
-    return jwt;
-  };
 
   const readError = async (res) => {
     const base = `HTTP ${res.status}`;
@@ -49,25 +39,19 @@ export default function PigOwnerHandoverButton({ pigId, canChange, isOwner, memb
   }, []);
 
   const handoverOwner = async (newowner) => {
-    const jwt = ensureJwt();
-    newOwner = newowner.id;
-    if (!jwt) return;
+    const newOwner = newowner.id;
     if (!window.confirm('정말 양도하시겠습니까?')) return;
     try {
       setPending(true);
-      const res = await fetch(
-        isOwner ? `/api/pig/${pigId}/handover` : `/api/pig/${pigId}/handover`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-jwt': jwt,
-          },
-          body: JSON.stringify({
-            new_owner: newOwner,
-          }),
+      const res = await fetch(`/api/pig/${pigId}/handover`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          new_owner: newOwner,
+        }),
+      });
 
       if (res.ok) {
         alert('PIG장 양도 성공!');
@@ -82,7 +66,7 @@ export default function PigOwnerHandoverButton({ pigId, canChange, isOwner, memb
     }
   };
 
-  return canChange ? (
+  return (
     <div className="PigMemberDropdown" ref={dropdownRef}>
       <button className="PigMemberBtn" onClick={() => setOpen((prev) => !prev)}>
         {'피그장 양도 ▼'}
@@ -109,5 +93,5 @@ export default function PigOwnerHandoverButton({ pigId, canChange, isOwner, memb
         </div>
       )}
     </div>
-  ) : null;
+  );
 }

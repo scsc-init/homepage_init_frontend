@@ -92,13 +92,9 @@ export default function SigClient({ sig, members, articleId, sigId }) {
           <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />
         )}
         <EditSigButton sigId={sigId} canEdit={canEdit} />
-        <SigOwnerHandoverButton
-          sigId={sigId}
-          canChange={canEdit}
-          isOwner={isOwner}
-          members={members}
-          owner={sig.owner}
-        />
+        {isOwner || (typeof me?.role === 'number' && me.role >= minExecutiveLevel) ? (
+          <SigOwnerHandoverButton sigId={sigId} members={members} owner={sig.owner} />
+        ) : null}
         <SigDeleteButton sigId={sigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="SigDivider" />
