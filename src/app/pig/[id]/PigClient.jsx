@@ -4,6 +4,7 @@ import PigJoinLeaveButton from './PigJoinLeaveButton';
 import EditPigButton from './EditPigButton';
 import PigDeleteButton from './PigDeleteButton';
 import PigMembers from './PigMembers';
+import PigOwnerHandoverButton from './PigOwnerHandoverButton';
 import PigContents from './PigContents';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 
@@ -27,6 +28,9 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
           <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
         )}
         <EditPigButton pigId={pigId} canEdit={canEdit} />
+        {isOwner ? (
+          <PigOwnerHandoverButton pigId={pigId} members={members} owner={pig.owner} />
+        ) : null}
         <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="PigDivider" />

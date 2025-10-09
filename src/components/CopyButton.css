@@ -11,3 +11,8 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+.invite-link-copy:focus {
+  outline: 2px solid var(--color-button-bg);
+  outline-offset: 2px;
+}
