@@ -7,7 +7,6 @@ export default function PigOwnerHandoverButton({ pigId, members, owner }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
   const memberData = Array.isArray(members) ? members : [];
-  const count = memberData.length;
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -73,21 +72,22 @@ export default function PigOwnerHandoverButton({ pigId, members, owner }) {
       </button>
       {open && (
         <div className="PigMemberMenu open fixed-width">
-          {count <= 1 ? (
+          {memberData.filter((m) => m.id !== owner).length === 0 ? (
             <button onClick={() => setOpen((prev) => !prev)}>인원 없음</button>
           ) : (
             <ul className="PigMemberList">
-              {memberData.map((m) => (
-                <button
-                  key={m.id}
-                  disabled={pending}
-                  aria-busy={pending}
-                  className={m.id === owner ? 'PigMemberMenu button' : 'none'}
-                  onClick={() => handoverOwner(m)}
-                >
-                  To {m.name}
-                </button>
-              ))}
+              {memberData
+                .filter((m) => m.id !== owner)
+                .map((m) => (
+                  <button
+                    key={m.id}
+                    disabled={pending}
+                    aria-busy={pending}
+                    onClick={() => handoverOwner(m)}
+                  >
+                    To {m.name}
+                  </button>
+                ))}
             </ul>
           )}
         </div>

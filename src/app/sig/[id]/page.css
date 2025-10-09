@@ -352,7 +352,7 @@ body {
 }
 
 .SigMemberMenu {
-  display: flex;
+  display: none;
   position: absolute;
   top: 110%;
   left: 0;
