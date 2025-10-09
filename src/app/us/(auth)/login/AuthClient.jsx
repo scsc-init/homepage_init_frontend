@@ -106,12 +106,7 @@ export default function AuthClient() {
               if (authLoading) return;
               setAuthLoading(true);
               log('click_login_button', { provider: 'google' });
-              const res = await signIn('google', { redirect: false });
-              if (res?.ok) {
-                const session = await getSession();
-                if (session.registered) router.replace('/');
-                else router.replace('/us/register');
-              }
+              await signIn('google', { callbackUrl: '/us/login/callback' });
             }}
             disabled={inAppWarning || authLoading}
             aria-disabled={inAppWarning || authLoading}
