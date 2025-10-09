@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
+import { cookies } from 'next/headers';
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions = {
   session: { strategy: 'jwt' },
   providers: [
     Google({
@@ -14,14 +14,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, account }) {
       if (account?.provider === 'google' && token?.email) {
         try {
-          const res = await fetch(`${process.env.NEXTAUTH_URL}/api/user/login`, {
+          const res = await fetch('/api/user/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: token.email }),
+            cache: 'no-store',
           });
           if (res.status === 200) {
             const data = await res.json();
-            token.appJwt = data.jwt;
+            cookies().set('app_jwt', data.jwt, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              path: '/',
+              maxAge: 60 * 60 * 24 * 7,
+            });
             token.signupRequired = false;
           } else if (res.status === 404) {
             token.signupRequired = true;
@@ -31,9 +38,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      if (token?.appJwt) session.appJwt = token.appJwt;
       session.signupRequired = Boolean(token?.signupRequired);
       return session;
     },
   },
-});
+  events: {},
+};

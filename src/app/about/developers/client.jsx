@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 const executives = [
   {
     name: '강명석',
@@ -20,7 +20,7 @@ const executives = [
     name: '박성현',
     role: '프론트',
     image: '/devs/psh.jpg',
-    description: '카와이한 여고생쨩',
+    description: '아주아주 귀여운 여고생',
   },
   {
     name: '황민기',
@@ -40,20 +40,21 @@ const executives = [
     image: '/devs/yyw.jpg',
     description: '고능',
   },
+  {
+    name: '박상혁(Ethan)',
+    role: '백엔드, 프론트엔드',
+    image: '/devs/psh.jpg',
+    description: 'SCSC 막스 베르슈타펜',
+  },
 ];
 export default function ExecutivesClient() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const total = executives.length;
   const autoRef = useRef();
 
   const prev = () => {
     setCenterIndex((prev) => (prev - 1 + total) % total);
-  };
-
-  const next = () => {
-    setCenterIndex((prev) => (prev + 1) % total);
   };
 
   useEffect(() => {
@@ -66,6 +67,10 @@ export default function ExecutivesClient() {
   }, []);
 
   useEffect(() => {
+    const total = executives.length;
+    const next = () => {
+      setCenterIndex((prev) => (prev + 1) % total);
+    };
     if (!hovered && !isMobile) {
       autoRef.current = setInterval(() => {
         next();

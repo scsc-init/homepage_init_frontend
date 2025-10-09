@@ -1,4 +1,3 @@
-// app/article/[id]/page.jsx
 'use client';
 
 import ReactMarkdown from 'react-markdown';
@@ -24,22 +23,23 @@ export default function ArticleDetail({ params }) {
   const { id } = params;
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
     const loadAll = async () => {
       try {
         const [contentRes, commentsRes, userRes] = await Promise.all([
-          fetch(`/api/article/${id}`, { headers: { 'x-jwt': jwt } }),
-          fetch(`/api/comments/${id}`, { headers: { 'x-jwt': jwt } }),
-          fetch(`/api/user/profile`, { headers: { 'x-jwt': jwt } }),
+          fetch(`/api/article/${id}`),
+          fetch(`/api/comments/${id}`),
+          fetch(`/api/user/profile`),
         ]);
+
+        if (userRes.status === 401) {
+          router.push('/us/login');
+          return;
+        }
         if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
           setIsError(true);
           return;
         }
+
         const [articleJson, commentsJson, userJson] = await Promise.all([
           contentRes.json(),
           commentsRes.json(),
@@ -73,17 +73,9 @@ export default function ArticleDetail({ params }) {
 
   const handleDelete = async () => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, {
-        method: 'POST',
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/us/login');
@@ -102,7 +94,7 @@ export default function ArticleDetail({ params }) {
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
-      <p className="SigInfo">작성일: {utc2kst(new Date(article.created_at))}</p>
+      <p className="SigInfo">작성일: {utc2kst(article.created_at)}</p>
 
       {isAuthor && (
         <div className={`SigActionRow ${isDeleting ? 'is-busy' : ''}`}>
@@ -131,14 +123,16 @@ export default function ArticleDetail({ params }) {
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw, rehypeHighlight]}
           components={{
-            h1: ({ node, ...props }) => <h1 className="mdx-h1" {...props} />,
-            h2: ({ node, ...props }) => <h2 className="mdx-h2" {...props} />,
-            p: ({ node, ...props }) => <p className="mdx-p" {...props} />,
-            li: ({ node, ...props }) => <li className="mdx-li" {...props} />,
-            code: ({ node, ...props }) => <code className="mdx-inline-code" {...props} />,
-            pre: ({ node, ...props }) => <pre className="mdx-pre" {...props} />,
-            img: ({ node, ...props }) => <img className="mdx-img" {...props} />,
-            table: ({ node, ...props }) => (
+            h1: ({ _node, ...props }) => <h1 className="mdx-h1" {...props} />,
+            h2: ({ _node, ...props }) => <h2 className="mdx-h2" {...props} />,
+            p: ({ _node, ...props }) => <p className="mdx-p" {...props} />,
+            li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
+            code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
+            pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
+            img: ({ _node, ...props }) => (
+              <img className="mdx-img" {...props} alt="article image" />
+            ),
+            table: ({ _node, ...props }) => (
               <div className="mdx-table-wrap">
                 <table {...props} />
               </div>

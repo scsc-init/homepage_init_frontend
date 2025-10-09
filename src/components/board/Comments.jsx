@@ -43,11 +43,9 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return alert('로그인이 필요합니다.');
     const res = await fetch('/api/comments/create', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         article_id: Number(articleId),
         parent_id: comment.id,
@@ -64,19 +62,17 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
   };
 
   const handleDeleteReply = async () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return alert('로그인이 필요합니다.');
     if (userId === comment.author_id) {
       const res = await fetch(`/api/comments/${comment.id}/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.status === 204) onReplySubmit();
       else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
     } else {
       const res = await fetch(`/api/comments/${comment.id}/executive/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.status === 204) onReplySubmit();
       else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
@@ -148,16 +144,12 @@ export default function Comments({ articleId, initialComments, user }) {
   }, []);
 
   const fetchComments = async () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
     try {
-      const res = await fetch(`/api/comments/${articleId}`, {
-        headers: { 'x-jwt': jwt },
-      });
+      const res = await fetch(`/api/comments/${articleId}`);
+      if (res.status === 401) {
+        router.push('/us/login');
+        return;
+      }
       if (!res.ok) {
         setIsError(true);
         return;
@@ -171,16 +163,10 @@ export default function Comments({ articleId, initialComments, user }) {
 
   const submitNew = async () => {
     if (!newContent.trim()) return;
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
     try {
       const res = await fetch('/api/comments/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-jwt': jwt },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           article_id: Number(articleId),
           parent_id: null,
@@ -191,6 +177,9 @@ export default function Comments({ articleId, initialComments, user }) {
         setNewContent('');
         setShowNew(false);
         await fetchComments();
+      } else if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
       } else {
         alert('댓글 작성 실패: ' + (await readErrorText(res)));
       }

@@ -6,9 +6,7 @@ import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
 
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), {
-  ssr: false,
-});
+const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
 export default function CreateBoardArticleClient({ boardInfo }) {
   const {
@@ -18,10 +16,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: {
-      title: '',
-      editor: '',
-    },
+    defaultValues: { title: '', editor: '' },
   });
 
   const router = useRouter();
@@ -30,12 +25,18 @@ export default function CreateBoardArticleClient({ boardInfo }) {
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
+    const check = async () => {
+      try {
+        const res = await fetch(`/api/user/profile`, { cache: 'no-store' });
+        if (res.status === 401) {
+          alert('로그인이 필요합니다.');
+          router.push('/us/login');
+        }
+      } catch {
+        router.push('/us/login');
+      }
+    };
+    check();
   }, [router]);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       }
     };
 
-    const handleRouteChange = (url) => {
+    const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
         const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
@@ -63,20 +64,16 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty]);
+  }, [router, isDirty]);
 
   const onSubmit = async (data) => {
     if (submitting) return;
-    const jwt = localStorage.getItem('jwt');
     setSubmitting(true);
 
     try {
       const res = await fetch(`/api/article/create`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-jwt': jwt,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
@@ -87,6 +84,9 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       if (res.status === 201) {
         alert('게시글 작성 완료!');
         router.push(`/board/${boardInfo.id}`);
+      } else if (res.status === 401) {
+        alert('다시 로그인해주세요.');
+        router.push('/us/login');
       } else {
         const err = await res.json();
         throw new Error('작성 실패: ' + (err.detail ?? JSON.stringify(err)));

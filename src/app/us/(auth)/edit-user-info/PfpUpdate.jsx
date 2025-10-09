@@ -25,25 +25,20 @@ export default function PfpUpdate() {
   };
 
   const handleSubmit = async () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      alert('로그인이 필요합니다.');
-      router.push('/us/login');
-      return;
-    }
-
     if (mode === 'url' && url) {
       const res = await fetch('/api/user/update', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-jwt': jwt,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile_picture: url,
           profile_picture_is_url: true,
         }),
       });
+      if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
+        return;
+      }
       alert(res.status === 204 ? '변경 완료' : `변경 실패`);
       router.push('/about/my-page');
     } else if (mode === 'file' && file) {
@@ -52,9 +47,13 @@ export default function PfpUpdate() {
 
       const res = await fetch('/api/user/update-pfp-file', {
         method: 'POST',
-        headers: { 'x-jwt': jwt },
         body: form,
       });
+      if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        router.push('/us/login');
+        return;
+      }
       alert(res.status === 204 ? '변경 완료' : `변경 실패`);
       router.push('/about/my-page');
     }

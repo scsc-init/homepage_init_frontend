@@ -1,7 +1,8 @@
+// src/app/us/login/AuthClient.jsx
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import './page.css';
 import * as validator from './validator';
@@ -41,13 +42,18 @@ function log(event, data = {}) {
   } catch {}
 }
 
-async function onAuthFail() {
-  try {
-    localStorage.removeItem('jwt');
-  } catch {}
-  try {
-    await signOut({ redirect: false });
-  } catch {}
+async function wait(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+async function ensureCookieReady() {
+  for (let i = 0; i < 6; i++) {
+    try {
+      const r = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
+      if (r.ok) return true;
+    } catch {}
+    await wait(150);
+  }
+  return false;
 }
 
 export default function LoginPage() {
@@ -70,16 +76,8 @@ export default function LoginPage() {
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
-  const router = useRouter();
   const [authLoading, setAuthLoading] = useState(false);
   const [signupBusy, setSignupBusy] = useState(false);
-
-  useEffect(() => {
-    log('page_view', {
-      path: typeof window !== 'undefined' ? window.location.pathname : '',
-      search: typeof window !== 'undefined' ? window.location.search : '',
-    });
-  }, []);
 
   useEffect(() => {
     let isInAppBrowser = false;
@@ -102,77 +100,74 @@ export default function LoginPage() {
     }
   }, []);
 
-  useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return;
-    const checkProfile = async () => {
-      try {
-        const resUser = await fetch(`/api/user/profile`, {
-          headers: { 'x-jwt': jwt },
-        });
-        if (resUser.status !== 200) {
-          log('auto_login_profile_check_failed', { status: resUser.status });
-          await onAuthFail();
-          return;
-        }
-        log('auto_login_redirect', { to: '/about/welcome' });
-        router.push('/about/welcome');
-      } catch (e) {
-        log('auto_login_profile_check_error', { error: String(e) });
-      }
-    };
-    checkProfile();
-  }, [router]);
+  const search = useSearchParams();
+  const isOAuthReturn = search.get('oauth') === '1';
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
-    if (session?.loginError) {
-      log('login_error', { source: 'session_flag' });
-      return;
-    }
-    if (session?.signupRequired) {
-      const email = (session?.user?.email || '').toLowerCase();
-      const cName = cleanName(session?.user?.name || '');
-      const image = session?.user?.image || '';
-      setForm((prev) => ({
-        ...prev,
-        email,
-        name: cName,
-        profile_picture_url: image,
-      }));
-      setStage(1);
-      log('signup_required', { email });
-      return;
-    }
-    if (session?.appJwt) {
-      (async () => {
-        try {
-          localStorage.setItem('jwt', session.appJwt);
-        } catch {}
-        try {
-          await signOut({ redirect: false });
-        } catch {}
-        log('redirect', { to: '/' });
+    (async () => {
+      let prof = null;
+      try {
+        prof = await fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' });
+      } catch {}
+      if (prof && prof.status === 200) {
         window.location.replace('/');
-      })();
-      return;
-    }
-    const hasJwt = !!localStorage.getItem('jwt');
-    if (!hasJwt) {
-      (async () => {
+        return;
+      }
+
+      if (status !== 'authenticated' || !isOAuthReturn) {
+        setStage(0);
+        return;
+      }
+
+      const email = (session?.user?.email || '').toLowerCase();
+      if (!email) return;
+      if (!validator.email(email)) {
+        alert('SNU 구글 계정(@snu.ac.kr)으로만 로그인할 수 있습니다.');
         try {
           await signOut({ redirect: false });
         } catch {}
-        log('cleared_session_due_to_missing_jwt');
-      })();
-    }
-  }, [status, session]);
+        setStage(0);
+        return;
+      }
+
+      const loginRes = await fetch('/api/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email }),
+      });
+
+      if (loginRes.ok) {
+        const { jwt } = await loginRes.json();
+        await fetch('/api/auth/app-jwt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ jwt }),
+        });
+        await ensureCookieReady();
+        window.location.replace('/');
+        return;
+      }
+
+      if (loginRes.status === 404) {
+        const cName = cleanName(session?.user?.name || '');
+        const image = session?.user?.image || '';
+        setForm((p) => ({ ...p, email, name: cName, profile_picture_url: image }));
+        setStage(1);
+        log('signup_required', { email });
+        return;
+      }
+
+      setStage(0);
+    })();
+  }, [status, session, isOAuthReturn]);
 
   useEffect(() => {
     if (stage !== 4) return;
     const fetchMajors = async () => {
       try {
-        const res = await fetch(`/api/majors`);
+        const res = await fetch(`/api/majors`, { credentials: 'include' });
         const data = await res.json();
         setMajors(data);
         log('majors_loaded', { count: Array.isArray(data) ? data.length : 0 });
@@ -188,9 +183,11 @@ export default function LoginPage() {
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
+
     const createRes = await fetch(`/api/user/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({
         email,
         name: form.name,
@@ -209,23 +206,31 @@ export default function LoginPage() {
         detail: createData?.detail || null,
       });
       alert(`유저 생성 실패: ${createData.detail}`);
-      router.push('/');
+      window.location.replace('/');
       return;
     }
+
     log('signup_create_success');
+
     const loginRes = await fetch(`/api/user/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ email }),
     });
-    const { jwt } = await loginRes.json();
-    try {
-      localStorage.setItem('jwt', jwt);
-      log('stored_app_jwt_after_signup');
-    } catch {
-      log('store_jwt_failed_after_signup');
+    if (!loginRes.ok) {
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
+      return;
     }
-    log('redirect', { to: '/about/welcome' });
+    const { jwt } = await loginRes.json();
+
+    await fetch('/api/auth/app-jwt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ jwt }),
+    });
+    await ensureCookieReady();
     window.location.replace('/about/welcome');
   };
 
@@ -234,9 +239,15 @@ export default function LoginPage() {
       <div className="GoogleSignupCard">
         {stage === 0 && (
           <div>
-            <div className="main-logo-wrapper">
-              <img src="/main/main-logo.png" alt="Main Logo" className="main-logo logo" />
-              <div className="main-subtitle">Seoul National University Computer Study Club</div>
+            <div className="main-logo-wrapper__login">
+              <img
+                src="/main/main-logo.png"
+                alt="Main Logo"
+                className="main-logo__login logo"
+              />
+              <div className="main-subtitle__login">
+                Seoul National University Computer Study Club
+              </div>
             </div>
             <p className="login-description">SNU 구글 계정으로 로그인/회원가입</p>
             <div className="google-signin-button-wrapper">
@@ -247,7 +258,11 @@ export default function LoginPage() {
                   if (authLoading) return;
                   setAuthLoading(true);
                   log('click_login_button', { provider: 'google' });
-                  signIn('google', { callbackUrl: '/us/login' }, { prompt: 'select_account' });
+                  signIn(
+                    'google',
+                    { callbackUrl: '/us/login?oauth=1' },
+                    { prompt: 'select_account' },
+                  );
                 }}
                 disabled={inAppWarning || authLoading}
                 aria-disabled={inAppWarning || authLoading}
@@ -282,10 +297,7 @@ export default function LoginPage() {
               이름: <strong>{form.name}</strong>
             </p>
             <button
-              onClick={() => {
-                log('click_stage1_next');
-                setStage(2);
-              }}
+              onClick={() => setStage(2)}
               style={{ width: '100%', boxSizing: 'border-box' }}
             >
               다음
@@ -319,16 +331,9 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const sid = `${form.student_id_year}${form.student_id_number}`;
-                log('click_stage2_next_attempt', { sid_length: sid.length });
-                validator.studentID(sid, (ok) => {
-                  if (ok) {
-                    log('stage2_valid');
-                    setStage(3);
-                  } else {
-                    log('stage2_invalid');
-                    alert('올바른 학번 형식이 아닙니다.');
-                  }
-                });
+                validator.studentID(sid, (ok) =>
+                  ok ? setStage(3) : alert('올바른 학번 형식이 아닙니다.'),
+                );
               }}
             >
               다음
@@ -372,18 +377,9 @@ export default function LoginPage() {
             <button
               onClick={() => {
                 const phone = `${form.phone1}${form.phone2}${form.phone3}`;
-                log('click_stage3_next_attempt', {
-                  phone_length: phone.length,
-                });
-                validator.phoneNumber(phone, (ok) => {
-                  if (ok) {
-                    log('stage3_valid');
-                    setStage(4);
-                  } else {
-                    log('stage3_invalid');
-                    alert('전화번호 형식이 올바르지 않습니다.');
-                  }
-                });
+                validator.phoneNumber(phone, (ok) =>
+                  ok ? setStage(4) : alert('전화번호 형식이 올바르지 않습니다.'),
+                );
               }}
             >
               다음
@@ -417,7 +413,6 @@ export default function LoginPage() {
                   ))}
               </select>
             </div>
-
             <p className="PolicyLink agree">
               회원 가입 시{' '}
               <a
@@ -436,22 +431,20 @@ export default function LoginPage() {
                 if (signupBusy) return;
                 setSignupBusy(true);
                 if (!college) {
-                  log('stage4_missing_college');
                   alert('단과대학을 선택하세요.');
                   setSignupBusy(false);
                   return;
                 }
                 if (!form.major_id) {
-                  log('stage4_missing_major');
                   alert('학과/학부를 선택하세요.');
                   setSignupBusy(false);
                   return;
                 }
-                log('click_signup_button', {
-                  college,
-                  major_id: form.major_id,
-                });
-                await handleSubmit();
+                try {
+                  await handleSubmit();
+                } finally {
+                  setSignupBusy(false);
+                }
               }}
               disabled={signupBusy}
               aria-disabled={signupBusy}
