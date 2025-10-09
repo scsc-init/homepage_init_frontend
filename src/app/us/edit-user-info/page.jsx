@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as validator from '../login/validator';
+import * as validator from '@/util/validator';
 import PfpUpdate from './PfpUpdate';
 import './page.css';
 import { oldboyLevel } from '@/util/constants';

@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import './page.css';
-import * as validator from './validator';
+import * as validator from '@/util/validator';
 
 function cleanName(raw) {
   if (!raw) return '';

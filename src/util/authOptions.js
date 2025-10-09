@@ -2,12 +2,7 @@ import { cookies } from 'next/headers';
 import Google from 'next-auth/providers/google';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
-
-function validate(email) {
-  if (process.env.SNU_EMAIL_CHECK === 'TRUE')
-    return email != undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email);
-  return true;
-}
+import * as validator from '@/util/validator';
 
 export const authOptions = {
   session: { strategy: 'jwt' },
@@ -23,7 +18,7 @@ export const authOptions = {
         return '/us/login?error=no_information';
       }
 
-      if (!validate(user.email)) {
+      if (process.env.SNU_EMAIL_CHECK === 'TRUE' && !validator.email(user.email)) {
         return '/us/login?error=invalid_email';
       }
 
