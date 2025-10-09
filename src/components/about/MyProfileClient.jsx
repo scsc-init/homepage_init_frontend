@@ -25,7 +25,7 @@ const USER_ROLE_MAP = {
 
 async function onAuthFail() {
   try {
-    await fetch('/api/auth/app-jwt', { method: 'DELETE', credentials: 'include' });
+    await fetch('/api/auth/logout', { method: 'POST' });
   } catch {}
   try {
     await signOut({ redirect: false });
@@ -98,10 +98,9 @@ export default function MyProfileClient() {
   }, [router]);
 
   const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/app-jwt', { method: 'DELETE', credentials: 'include' });
-    } catch {}
-    signOut({ callbackUrl: '/' });
+    await signOut({ redirect: false });
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/';
   };
 
   const handleEnroll = async () => {
