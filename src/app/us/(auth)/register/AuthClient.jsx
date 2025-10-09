@@ -98,13 +98,17 @@ export default function AuthClient({ session }) {
       }),
     });
     if (createRes.status !== 201) {
-      const createData = await createRes.json();
+      let createData;
+      try {
+        createData = await createRes.json();
+      } catch {
+        createData = { detail: '서버 응답을 처리할 수 없습니다.' };
+      }
       log('signup_create_failed', {
         status: createRes.status,
         detail: createData?.detail || null,
       });
-      alert(`유저 생성 실패: ${createData.detail}`);
-      window.location.replace('/');
+      alert(`유저 생성 실패: ${createData?.detail || '알 수 없는 오류가 발생했습니다.'}`);
       return;
     }
 
@@ -117,10 +121,25 @@ export default function AuthClient({ session }) {
       body: JSON.stringify({ email }),
     });
     if (!loginRes.ok) {
+      log('signup_login_failed', { status: loginRes.status });
       alert('로그인에 실패했습니다. 다시 시도해주세요.');
       return;
     }
-    const { jwt } = await loginRes.json();
+    let jwt;
+    try {
+      const data = await loginRes.json();
+      jwt = data.jwt;
+    } catch (error) {
+      log('signup_login_parse_failed', { error: String(error) });
+      alert('로그인 응답 처리에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    if (!jwt) {
+      log('signup_login_no_jwt');
+      alert('로그인 정보가 올바르지 않습니다. 다시 시도해주세요.');
+      return;
+    }
 
     const cookieRes = await fetch('/api/auth/login', {
       method: 'POST',
@@ -130,8 +149,10 @@ export default function AuthClient({ session }) {
     });
 
     if (cookieRes.ok) {
+      log('signup_complete');
       window.location.href = '/about/welcome';
     } else {
+      log('signup_cookie_failed', { status: cookieRes.status });
       alert('로그인에 실패했습니다. 다시 시도해주세요.');
       return;
     }

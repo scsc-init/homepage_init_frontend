@@ -22,17 +22,34 @@ export const authOptions = {
         return '/us/login?error=invalid_email';
       }
 
-      const res = await fetch(`${getBaseUrl()}/api/user/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-secret': getApiSecret() },
-        body: JSON.stringify({
-          email: user.email,
-        }),
-        cache: 'no-store',
-      });
+      let res;
+      try {
+        res = await fetch(`${getBaseUrl()}/api/user/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-secret': getApiSecret() },
+          body: JSON.stringify({
+            email: user.email,
+          }),
+          cache: 'no-store',
+        });
+      } catch (err) {
+        console.error('Backend login request failed:', err);
+        return '/us/login?error=default';
+      }
 
       if (res.status === 200) {
-        const data = await res.json();
+        let data;
+        try {
+          data = await res.json();
+        } catch (error) {
+          console.error('Failed to parse login response:', error);
+          return '/us/login?error=default';
+        }
+
+        if (!data.jwt) {
+          console.error('JWT missing in login response');
+          return '/us/login?error=default';
+        }
 
         cookies().set('app_jwt', data.jwt, {
           httpOnly: true,

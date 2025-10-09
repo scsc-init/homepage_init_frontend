@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req) {
   const { jwt } = await req.json();
 
-  if (!jwt) return NextResponse.json({ status: 400 });
+  if (!jwt) return NextResponse.json({ error: 'Missing jwt' }, { status: 400 });
 
   const res = NextResponse.json({ success: true });
 
