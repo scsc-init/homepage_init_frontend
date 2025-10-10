@@ -98,7 +98,7 @@ export default function AuthClient({ session }) {
         status: 'pending',
         profile_picture: form.profile_picture_url,
         profile_picture_is_url: true,
-        id_token: session.id_token,
+        hashToken: session.hashToken,
       }),
     });
     if (createRes.status !== 201) {
@@ -122,7 +122,7 @@ export default function AuthClient({ session }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ email, id_token: session.id_token }),
+      body: JSON.stringify({ email, hashToken: session.hashToken }),
     });
 
     if (loginRes.ok) {

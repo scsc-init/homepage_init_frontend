@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function RegisterPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email || !session?.user?.name || !session?.id_token)
+  if (!session?.user?.email || !session?.user?.name || !session?.hashToken)
     redirect('/us/login');
   const res = await fetch(`${getBaseUrl()}/api/user/login`, {
     method: 'POST',
@@ -21,7 +21,7 @@ export default async function RegisterPage() {
     },
     body: JSON.stringify({
       email: session.user.email,
-      id_token: session.id_token,
+      hashToken: session.hashToken,
     }),
   });
   if (res.status === 200) {
@@ -42,7 +42,7 @@ export default async function RegisterPage() {
     if (res.status === 204) console.log('봇 로그인 성공');
     else console.log(`봇 로그인 실패: ${await res.text()}`);
   };
-  await discordLogin();
+  discordLogin();
 
   return <AuthClient session={session} />;
 }

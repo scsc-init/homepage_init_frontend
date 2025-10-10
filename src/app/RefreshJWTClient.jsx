@@ -10,12 +10,12 @@ export default function RefreshJWTClient() {
   useEffect(() => {
     fetchMeClient().then(async (me) => {
       if (me) return;
-      if (session?.user?.email && session?.id_token) {
+      if (session?.user?.email && session?.hashToken) {
         const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ email: session.user.email, id_token: session.id_token }),
+          body: JSON.stringify({ email: session.user.email, hashToken: session.hashToken }),
         });
         if (!loginRes.ok) {
           await signOut({ redirect: false });
@@ -26,5 +26,5 @@ export default function RefreshJWTClient() {
         await fetch('/api/auth/logout', { method: 'POST' });
       }
     });
-  }, [session?.user?.email, session?.id_token]);
+  }, [session?.user?.email, session?.hashToken]);
 }

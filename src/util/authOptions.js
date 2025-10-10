@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import Google from 'next-auth/providers/google';
+import crypto from 'crypto';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
 import * as validator from '@/util/validator';
@@ -13,11 +14,7 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (!account?.id_token) {
-        return '/us/login?error=default';
-      }
-
+    async signIn({ user }) {
       if (!user?.email || !user?.name) {
         return '/us/login?error=no_information';
       }
@@ -27,12 +24,16 @@ export const authOptions = {
       }
 
       let res;
+      const hash = crypto
+        .createHmac('sha256', process.env.API_SECRET)
+        .update(String(user.email).toLowerCase())
+        .digest('hex');
       try {
         res = await fetch(`${getBaseUrl()}/api/user/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-secret': getApiSecret() },
           body: JSON.stringify({
-            id_token: account.id_token,
+            hashToken: hash,
             email: user.email,
           }),
           cache: 'no-store',
@@ -65,6 +66,7 @@ export const authOptions = {
         });
 
         user.registered = true;
+        user.hashToken = hash;
 
         return true;
       }
@@ -75,20 +77,18 @@ export const authOptions = {
 
       return '/us/login?error=default';
     },
-    async jwt({ token, account, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.registered = user.registered || false;
-      }
-      if (account) {
-        token.id_token = account.id_token || null;
+        token.hashToken = user.hashToken || null;
       }
       return token;
     },
 
     async session({ session, token }) {
       if (token) {
-        session.registered = token.registered || null;
-        session.id_token = token.id_token || null;
+        session.registered = token.registered || false;
+        session.hashToken = token.hashToken || null;
       }
       return session;
     },

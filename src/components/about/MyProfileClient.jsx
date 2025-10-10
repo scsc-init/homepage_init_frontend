@@ -73,12 +73,12 @@ export default function MyProfileClient() {
         const me = await fetchMeClient();
         if (me) {
           data = me;
-        } else if (session?.user?.email && session?.id_token) {
+        } else if (session?.user?.email && session?.hashToken) {
           const loginRes = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ email: session.user.email, id_token: session.id_token }),
+            body: JSON.stringify({ email: session.user.email, hashToken: session.hashToken }),
           });
           if (!loginRes.ok) {
             await onAuthFail();
