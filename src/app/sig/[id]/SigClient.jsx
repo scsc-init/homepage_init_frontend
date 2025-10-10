@@ -4,6 +4,7 @@ import SigJoinLeaveButton from './SigJoinLeaveButton';
 import EditSigButton from './EditSigButton';
 import SigDeleteButton from './SigDeleteButton';
 import SigMembers from './SigMembers';
+import SigOwnerHandoverButton from './SigOwnerHandoverButton';
 import SigContents from './SigContents';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 
@@ -27,6 +28,9 @@ export default function SigClient({ sig, members, articleContent, me, sigId }) {
           <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />
         )}
         <EditSigButton sigId={sigId} canEdit={canEdit} />
+        {isOwner ? (
+          <SigOwnerHandoverButton sigId={sigId} members={members} owner={sig.owner} />
+        ) : null}
         <SigDeleteButton sigId={sigId} canDelete={canEdit} isOwner={isOwner} />
       </div>
       <hr className="SigDivider" />

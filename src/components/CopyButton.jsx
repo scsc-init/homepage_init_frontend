@@ -6,6 +6,7 @@ export default function CopyButton(props) {
     <button
       onClick={() => navigator.clipboard.writeText(props.link)}
       className="invite-link-copy"
+      aria-label="초대 링크 복사"
     >
       🔗COPY
     </button>
