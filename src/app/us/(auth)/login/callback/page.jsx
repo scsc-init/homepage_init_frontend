@@ -9,7 +9,11 @@ export default function OAuthLanding() {
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status === 'loading') return;
+    if (status === 'unauthenticated') {
+      router.replace('/us/login');
+      return;
+    }
 
     if (session.registered) {
       router.replace('/');
