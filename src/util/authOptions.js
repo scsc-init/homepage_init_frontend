@@ -24,8 +24,13 @@ export const authOptions = {
       }
 
       let res;
+      const apiSecret = getApiSecret();
+      if (!apiSecret) {
+        console.error('API_SECRET is missing');
+        return '/us/login?error=default';
+      }
       const hash = crypto
-        .createHmac('sha256', process.env.API_SECRET)
+        .createHmac('sha256', apiSecret)
         .update(String(user.email).toLowerCase())
         .digest('hex');
       try {
