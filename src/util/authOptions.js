@@ -77,6 +77,7 @@ export const authOptions = {
       }
 
       if (res.status === 404) {
+        user.hashToken = hash;
         return true;
       }
 

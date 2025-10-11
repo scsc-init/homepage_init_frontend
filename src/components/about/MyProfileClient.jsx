@@ -62,12 +62,20 @@ function ArrowIcon() {
 }
 
 export default function MyProfileClient() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const load = async () => {
+      if (status === 'loading') return;
+
+      if (status === 'unauthenticated') {
+        await onAuthFail();
+        router.replace('/us/login');
+        return;
+      }
+
       try {
         let data;
         const me = await fetchMeClient();
@@ -80,7 +88,9 @@ export default function MyProfileClient() {
             credentials: 'include',
             body: JSON.stringify({ email: session.user.email, hashToken: session.hashToken }),
           });
-          if (!loginRes.ok) {
+          if (loginRes.ok) {
+            data = await fetchMeClient();
+          } else {
             await onAuthFail();
             router.replace('/us/login');
           }
@@ -100,7 +110,7 @@ export default function MyProfileClient() {
       }
     };
     load();
-  }, [router, session]);
+  }, [router, session, status]);
 
   const handleLogout = async () => {
     await onAuthFail();
