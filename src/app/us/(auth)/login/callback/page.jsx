@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function OAuthLanding() {
   const router = useRouter();
@@ -22,5 +23,5 @@ export default function OAuthLanding() {
     }
   }, [status, session, router]);
 
-  return <div>로그인 중…</div>;
+  return <LoadingSpinner />;
 }

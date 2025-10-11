@@ -1,9 +1,7 @@
-//이 파일은 사용하지 않는 것으로 보입니다. 다른 WithAuthorization.jsx가 존재하니 주의하세요.
-
-// src/components/WithAuthorization.jsx
 'use client';
 
 import { useEffect, useState } from 'react';
+import { fetchMeClient } from '@/util/fetchClientData';
 
 export default function WithAuthorization({ children }) {
   const [allowed, setAllowed] = useState(null);
@@ -11,21 +9,14 @@ export default function WithAuthorization({ children }) {
   useEffect(() => {
     let done = false;
     const check = async () => {
-      const jwt = localStorage.getItem('jwt');
-      if (!jwt) return setAllowed(false);
-
       try {
-        const res = await fetch(`/api/user/profile`, {
-          headers: { 'x-jwt': jwt },
-        });
+        const me = await fetchMeClient();
 
-        if (!res.ok) {
+        if (!me) {
           return setAllowed(false);
         }
 
-        const data = await res.json();
-
-        const access = typeof data.role === 'number' && data.role >= 500;
+        const access = typeof me.role === 'number' && me.role >= 500;
         if (!done) setAllowed(access);
       } catch (_err) {
         if (!done) setAllowed(false);
