@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
+import { fetchMeClient } from '@/util/fetchClientData';
 import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import './myProfile.css';
 
@@ -25,7 +26,7 @@ const USER_ROLE_MAP = {
 
 async function onAuthFail() {
   try {
-    await fetch('/api/auth/app-jwt', { method: 'DELETE', credentials: 'include' });
+    await fetch('/api/auth/logout', { method: 'POST' });
   } catch {}
   try {
     await signOut({ redirect: false });
@@ -61,28 +62,42 @@ function ArrowIcon() {
 }
 
 export default function MyProfileClient() {
+  const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const load = async () => {
+      if (status === 'loading') return;
+
+      if (status === 'unauthenticated') {
+        await onAuthFail();
+        router.replace('/us/login');
+        return;
+      }
+
       try {
-        const r = await fetch('/api/user/profile', {
-          credentials: 'include',
-          cache: 'no-store',
-        });
-        if (!r.ok) {
+        let data;
+        const me = await fetchMeClient();
+        if (me) {
+          data = me;
+        } else if (session?.user?.email && session?.hashToken) {
+          const loginRes = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email: session.user.email, hashToken: session.hashToken }),
+          });
+          if (loginRes.ok) {
+            data = await fetchMeClient();
+          } else {
+            await onAuthFail();
+            router.replace('/us/login');
+          }
+        } else {
           await onAuthFail();
           router.replace('/us/login');
-          return;
         }
-        const ct = r.headers.get('content-type') || '';
-        if (!ct.includes('application/json')) {
-          await onAuthFail();
-          router.replace('/us/login');
-          return;
-        }
-        const data = await r.json();
         if (!data || !data.email) {
           await onAuthFail();
           router.replace('/us/login');
@@ -95,13 +110,11 @@ export default function MyProfileClient() {
       }
     };
     load();
-  }, [router]);
+  }, [router, session, status]);
 
   const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/app-jwt', { method: 'DELETE', credentials: 'include' });
-    } catch {}
-    signOut({ callbackUrl: '/' });
+    await onAuthFail();
+    window.location.href = '/';
   };
 
   const handleEnroll = async () => {

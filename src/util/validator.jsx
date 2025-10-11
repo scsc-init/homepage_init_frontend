@@ -15,7 +15,7 @@ export function name(name, then) {
 }
 
 export function phoneNumber(phoneNumber, then) {
-  then && then(phoneNumber != undefined && /^01[016789][0-9]{3,4}[0-9]{4}$/.test(phoneNumber));
+  then && then(phoneNumber != undefined && /^010\d{8}$/.test(phoneNumber));
 }
 
 export function studentID(studentID, then) {

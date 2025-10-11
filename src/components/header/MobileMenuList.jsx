@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
-import { fetchUserClient } from '@/util/fetchClientData';
+import { fetchMeClient } from '@/util/fetchClientData';
 
 function MobileExecutiveButton() {
   const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
-    fetchUserClient().then(setUser);
+    fetchMeClient().then(setUser);
   }, []);
 
   useEffect(() => {

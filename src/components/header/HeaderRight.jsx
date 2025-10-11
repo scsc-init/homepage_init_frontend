@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { fetchUserClient } from '@/util/fetchClientData';
+import { fetchMeClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
 
 export default function HeaderRight() {
@@ -10,7 +10,7 @@ export default function HeaderRight() {
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
-    fetchUserClient().then(setUser);
+    fetchMeClient().then(setUser);
   }, []);
 
   useEffect(() => {
