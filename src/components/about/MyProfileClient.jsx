@@ -216,6 +216,15 @@ export default function MyProfileClient() {
                 </span>
                 <span className="btn-label">입금안내</span>
               </button>
+              <button
+                onClick={() => router.push('/us/edit-user-info')}
+                className="action-button"
+              >
+                <span className="btn-icon">
+                  <ArrowIcon />
+                </span>
+                <span className="btn-label">정보수정</span>
+              </button>
               <button onClick={handleLogout} className="logout-button" aria-label="로그아웃">
                 <span className="material-icons">logout</span>
               </button>
