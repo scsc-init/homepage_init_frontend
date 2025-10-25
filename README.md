@@ -5,18 +5,38 @@ Google OAuth 2.0 기반 사용자 인증, SIG/PIG 생성, 게시판 기능 및 �
 
 > 작성일: 2025-05-12
 >
-> 최신개정일 : 2025-10-05
+> 최신개정일 : 2025-10-26
 >
 > 작성자 : 이한경 윤영우 강명석 박성현
 >
-> 최신개정자 : 강명석
+> 최신개정자 : 박성현
 
 ---
 
-## 브랜치 설명
+## 🧭 Branch Management
 
-- main: 배포된 코드를 저장하며 버전 별로 태그가 붙어 있습니다.
-- develop(default): 개발 중인 코드를 저장합니다.
+브랜치 관리는 **git flow**를 지향합니다. 운영되는 브랜치는 다음과 같습니다.
+
+- **main**: 배포된 코드. 각 커밋에는 버전 태그(`vX.Y`)가 붙습니다.
+- **develop (default)**: 개발 중인 코드. **squash merge 전용**입니다.
+
+### 작업 브랜치 규칙
+
+- 브랜치 이름은 반드시 `feature/` 접두어를 사용합니다.  
+  예) `feature/sig-create`, `feature/fund-apply-fix`
+- PR 제목에는 **GitHub 이모지 + 요약 문장**을 사용합니다.  
+  예) `✨ SIG 생성 폼 검증 추가`
+- PR 본문에는 반드시 관련 이슈를 `#123` 형태로 언급합니다.
+- 병합은 **Squash and merge**로만 진행합니다.
+- 릴리스 시 `develop → main` 병합 후 태그(`vX.Y.Z`)를 추가합니다.
+
+```bash
+git fetch
+git checkout -b feature/<slug> origin/develop
+# 작업...
+git push -u origin feature/<slug>
+# → develop 브랜치로 PR 생성
+```
 
 ---
 
@@ -69,7 +89,19 @@ src/
 | `NEXT_PUBLIC_DISCORD_INVITE_LINK` | 디스코드 초대 링크                                                                          |
 | `NEXT_PUBLIC_KAKAO_INVITE_LINK`   | 카카오톡 초대 링크                                                                          |
 
-## 설치 및 실행 방법
+```env
+BACKEND_URL=http://localhost:8080
+API_SECRET=some-secret-code
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+NEXTAUTH_SECRET=$(openssl rand -base64 32)
+NEXTAUTH_URL=http://localhost:3000
+SNU_EMAIL_CHECK=TRUE
+```
+
+---
+
+## 🧩 Install & Execute
 
 ### 1. 레포지토리 클론
 
@@ -80,9 +112,7 @@ git clone https://github.com/scsc-init/homepage_init_frontend.git
 ### 2. 패키지 설치
 
 ```bash
-npm install
-npm install react-swipeable
-
+npm ci
 ```
 
 ### 3. `.env.local` 설정
@@ -114,7 +144,7 @@ npm run dev
 
 ---
 
-## Google Auth 2.0 관리
+## 🔐 Authentication: Google OAuth 2.0
 
 - **scsc 구글 계정 또는 공식 도메인이 변경될 경우 auth 관련 코드를 수정할 필요가 있습니다.**
 
@@ -125,7 +155,7 @@ npm run dev
 - 보통 로컬 개발환경인 경우 http://localhost:3000/api/auth/callback/google를, 배포 환경인 경우 https://(your-domain)/api/auth/callback/google을 입력하면 됩니다.
 - 발급된 Client ID를 복사해주세요.
 
-## next auth 설정
+### next auth 설정
 
 - 아래 내용을 `.env.local`에 추가하십시오.
 
@@ -140,6 +170,103 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 - nextauth secret은 임의로 정한 뒤, 배포할 때 환경변수 등록하시면 됩니다.
 - nextauth url은 도메인 받아서 넣으시면 됩니다.
 
+### 인증 흐름
+
+1. 사용자가 Google 로그인
+2. `AuthClient.jsx` → `/api/auth/[...nextauth]/route.js` 호출
+3. 성공 시 JWT 세션 쿠키 생성
+
+---
+
+## 🧱 Configurations
+
+### Lint & Prettier
+
+> 코드 스타일과 가독성 개선을 위해 사용합니다.
+
+- `.prettierrc`:코드 포맷터입니다.
+- `pre-commit`:포맷 검증에 통과하지 못한 코드의 커밋을 방지합니다.
+- `ESLint`:React Hooks 규칙 강제, unused import 금지, import 정렬 적용에 사용합니다.
+
+아래 명령어를 실행해 사용해주세요.
+
+```bash
+#1 Husky 설치(최초 1회)
+npx husky install
+
+#2 포맷
+npm run format         # Prettier로 전체 포맷
+npm run format:check   # 포맷 검증만(변경 없음)
+
+#3 lint
+npm run lint
+npm run lint:fix
+```
+
+### JSDoc 규칙
+
+- 주석 작성은 **JSDoc** 양식에 따라주세요.
+- 예시:
+
+```js
+/**
+ * @param {string} url Source image URL
+ * @returns {string} URL with high-resolution parameters applied when applicable
+ */
+```
+
+---
+
+## 🧮 utils/constants.jsx
+
+| Key                       | 예시 값                                   | 설명                                        |
+| ------------------------- | ----------------------------------------- | ------------------------------------------- |
+| `minExecutiveLevel`       | 500                                       | 운영진 권한 기준값                          |
+| `oldboyLevel`             | 400                                       | 졸업생 권한                                 |
+| `DEPOSIT_ACC`             | 국민은행 942902-02-054136 (강명석)        | 입금 계좌                                   |
+| `DISCORD_INVITE_LINK`     | discord.gg/SmXFDxA7XE                     | 디스코드 초대 링크                          |
+| `KAKAO_INVITE_LINK`       | invite.kakao.com/tc/...                   | 카카오톡 초대 링크                          |
+| `hideFooterRoutes`        | `['/', '/us/login', '/about/my-page']`    | 푸터를 숨길 라우트                          |
+| `presidentEmails`         | `[sungjae0506@snu.ac.kr]`                 | 회장 이메일                                 |
+| `excludedExecutiveEmails` | `[bot@discord.com, deposit.app@scsc.dev]` | 임원 목록에서 제외할 이메일                 |
+| `COLORS`                  | `primary: 'var(--color-primary)'`         | 전체적인 색상 정의로, theme.css와 함께 수정 |
+
+> **주의:** constants 변경 시 backend의 권한 상수와 일치해야 합니다.
+
+---
+
+## 🗝️ KV Table (저장소 정책)
+
+| Key       | Storage        | TTL      | 접근성               | 설명                                                   |
+| --------- | -------------- | -------- | -------------------- | ------------------------------------------------------ |
+| `theme`   | Cookie         | 1년      | 클라이언트 접근 가능 | 테마 설정                                              |
+| `app_jwt` | Cookie         | 7일      | 클라이언트 접근 불가 | 로그인 성공 시 생성되는 JWT 세션 토큰. 로그아웃시 삭제 |
+| `sigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장                                   |
+| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장                                   |
+
+---
+
+## ⚙️ CI: Continuous Integration
+
+### build.yml
+
+- **트리거:** `push` (main), `pull_request` (develop)
+- **환경:** Node 20
+- **단계:**
+  1. `npm ci`
+  2. `npm run build`
+- **캐시:** npm
+- **결과:** 빌드 성공 시 배포 트리거
+
+### lint.yml
+
+- **트리거:** `pull_request`
+- **검증:**
+  ```bash
+  npm run lint --max-warnings=0
+  ```
+- **정책:** 오류 발생 시 PR 자동 실패
+
 ---
 
 ## 주요 기술 스택
@@ -149,18 +276,3 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 - **Zustand**: 상태 관리
 - **CSS Modules**
 - **ESLint + Prettier**
-
----
-
-## 유지보수 관련 사항
-
-/util/constatns.jsx에 프론트에서 설정해야할 변수와 값들이 있습니다. 수정할 필요가 있다면 백엔드와 협의해 작성해주세요.
-파일 상단의 주석을 참고해 수정해주세요.
-
-## Migration details for devs
-
-### Add pre-commit(husky)
-
-코드 통일성을 위해 `eslint`와 `prettier`를 사용하고 있습니다.
-
-현재 lint 작업이 `husky`에서 pre-commit으로 수행되고 있으므로, commit 후 다시 commit을 해야 할 수 있습니다. [via PR#229](https://github.com/scsc-init/homepage_init_frontend/pull/229).
