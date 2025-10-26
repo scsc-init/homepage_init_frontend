@@ -242,7 +242,7 @@ npm run lint:fix
 | `theme`   | Cookie         | 1년      | 클라이언트 접근 가능 | 테마 설정                                              |
 | `app_jwt` | Cookie         | 7일      | 클라이언트 접근 불가 | 로그인 성공 시 생성되는 JWT 세션 토큰. 로그아웃시 삭제 |
 | `sigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장                                   |
-| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장                                   |
+| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | PIG 생성 폼 임시저장                                   |
 
 ---
 
