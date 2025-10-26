@@ -1,4 +1,5 @@
 .NF_Root {
+  height: 100dvh;
   min-height: 100vh;
   background: var(--main-bg-gradient);
   color: var(--color-text-body);
@@ -9,9 +10,6 @@
   overflow: hidden;
 }
 
-html {
-  overflow-y: hidden;
-}
 .NF_Backdrop {
   position: absolute;
   inset: -20%;

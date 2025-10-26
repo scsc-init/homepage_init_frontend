@@ -52,6 +52,7 @@ export default function ExecutivesClient() {
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const autoRef = useRef();
+  const total = executives.length;
 
   const prev = () => {
     setCenterIndex((prev) => (prev - 1 + total) % total);

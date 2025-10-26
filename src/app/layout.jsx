@@ -1,5 +1,5 @@
 import { Noto_Sans_KR } from 'next/font/google';
-import './global.css';
+import '@/styles/global.css';
 import Header from './Header';
 import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
