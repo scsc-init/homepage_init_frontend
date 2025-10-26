@@ -4,7 +4,7 @@ import HeaderCenter from '@/components/header/HeaderCenter';
 import HeaderRight from '@/components/header/HeaderRight';
 import MobileMenuList from '@/components/header/MobileMenuList';
 import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
-import styles from '@/app/Header.module.css';
+import styles from './Header.module.css';
 
 export default async function Header() {
   noStore();

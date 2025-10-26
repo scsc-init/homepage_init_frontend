@@ -7,6 +7,7 @@
   border-bottom: 1px solid var(--header-border-color);
   box-shadow: 0 1px 4px var(--header-shadow-color);
 }
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -15,20 +16,24 @@
   max-width: 1200px;
   margin: 0 auto;
 }
+
 .left,
 .right {
   display: flex;
   align-items: center;
 }
+
 .left {
   min-width: 12rem;
 }
+
 .center {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .right {
   justify-content: flex-end;
   gap: 0.75rem;
@@ -36,24 +41,29 @@
   white-space: nowrap;
   height: 2rem;
 }
+
 .rightLoading {
   width: 12rem;
   height: 2rem;
 }
+
 .rightLogin {
   display: flex;
   align-items: center;
 }
+
 .rightMain {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
+
 .executiveLink {
   font-size: 0.875rem;
   text-decoration: none;
   color: var(--header-foreground-color);
 }
+
 .userLink {
   display: flex;
   align-items: center;
@@ -62,18 +72,21 @@
   text-decoration: none;
   color: var(--header-foreground-color);
 }
+
 .userPic {
   width: 24px;
   height: 24px;
   border-radius: 50%;
   object-fit: cover;
 }
+
 .userName {
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 5rem;
   white-space: nowrap;
 }
+
 .menuList {
   display: flex;
   gap: 2rem;
@@ -81,10 +94,12 @@
   margin: 0;
   padding: 0;
 }
+
 .menuItem {
   position: relative;
   display: inline-block;
 }
+
 .menuTrigger {
   font-size: 1rem;
   font-weight: 600;
@@ -95,9 +110,11 @@
   padding: 0.4rem 0;
   transition: color 0.2s ease;
 }
+
 .menuTrigger:hover {
   color: var(--foreground-color);
 }
+
 .menuContent {
   position: absolute;
   top: 100%;
@@ -117,19 +134,23 @@
     opacity 0.25s ease,
     transform 0.25s ease;
 }
+
 .menuContentOpen {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
+
 .menuContent ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
 .menuContent li {
   margin-bottom: 0.25rem;
 }
+
 .menuLink {
   display: inline-block;
   background: none;
@@ -144,16 +165,20 @@
   border-radius: 0.35rem;
   transition: background-color 0.15s ease;
 }
+
 .menuLink:hover {
   background-color: var(--foreground-color);
   color: var(--background-color);
 }
+
 .hamburgerButton {
   display: none;
 }
+
 .mobileWrapper {
   display: none;
 }
+
 .mobileMenu {
   display: flex;
   flex-direction: column;
@@ -163,15 +188,18 @@
   border-top: 1px solid var(--header-border-color);
   box-shadow: 0 4px 12px var(--header-shadow-color);
 }
+
 .mobileMenuList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .mobileMenuItem {
   display: flex;
   flex-direction: column;
 }
+
 .mobileTrigger,
 .mobileSubLink {
   background: none;
@@ -190,227 +218,33 @@
     color 0.15s ease;
   text-decoration: none;
 }
+
 .mobileTrigger:hover,
 .mobileSubLink:hover {
   background-color: var(--foreground-color);
   color: var(--background-color);
 }
+
 .mobileSubMenu {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
+
 .mobileSubMenuOpen {
   max-height: 400px;
 }
+
 .mobileSubMenu ul {
   list-style: none;
   margin: 0.5rem 0 0 0;
   padding-left: 1rem;
 }
+
 .mobileSubMenu li {
   margin-bottom: 0.25rem;
 }
-.spacer {
-  height: 3.5rem;
-}
-@media (max-width: 768px) {
-  .center {
-    display: none;
-  }
-  .rightLoading {
-    width: auto;
-  }
-  .hamburgerButton {
-    display: block;
-    background-color: var(--header-background-color);
-    border: 1px solid var(--header-border-color);
-    border-radius: 0.5rem;
-    font-size: 1.5rem;
-    color: var(--header-foreground-color);
-    padding: 0.4rem 0.6rem;
-    transition:
-      background-color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-  .hamburgerButton:hover {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  .mobileWrapper {
-    display: block;
-    position: absolute;
-    top: 3.5rem;
-    left: 0;
-    width: 100%;
-    z-index: 999;
-    background-color: var(--background-color);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  .mobileWrapperOpen {
-    max-height: 1000px;
-  }
-}
 
-.container {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  background-color: var(--header-background-color);
-  border-bottom: 1px solid var(--header-border-color);
-  box-shadow: 0 1px 4px var(--header-shadow-color);
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 3.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.left,
-.right {
-  display: flex;
-  align-items: center;
-}
-.left {
-  min-width: 12rem;
-}
-.center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.right {
-  justify-content: flex-end;
-  gap: 0.75rem;
-  min-width: 8rem;
-  white-space: nowrap;
-  height: 2rem;
-}
-
-.rightLoading {
-  width: 12rem;
-  height: 2rem;
-}
-.rightLogin {
-  display: flex;
-  align-items: center;
-}
-.rightMain {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.executiveLink {
-  font-size: 0.875rem;
-  text-decoration: none;
-  color: var(--header-foreground-color);
-}
-.userLink {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  overflow: hidden;
-  text-decoration: none;
-  color: var(--header-foreground-color);
-}
-.userPic {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.userName {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 5rem;
-  white-space: nowrap;
-}
-
-.menuList {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.menuItem {
-  position: relative;
-  display: inline-block;
-}
-.menuTrigger {
-  font-size: 1rem;
-  font-weight: 600;
-  background: none;
-  border: none;
-  color: var(--header-foreground-color);
-  cursor: pointer;
-  padding: 0.4rem 0;
-  transition: color 0.2s ease;
-}
-.menuTrigger:hover {
-  color: var(--foreground-color);
-}
-.menuContent {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 0.3rem;
-  background: var(--header-background-color);
-  border: 1px solid var(--header-border-color);
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 20px var(--header-shadow-color);
-  padding: 0.6rem 0.8rem;
-  min-width: max-content;
-  z-index: 100;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-}
-.menuContentOpen {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-.menuContent ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.menuContent li {
-  margin-bottom: 0.25rem;
-}
-.menuLink {
-  display: inline-block;
-  background: none;
-  text-decoration: none;
-  border: none;
-  font-size: 0.95rem;
-  color: var(--header-foreground-color);
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  padding: 0.4rem 0.5rem;
-  border-radius: 0.35rem;
-  transition: background-color 0.15s ease;
-}
-.menuLink:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
-}
-
-.hamburgerButton {
-  display: none;
-}
 .spacer {
   height: 3.5rem;
 }
@@ -420,6 +254,7 @@
   .center {
     display: none;
   }
+
   .rightLoading {
     width: auto;
   }
@@ -436,14 +271,15 @@
       background-color 0.2s ease,
       box-shadow 0.2s ease;
   }
+
   .hamburgerButton:hover {
     background-color: var(--foreground-color);
     color: var(--background-color);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 
-  /* 핵심 수정: 메뉴 래퍼를 fixed + 더 큰 z-index 로 */
   .mobileWrapper {
+    display: block;
     position: fixed;
     top: 3.5rem;
     left: 0;
@@ -454,329 +290,57 @@
     overflow: hidden;
     transition: max-height 0.3s ease;
   }
+
   .mobileWrapperOpen {
     max-height: 100vh;
   }
 
   .mobileMenu {
-    display: flex;
-    flex-direction: column;
     gap: 1rem;
     padding: 1rem 1rem 1.25rem;
     border-top: 1px solid var(--header-border-color);
     box-shadow: 0 4px 12px var(--header-shadow-color);
   }
+
   .mobileMenuList {
-    list-style: none;
     padding: 0;
     margin: 0;
   }
+
   .mobileMenuItem {
     display: flex;
     flex-direction: column;
   }
+
   .mobileTrigger,
   .mobileSubLink {
-    background: none;
-    border: none;
     padding: 0.75rem 0.75rem;
     font-size: 1rem;
     font-weight: 600;
     text-align: left;
     color: var(--header-foreground-color);
-    cursor: pointer;
-    display: block;
-    width: 100%;
     border-radius: 0.5rem;
-    text-decoration: none;
-    transition:
-      background-color 0.15s ease,
-      color 0.15s ease;
   }
-  .mobileTrigger:hover,
-  .mobileSubLink:hover {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
-  }
+
   .mobileSubMenu {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
   }
+
   .mobileSubMenuOpen {
     max-height: 400px;
   }
+
   .mobileSubMenu ul {
-    list-style: none;
     margin: 0.5rem 0 0 0;
     padding-left: 1rem;
   }
-  .mobileSubMenu li {
-    margin-bottom: 0.25rem;
-  }
-}
 
-.container {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  background-color: var(--header-background-color);
-  border-bottom: 1px solid var(--header-border-color);
-  box-shadow: 0 1px 4px var(--header-shadow-color);
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 3.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.left,
-.right {
-  display: flex;
-  align-items: center;
-}
-.left {
-  min-width: 12rem;
-}
-.center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.right {
-  justify-content: flex-end;
-  gap: 0.75rem;
-  min-width: 8rem;
-  white-space: nowrap;
-  height: 2rem;
-}
-
-.rightLoading {
-  width: 12rem;
-  height: 2rem;
-}
-.rightLogin {
-  display: flex;
-  align-items: center;
-}
-.rightMain {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.executiveLink {
-  font-size: 0.875rem;
-  text-decoration: none;
-  color: var(--header-foreground-color);
-}
-.userLink {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  overflow: hidden;
-  text-decoration: none;
-  color: var(--header-foreground-color);
-}
-.userPic {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.userName {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 5rem;
-  white-space: nowrap;
-}
-
-.menuList {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.menuItem {
-  position: relative;
-  display: inline-block;
-}
-.menuTrigger {
-  font-size: 1rem;
-  font-weight: 600;
-  background: none;
-  border: none;
-  color: var(--header-foreground-color);
-  cursor: pointer;
-  padding: 0.4rem 0;
-  transition: color 0.2s ease;
-}
-.menuTrigger:hover {
-  color: var(--foreground-color);
-}
-.menuContent {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 0.3rem;
-  background: var(--header-background-color);
-  border: 1px solid var(--header-border-color);
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 20px var(--header-shadow-color);
-  padding: 0.6rem 0.8rem;
-  min-width: max-content;
-  z-index: 100;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-}
-.menuContentOpen {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-.menuContent ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.menuContent li {
-  margin-bottom: 0.25rem;
-}
-.menuLink {
-  display: inline-block;
-  background: none;
-  text-decoration: none;
-  border: none;
-  font-size: 0.95rem;
-  color: var(--header-foreground-color);
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  padding: 0.4rem 0.5rem;
-  border-radius: 0.35rem;
-  transition: background-color 0.15s ease;
-}
-.menuLink:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
-}
-
-.hamburgerButton {
-  display: none;
-}
-.spacer {
-  height: 3.5rem;
-}
-
-/* 모바일 전용 */
-@media (max-width: 768px) {
-  .center {
-    display: none;
-  }
-  .rightLoading {
-    width: auto;
-  }
-
-  .hamburgerButton {
-    display: block;
-    background-color: var(--header-background-color);
-    border: 1px solid var(--header-border-color);
-    border-radius: 0.5rem;
-    font-size: 1.5rem;
-    color: var(--header-foreground-color);
-    padding: 0.4rem 0.6rem;
-    transition:
-      background-color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-  .hamburgerButton:hover {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .mobileWrapper {
-    position: fixed;
-    top: 3.5rem;
-    left: 0;
-    width: 100%;
-    z-index: 2000;
-    background-color: var(--header-background-color);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  .mobileWrapperOpen {
-    max-height: 100vh;
-  }
-
-  .mobileMenu {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 1rem 1.25rem;
-    border-top: 1px solid var(--header-border-color);
-    box-shadow: 0 4px 12px var(--header-shadow-color);
-  }
-  .mobileMenuList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .mobileMenuItem {
-    display: flex;
-    flex-direction: column;
-  }
-  .mobileTrigger,
-  .mobileSubLink {
-    background: none;
-    border: none;
-    padding: 0.75rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: left;
-    color: var(--header-foreground-color);
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition:
-      background-color 0.15s ease,
-      color 0.15s ease;
-  }
-  .mobileTrigger:hover,
-  .mobileSubLink:hover {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
-  }
-  .mobileSubMenu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  .mobileSubMenuOpen {
-    max-height: 400px;
-  }
-  .mobileSubMenu ul {
-    list-style: none;
-    margin: 0.5rem 0 0 0;
-    padding-left: 1rem;
-  }
   .mobileSubMenu li {
     margin-bottom: 0.25rem;
   }
 
-  /* 모바일에서는 헤더 우측의 운영진 링크 감춤 (햄버거 안에서만 노출) */
   .rightMain .executiveLink {
     display: none;
   }

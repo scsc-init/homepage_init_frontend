@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/app/Footer.module.css';
+import styles from './Footer.module.css';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { hideFooterRoutes, footerLogoData } from '@/util/constants';
