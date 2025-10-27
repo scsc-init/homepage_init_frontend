@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 import { fetchMeClient } from '@/util/fetchClientData';
+import styles from '@/app/Header.module.css';
 
 function MobileExecutiveButton() {
   const [user, setUser] = useState(undefined);
@@ -13,32 +14,20 @@ function MobileExecutiveButton() {
   useEffect(() => {
     fetchMeClient().then(setUser);
   }, []);
-
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);
 
-  if (user === undefined || !user) return null;
-
-  if (isExecutive) {
-    return (
-      <Link
-        href="/executive"
-        className="unset toAdminPageButton"
-        style={{
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.3rem',
-          textDecoration: 'none',
-        }}
-      >
-        운영진 페이지
-      </Link>
-    );
-  }
-
-  return null;
+  if (!user || !isExecutive) return null;
+  return (
+    <Link
+      href="/executive"
+      className={`${styles.executiveLink} unset`}
+      style={{ fontSize: '0.875rem' }}
+    >
+      운영진 페이지
+    </Link>
+  );
 }
 
 export default function MobileMenuList() {
@@ -48,38 +37,59 @@ export default function MobileMenuList() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!mobileMenuOpen) return;
     setMobileMenuOpen(false);
     setOpenedMenuIndex(null);
   }, [pathname, searchParams]);
 
+  const wrapperClass = `${styles.mobileWrapper} ${mobileMenuOpen ? styles.mobileWrapperOpen : ''}`;
+
   return (
     <div>
-      <button className="HamburgerButton" onClick={() => setMobileMenuOpen((prev) => !prev)}>
+      <button
+        type="button"
+        aria-expanded={mobileMenuOpen ? 'true' : 'false'}
+        aria-controls="mobileMenuPanel"
+        className={styles.hamburgerButton}
+        onClick={() => setMobileMenuOpen((prev) => !prev)}
+      >
         ☰
       </button>
-      <div className={`MobileMenuWrapper ${mobileMenuOpen ? 'open' : ''}`}>
-        <div className="MobileMenu">
-          <ul className="MobileMenuList">
+
+      <div id="mobileMenuPanel" className={wrapperClass}>
+        <div className={styles.mobileMenu}>
+          <ul className={styles.mobileMenuList}>
             {headerMenuData.map((menu, index) => {
               const items = menu.items || [];
               if (!items.length) return null;
 
+              const subClass =
+                openedMenuIndex === index
+                  ? `${styles.mobileSubMenu} ${styles.mobileSubMenuOpen}`
+                  : styles.mobileSubMenu;
+
               return (
-                <li className="MobileMenuItem" key={menu.title}>
+                <li className={styles.mobileMenuItem} key={menu.title}>
                   <button
-                    className="MobileMenuTrigger"
+                    type="button"
+                    className={styles.mobileTrigger}
+                    aria-expanded={openedMenuIndex === index ? 'true' : 'false'}
                     onClick={() =>
                       setOpenedMenuIndex((prev) => (prev === index ? null : index))
                     }
                   >
                     {menu.title}
                   </button>
-                  <div className={`MobileSubMenu ${openedMenuIndex === index ? 'open' : ''}`}>
+                  <div className={subClass}>
                     <ul>
                       {items.map((item) => (
                         <li key={item.label}>
-                          <Link href={item.url}>{item.label}</Link>
+                          <Link
+                            className={styles.mobileSubLink}
+                            href={item.url}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
                         </li>
                       ))}
                     </ul>
@@ -88,6 +98,7 @@ export default function MobileMenuList() {
               );
             })}
           </ul>
+
           <MobileExecutiveButton />
         </div>
       </div>

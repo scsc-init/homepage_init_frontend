@@ -1,4 +1,4 @@
-#Footer {
+.root {
   width: 100%;
   background: var(--footer-background);
   color: var(--footer-text-color);
@@ -7,7 +7,7 @@
   overflow-x: hidden;
 }
 
-#FooterInner {
+.inner {
   max-width: 1280px;
   margin: 0 auto;
   padding: 3rem 2rem;
@@ -19,7 +19,7 @@
   box-sizing: border-box;
 }
 
-#FooterInfoContainer {
+.infoContainer {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -29,7 +29,7 @@
   user-select: text;
 }
 
-#FooterLogoList {
+.logoList {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -37,17 +37,7 @@
   flex-wrap: wrap;
 }
 
-.FooterLogo {
-  background-color: var(--footer-icon-bg);
-  padding: 0.6rem;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s ease;
-}
-
-.FooterLogo {
+.logo {
   background-color: var(--executive-card-bg);
   padding: 0.75rem;
   border-radius: 50%;
@@ -60,21 +50,19 @@
   box-sizing: border-box;
 }
 
-.FooterLogo svg {
+.logo img {
   width: 24px;
   height: 24px;
-  fill: var(--footer-text-color);
   object-fit: contain;
   overflow: visible;
 }
 
 @media (max-width: 768px) {
-  #FooterInner {
+  .inner {
     flex-direction: column;
     align-items: flex-start;
   }
-
-  #FooterLogoList {
+  .logoList {
     justify-content: flex-start;
   }
 }
