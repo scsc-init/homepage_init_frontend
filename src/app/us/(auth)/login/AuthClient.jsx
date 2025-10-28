@@ -1,13 +1,12 @@
-// src/app/us/login/AuthClient.jsx
 'use client';
 
 import { useEffect, useState } from 'react';
-import { signIn, getSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
-import styles from '../page.module.css';
+import styles from '../auth.module.css';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
