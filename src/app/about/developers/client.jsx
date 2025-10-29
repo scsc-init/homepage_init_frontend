@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 const executives = [
   {
     name: '강명석',
@@ -52,10 +52,15 @@ export default function ExecutivesClient() {
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const autoRef = useRef();
+  const total = executives.length;
 
-  const prev = () => {
+  const next = useCallback(() => {
+    setCenterIndex((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const prev = useCallback(() => {
     setCenterIndex((prev) => (prev - 1 + total) % total);
-  };
+  }, [total]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -67,17 +72,13 @@ export default function ExecutivesClient() {
   }, []);
 
   useEffect(() => {
-    const total = executives.length;
-    const next = () => {
-      setCenterIndex((prev) => (prev + 1) % total);
-    };
     if (!hovered && !isMobile) {
       autoRef.current = setInterval(() => {
         next();
       }, 4000);
     }
     return () => clearInterval(autoRef.current);
-  }, [hovered, isMobile]);
+  }, [hovered, isMobile, next]);
 
   const handlers = useSwipeable({
     onSwipedLeft: next,

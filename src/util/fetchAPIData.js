@@ -78,3 +78,54 @@ export async function fetchDiscordInviteLink() {
     return resData.result.invite_url;
   }
 }
+
+export async function fetchLeadershipIds() {
+  const res = await handleApiRequest('GET', '/api/kv/leaders');
+  if (!res.ok) {
+    return { presidentId: '', vicePresidentId: '' };
+  }
+  let payload;
+  try {
+    payload = await res.json();
+  } catch {
+    payload = null;
+  }
+  let parsed = {};
+  if (payload && typeof payload.value === 'string') {
+    try {
+      parsed = JSON.parse(payload.value || '{}');
+    } catch {
+      parsed = {};
+    }
+  }
+  const presidentId = typeof parsed.president_id === 'string' ? parsed.president_id : '';
+  const vicePresidentId =
+    typeof parsed.vice_president_id === 'string' ? parsed.vice_president_id : '';
+  return { presidentId, vicePresidentId };
+}
+
+export async function fetchExecutiveCandidates() {
+  const [execRes, prezRes] = await Promise.all([
+    handleApiRequest('GET', '/api/users', { query: { user_role: 'executive' } }),
+    handleApiRequest('GET', '/api/users', { query: { user_role: 'president' } }),
+  ]);
+
+  const execList = execRes.ok ? await execRes.json().catch(() => []) : [];
+  const prezList = prezRes.ok ? await prezRes.json().catch(() => []) : [];
+
+  const merged = new Map();
+  for (const entry of [
+    ...(Array.isArray(execList) ? execList : []),
+    ...(Array.isArray(prezList) ? prezList : []),
+  ]) {
+    if (!entry || typeof entry !== 'object') continue;
+    const key = entry.id || entry.email || `${entry.name || ''}-${entry.phone || ''}`;
+    if (!merged.has(key)) merged.set(key, entry);
+  }
+
+  return Array.from(merged.values()).sort((a, b) => {
+    const nameA = (a?.name || '').toString();
+    const nameB = (b?.name || '').toString();
+    return nameA.localeCompare(nameB, 'ko');
+  });
+}

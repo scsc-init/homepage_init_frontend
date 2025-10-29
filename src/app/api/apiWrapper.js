@@ -16,29 +16,64 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const appJwt = cookieStore.get('app_jwt')?.value || null;
 
   let fullPath = pathTemplate;
-  if (options.params) {
-    for (const key of Object.keys(options.params)) {
-      const encoded = encodeURIComponent(String(options.params[key]));
+  const { params, query, body, headers: extraHeaders } = options;
+  if (params) {
+    for (const key of Object.keys(params)) {
+      const encoded = encodeURIComponent(String(params[key]));
       fullPath = fullPath.replaceAll(`{${key}}`, encoded);
     }
   }
-  if (options.query) {
-    const qs = new URLSearchParams(options.query).toString();
+  if (query) {
+    const qs = new URLSearchParams(query).toString();
     if (qs) fullPath += `?${qs}`;
   }
-  const fullUrl = `${getBaseUrl()}${fullPath}`;
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) {
+    throw new Error('Missing BACKEND_URL environment variable');
+  }
+  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  const fullUrl = new URL(fullPath, normalizedBase).toString();
 
   const hasIncoming = Boolean(request);
-  const bodyJson = hasIncoming ? await request.json() : undefined;
+  if (hasIncoming && body !== undefined) {
+    throw new Error('handleApiRequest: provide either request or options.body, not both');
+  }
 
-  const hdrs = { 'x-api-secret': getApiSecret() };
+  let bodyJson;
+  if (hasIncoming) {
+    bodyJson = await request.json();
+  } else if (body !== undefined) {
+    bodyJson = body;
+  }
+
+  const hdrs = {
+    'x-api-secret': getApiSecret(),
+    ...(extraHeaders || {}),
+  };
   if (appJwt) hdrs['x-jwt'] = appJwt;
-  if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
+
+  let fetchBody;
+  const isBlobSupported = typeof Blob !== 'undefined';
+  if (bodyJson === undefined) {
+    fetchBody = undefined;
+  } else if (
+    bodyJson instanceof FormData ||
+    bodyJson instanceof URLSearchParams ||
+    typeof bodyJson === 'string' ||
+    (isBlobSupported && bodyJson instanceof Blob)
+  ) {
+    fetchBody = bodyJson;
+  } else {
+    if (!hdrs['Content-Type']) {
+      hdrs['Content-Type'] = 'application/json';
+    }
+    fetchBody = JSON.stringify(bodyJson);
+  }
 
   return fetch(fullUrl, {
     method,
     headers: hdrs,
-    body: bodyJson !== undefined ? JSON.stringify(bodyJson) : undefined,
+    body: fetchBody,
     cache: 'no-store',
   });
 }
