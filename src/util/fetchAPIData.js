@@ -9,7 +9,7 @@ import { handleApiRequest } from '@/app/api/apiWrapper';
  * @param {object} [options.params] - The Next.js `params` object from the route handler.
  * @param {object} [options.query] - Object for URL query parameters (e.g., { page: 1 }).
  * @param {Request} request - If included, fetch with body from it. The incoming Next.js Request object.
- * @returns {Promise<any>} - Promise that resolves with either response body or with error.
+ * @returns {Promise<any>} - Promise that resolves with response body or rejects on non-OK response.
  */
 async function safeFetch(method, path, options = {}, request) {
   const res = await handleApiRequest(method, path, options, request);
