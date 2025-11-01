@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import '@/styles/theme.css';
-import styles from '../page.module.css';
+import styles from '../auth.module.css';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
