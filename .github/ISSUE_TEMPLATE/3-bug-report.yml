@@ -16,7 +16,9 @@ body:
     id: expected
     attributes:
       label: 'Expected behavior'
+      description: 'What did you expect to happen?'
   - type: textarea
     id: actual
     attributes:
       label: 'Actual behavior'
+      description: 'What actually happened?'
