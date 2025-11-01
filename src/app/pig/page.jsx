@@ -17,7 +17,7 @@ export default async function PigListPage() {
     .map((p) => p.value)
     .filter((p) => allowed.has(p.status));
 
-  const myId = '';
+  let myId = '';
   if (me.status === 'fulfilled') {
     myId = me.value.id;
   }

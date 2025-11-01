@@ -17,7 +17,7 @@ export default async function SigListPage() {
     .map((s) => s.value)
     .filter((s) => allowed.has(s.status));
 
-  const myId = '';
+  let myId = '';
   if (me.status === 'fulfilled') {
     myId = me.value.id;
   }
