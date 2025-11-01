@@ -8,7 +8,7 @@ import styles from './Header.module.css';
 
 export default async function Header() {
   noStore();
-  const scscGlobalStatus = await fetchSCSCGlobalStatus();
+  const [scscGlobalStatus] = await Promise.allSettled([fetchSCSCGlobalStatus()]);
 
   return (
     <div>
@@ -16,8 +16,12 @@ export default async function Header() {
         <div className={styles.header}>
           <div className={styles.left}>
             <HeaderLeft
-              year={scscGlobalStatus ? scscGlobalStatus.year : null}
-              semester={scscGlobalStatus ? scscGlobalStatus.semester : null}
+              year={
+                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null
+              }
+              semester={
+                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.semester : null
+              }
             />
           </div>
           <div className={styles.center}>

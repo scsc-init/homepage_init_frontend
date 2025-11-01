@@ -8,8 +8,8 @@ export const metadata = { title: 'PIG' };
 
 export default async function EditPigPage({ params }) {
   const { id } = params;
-  const me = await fetchMe();
-  if (!me?.id) redirect('/us/login');
+  const [me] = await Promise.allSettled([fetchMe()]);
+  if (me.status === 'rejected') redirect('/us/login');
 
   const pigRes = await handleApiRequest('GET', `/api/pig/${id}`);
   if (!pigRes.ok) {

@@ -8,8 +8,8 @@ export const metadata = { title: 'SIG' };
 
 export default async function EditSigPage({ params }) {
   const { id } = params;
-  const me = await fetchMe();
-  if (!me?.id) redirect('/us/login');
+  const [me] = await Promise.allSettled([fetchMe()]);
+  if (me.status === 'rejected') redirect('/us/login');
 
   const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
