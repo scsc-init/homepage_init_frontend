@@ -8,7 +8,7 @@ export default async function PigListPage() {
   const [pigs, me] = await Promise.allSettled([fetchPigs(), fetchMe()]);
 
   if (pigs.status === 'rejected') {
-    return <div>시그 정보를 불러올 수 없습니다.</div>;
+    return <div>피그 정보를 불러올 수 없습니다.</div>;
   }
 
   const allowed = new Set(['surveying', 'recruiting', 'active']);

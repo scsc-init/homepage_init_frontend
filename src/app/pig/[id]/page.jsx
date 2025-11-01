@@ -74,7 +74,7 @@ export default async function PigDetailPage({ params }) {
       pig={pig}
       members={members}
       articleContent={article.content}
-      me={me}
+      me={me.value}
       pigId={id}
     />
   );

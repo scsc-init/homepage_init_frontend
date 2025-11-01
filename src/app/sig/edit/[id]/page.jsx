@@ -27,5 +27,5 @@ export default async function EditSigPage({ params }) {
   const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
   const article = articleRes.ok ? await articleRes.json() : { content: '' };
 
-  return <EditSigClient sigId={id} me={me} sig={sig} article={article} />;
+  return <EditSigClient sigId={id} me={me.value} sig={sig} article={article} />;
 }

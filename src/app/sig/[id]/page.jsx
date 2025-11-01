@@ -74,7 +74,7 @@ export default async function SigDetailPage({ params }) {
       sig={sig}
       members={members}
       articleContent={article.content}
-      me={me}
+      me={me.value}
       sigId={id}
     />
   );

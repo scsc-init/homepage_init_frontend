@@ -88,15 +88,15 @@ export async function fetchPigs() {
         try {
           const [articleRes, membersRes] = await Promise.all([
             handleApiRequest('GET', `/api/article/${pig.content_id}`),
-            handleApiRequest('GET', `/api/sig/${pig.id}/members`),
+            handleApiRequest('GET', `/api/pig/${pig.id}/members`),
           ]);
           const article = articleRes.ok
             ? await articleRes.json()
-            : { content: '시그 설명을 불러오는데 실패했습니다.' };
+            : { content: '피그 설명을 불러오는데 실패했습니다.' };
           const members = membersRes.ok ? await membersRes.json() : [];
           return { ...pig, content: article.content, members: members };
         } catch (err) {
-          throw new Error(`sig fetch failed: ${err}`);
+          throw new Error(`pig fetch failed: ${err}`);
         }
       }),
     );

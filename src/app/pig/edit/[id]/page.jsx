@@ -27,5 +27,5 @@ export default async function EditPigPage({ params }) {
   const articleRes = await handleApiRequest('GET', `/api/article/${pig.content_id}`);
   const article = articleRes.ok ? await articleRes.json() : { content: '' };
 
-  return <EditPigClient pigId={id} me={me} pig={pig} article={article} />;
+  return <EditPigClient pigId={id} me={me.value} pig={pig} article={article} />;
 }
