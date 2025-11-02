@@ -45,7 +45,8 @@ body {
 
 .ExecutiveCard {
   width: 200px;
-  background: var(--executive-bg, white);
+  background: var(--executive-card-bg);
+  color: var(--executive-name-color);
   border-radius: 1rem;
   text-align: center;
   padding: 1rem;
@@ -60,6 +61,24 @@ body {
     opacity 0.6s ease;
   z-index: 1;
   pointer-events: none;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+}
+
+/* 단일 정의로 통일 */
+.ExecutiveImageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.ExecutiveImage {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
 }
 
 .ExecutiveCard.center {
@@ -93,23 +112,10 @@ body {
   z-index: 1;
 }
 
-.ExecutiveImageWrapper {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.ExecutiveImage {
-  object-fit: cover;
-}
-
 .ExecutiveRole,
 .ExecutivePhone {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--executive-role-color);
 }
 
 .ExecutiveDots {
@@ -143,9 +149,10 @@ body {
   box-shadow: 0 0 6px var(--primary-neon);
 }
 
+/* 데스크탑/모바일 분기 */
 @media (max-width: 768px) {
   .ExecutiveCarouselWrapper {
-    display: none;
+    display: none !important;
   }
 
   .ExecutiveMasonry {
@@ -153,33 +160,29 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1.5rem;
     justify-items: center;
+    width: 100%;
   }
 
-  .ExecutiveCard {
+  .ExecutiveMasonry .ExecutiveCard {
     width: 100%;
     max-width: 200px;
     height: auto;
-    position: static;
+    position: static !important;
     transform: none !important;
     opacity: 1 !important;
-    pointer-events: auto;
+    pointer-events: auto !important;
+    box-shadow: 0 3px 12px var(--executive-card-shadow);
   }
 
-  .ExecutiveImageWrapper {
-    aspect-ratio: 1 / 1;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    position: relative;
-  }
-
+  /* 모바일에서는 오버레이만 유지 */
   .ExecutiveOverlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.55);
-    color: white;
+    background: var(--executive-overlay-bg);
+    color: var(--executive-description-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -198,14 +201,9 @@ body {
     margin: 0;
     text-align: center;
   }
-
-  .ExecutiveRole,
-  .ExecutivePhone {
-    font-size: 0.9rem;
-    color: #444;
-  }
 }
 
+/* 배경 로고 */
 .WallLogo,
 .WallLogo2 {
   position: fixed;
@@ -246,111 +244,5 @@ body {
     left: 0;
     width: 10vh;
     height: 30vh;
-  }
-}
-
-.ExecutiveCard {
-  width: 200px;
-  background: var(--executive-card-bg);
-  color: var(--executive-name-color);
-  border-radius: 1rem;
-  text-align: center;
-  padding: 1rem;
-  opacity: 0;
-  transform: scale(0.85);
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform-origin: center center;
-  transition:
-    transform 0.6s ease,
-    opacity 0.6s ease;
-  z-index: 1;
-  pointer-events: none;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
-}
-
-.ExecutiveRole,
-.ExecutivePhone {
-  font-size: 0.9rem;
-  color: var(--executive-role-color);
-}
-
-.ExecutiveOverlay {
-  background: var(--executive-overlay-bg);
-  color: var(--executive-description-color);
-}
-
-.ExecutiveDot {
-  background-color: var(--dot-bg);
-}
-
-.ExecutiveDot.active {
-  background-color: var(--primary-color);
-  box-shadow: 0 0 6px var(--primary-neon);
-}
-
-@media (max-width: 768px) {
-  .ExecutiveCarouselWrapper {
-    display: none !important;
-  }
-
-  .ExecutiveMasonry {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1.5rem;
-    justify-items: center;
-    width: 100%;
-  }
-
-  .ExecutiveMasonry .ExecutiveCard {
-    width: 100%;
-    max-width: 200px;
-    height: auto;
-    position: static !important;
-    transform: none !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    box-shadow: 0 3px 12px var(--executive-card-shadow);
-  }
-
-  .ExecutiveImageWrapper {
-    aspect-ratio: 1 / 1;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .ExecutiveOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.55);
-    color: var(--executive-description-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  .ExecutiveImageWrapper:hover .ExecutiveOverlay {
-    opacity: 1;
-  }
-
-  .ExecutiveDescription {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5;
-    margin: 0;
-    text-align: center;
-  }
-
-  .ExecutiveRole,
-  .ExecutivePhone {
-    font-size: 0.9rem;
-    color: #444;
   }
 }

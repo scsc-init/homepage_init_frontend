@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
+import { cookies } from 'next/headers';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
-
 /**
  * Handles forwarding requests to an internal API.
  * @param {string} method - The HTTP method (e.g., "POST").
@@ -13,35 +12,33 @@ import { getApiSecret } from '@/util/getApiSecret';
  * @returns {Promise<Response>} - A Next.js Response object.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
-  const headersList = headers();
-  const jwt = headersList.get('x-jwt');
+  const cookieStore = cookies();
+  const appJwt = cookieStore.get('app_jwt')?.value || null;
 
-  // --- URL Construction (as before, using pathTemplate and params/query) ---
   let fullPath = pathTemplate;
   if (options.params) {
-    for (const key in options.params) {
-      fullPath = fullPath.replace(`{${key}}`, options.params[key]);
+    for (const key of Object.keys(options.params)) {
+      const encoded = encodeURIComponent(String(options.params[key]));
+      fullPath = fullPath.replaceAll(`{${key}}`, encoded);
     }
   }
   if (options.query) {
-    const searchParams = new URLSearchParams(options.query).toString();
-    if (searchParams) {
-      fullPath += `?${searchParams}`;
-    }
+    const qs = new URLSearchParams(options.query).toString();
+    if (qs) fullPath += `?${qs}`;
   }
   const fullUrl = `${getBaseUrl()}${fullPath}`;
 
-  const requestBody = request ? await request.json() : undefined;
+  const hasIncoming = Boolean(request);
+  const bodyJson = hasIncoming ? await request.json() : undefined;
 
-  const res = await fetch(fullUrl, {
-    method: method,
-    headers: {
-      'Content-Type': requestBody ? 'application/json' : undefined,
-      'x-api-secret': getApiSecret(),
-      'x-jwt': jwt,
-    },
-    body: requestBody && JSON.stringify(requestBody),
+  const hdrs = { 'x-api-secret': getApiSecret() };
+  if (appJwt) hdrs['x-jwt'] = appJwt;
+  if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
+
+  return fetch(fullUrl, {
+    method,
+    headers: hdrs,
+    body: bodyJson !== undefined ? JSON.stringify(bodyJson) : undefined,
     cache: 'no-store',
   });
-  return res;
 }

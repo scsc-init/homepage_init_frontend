@@ -6,24 +6,9 @@ import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import './page.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
-import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
 
-async function fetchDiscordInviteLink() {
-  const res = await fetch(`${getBaseUrl()}/api/bot/discord/general/get_invite`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
-  if (res.ok) {
-    const resData = await res.json();
-    return resData.result.invite_url;
-  }
-}
-
 export default async function AboutPage() {
-  const year = new Date().getFullYear() - 1984;
-
   return (
     <>
       <div className="WallLogo"></div>

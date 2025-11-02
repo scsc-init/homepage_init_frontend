@@ -1,11 +1,11 @@
 'use client';
 
-import SortDropdown from '@/components/board/SortDropdown'; // 기존 재사용
+import SortDropdown from '@/components/board/SortDropdown';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function SigListClient({ sigs }) {
+export default function SigListClient({ sigs, myId }) {
   const [sortOrder, setSortOrder] = useState('latest');
 
   const sortedSigs = [...sigs].sort((a, b) => {
@@ -14,6 +14,10 @@ export default function SigListClient({ sigs }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
+
+  const myOwnedSigIds = new Set(
+    sigs.filter((sig) => sig?.owner && String(sig.owner) === myId).map((sig) => String(sig.id)),
+  );
 
   return (
     <>
@@ -28,19 +32,23 @@ export default function SigListClient({ sigs }) {
       </div>
 
       <div id="SigList">
-        {sortedSigs.map((sig) => (
-          <Link key={sig.id} href={`/sig/${sig.id}`} className="sigLink">
-            <div className="sigCard">
-              <div className="sigTopbar">
-                <span className="sigTitle">{sig.title}</span>
-                <span className="sigUserCount">
-                  {sig.year}년 {SEMESTER_MAP[sig.semester]}학기
-                </span>
+        {sortedSigs.map((sig) => {
+          const sid = String(sig.id);
+          const isMine = myOwnedSigIds.has(sid);
+          return (
+            <Link key={sig.id} href={`/sig/${sig.id}`} className="sigLink">
+              <div className={`sigCard ${isMine ? 'isMine' : ''}`}>
+                <div className="sigTopbar">
+                  <span className="sigTitle">{sig.title}</span>
+                  <span className="sigUserCount">
+                    {sig.year}년 {SEMESTER_MAP[sig.semester]}학기
+                  </span>
+                </div>
+                <div className="sigDescription">{sig.description}</div>
               </div>
-              <div className="sigDescription">{sig.description}</div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </>
   );

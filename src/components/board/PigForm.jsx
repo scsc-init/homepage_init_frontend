@@ -43,31 +43,31 @@ export default function PigForm({
         />
       </div>
 
-      <div>
-        <label className="block mb-2 font-semibold">가입 기간 자유화</label>
-        <div>
+      <div className="form-toggle-row">
+        <span className="form-toggle-label">가입 기간 자유화</span>
+        <span className="form-toggle-right">
           <Controller
             name="is_rolling_admission"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch checked={field.value} onChange={field.onChange} />
+              <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
             )}
           />
-        </div>
+        </span>
       </div>
 
       {isCreate ? null : (
-        <div>
-          <label className="block mb-2 font-semibold">다음 학기에 연장 신청</label>
-          <div>
+        <div className="form-toggle-row">
+          <span className="form-toggle-label">다음 학기에 연장 신청</span>
+          <span className="form-toggle-right">
             <Controller
               name="should_extend"
               control={control}
               render={({ field }) => (
-                <ToggleSwitch checked={field.value} onChange={field.onChange} />
+                <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
               )}
             />
-          </div>
+          </span>
         </div>
       )}
 

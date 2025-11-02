@@ -1,12 +1,15 @@
+// src/components/ToggleSwitch.jsx
+'use client';
+
 import './ToggleSwitch.css';
 
-const ToggleSwitch = ({ checked, onChange }) => {
+export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
+  const isOn = typeof checked !== 'undefined' ? !!checked : !!valueProp;
+
   return (
-    <label className="switch">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <span className="slider round"></span>
+    <label className="switch switch--form" title={isOn ? '켜짐' : '꺼짐'}>
+      <input type="checkbox" checked={isOn} onChange={(e) => onChange?.(e.target.checked)} />
+      <span className="slider" aria-hidden="true" />
     </label>
   );
-};
-
-export default ToggleSwitch;
+}
