@@ -117,7 +117,8 @@ Google OAuth, NextAuth 설정에 관한 자세한 설명은 다음 섹션을 참
 npm run dev
 ```
 
-접속: [http://localhost:3000](http://localhost:3000)  
+접속: [http://localhost:3000](http://localhost:3000)
+
 - 상황에 따라, 벡엔드 서버 실행이 요구될 수 있습니다. 이 경우 [BE repository](https://github.com/scsc-init/homepage_init_backend) 또는 [MSA repository = BE+Bot](https://github.com/scsc-init/homepage_init_be_msa)의 `readme.md`를 참고하세요.
 
 ---
@@ -126,10 +127,10 @@ npm run dev
 
 **scsc 구글 계정 또는 공식 도메인이 변경될 경우 auth 관련 코드를 수정할 필요가 있습니다.**
 
-- 원하는 계정으로 로그인 후 [Google Auth Client 패널](https://console.cloud.google.com/auth/clients)에 접속하세요.  
-- OAuth 2.0 Client IDs 항목에서 **+ Create Credentials** 클릭 후 웹 애플리케이션 유형으로 Client ID 를 생성하세요.  
-- Authorized redirect URIs를 입력하세요. *로그인 성공 후 사용자를 돌려보낼 주소*를 입력하면 됩니다.[^oauth]  
-- 발급된 Client ID 와 secret key 를 복사한 후, 하단의 `### next auth 설정`을 따르세요.  
+- 원하는 계정으로 로그인 후 [Google Auth Client 패널](https://console.cloud.google.com/auth/clients)에 접속하세요.
+- OAuth 2.0 Client IDs 항목에서 **+ Create Credentials** 클릭 후 웹 애플리케이션 유형으로 Client ID 를 생성하세요.
+- Authorized redirect URIs를 입력하세요. *로그인 성공 후 사용자를 돌려보낼 주소*를 입력하면 됩니다.[^oauth]
+- 발급된 Client ID 와 secret key 를 복사한 후, 하단의 `### next auth 설정`을 따르세요.
 
 [^oauth]: 로컬 개발환경인 경우 `http://localhost:3000/api/auth/callback/google`를, 배포 환경인 경우 `https://(your-domain)/api/auth/callback/google`을 입력하면 됩니다.
 
@@ -162,13 +163,13 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 
 본 레포지토리는 코드 스타일 통일과 가독성 개선을 위해 **`eslint`** 그리고 **`prettier`** 를 사용하고 있습니다.  
 또한 동시에, 커밋 사전에 해당 linter 들이 자동 실행되도록 **`husky`**를 도입하여 사용하고 있습니다.  
-관련된 파일들은 아래와 같습니다.  
+관련된 파일들은 아래와 같습니다.
 
 - `.prettierrc`: For prettier. 코드 포맷터입니다.
 - `ESLint`: For eslint. React Hooks 규칙 강제, unused import 금지, import 정렬 적용에 사용합니다.
 - `pre-commit`: For husky. 포맷 검증에 통과하지 못한 코드의 커밋을 방지합니다.
 
-명령어를 실행해 사용해주세요. 등록을 강력히 권장합니다.  
+명령어를 실행해 사용해주세요. 등록을 강력히 권장합니다.
 
 ```bash
 #1 Husky 설치(최초 1회)
@@ -192,10 +193,11 @@ npx prettier --write .
 
 ### JSDoc 규칙
 
-- 주석 작성은 **`JSDoc`** 양식에 따르고 있습니다.  
-- 또한 동시에, a. 매우 큰 분기가 발생하는 부분이거나 b. 가독성이 비약적인 수준으로 향상 되지 않는 경우, 함수 내에서 주석을 작성하는 것을 지양합니다.  
+- 주석 작성은 **`JSDoc`** 양식에 따르고 있습니다.
+- 또한 동시에, a. 매우 큰 분기가 발생하는 부분이거나 b. 가독성이 비약적인 수준으로 향상 되지 않는 경우, 함수 내에서 주석을 작성하는 것을 지양합니다.
 
 #### JSDoc 예시
+
 ```js
 /**
  * @param {string} url Source image URL
@@ -204,19 +206,21 @@ npx prettier --write .
 ```
 
 #### 사용하면 안 되는 주석 예시 (cursed)
+
 ```js
 function doSomething(x, y) {
   try {
     // ...
   } catch (err) {
     // return success == fail when error occur
-    return { success: false, error: err } 
+    return { success: false, error: err };
   }
 }
 ```
+
 에러 터졌을 때 success == false 인 object 를 반환한다는 사실은 코드만 읽어도 알 수 있습니다.  
 코드에 미리 작성한 내용을 주석에 **다시** 작성하는 건 동어반복임.  
-특히 AI-generated 코드가 이런 생산성 없는 주석을 작성하는 경우가 많은데, a. 유지보수에 도움이 안 되고 b. 쓸모없기 때문에 프로젝트 내에서는 삭제한 후 사용하도록 합니다.  
+특히 AI-generated 코드가 이런 생산성 없는 주석을 작성하는 경우가 많은데, a. 유지보수에 도움이 안 되고 b. 쓸모없기 때문에 프로젝트 내에서는 삭제한 후 사용하도록 합니다.
 
 ## utils/constants.jsx
 
@@ -237,7 +241,7 @@ function doSomething(x, y) {
 ## 🗝️ KV Table
 
 본 레포지토리는 footer message 와 같은 런타임 환경 변수 관리를 위해, BE의 KV table 기능을 사용하고 있습니다.  
-사용하고 있는 Key 값들은 아래와 같습니다.  
+사용하고 있는 Key 값들은 아래와 같습니다.
 
 | Key              | 예시 값                                                                 | 설명        | 형식   |
 | ---------------- | ----------------------------------------------------------------------- | ----------- | ------ |
@@ -255,7 +259,7 @@ function doSomething(x, y) {
 ## CI: Continuous Integration
 
 본 레포지토리는 github actions 를 사용하여 CI 를 자체적으로 관리하고 있습니다.  
-[`.github/workflows`](https://github.com/scsc-init/homepage_init_frontend/tree/develop/.github/workflows) 폴더에서 모든 CI 항목을 확인할 수 있습니다.  
+[`.github/workflows`](https://github.com/scsc-init/homepage_init_frontend/tree/develop/.github/workflows) 폴더에서 모든 CI 항목을 확인할 수 있습니다.
 
 ### build.yml
 
