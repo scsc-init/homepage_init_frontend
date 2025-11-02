@@ -14,7 +14,7 @@ Next.js **14** App Router 기반으로 구축된 SCSC init의 FE 코드입니다
 
 브랜치 관리는 **git flow**를 지향합니다.
 
-- **main**: 배포용 브랜치입니다. 각 커밋에는 버전 태그(`vX.Y`)가 붙습니다. fast-forward marge 전용 protection 이 설정되어 있습니다.
+- **main**: 배포용 브랜치입니다. 각 커밋에는 버전 태그(`vX.Y`)가 붙습니다. fast-forward merge 전용 protection 이 설정되어 있습니다.
 - **develop (default)**: 개발 중인 코드입니다. feature PR은 develop으로 request 해야 하며 squash merge 전용입니다.
 
 ### 작업 브랜치 규칙
@@ -258,7 +258,7 @@ function doSomething(x, y) {
 
 ## CI: Continuous Integration
 
-본 레포지토리는 github actions 를 사용하여 CI 를 자체적으로 관리하고 있습니다.  
+본 레포지토리는 GitHub Actions 를 사용하여 CI 를 자체적으로 관리하고 있습니다.  
 [`.github/workflows`](https://github.com/scsc-init/homepage_init_frontend/tree/develop/.github/workflows) 폴더에서 모든 CI 항목을 확인할 수 있습니다.
 
 ### build.yml
