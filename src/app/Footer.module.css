@@ -1,0 +1,68 @@
+.root {
+  width: 100%;
+  background: var(--footer-background);
+  color: var(--footer-text-color);
+  z-index: 10000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-x: hidden;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  box-sizing: border-box;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  min-width: 240px;
+  color: var(--footer-text-color);
+  user-select: text;
+}
+
+.logoList {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.logo {
+  background-color: var(--executive-card-bg);
+  padding: 0.75rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.logo img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .logoList {
+    justify-content: flex-start;
+  }
+}

@@ -1,0 +1,325 @@
+#EmailNotice.error,
+#EmailCodeNotice.error,
+#PasswordNotice.error,
+#StudentIDNotice.error,
+#NameNotice.error,
+#PhoneNumberNotice.error {
+  color: var(--red-10);
+}
+
+#EmailNotice.success,
+#EmailCodeNotice.success,
+#PasswordNotice.success,
+#StudentIDNotice.success,
+#NameNotice.success,
+#PhoneNumberNotice.success {
+  color: var(--green-10);
+}
+
+.SignupAlerticon,
+.SignupSuccessIcon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+#SignupContainer {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#SignupForm {
+  position: relative;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: left;
+  justify-content: center;
+  width: 100%;
+  max-width: 25rem;
+  padding: 5rem 2.5rem;
+}
+
+#LoginInfo,
+#UserInfo {
+  margin: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#EmailCodeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+#EmailCodeSend {
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  flex-shrink: 0;
+}
+
+#SignupButtonsContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+#SignupButtonsContainer > * {
+  flex: 1;
+}
+
+#GoogleSignupContainer {
+  min-height: calc(100vh - 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--main-bg-gradient);
+  box-sizing: border-box;
+}
+
+.GoogleSignupCard {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: min(480px, 80vw);
+  box-sizing: border-box;
+}
+
+.GoogleSignupCard h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #1e293b;
+}
+
+.GoogleSignupCard input,
+.GoogleSignupCard select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  background-color: #f9fafb;
+}
+
+.GoogleSignupCard input:disabled {
+  background-color: #e2e8f0;
+}
+
+.GoogleSignupCard button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  color: white;
+  font-size: 1rem;
+  margin-top: 1rem;
+  background-color: #2563eb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.GoogleSignupCard button:hover {
+  background-color: #1d4ed8;
+}
+
+.GoogleSignupCard p {
+  font-size: 0.9rem;
+  color: #475569;
+  margin-top: 0.5rem;
+}
+
+.main-logo__login {
+  position: relative;
+  width: 30vw;
+  max-width: 220px;
+  height: auto;
+}
+
+.main-subtitle__login {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--color-text-subtle);
+  font-weight: 400;
+  line-height: 1.4;
+  width: 36vw;
+  max-width: 180px;
+}
+
+.main-logo-wrapper__login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  margin-top: 4vh;
+  margin-bottom: 5vh;
+  position: relative;
+}
+
+.login-description {
+  margin-bottom: 3vh;
+  text-align: center;
+  font-weight: bold;
+}
+
+.google-signin-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 4;
+  position: relative;
+}
+
+.GoogleLoginBtn {
+  width: 100%;
+  max-width: 360px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-button-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--color-text-body);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.GoogleLoginBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.GoogleLoginBtn:active {
+  transform: translateY(1px);
+}
+.GoogleLoginBtn:hover {
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.12);
+  background: var(--color-surface-light);
+}
+.GoogleIcon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+}
+.GoogleIcon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.GoogleIcon svg path:nth-child(1) {
+  fill: #ea4335;
+}
+.GoogleIcon svg path:nth-child(2) {
+  fill: #4285f4;
+}
+.GoogleIcon svg path:nth-child(3) {
+  fill: #fbbc05;
+}
+.GoogleIcon svg path:nth-child(4) {
+  fill: #34a853;
+}
+.GoogleLoginText {
+  line-height: 1;
+  font-size: 15px;
+}
+
+.GoogleBtnHint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+}
+
+.InAppWarning {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--red-10);
+}
+
+:global(.dark) .GoogleSignupCard {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+}
+
+:global(.dark) .GoogleSignupCard h2 {
+  color: var(--color-text-body);
+}
+
+:global(.dark) .GoogleSignupCard input,
+:global(.dark) .GoogleSignupCard select {
+  background-color: var(--color-surface-light);
+  color: var(--color-text-body);
+  border: 1px solid var(--color-button-border);
+}
+
+:global(.dark) .GoogleSignupCard input:disabled {
+  background-color: #3a3a3a;
+  color: var(--color-text-subtle);
+}
+
+:global(.dark) .GoogleSignupCard button {
+  background-color: var(--color-button-bg);
+  color: white;
+}
+
+:global(.dark) .GoogleSignupCard button:hover {
+  background-color: #368aa0;
+}
+
+.GoogleSignupCard p {
+  color: var(--color-text-subtle);
+}
+
+:global(.dark) .main-subtitle__login {
+  color: var(--color-text-subtle);
+}
+
+:global(.dark) .login-description {
+  color: var(--color-text-body);
+}
+
+:global(.dark) .GoogleLoginBtn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-button-border);
+  color: var(--color-text-body);
+}
+:global(.dark) .GoogleLoginBtn:hover {
+  background: var(--color-surface-light);
+}
+
+.GoogleSignupCard .SignupBtn:disabled,
+.GoogleSignupCard .SignupBtn.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.PolicyLink {
+  margin-top: 8px;
+  font-size: 8px;
+  color: var(--color-surface-light) !important;
+}
+.PolicyLink a {
+  color: var(--color-surface-light);
+  text-decoration: underline;
+}
+
+:global(.dark) .agree {
+  color: var(--color-surface-light);
+}

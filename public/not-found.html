@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SCSC: 서울대 컴퓨터 연구회 - 404</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="서울대학교 SCSC" />
+    <meta
+      property="og:description"
+      content="서울대학교 컴퓨터 연구회 SCSC의 공식 홈페이지입니다.  
+SCSC는 SIG(Special Interested Group) 또는 PIG를 통해 스터디와 연구를 진행합니다. 이에 더해 SCSC는, SKYST 대회 진행 및 세미나 운영을 진행하고 있습니다."
+    />
+    <meta property="og:url" content="https://scsc.dev/" />
+    <meta property="og:site_name" content="SCSC" />
+    <meta property="og:image" content="https://scsc.dev/opengraph.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SCSC Logo" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="서울대학교 SCSC" />
+    <meta
+      name="twitter:description"
+      content="서울대학교 컴퓨터 연구 동아리, SCSC의 공식 홈페이지입니다."
+    />
+    <meta name="twitter:image" content="https://scsc.dev/opengraph.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" />
+
+    <style>
+      /* === Styles from not-found.css === */
+      .NF_Root {
+        min-height: 100vh;
+        background: var(--main-bg-gradient, #f8f9fa);
+        color: var(--color-text-body, #333);
+        display: grid;
+        place-items: center;
+        padding: 6rem 1.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+      html {
+        overflow-y: hidden;
+      }
+      .NF_Backdrop {
+        position: absolute;
+        inset: -20%;
+        background-image: radial-gradient(
+          circle at 1px 1px,
+          var(--dot-bg, #ccc) 1px,
+          transparent 1px
+        );
+        background-size: 22px 22px;
+        opacity: 0.18;
+        pointer-events: none;
+      }
+      .NF_Card {
+        position: relative;
+        width: 100%;
+        max-width: 48rem;
+        border: 1px solid var(--header-border-color, #ddd);
+        background: var(--executive-card-bg, #fff);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+        border-radius: 1.25rem;
+        padding: 2.25rem 2rem 2rem;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .NF_Card::after {
+        content: '';
+        position: absolute;
+        inset: -30% -10% auto -10%;
+        height: 60%;
+        background: var(--main-focus-gradient, rgba(0, 153, 255, 0.2));
+        filter: blur(12px);
+        opacity: 0.7;
+        pointer-events: none;
+      }
+      .NF_Badge {
+        font-size: clamp(2.75rem, 7vw, 5.5rem);
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: var(--color-text-strong, #000);
+        opacity: 0.08;
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+        user-select: none;
+      }
+      .NF_Title {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.5rem, 3.6vw, 2rem);
+        color: var(--color-text-strong, #000);
+      }
+      .NF_Desc {
+        margin: 0 0 1.5rem;
+        color: var(--color-text-subtle, #555);
+      }
+      .NF_Actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .NF_Button {
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.875rem;
+        border: 1px solid var(--color-button-border, #ccc);
+        background: var(--color-button-bg, #f5f5f5);
+        color: var(--color-button-text, #000);
+        text-decoration: none;
+        font-weight: 600;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
+        outline: none;
+        cursor: pointer;
+      }
+      .NF_Button:hover {
+        background: var(--color-button-hover-bg, #eee);
+        transform: translateY(-1px);
+      }
+      .NF_Button:focus-visible {
+        box-shadow: 0 0 0 3px var(--selection-bg, #0099ff44);
+      }
+      .NF_Secondary {
+        background: transparent;
+        color: var(--color-text-body, #333);
+        border-color: var(--header-border-color, #ddd);
+      }
+      .NF_Secondary:hover {
+        background: var(--executive-arrow-bg, #f0f0f0);
+      }
+      @media (max-width: 480px) {
+        .NF_Card {
+          padding: 1.75rem 1rem 1rem;
+        }
+        .NF_Actions {
+          gap: 0.5rem;
+        }
+        .NF_Button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="NF_Root">
+      <div class="NF_Backdrop" aria-hidden="true"></div>
+      <section class="NF_Card" role="group" aria-labelledby="nf-title">
+        <div class="NF_Badge" aria-hidden="true">404</div>
+        <h1 id="nf-title" class="NF_Title">페이지를 찾을 수 없습니다</h1>
+        <p class="NF_Desc">요청하신 주소가 변경되었거나 존재하지 않습니다.</p>
+        <div class="NF_Actions">
+          <button type="button" class="NF_Button NF_Secondary" onclick="goBack()">
+            ← 뒤로가기
+          </button>
+          <a class="NF_Button" href="/">홈으로 이동</a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      function goBack() {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = '/';
+        }
+      }
+    </script>
+  </body>
+</html>

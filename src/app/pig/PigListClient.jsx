@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
-import SortDropdown from '@/components/board/SortDropdown'; // 기존 재사용
+import SortDropdown from '@/components/board/SortDropdown';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function PigListClient({ pigs }) {
+export default function PigListClient({ pigs, myId }) {
   const [sortOrder, setSortOrder] = useState('latest');
 
   const sortedPigs = [...pigs].sort((a, b) => {
@@ -14,6 +14,10 @@ export default function PigListClient({ pigs }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
+
+  const myOwnedPigIds = new Set(
+    pigs.filter((pig) => pig?.owner && String(pig.owner) === myId).map((pig) => String(pig.id)),
+  );
 
   return (
     <>
@@ -28,19 +32,23 @@ export default function PigListClient({ pigs }) {
       </div>
 
       <div id="PigList">
-        {sortedPigs.map((pig) => (
-          <Link key={pig.id} href={`/pig/${pig.id}`} className="pigLink">
-            <div className="pigCard">
-              <div className="pigTopbar">
-                <span className="pigTitle">{pig.title}</span>
-                <span className="pigUserCount">
-                  {pig.year}년 {SEMESTER_MAP[pig.semester]}학기
-                </span>
+        {sortedPigs.map((pig) => {
+          const pid = String(pig.id);
+          const isMine = myOwnedPigIds.has(pid);
+          return (
+            <Link key={pig.id} href={`/pig/${pig.id}`} className="pigLink">
+              <div className={`pigCard ${isMine ? 'isMine' : ''}`}>
+                <div className="pigTopbar">
+                  <span className="pigTitle">{pig.title}</span>
+                  <span className="pigUserCount">
+                    {pig.year}년 {SEMESTER_MAP[pig.semester]}학기
+                  </span>
+                </div>
+                <div className="pigDescription">{pig.description}</div>
               </div>
-              <div className="pigDescription">{pig.description}</div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </>
   );

@@ -327,12 +327,87 @@ body {
   border-style: solid;
 }
 
+.SigMemberDropdown {
+  position: relative;
+}
+
+.SigMemberBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+  min-width: 0;
+}
+
+.SigMemberBtn:hover {
+  background-color: var(--color-button-hover-bg);
+  transform: translateY(-1px);
+}
+
+.SigMemberMenu {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--color-text-subtle);
+  border-radius: 0.625rem;
+  overflow: hidden;
+  padding: 0.4rem 0.5rem;
+  z-index: 10;
+}
+
+.SigMemberMenu.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.SigMemberMenu button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: center;
+  color: var(--color-text-body);
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.15s ease;
+  border-radius: 0.625rem;
+}
+
+.SigMemberMenu button:hover {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
+}
+
+.fixed-width {
+  width: 7.5rem;
+  text-align: center;
+}
+
 @media (max-width: 560px) {
   .SigActionRow {
     flex-direction: column;
     align-items: stretch;
   }
   .SigButton {
+    width: 100%;
+    max-width: 100%;
+  }
+  .SigMemberBtn {
+    width: 100%;
+    max-width: 100%;
+  }
+  .SigMemberMenu {
     width: 100%;
     max-width: 100%;
   }
@@ -434,6 +509,16 @@ body {
   background: var(--executive-card-bg);
   border: 1px solid var(--color-button-border);
   color: var(--color-text-body);
+  box-shadow: 0 1px 3px var(--executive-card-shadow);
+}
+
+.SigMemberOwner {
+  padding: 0.45rem 0.75rem;
+  border-radius: 9999px;
+  background: var(--color-text-body);
+  border: 1px solid var(--color-button-border);
+  color: var(--executive-card-bg);
+  font-weight: bold;
   box-shadow: 0 1px 3px var(--executive-card-shadow);
 }
 

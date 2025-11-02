@@ -12,16 +12,10 @@ export default function ArticlesView({ board, sortOrder }) {
   const [articles, setArticles] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
 
-  const boardId = board?.id; // board가 없으면 undefined
+  const boardId = board?.id;
 
   useEffect(() => {
-    if (!boardId) return; // board 없을 경우 실행하지 않음
-
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      router.push('/us/login');
-      return;
-    }
+    if (!boardId) return;
 
     if (boardId === 1 || boardId === 2) {
       setUnauthorized(true);
@@ -30,15 +24,15 @@ export default function ArticlesView({ board, sortOrder }) {
 
     const fetchContents = async () => {
       try {
-        const res = await fetch(`/api/articles/${boardId}`, {
-          headers: { 'x-jwt': jwt },
-        });
-
+        const res = await fetch(`/api/articles/${boardId}`);
+        if (res.status === 401) {
+          router.push('/us/login');
+          return;
+        }
         if (!res.ok) {
           router.push('/us/login');
           return;
         }
-
         const data = await res.json();
         setArticles(data);
       } catch (_) {
@@ -65,15 +59,15 @@ export default function ArticlesView({ board, sortOrder }) {
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
-
+  const displayArticles = sortedArticles.filter((a) => a?.is_deleted !== true);
   return (
     <div id="SigList">
-      {sortedArticles.map((article) => (
+      {displayArticles.map((article) => (
         <Link key={article.id} href={`/article/${article.id}`} className="sigLink">
           <div className="sigCard">
             <div className="sigTopbar">
               <span className="sigTitle">{article.title}</span>
-              <span className="sigUserCount">{utc2kst(new Date(article.created_at))}</span>
+              <span className="sigUserCount">{utc2kst(article.created_at)}</span>
             </div>
             <div className="sigDescription">
               {article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...

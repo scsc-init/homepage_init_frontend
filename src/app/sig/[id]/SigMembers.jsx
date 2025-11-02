@@ -1,5 +1,14 @@
-export default function SigMembers({ members }) {
-  const list = Array.isArray(members) ? members : [];
+export default function SigMembers({ owner, members }) {
+  const rawList = Array.isArray(members) ? members : [];
+  const ownerIndex = !!owner ? rawList.findIndex((m) => m.id === owner) : -1;
+  const list =
+    ownerIndex === -1
+      ? rawList
+      : [
+          rawList[ownerIndex],
+          ...rawList.slice(0, ownerIndex),
+          ...rawList.slice(ownerIndex + 1),
+        ];
   const count = list.length;
 
   return (
@@ -15,11 +24,17 @@ export default function SigMembers({ members }) {
         <div className="SigMembersEmpty">가입한 인원이 없습니다.</div>
       ) : (
         <ul className="SigMemberList">
-          {list.map((m) => (
-            <li key={m.id} className="SigMemberChip">
-              {m.name}
-            </li>
-          ))}
+          {list.map((m) =>
+            m.id === owner ? (
+              <li key={m.id} className="SigMemberOwner">
+                {m.name}
+              </li>
+            ) : (
+              <li key={m.id} className="SigMemberChip">
+                {m.name}
+              </li>
+            ),
+          )}
         </ul>
       )}
     </section>
