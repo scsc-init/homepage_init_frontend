@@ -10,19 +10,12 @@ import {
 } from '@/util/constants';
 import { resolveProfileImage } from '@/util/profileImage';
 
-function roleByEmailFallback(email) {
-  const e = String(email || '').toLowerCase();
-  if (presidentEmails.map((x) => x.toLowerCase()).includes(e)) return '회장';
-  if (vicePresidentEmails.map((x) => x.toLowerCase()).includes(e)) return '부회장';
-  return '임원';
-}
-
 function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
   const { presidentId, vicePresidentId } = leadershipIds || {};
   if (presidentId && user.id === presidentId) return '회장';
   if (vicePresidentId && user.id === vicePresidentId) return '부회장';
-  return roleByEmailFallback(user.email);
+  return '임원';
 }
 
 function normUser(u) {

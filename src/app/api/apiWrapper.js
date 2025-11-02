@@ -1,6 +1,7 @@
-import { cookies } from 'next/headers';
+import { headers } from 'next/headers';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
+
 /**
  * Handles forwarding requests to an internal API.
  * @param {string} method - The HTTP method (e.g., "POST").
@@ -12,68 +13,34 @@ import { getApiSecret } from '@/util/getApiSecret';
  * @returns {Promise<Response>} - A Next.js Response object.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
-  const cookieStore = cookies();
-  const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const headersList = headers();
+  const jwt = headersList.get('x-jwt');
 
   let fullPath = pathTemplate;
-  const { params, query, body, headers: extraHeaders } = options;
-  if (params) {
-    for (const key of Object.keys(params)) {
-      const encoded = encodeURIComponent(String(params[key]));
-      fullPath = fullPath.replaceAll(`{${key}}`, encoded);
+  if (options.params) {
+    for (const key in options.params) {
+      fullPath = fullPath.replace(`{${key}}`, options.params[key]);
     }
   }
-  if (query) {
-    const qs = new URLSearchParams(query).toString();
-    if (qs) fullPath += `?${qs}`;
-  }
-  const baseUrl = getBaseUrl();
-  if (!baseUrl) {
-    throw new Error('Missing BACKEND_URL environment variable');
-  }
-  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-  const fullUrl = new URL(fullPath, normalizedBase).toString();
-
-  const hasIncoming = Boolean(request);
-  if (hasIncoming && body !== undefined) {
-    throw new Error('handleApiRequest: provide either request or options.body, not both');
-  }
-
-  let bodyJson;
-  if (hasIncoming) {
-    bodyJson = await request.json();
-  } else if (body !== undefined) {
-    bodyJson = body;
-  }
-
-  const hdrs = {
-    'x-api-secret': getApiSecret(),
-    ...(extraHeaders || {}),
-  };
-  if (appJwt) hdrs['x-jwt'] = appJwt;
-
-  let fetchBody;
-  const isBlobSupported = typeof Blob !== 'undefined';
-  if (bodyJson === undefined) {
-    fetchBody = undefined;
-  } else if (
-    bodyJson instanceof FormData ||
-    bodyJson instanceof URLSearchParams ||
-    typeof bodyJson === 'string' ||
-    (isBlobSupported && bodyJson instanceof Blob)
-  ) {
-    fetchBody = bodyJson;
-  } else {
-    if (!hdrs['Content-Type']) {
-      hdrs['Content-Type'] = 'application/json';
+  if (options.query) {
+    const searchParams = new URLSearchParams(options.query).toString();
+    if (searchParams) {
+      fullPath += `?${searchParams}`;
     }
-    fetchBody = JSON.stringify(bodyJson);
   }
+  const fullUrl = `${getBaseUrl()}${fullPath}`;
 
-  return fetch(fullUrl, {
+  const requestBody = request ? await request.json() : undefined;
+
+  const res = await fetch(fullUrl, {
     method,
-    headers: hdrs,
-    body: fetchBody,
+    headers: {
+      'Content-Type': requestBody && 'application/json',
+      'x-api-secret': getApiSecret(),
+      'x-jwt': jwt,
+    },
+    body: requestBody && JSON.stringify(requestBody),
     cache: 'no-store',
   });
+  return res;
 }

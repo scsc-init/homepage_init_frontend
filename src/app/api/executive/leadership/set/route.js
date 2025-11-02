@@ -25,7 +25,13 @@ export async function POST(request) {
     }),
   };
 
-  const res = await handleApiRequest('POST', '/api/kv/leaders/update', { body: payload });
+  const sanitizedRequest = new Request('http://localhost', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  const res = await handleApiRequest('POST', '/api/kv/leaders/update', {}, sanitizedRequest);
 
   if (!res.ok) {
     const text = await res.text();
