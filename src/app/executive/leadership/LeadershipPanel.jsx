@@ -34,7 +34,14 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
   }, [candidates]);
 
   const findCandidate = useCallback(
-    (id) => sortedCandidates.find((candidate) => candidate.id === id) ?? null,
+    (id) => {
+      const target = String(id ?? '').trim();
+      if (!target) return null;
+      return (
+        sortedCandidates.find((candidate) => String(candidate?.id ?? '').trim() === target) ??
+        null
+      );
+    },
     [sortedCandidates],
   );
 
@@ -49,14 +56,20 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const presidentTrimmed = String(selectedPresidentId || '').trim();
+    const vicePresidentTrimmed = String(selectedVicePresidentId || '').trim();
+    if (presidentTrimmed && vicePresidentTrimmed && presidentTrimmed === vicePresidentTrimmed) {
+      alert('회장과 부회장은 서로 다른 인물이어야 합니다.');
+      return;
+    }
     setPending(true);
     try {
       const res = await fetch('/api/executive/leadership/set', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          president_id: selectedPresidentId || null,
-          vice_president_id: selectedVicePresidentId || null,
+          president_id: presidentTrimmed || null,
+          vice_president_id: vicePresidentTrimmed || null,
         }),
       });
 
@@ -124,7 +137,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                 >
                   <option value="">미지정</option>
                   {sortedCandidates.map((candidate) => (
-                    <option key={candidate.id} value={candidate.id}>
+                    <option key={candidate.id} value={String(candidate.id ?? '')}>
                       {candidate.name} ({candidate.email})
                     </option>
                   ))}
@@ -148,7 +161,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                 >
                   <option value="">미지정</option>
                   {sortedCandidates.map((candidate) => (
-                    <option key={candidate.id} value={candidate.id}>
+                    <option key={candidate.id} value={String(candidate.id ?? '')}>
                       {candidate.name} ({candidate.email})
                     </option>
                   ))}
