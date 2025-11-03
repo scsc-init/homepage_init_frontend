@@ -49,7 +49,13 @@ const PLACEHOLDER = {
 };
 
 export default function FundApplyClient({ boardInfo, sigs, pigs }) {
-  const { register, handleSubmit, watch, setValue } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       applyType: '',
       orgCategory: '',
@@ -396,6 +402,11 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                       inputMode="numeric"
                       disabled={useKakaoPay || submitting}
                     />
+                    {!useKakaoPay && errors.accountNumber?.message && (
+                      <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                        {errors.accountNumber.message}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <input
