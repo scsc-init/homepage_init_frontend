@@ -7,8 +7,8 @@ import { fetchUsers, fetchMajors } from '@/util/fetchAPIData';
 import '../page.css';
 
 export default async function ExecutiveUserPage() {
-  const [users, majors] = await Promise.all([fetchUsers(), fetchMajors()]);
-  const safeUsers = Array.isArray(users) ? users : [];
+  const [users, majors] = await Promise.allSettled([fetchUsers(), fetchMajors()]);
+  const safeUsers = users.status === 'fulfilled' ? users.value : [];
   const usersSortedByRole = Array.from(
     new Map(safeUsers.map((user) => [user.id, user])).values(),
   );
@@ -19,7 +19,10 @@ export default async function ExecutiveUserPage() {
       <div className="admin-panel">
         <h2>유저 관리</h2>
         <div className="adm-section">
-          <UserList users={usersSortedByRole} majors={majors} />
+          <UserList
+            users={usersSortedByRole}
+            majors={majors.status === 'fulfilled' ? majors.value : []}
+          />
         </div>
         <div className="adm-section">
           <EnrollManagementPanel />

@@ -14,7 +14,7 @@ import {
 import './page.css';
 
 export default async function AdminPanel() {
-  const [boards, scscGlobalStatus, majors, discordBotStatus] = await Promise.all([
+  const [boards, scscGlobalStatus, majors, discordBotStatus] = await Promise.allSettled([
     fetchBoards([3, 4, 5, 6]),
     fetchSCSCGlobalStatus(),
     fetchMajors(),
@@ -41,7 +41,13 @@ export default async function AdminPanel() {
 
         <h2>게시글 관리</h2>
         <div className="adm-section">
-          <ArticleList boards={boards} />
+          <ArticleList
+            boards={
+              boards.status === 'fulfilled'
+                ? boards.value.filter((b) => b.status === 'fulfilled').map((b) => b.value)
+                : []
+            }
+          />
         </div>
 
         <h2>SIG 관리</h2>
@@ -57,22 +63,28 @@ export default async function AdminPanel() {
         <h2>Scsc status 관리</h2>
         <div className="adm-section">
           <ScscStatusPanel
-            scscGlobalStatus={scscGlobalStatus.status}
-            semester={scscGlobalStatus.semester}
-            year={scscGlobalStatus.year}
+            scscGlobalStatus={
+              scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.status : null
+            }
+            semester={
+              scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.semester : null
+            }
+            year={scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null}
           />
         </div>
 
         <h2>디스코드 봇 관리</h2>
         <div className="adm-section">
           <DiscordBotPanel
-            is_logged_in={discordBotStatus ? discordBotStatus.logged_in : 'error'}
+            is_logged_in={
+              discordBotStatus.status === 'fulfilled' ? discordBotStatus.value : 'error'
+            }
           />
         </div>
 
         <h2>전공 관리</h2>
         <div className="adm-section">
-          <MajorList majors={majors} />
+          <MajorList majors={majors.status === 'fulfilled' ? majors.value : []} />
         </div>
       </div>
     </WithAuthorization>
