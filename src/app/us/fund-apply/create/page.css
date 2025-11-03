@@ -86,6 +86,7 @@ select.C_Input option {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 .C_Checkbox {
   width: 1.1rem;
@@ -97,6 +98,51 @@ select.C_Input option {
 .C_CheckText {
   font-size: 0.9rem;
   color: var(--color-text-body);
+}
+
+.PayoutSection {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface-light);
+  border: 1px solid var(--color-button-border);
+  border-radius: 0.75rem;
+  margin-top: 0.5rem;
+}
+.PayoutHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.PayoutHelpText {
+  font-size: 0.875rem;
+  color: var(--color-text-subtle, #666);
+  margin: 0 0 0.75rem;
+}
+.PayoutField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.PayoutField .C_Input {
+  margin-bottom: 1;
+}
+.PayoutGrid {
+  margin-top: 1.35rem;
+}
+.PayoutCheck {
+  margin: 0.5rem 0 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--color-button-border);
+}
+.C_SubLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-subtle, #666);
+  margin-bottom: 0.2rem;
+}
+.DetailSection {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-button-border);
 }
 .C_Link {
   text-decoration: underline;

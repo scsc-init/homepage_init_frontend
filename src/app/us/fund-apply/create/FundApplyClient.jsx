@@ -145,18 +145,29 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     if (submitting) return;
     if (!user) return;
 
+    const rawAmount = String(data.amount || '').replace(/\s+/g, '');
     const bankName = String(data.bankName || '').trim();
-    const accountNumberRaw = String(data.accountNumber || '');
-    const accountNumber = accountNumberRaw.replace(/\s+/g, '');
+    const accountNumber = String(data.accountNumber || '').trim();
     const accountHolder = String(data.accountHolder || '').trim();
-    const wantsKakaoPay = Boolean(data.useKakaoPay);
+    const isKakaoPay = Boolean(data.useKakaoPay);
+    const amountNumber = Number(rawAmount || 0);
 
-    if (!wantsKakaoPay && (!bankName || !accountNumber || !accountHolder)) {
-      alert('은행, 계좌번호, 예금주 정보를 모두 입력하거나 카카오페이로 받기를 선택해주세요.');
-      return;
+    if (!isKakaoPay) {
+      if (!bankName) {
+        alert('은행명을 입력해주세요.');
+        return;
+      }
+      if (!accountNumber) {
+        alert('계좌번호를 입력해주세요.');
+        return;
+      }
+      if (!accountHolder) {
+        alert('예금주를 입력해주세요.');
+        return;
+      }
     }
 
-    if (!wantsKakaoPay && !/^\d+$/.test(accountNumber)) {
+    if (!isKakaoPay && !/^\d+$/.test(accountNumber)) {
       alert('계좌번호는 숫자만 입력 가능합니다.');
       return;
     }
@@ -170,14 +181,14 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
         : data.applyType === 'pair'
           ? `${data.pairBefore} / ${data.pairAfter}`
           : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
-    const payoutInfo = wantsKakaoPay
+    const payoutInfo = isKakaoPay
       ? '카카오페이로 받겠습니다'
       : `${bankName} | ${accountNumber} | ${accountHolder}`;
 
     const metaLines = [
       `**신청 유형**: ${tLabel}`,
       `**대상**: ${targetDisplay}`,
-      `**신청 금액**: ${fmtNumber(data.amount)}원`,
+      `**신청 금액**: ${fmtNumber(amountNumber)}원`,
       `**지급 정보**: ${payoutInfo}`,
       `**신청자**: ${user.student_id} ${user.name} (${user.email})`,
     ];
@@ -360,36 +371,67 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
           )}
 
           {step3Ready && (
-            <div className="Step fade-in space-y-4">
-              <div>
-                <label className="C_Label">신청 금액</label>
-                <input
-                  type="number"
-                  {...register('amount', { required: true, min: 1 })}
-                  placeholder="신청 금액 (숫자만)"
-                  className="C_Input"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="C_Label">지급 계좌 정보</label>
-                  <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
-                    은행, 계좌번호, 예금주를 모두 입력하거나 카카오페이로 받기를 선택해주세요.
+            <div className="Step fade-in space-y-8">
+              <div className="PayoutSection space-y-6">
+                <div className="PayoutHeader">
+                  <label className="C_Label">신청 금액 및 지급 방식</label>
+                  <p className="PayoutHelpText">
+                    카카오페이를 선택하지 않으면 아래 계좌 정보를 모두 입력해주세요.
                   </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
+                <label className="C_CheckRow PayoutCheck">
+                  <input
+                    type="checkbox"
+                    {...register('useKakaoPay')}
+                    className="C_Checkbox"
+                    disabled={submitting}
+                  />
+                  <span className="C_CheckText">카카오페이로 받겠습니다</span>
+                </label>
+                <div className="PayoutGrid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+                  <div className="PayoutField">
+                    <label className="C_SubLabel" htmlFor="fund-amount-input">
+                      신청 금액
+                    </label>
                     <input
+                      id="fund-amount-input"
+                      type="text"
+                      {...register('amount', {
+                        required: '신청 금액을 입력해주세요.',
+                        pattern: {
+                          value: /^\d+$/,
+                          message: '신청 금액은 숫자만 입력 가능합니다.',
+                        },
+                      })}
+                      placeholder="신청 금액 (숫자만)"
+                      className="C_Input"
+                      inputMode="numeric"
+                    />
+                    {errors.amount?.message && (
+                      <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                        {errors.amount.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="PayoutField">
+                    <label className="C_SubLabel" htmlFor="fund-bank-input">
+                      은행
+                    </label>
+                    <input
+                      id="fund-bank-input"
                       type="text"
                       {...register('bankName')}
-                      placeholder="은행명 (예: 국민은행)"
+                      placeholder="은행 (예: 토스뱅크)"
                       className="C_Input"
                       disabled={useKakaoPay || submitting}
                     />
                   </div>
-                  <div>
+                  <div className="PayoutField">
+                    <label className="C_SubLabel" htmlFor="fund-account-input">
+                      계좌번호
+                    </label>
                     <input
+                      id="fund-account-input"
                       type="text"
                       {...register('accountNumber', {
                         pattern: {
@@ -397,7 +439,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                           message: '계좌번호는 숫자만 입력 가능합니다.',
                         },
                       })}
-                      placeholder="계좌번호 (숫자만)"
+                      placeholder="계좌번호 (예: 12345678901234)"
                       className="C_Input"
                       inputMode="numeric"
                       disabled={useKakaoPay || submitting}
@@ -408,37 +450,38 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                       </p>
                     )}
                   </div>
-                  <div>
+                  <div className="PayoutField">
+                    <label className="C_SubLabel" htmlFor="fund-holder-input">
+                      예금주
+                    </label>
                     <input
+                      id="fund-holder-input"
                       type="text"
                       {...register('accountHolder')}
-                      placeholder="예금주"
+                      placeholder="예금주 (예: 홍길동)"
                       className="C_Input"
                       disabled={useKakaoPay || submitting}
                     />
                   </div>
                 </div>
-                <label className="C_CheckRow">
-                  <input
-                    type="checkbox"
-                    {...register('useKakaoPay')}
-                    className="C_Checkbox"
-                    disabled={submitting}
-                  />
-                  <span className="C_CheckText">카카오페이로 받겠습니다</span>
-                </label>
               </div>
 
-              <div
-                ref={wrapperRef}
-                className={`EditorWrapper ${hasContent ? 'has-content' : ''}`}
-              >
-                {!hasContent && (
-                  <div ref={placeholderRef} className="EditorPlaceholder">
-                    <div className="EditorPlaceholderText">{placeholderText}</div>
-                  </div>
-                )}
-                <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
+              <div className="DetailSection space-y-3">
+                <label className="C_Label" htmlFor="fund-detail-editor">
+                  상세 내용
+                </label>
+                <div
+                  id="fund-detail-editor"
+                  ref={wrapperRef}
+                  className={`EditorWrapper ${hasContent ? 'has-content' : ''}`}
+                >
+                  {!hasContent && (
+                    <div ref={placeholderRef} className="EditorPlaceholder">
+                      <div className="EditorPlaceholderText">{placeholderText}</div>
+                    </div>
+                  )}
+                  <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
+                </div>
               </div>
             </div>
           )}
