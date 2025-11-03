@@ -55,14 +55,10 @@ export async function fetchSigs() {
     const sigsWithContentMembers = await Promise.allSettled(
       sigsRaw.map(async (sig) => {
         try {
-          const [articleRes, membersRes] = await Promise.all([
-            handleApiRequest('GET', `/api/article/${sig.content_id}`),
-            handleApiRequest('GET', `/api/sig/${sig.id}/members`),
+          const [article, members] = await Promise.all([
+            safeFetch('GET', `/api/article/${sig.content_id}`),
+            safeFetch('GET', `/api/sig/${sig.id}/members`),
           ]);
-          const article = articleRes.ok
-            ? await articleRes.json()
-            : { content: '시그 설명을 불러오는데 실패했습니다.' };
-          const members = membersRes.ok ? await membersRes.json() : [];
           return { ...sig, content: article.content, members: members };
         } catch (err) {
           throw new Error(`sig fetch failed: ${err}`);
@@ -86,14 +82,10 @@ export async function fetchPigs() {
     const pigsWithContentMembers = await Promise.allSettled(
       pigsRaw.map(async (pig) => {
         try {
-          const [articleRes, membersRes] = await Promise.all([
-            handleApiRequest('GET', `/api/article/${pig.content_id}`),
-            handleApiRequest('GET', `/api/pig/${pig.id}/members`),
+          const [article, members] = await Promise.all([
+            safeFetch('GET', `/api/article/${pig.content_id}`),
+            safeFetch('GET', `/api/pig/${pig.id}/members`),
           ]);
-          const article = articleRes.ok
-            ? await articleRes.json()
-            : { content: '피그 설명을 불러오는데 실패했습니다.' };
-          const members = membersRes.ok ? await membersRes.json() : [];
           return { ...pig, content: article.content, members: members };
         } catch (err) {
           throw new Error(`pig fetch failed: ${err}`);
