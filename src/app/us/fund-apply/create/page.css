@@ -123,7 +123,7 @@ select.C_Input option {
   gap: 0.25rem;
 }
 .PayoutField .C_Input {
-  margin-bottom: 1;
+  margin-bottom: 0;
 }
 .PayoutGrid {
   margin-top: 1.35rem;
