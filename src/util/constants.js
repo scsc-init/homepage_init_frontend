@@ -1,4 +1,4 @@
-// @/util/constants.jsx
+// @/util/constants.js
 
 /**
  * @file 변경 가능성이 있는 변수들과 설명을 모아둔 파일입니다.

@@ -26,8 +26,8 @@ export default async function RegisterPage() {
     }),
   });
   if (res.status === 200) {
-    const me = await fetchMe();
-    redirect(me ? '/' : '/us/login');
+    const [me] = await Promise.allSettled([fetchMe()]);
+    redirect(me.status === 'fulfilled' ? '/' : '/us/login');
   }
   if (res.status !== 404) {
     redirect('/us/login');

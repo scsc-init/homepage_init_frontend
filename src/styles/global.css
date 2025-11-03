@@ -199,7 +199,6 @@ a {
   color: var(--color-button-bg);
 }
 
-/* 비활성화/로딩 공통 처리 */
 button[disabled],
 button.is-disabled,
 [aria-disabled='true'] {
@@ -207,6 +206,7 @@ button.is-disabled,
   cursor: not-allowed !important;
   pointer-events: none !important;
   filter: grayscale(0.1) saturate(0.75);
+  border: unset;
 }
 
 .is-busy,
@@ -242,4 +242,35 @@ button.is-disabled,
   display: inline-block;
   margin-left: 0.75rem;
   margin-top: 0.25rem;
+}
+
+section {
+  background: var(--page-section-bg, transparent);
+}
+
+input,
+select,
+textarea {
+  border-radius: var(--control-radius, 0.5rem);
+  border: 1px solid var(--color-surface-light);
+  background: var(--color-surface, var(--background-color));
+  color: var(--color-text-body);
+}
+
+input,
+select,
+textarea {
+  padding: 0.5rem 0.75rem;
+}
+
+button {
+  background: var(--color-button-bg);
+  color: var(--color-button-text, var(--background-color));
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--control-radius, 0.5rem);
+}
+
+.decorateNone {
+  text-decoration: none;
+  color: var(--color-text-body);
 }

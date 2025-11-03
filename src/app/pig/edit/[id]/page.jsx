@@ -8,8 +8,8 @@ export const metadata = { title: 'PIG' };
 
 export default async function EditPigPage({ params }) {
   const { id } = params;
-  const me = await fetchMe();
-  if (!me?.id) redirect('/us/login');
+  const [me] = await Promise.allSettled([fetchMe()]);
+  if (me.status === 'rejected') redirect('/us/login');
 
   const pigRes = await handleApiRequest('GET', `/api/pig/${id}`);
   if (!pigRes.ok) {
@@ -27,5 +27,5 @@ export default async function EditPigPage({ params }) {
   const articleRes = await handleApiRequest('GET', `/api/article/${pig.content_id}`);
   const article = articleRes.ok ? await articleRes.json() : { content: '' };
 
-  return <EditPigClient pigId={id} me={me} pig={pig} article={article} />;
+  return <EditPigClient pigId={id} me={me.value} pig={pig} article={article} />;
 }
