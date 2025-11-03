@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Footer() {
   const pathname = usePathname();
-  const hideFooterRoutes = ['/us/login', '/signup', '/about/my-page'];
+  const shouldHideFooter = hideFooterRoutes.includes(pathname);
   const [footerMessage, setFooterMessage] = useState('');
   const [showEditor, setShowEditor] = useState(false);
   const [newMessage, setNewMessage] = useState('');
@@ -20,8 +20,6 @@ export default function Footer() {
   const newRef = useRef(null);
   const router = useRouter();
   const key = 'footer-message';
-
-  if (hideFooterRoutes.includes(pathname)) return null;
 
   useEffect(() => {
     fetchMeClient().then(setUser);
@@ -41,6 +39,8 @@ export default function Footer() {
     getFooter();
   }, []);
 
+  if (shouldHideFooter) return null;
+
   const getFooter = async () => {
     const res = await fetch(`/api/kv/${key}`, {
       method: 'GET',
@@ -51,7 +51,6 @@ export default function Footer() {
     if (res.ok) {
       const footer = await res.json();
       setFooterMessage(footer.value);
-      router.refresh();
     } else {
       setFooterMessage('Footer 정보를 불러오지 못했습니다.');
       return;
@@ -76,7 +75,7 @@ export default function Footer() {
       if (res.ok) {
         const footer = await res.json();
         setFooterMessage(footer.value);
-        setNewMessage(footerMessage);
+        setNewMessage(footer.value);
         setShowEditor(false);
         router.refresh();
       } else if (res.status === 401 || res.status === 403) {

@@ -145,24 +145,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .boardActions {
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
-  .boardActions > * {
-    width: auto;
-  }
-}
-
-.boardActions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
   margin-bottom: 1.5rem;
 }
@@ -182,5 +164,8 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 0.5rem;
+  }
+  .boardActions > * {
+    width: auto;
   }
 }
