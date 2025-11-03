@@ -140,12 +140,18 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     if (!user) return;
 
     const bankName = String(data.bankName || '').trim();
-    const accountNumber = String(data.accountNumber || '').trim();
+    const accountNumberRaw = String(data.accountNumber || '');
+    const accountNumber = accountNumberRaw.replace(/\s+/g, '');
     const accountHolder = String(data.accountHolder || '').trim();
     const wantsKakaoPay = Boolean(data.useKakaoPay);
 
     if (!wantsKakaoPay && (!bankName || !accountNumber || !accountHolder)) {
       alert('은행, 계좌번호, 예금주 정보를 모두 입력하거나 카카오페이로 받기를 선택해주세요.');
+      return;
+    }
+
+    if (!wantsKakaoPay && !/^\d+$/.test(accountNumber)) {
+      alert('계좌번호는 숫자만 입력 가능합니다.');
       return;
     }
 
@@ -379,7 +385,12 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                   <div>
                     <input
                       type="text"
-                      {...register('accountNumber')}
+                      {...register('accountNumber', {
+                        pattern: {
+                          value: /^[\d\s]*$/,
+                          message: '계좌번호는 숫자만 입력 가능합니다.',
+                        },
+                      })}
                       placeholder="계좌번호 (숫자만)"
                       className="C_Input"
                       inputMode="numeric"
