@@ -60,6 +60,10 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
       amount: '',
       editor: '',
       checked: false,
+      bankName: '',
+      accountNumber: '',
+      accountHolder: '',
+      useKakaoPay: false,
     },
   });
 
@@ -71,6 +75,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
   const pairBefore = watch('pairBefore');
   const pairAfter = watch('pairAfter');
   const isChecked = watch('checked');
+  const useKakaoPay = watch('useKakaoPay');
 
   const [user, setUser] = useState(null);
   const [targetList, setTargetList] = useState([]);
@@ -134,6 +139,16 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     if (submitting) return;
     if (!user) return;
 
+    const bankName = String(data.bankName || '').trim();
+    const accountNumber = String(data.accountNumber || '').trim();
+    const accountHolder = String(data.accountHolder || '').trim();
+    const wantsKakaoPay = Boolean(data.useKakaoPay);
+
+    if (!wantsKakaoPay && (!bankName || !accountNumber || !accountHolder)) {
+      alert('은행, 계좌번호, 예금주 정보를 모두 입력하거나 카카오페이로 받기를 선택해주세요.');
+      return;
+    }
+
     setSubmitting(true);
 
     const tLabel = typeLabel(data.applyType);
@@ -143,11 +158,15 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
         : data.applyType === 'pair'
           ? `${data.pairBefore} / ${data.pairAfter}`
           : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
+    const payoutInfo = wantsKakaoPay
+      ? '카카오페이로 받겠습니다'
+      : `${bankName} | ${accountNumber} | ${accountHolder}`;
 
     const metaLines = [
       `**신청 유형**: ${tLabel}`,
       `**대상**: ${targetDisplay}`,
       `**신청 금액**: ${fmtNumber(data.amount)}원`,
+      `**지급 정보**: ${payoutInfo}`,
       `**신청자**: ${user.student_id} ${user.name} (${user.email})`,
     ];
     const metaBlock = metaLines.join('  \n');
@@ -338,6 +357,54 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                   placeholder="신청 금액 (숫자만)"
                   className="C_Input"
                 />
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="C_Label">지급 계좌 정보</label>
+                  <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
+                    은행, 계좌번호, 예금주를 모두 입력하거나 카카오페이로 받기를 선택해주세요.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      {...register('bankName')}
+                      placeholder="은행명 (예: 국민은행)"
+                      className="C_Input"
+                      disabled={useKakaoPay || submitting}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      {...register('accountNumber')}
+                      placeholder="계좌번호 (숫자만)"
+                      className="C_Input"
+                      inputMode="numeric"
+                      disabled={useKakaoPay || submitting}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      {...register('accountHolder')}
+                      placeholder="예금주"
+                      className="C_Input"
+                      disabled={useKakaoPay || submitting}
+                    />
+                  </div>
+                </div>
+                <label className="C_CheckRow">
+                  <input
+                    type="checkbox"
+                    {...register('useKakaoPay')}
+                    className="C_Checkbox"
+                    disabled={submitting}
+                  />
+                  <span className="C_CheckText">카카오페이로 받겠습니다</span>
+                </label>
               </div>
 
               <div
