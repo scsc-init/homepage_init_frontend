@@ -1,5 +1,7 @@
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { getBaseUrl } from '@/util/getBaseUrl';
+import { getApiSecret } from '@/util/getApiSecret';
 
 function sanitizeId(value) {
   if (value === null || value === undefined) return '';
@@ -25,15 +27,31 @@ export async function POST(request) {
     }),
   };
 
-  const sanitizedRequest = new Request('http://localhost', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  const cookieStore = cookies();
+  const appJwt = cookieStore.get('app_jwt')?.value || null;
 
   let res;
   try {
-    res = await handleApiRequest('POST', '/api/kv/leaders/update', {}, sanitizedRequest);
+    let apiSecret = getApiSecret();
+    if (!apiSecret) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Missing API_SECRET environment variable');
+      }
+      console.warn('API_SECRET is missing; using development placeholder value.');
+      apiSecret = 'development-missing-api-secret';
+    }
+    const hdrs = {
+      'Content-Type': 'application/json',
+      'x-api-secret': apiSecret,
+    };
+    if (appJwt) hdrs['x-jwt'] = appJwt;
+
+    res = await fetch(`${getBaseUrl()}/api/kv/leaders/update`, {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify(payload),
+      cache: 'no-store',
+    });
   } catch (err) {
     const detail =
       err instanceof Error && err.message
