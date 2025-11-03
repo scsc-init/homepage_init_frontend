@@ -2,15 +2,18 @@ import { NextResponse } from 'next/server';
 import { handleApiRequest } from '@/app/api/apiWrapper';
 
 export async function GET() {
-  const res = await handleApiRequest('GET', '/api/kv/leaders');
-
-  if (!res.ok) {
-    // When the key does not exist or permission denied, fall back to empty state.
-    return NextResponse.json({ president_id: null, vice_president_id: null }, { status: 200 });
-  }
-
   try {
-    const payload = await res.json();
+    const res = await handleApiRequest('GET', '/api/kv/leaders');
+
+    if (!res.ok) {
+      // When the key does not exist or permission denied, fall back to empty state.
+      return NextResponse.json(
+        { president_id: null, vice_president_id: null },
+        { status: 200 },
+      );
+    }
+
+    const payload = await res.json().catch(() => null);
     if (!payload || typeof payload.value !== 'string') {
       return NextResponse.json(
         { president_id: null, vice_president_id: null },

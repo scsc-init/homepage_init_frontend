@@ -8,6 +8,7 @@ import { getApiSecret } from '@/util/getApiSecret';
  * @param {object} [options] - Optional additional fetch options.
  * @param {object} [options.params] - The Next.js `params` object from the route handler.
  * @param {object} [options.query] - Object for URL query parameters (e.g., { page: 1 }).
+ * @param {object} [options.extraHeaders] - Additional headers to forward to the upstream API.
  * @param {Request} request - If included, fetch with body from it. The incoming Next.js Request object.
  * @returns {Promise<Response>} - A Next.js Response object.
  */
@@ -31,7 +32,20 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const hasIncoming = Boolean(request);
   const bodyJson = hasIncoming ? await request.json() : undefined;
 
-  const hdrs = { 'x-api-secret': getApiSecret() };
+  let apiSecret = getApiSecret();
+  if (!apiSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Missing API_SECRET environment variable');
+    }
+    console.warn('API_SECRET is missing; using development placeholder value.');
+    apiSecret = 'development-missing-api-secret';
+  }
+
+  const hdrs = {
+    ...(options.extraHeaders || {}),
+  };
+
+  hdrs['x-api-secret'] = apiSecret;
   if (appJwt) hdrs['x-jwt'] = appJwt;
   if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
 

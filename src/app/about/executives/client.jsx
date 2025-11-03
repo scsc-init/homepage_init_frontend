@@ -13,8 +13,11 @@ import { resolveProfileImage } from '@/util/profileImage';
 function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
   const { presidentId, vicePresidentId } = leadershipIds || {};
-  if (presidentId && user.id === presidentId) return '회장';
-  if (vicePresidentId && user.id === vicePresidentId) return '부회장';
+  const userId = String(user.id ?? '').trim();
+  const presidentKey = String(presidentId ?? '').trim();
+  const vicePresidentKey = String(vicePresidentId ?? '').trim();
+  if (presidentKey && userId === presidentKey) return '회장';
+  if (vicePresidentKey && userId === vicePresidentKey) return '부회장';
   return '임원';
 }
 

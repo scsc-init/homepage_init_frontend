@@ -31,10 +31,19 @@ export async function POST(request) {
     body: JSON.stringify(payload),
   });
 
-  const res = await handleApiRequest('POST', '/api/kv/leaders/update', {}, sanitizedRequest);
+  let res;
+  try {
+    res = await handleApiRequest('POST', '/api/kv/leaders/update', {}, sanitizedRequest);
+  } catch (err) {
+    const detail =
+      err instanceof Error && err.message
+        ? `Upstream update failed: ${err.message}`
+        : 'Upstream update failed';
+    return NextResponse.json({ detail }, { status: 502 });
+  }
 
   if (!res.ok) {
-    const text = await res.text();
+    const text = await res.text().catch(() => '');
     return new NextResponse(text || 'Failed to update leadership entries', {
       status: res.status,
     });
