@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import SortDropdown from './SortDropdown';
 import ArticlesView from './ArticlesView';
-import './board.css';
+import styles from './board.module.css';
 
 export default function BoardClient({ board }) {
   const [sortOrder, setSortOrder] = useState('latest');
@@ -11,13 +11,13 @@ export default function BoardClient({ board }) {
   return (
     <>
       {/* 상단 버튼 영역 */}
-      <div className="BoardActions">
-        <div className="left-action">
+      <div className={styles.boardActions}>
+        <div className={styles.leftAction}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
         </div>
-        <div className="right-action">
+        <div className={styles.rightAction}>
           <a href={`/board/${board.id}/create`} id="BoardCreateButton">
-            <button className="BoardCreateBtn">글 작성</button>
+            <button className={styles.boardCreateBtn}>글 작성</button>
           </a>
         </div>
       </div>
