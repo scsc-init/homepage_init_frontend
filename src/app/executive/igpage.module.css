@@ -71,11 +71,6 @@
   resize: vertical;
 }
 
-.adm-textarea.footerMessage {
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
 .adm-button {
   padding: 0.5rem 0.9rem;
   border: 1px solid var(--color-button-border);
@@ -93,9 +88,6 @@
 .adm-button.outline {
   background: transparent;
   color: var(--color-text-body);
-}
-.adm-button.footerMessage {
-  margin-right: 1rem;
 }
 
 /* Modal */

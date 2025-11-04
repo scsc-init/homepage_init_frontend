@@ -8,7 +8,6 @@ import { hideFooterRoutes, footerLogoData } from '@/util/constants';
 
 export default function Footer() {
   const pathname = usePathname();
-  const hideFooterRoutes = ['/us/login', '/signup', '/about/my-page'];
   const [footerMessage, setFooterMessage] = useState('');
   const key = 'footer-message';
 

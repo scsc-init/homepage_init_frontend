@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from '../igpage.module.css';
+import styles from './Footer.module.css';
 
 export default function FooterMessage() {
   const [footerMessage, setFooterMessage] = useState('');
@@ -61,10 +61,10 @@ export default function FooterMessage() {
   };
 
   return (
-    <div className={styles['adm-td']}>
-      <div className={styles['adm-section']}>
+    <div className={styles['footerData']}>
+      <div className={styles['footerSection']}>
         <textarea
-          className={`${styles['adm-textarea']} ${styles['footerMessage']}`}
+          className={styles['footerTextArea']}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder={footerMessage}
@@ -72,20 +72,17 @@ export default function FooterMessage() {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) editFooter();
           }}
         />
-        <button
-          className={`${styles['adm-button']} ${styles['footerMessage']}`}
-          onClick={editFooter}
-          disabled={isSaving}
-        >
+        <button className={styles['footerButton']} onClick={editFooter} disabled={isSaving}>
           {isSaving ? '저장 중...' : '저장'}
         </button>
         <button
-          className={styles['adm-button']}
+          className={styles['footerButton']}
           onClick={() => {
             setNewMessage(footerMessage);
           }}
+          disabled={isSaving}
         >
-          취소
+          {isSaving ? '취소 불가' : '취소'}
         </button>
       </div>
     </div>
