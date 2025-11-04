@@ -277,7 +277,7 @@ function doSomething(x, y) {
 - **트리거:** `pull_request`
 - **검증:**
   ```bash
-  npm run lint --max-warnings=0
+  npm run lint
   ```
 - **정책:** 오류 발생 시 PR 자동 실패
 

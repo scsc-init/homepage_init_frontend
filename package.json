@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --fix",
     "format:prettier": "prettier --write .",
     "format:chk:prettier": "prettier --check .",
     "format": "npm run format:prettier && npm run lint:fix",
