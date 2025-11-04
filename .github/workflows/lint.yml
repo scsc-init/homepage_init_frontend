@@ -24,4 +24,4 @@ jobs:
         run: npm ci
 
       - name: Prettier + ESLint check
-        run: npm run format:chk && npm run lint:chk
+        run: npm run format:chk && npm run lint
