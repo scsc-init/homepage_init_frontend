@@ -29,55 +29,6 @@
   user-select: text;
 }
 
-.textBox {
-  display: flex;
-  align-items: center;
-  min-width: 300px;
-  margin-bottom: 0.5rem;
-  color: var(--footer-text-color);
-  border: 1px solid var(--footer-text-color);
-  background: var(--footer-background);
-  padding: 0.6rem;
-}
-
-.footerEditButtonSave,
-.footerEditButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-button-bg);
-  color: var(--color-button-text);
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.2s ease;
-  min-width: 0;
-}
-
-.footerEditButtonSave:hover,
-.footerEditButton:hover {
-  background: var(--color-button-hover-bg);
-  transform: translateY(-1px);
-}
-
-.footerEditButtonSave:active,
-.footerEditButton:active {
-  transform: translateY(0);
-}
-
-.footerEditButtonSave:focus-visible,
-.footerEditButton:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.footerEditButtonSave {
-  margin-left: 0.3rem;
-  margin-bottom: 0.3rem;
-}
-
 .message {
   margin-bottom: 0.3rem;
 }
