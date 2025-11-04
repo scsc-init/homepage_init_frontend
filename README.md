@@ -169,14 +169,16 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 - `ESLint`: For eslint. React Hooks 규칙 강제, unused import 금지, import 정렬 적용에 사용합니다.
 - `pre-commit`: For husky. 포맷 검증에 통과하지 못한 코드의 커밋을 방지합니다.
 
-명령어를 실행해 사용해주세요. 등록을 강력히 권장합니다.
+pr을 보내기 전 아래 명령어를 실행해주세요.
 
 ```bash
 #1 Husky 설치(최초 1회)
 npx husky install
+npx husky add .husky/pre-commit "npx lint-staged"
 
 #2 포맷팅
-npm run format         # Prettier로 전체 포맷
+npm version 0.2.0      #(최초 1회)처음에는 버전을 맞춰야 합니다.
+npm run format         # Prettier 포맷 및 ESLint 자동 수정
 
 #3 lint
 npm run lint
