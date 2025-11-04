@@ -33,7 +33,7 @@
   margin-bottom: 0.3rem;
 }
 
-#FooterLogoList {
+.logoList {
   display: flex;
   gap: 1rem;
   align-items: center;

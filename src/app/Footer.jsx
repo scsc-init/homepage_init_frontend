@@ -12,8 +12,6 @@ export default function Footer() {
   const [footerMessage, setFooterMessage] = useState('');
   const key = 'footer-message';
 
-  if (hideFooterRoutes.includes(pathname)) return null;
-
   useEffect(() => {
     const getFooter = async () => {
       const res = await fetch(`/api/kv/${key}`, {
@@ -32,6 +30,8 @@ export default function Footer() {
     };
     getFooter();
   }, []);
+
+  if (hideFooterRoutes.includes(pathname)) return null;
 
   const divideMessage = Array.isArray(String(footerMessage).split('\\n'))
     ? footerMessage.split('\\n')

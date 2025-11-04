@@ -6,7 +6,7 @@ import styles from '../igpage.module.css';
 export default function FooterMessage() {
   const [footerMessage, setFooterMessage] = useState('');
   const [newMessage, setNewMessage] = useState('');
-  const newRef = useRef(null);
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
   const key = 'footer-message';
 
@@ -32,6 +32,7 @@ export default function FooterMessage() {
   const editFooter = async () => {
     if (!newMessage.trim()) return;
     if (!window.confirm('정말 저장하시겠습니까?')) return;
+    setIsSaving(true);
     try {
       const res = await fetch(`/api/kv/${key}/update`, {
         method: 'POST',
@@ -53,6 +54,8 @@ export default function FooterMessage() {
       }
     } catch (e) {
       alert('Footer 편집 실패: ' + (e?.message || '네트워크 오류'));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -61,7 +64,6 @@ export default function FooterMessage() {
       <div className={styles['adm-section']}>
         <textarea
           className={`${styles['adm-textarea']} ${styles['footerMessage']}`}
-          ref={newRef}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder={footerMessage}
@@ -72,8 +74,9 @@ export default function FooterMessage() {
         <button
           className={`${styles['adm-button']} ${styles['footerMessage']}`}
           onClick={editFooter}
+          disabled={isSaving}
         >
-          저장
+          {isSaving ? '저장 중...' : '저장'}
         </button>
         <button
           className={styles['adm-button']}
