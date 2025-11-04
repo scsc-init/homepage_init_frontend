@@ -20,24 +20,15 @@ export async function POST(request) {
   const presidentId = sanitizeId(body?.president_id);
   const vicePresidentId = sanitizeId(body?.vice_president_id);
 
-  const payload = {
-    value: JSON.stringify({
-      president_id: presidentId || null,
-      vice_president_id: vicePresidentId || null,
-    }),
-  };
-
   const cookieStore = cookies();
   const appJwt = cookieStore.get('app_jwt')?.value || null;
 
-  let res;
   try {
     let apiSecret = getApiSecret();
     if (!apiSecret) {
       if (process.env.NODE_ENV === 'production') {
         throw new Error('Missing API_SECRET environment variable');
       }
-      console.warn('API_SECRET is missing; using development placeholder value.');
       apiSecret = 'development-missing-api-secret';
     }
     const hdrs = {
@@ -46,11 +37,31 @@ export async function POST(request) {
     };
     if (appJwt) hdrs['x-jwt'] = appJwt;
 
-    res = await fetch(`${getBaseUrl()}/api/kv/leaders/update`, {
-      method: 'POST',
-      headers: hdrs,
-      body: JSON.stringify(payload),
-      cache: 'no-store',
+    const [prezUpdate, viceUpdate] = await Promise.all([
+      fetch(`${getBaseUrl()}/api/kv/main-president/update`, {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ value: presidentId || null }),
+        cache: 'no-store',
+      }),
+      fetch(`${getBaseUrl()}/api/kv/vice-president/update`, {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ value: vicePresidentId || null }),
+        cache: 'no-store',
+      }),
+    ]);
+
+    if (!prezUpdate.ok || !viceUpdate.ok) {
+      const msg1 = prezUpdate.ok ? '' : await prezUpdate.text().catch(() => '');
+      const msg2 = viceUpdate.ok ? '' : await viceUpdate.text().catch(() => '');
+      const text = [msg1, msg2].filter(Boolean).join(' | ') || 'Failed to update leadership entries';
+      return new NextResponse(text, { status: (!prezUpdate.ok && prezUpdate.status) || (!viceUpdate.ok && viceUpdate.status) || 500 });
+    }
+
+    return NextResponse.json({
+      president_id: presidentId || null,
+      vice_president_id: vicePresidentId || null,
     });
   } catch (err) {
     const detail =
@@ -59,16 +70,4 @@ export async function POST(request) {
         : 'Upstream update failed';
     return NextResponse.json({ detail }, { status: 502 });
   }
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    return new NextResponse(text || 'Failed to update leadership entries', {
-      status: res.status,
-    });
-  }
-
-  return NextResponse.json({
-    president_id: presidentId || null,
-    vice_president_id: vicePresidentId || null,
-  });
 }

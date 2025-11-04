@@ -129,28 +129,27 @@ export async function fetchSCSCGlobalStatus() {
 }
 
 export async function fetchLeadershipIds() {
-  const res = await handleApiRequest('GET', '/api/kv/leaders');
-  if (!res.ok) {
+  try {
+    const [prez, vice] = await Promise.all([
+      handleApiRequest('GET', '/api/kv/main-president'),
+      handleApiRequest('GET', '/api/kv/vice-president'),
+    ]);
+    let presidentId = '';
+    let vicePresidentId = '';
+    if (prez.ok) {
+      const j = await prez.json().catch(() => null);
+      const v = j?.value;
+      presidentId = typeof v === 'string' && v.trim() ? v.trim() : '';
+    }
+    if (vice.ok) {
+      const j = await vice.json().catch(() => null);
+      const v = j?.value;
+      vicePresidentId = typeof v === 'string' && v.trim() ? v.trim() : '';
+    }
+    return { presidentId, vicePresidentId };
+  } catch {
     return { presidentId: '', vicePresidentId: '' };
   }
-  let payload;
-  try {
-    payload = await res.json();
-  } catch {
-    payload = null;
-  }
-  let parsed = {};
-  if (payload && typeof payload.value === 'string') {
-    try {
-      parsed = JSON.parse(payload.value || '{}');
-    } catch {
-      parsed = {};
-    }
-  }
-  const presidentId = typeof parsed.president_id === 'string' ? parsed.president_id : '';
-  const vicePresidentId =
-    typeof parsed.vice_president_id === 'string' ? parsed.vice_president_id : '';
-  return { presidentId, vicePresidentId };
 }
 
 export async function fetchExecutiveCandidates() {

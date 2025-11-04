@@ -3,33 +3,29 @@ import { handleApiRequest } from '@/app/api/apiWrapper';
 
 export async function GET() {
   try {
-    const res = await handleApiRequest('GET', '/api/kv/leaders');
+    const [prezRes, viceRes] = await Promise.all([
+      handleApiRequest('GET', '/api/kv/main-president'),
+      handleApiRequest('GET', '/api/kv/vice-president'),
+    ]);
 
-    if (!res.ok) {
-      // When the key does not exist or permission denied, fall back to empty state.
-      return NextResponse.json(
-        { president_id: null, vice_president_id: null },
-        { status: 200 },
-      );
+    let president_id = null;
+    let vice_president_id = null;
+
+    if (prezRes.ok) {
+      const prezPayload = await prezRes.json().catch(() => null);
+      const v = prezPayload?.value;
+      president_id = typeof v === 'string' && v.trim() ? v.trim() : null;
+      if (v === null) president_id = null;
     }
 
-    const payload = await res.json().catch(() => null);
-    if (!payload || typeof payload.value !== 'string') {
-      return NextResponse.json(
-        { president_id: null, vice_president_id: null },
-        { status: 200 },
-      );
+    if (viceRes.ok) {
+      const vicePayload = await viceRes.json().catch(() => null);
+      const v = vicePayload?.value;
+      vice_president_id = typeof v === 'string' && v.trim() ? v.trim() : null;
+      if (v === null) vice_president_id = null;
     }
-    const parsed = JSON.parse(payload.value || '{}');
-    const presidentId =
-      typeof parsed?.president_id === 'string' && parsed.president_id.trim()
-        ? parsed.president_id.trim()
-        : null;
-    const vicePresidentId =
-      typeof parsed?.vice_president_id === 'string' && parsed.vice_president_id.trim()
-        ? parsed.vice_president_id.trim()
-        : null;
-    return NextResponse.json({ president_id: presidentId, vice_president_id: vicePresidentId });
+
+    return NextResponse.json({ president_id, vice_president_id }, { status: 200 });
   } catch {
     return NextResponse.json({ president_id: null, vice_president_id: null }, { status: 200 });
   }
