@@ -55,8 +55,12 @@ export async function POST(request) {
     if (!prezUpdate.ok || !viceUpdate.ok) {
       const msg1 = prezUpdate.ok ? '' : await prezUpdate.text().catch(() => '');
       const msg2 = viceUpdate.ok ? '' : await viceUpdate.text().catch(() => '');
-      const text = [msg1, msg2].filter(Boolean).join(' | ') || 'Failed to update leadership entries';
-      return new NextResponse(text, { status: (!prezUpdate.ok && prezUpdate.status) || (!viceUpdate.ok && viceUpdate.status) || 500 });
+      const text =
+        [msg1, msg2].filter(Boolean).join(' | ') || 'Failed to update leadership entries';
+      return new NextResponse(text, {
+        status:
+          (!prezUpdate.ok && prezUpdate.status) || (!viceUpdate.ok && viceUpdate.status) || 500,
+      });
     }
 
     return NextResponse.json({
