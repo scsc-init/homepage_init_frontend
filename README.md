@@ -174,9 +174,10 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 ```bash
 #1 Husky 설치(최초 1회)
 npx husky install
+npx husky add .husky/pre-commit "npx lint-staged"
 
 #2 포맷팅
-npm run format         # Prettier로 전체 포맷
+npm run format         # Prettier로 전체 포맷 + ESLint 검사
 
 #3 lint
 npm run lint
