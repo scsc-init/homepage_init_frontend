@@ -21,6 +21,7 @@ export default function FooterMessage() {
       if (res.ok) {
         const footer = await res.json();
         setFooterMessage(footer.value);
+        setNewMessage(footer.value);
       } else {
         setFooterMessage('Footer 정보를 불러오지 못했습니다.');
         return;
