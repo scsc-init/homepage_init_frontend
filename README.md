@@ -177,7 +177,7 @@ npx husky install
 npx husky add .husky/pre-commit "npx lint-staged"
 
 #2 포맷팅
-npm run format         # Prettier로 전체 포맷 + ESLint 검사
+npm run format         # Prettier로 전체 포맷 + ESLint 수정
 
 #3 lint
 npm run lint
