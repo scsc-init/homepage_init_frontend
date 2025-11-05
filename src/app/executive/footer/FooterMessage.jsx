@@ -24,6 +24,7 @@ export default function FooterMessage() {
         setNewMessage(footer.value);
       } else {
         setFooterMessage('Footer 정보를 불러오지 못했습니다.');
+        setNewMessage('Footer 정보를 불러오지 못했습니다.');
         return;
       }
     };
