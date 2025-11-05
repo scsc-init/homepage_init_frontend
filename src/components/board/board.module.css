@@ -1,4 +1,4 @@
-/* board.css */
+/* board.module.css */
 #SigList {
   width: 100%;
   display: flex;
@@ -72,7 +72,7 @@
   all: unset;
 }
 
-.BoardCreateBtn {
+.boardCreateBtn {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   padding: 0.6rem 1.2rem;
@@ -82,15 +82,15 @@
   transition: background-color 0.2s ease;
 }
 
-.BoardCreateBtn:hover {
+.boardCreateBtn:hover {
   background-color: var(--color-button-hover-bg);
 }
 
-.SigSortDropdown {
+.sigSortDropdown {
   position: relative;
 }
 
-.SigSortBtn {
+.sigSortBtn {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   padding: 0.6rem 0.8rem;
@@ -99,67 +99,49 @@
   cursor: pointer;
   border: none;
   transition: background-color 0.2s ease;
+  width: 7.5rem;
+  text-align: center;
 }
 
-.SigSortBtn:hover {
+.sigSortBtn:hover {
   background-color: var(--color-button-hover-bg);
 }
 
-.SigSortMenu {
+.sigSortMenu {
   display: none;
   position: absolute;
   top: 110%;
   left: 0;
-  background-color: var(--executive-card-bg);
+  background-color: var(--background-color);
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   overflow: hidden;
   z-index: 10;
 }
 
-.SigSortMenu.open {
+.sigSortMenuOpen {
   display: flex;
   flex-direction: column;
 }
 
-.SigSortMenu button {
+.sigSortMenu button {
   padding: 0.5rem 1rem;
-  background: transparent;
-  border: none;
-  text-align: left;
-  color: var(--color-text-body);
+  margin-bottom: 0.1rem;
+  color: var(--color-button-text);
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
-.SigSortMenu button:hover {
-  background-color: var(--color-hover-bg);
+.sigSortMenu button:hover {
+  background-color: var(--color-button-hover-bg);
 }
 
-.fixed-width {
+.fixedWidth {
   width: 7.5rem;
   text-align: center;
 }
 
-.BoardActions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .BoardActions {
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
-  .BoardActions > * {
-    width: auto;
-  }
-}
-
-.BoardActions {
+.boardActions {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -167,20 +149,23 @@
   margin-bottom: 1.5rem;
 }
 
-.left-action {
+.leftAction {
   display: flex;
   align-items: center;
 }
 
-.right-action {
+.rightAction {
   display: flex;
   align-items: center;
 }
 
 @media (max-width: 768px) {
-  .BoardActions {
+  .boardActions {
     flex-direction: row;
     justify-content: space-between;
     gap: 0.5rem;
+  }
+  .boardActions > * {
+    width: auto;
   }
 }

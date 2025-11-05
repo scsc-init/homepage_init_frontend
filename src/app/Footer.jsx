@@ -2,22 +2,53 @@
 
 import styles from './Footer.module.css';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { hideFooterRoutes, footerLogoData } from '@/util/constants';
 
 export default function Footer() {
   const pathname = usePathname();
+  const [footerMessage, setFooterMessage] = useState('');
+  const key = 'footer-message';
+
+  useEffect(() => {
+    const getFooter = async () => {
+      const res = await fetch(`/api/kv/${key}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (res.ok) {
+        const footer = await res.json();
+        setFooterMessage(footer.value);
+      } else {
+        setFooterMessage('Footer 정보를 불러오지 못했습니다.');
+        return;
+      }
+    };
+    getFooter();
+  }, []);
+
   if (hideFooterRoutes.includes(pathname)) return null;
+
+  const divideMessage = Array.isArray(String(footerMessage).split('\\n'))
+    ? footerMessage.split('\\n')
+    : ['정보를 불러오지 못했습니다.'];
 
   return (
     <div className={styles.root}>
       <div className={styles.inner}>
         <div className={styles.infoContainer}>
           <div>
-            <b>서울대학교 컴퓨터 연구회</b>
+            <div>
+              {divideMessage.map((message) => (
+                <p className={styles.message} key={message}>
+                  {message}
+                </p>
+              ))}
+            </div>
           </div>
-          <div>회장 한성재 010-5583-1811</div>
-          <div>scsc.snu@gmail.com</div>
         </div>
         <div className={styles.logoList}>
           {footerLogoData.map(({ href, src, alt }) => (

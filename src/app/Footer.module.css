@@ -29,6 +29,10 @@
   user-select: text;
 }
 
+.message {
+  margin-bottom: 0.3rem;
+}
+
 .logoList {
   display: flex;
   gap: 1rem;

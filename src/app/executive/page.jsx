@@ -82,6 +82,11 @@ export default async function AdminPanel() {
           />
         </div>
 
+        <h2>Footer Message 관리</h2>
+        <p>
+          <Link href="/executive/footer">Footer Message 관리 페이지로 이동</Link>
+        </p>
+
         <h2>전공 관리</h2>
         <div className="adm-section">
           <MajorList majors={majors.status === 'fulfilled' ? majors.value : []} />
