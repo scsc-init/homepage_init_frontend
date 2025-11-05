@@ -2,6 +2,7 @@
   padding: 3rem;
   background: var(--background-color);
   color: var(--color-text-body);
+  min-height: 100vh;
 }
 
 .footerPanel h2 {
@@ -19,7 +20,7 @@
 }
 
 .footerSection {
-  margin-bottom: 12rem;
+  margin-bottom: 2rem;
 }
 
 .footerTextArea {

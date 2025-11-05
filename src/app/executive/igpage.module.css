@@ -2,6 +2,7 @@
   padding: 2rem;
   background: var(--background-color);
   color: var(--color-text-body);
+  min-height: 100vh;
 }
 
 .admin-panel h2 {

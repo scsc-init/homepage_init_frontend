@@ -68,9 +68,6 @@ export default function FooterMessage() {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder={footerMessage}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) editFooter();
-          }}
         />
         <button className={styles['footerButton']} onClick={editFooter} disabled={isSaving}>
           {isSaving ? '저장 중...' : '저장'}
