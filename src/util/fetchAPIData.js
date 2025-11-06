@@ -128,18 +128,6 @@ export async function fetchSCSCGlobalStatus() {
   return safeFetch('GET', '/api/scsc/global/status');
 }
 
-export async function fetchLeadershipIds() {
-  try {
-    const m = await getKVValues(['main-president', 'vice-president']);
-    return {
-      presidentId: m['main-president'] || '',
-      vicePresidentId: m['vice-president'] || '',
-    };
-  } catch {
-    return { presidentId: '', vicePresidentId: '' };
-  }
-}
-
 export async function fetchExecutiveCandidates() {
   const [execRes, prezRes] = await Promise.all([
     handleApiRequest('GET', '/api/users', { query: { user_role: 'executive' } }),
@@ -172,9 +160,7 @@ export async function fetchExecutiveCandidates() {
  */
 export async function getKVValue(key) {
   try {
-    const res = await handleApiRequest('GET', `/api/kv/${encodeURIComponent(key)}`);
-    if (!res.ok) return '';
-    const j = await res.json().catch(() => null);
+    const j = await safeFetch('GET', `/api/kv/${encodeURIComponent(key)}`);
     const v = j?.value;
     return typeof v === 'string' && v.trim() ? v.trim() : '';
   } catch {
@@ -185,26 +171,25 @@ export async function getKVValue(key) {
 /**
  * Get multiple KV values in parallel.
  * @param {string[]} keys
- * @returns {Promise<Record<string,string>>} - { key: value } with '' for missing
+ * @returns {Promise<Record<string, {status: 'fulfilled', value: string} | {status: 'rejected', reason: string}>>}
  */
 export async function getKVValues(keys) {
-  const uniq = Array.from(
-    new Set((keys || []).map((k) => String(k || '').trim()).filter(Boolean)),
-  );
+  const list = Array.isArray(keys) ? keys : [];
   const results = await Promise.allSettled(
-    uniq.map(async (k) => {
-      const v = await getKVValue(k);
-      return [k, v];
-    }),
+    list.map((k) => safeFetch('GET', `/api/kv/${encodeURIComponent(String(k))}`)),
   );
+
   const out = {};
-  for (const r of results) {
-    if (r.status === 'fulfilled' && Array.isArray(r.value)) {
-      const [k, v] = r.value;
-      out[k] = v;
+  for (let i = 0; i < list.length; i++) {
+    const key = String(list[i]);
+    const r = results[i];
+    if (r.status === 'fulfilled') {
+      const raw = r.value?.value;
+      out[key] = { status: 'fulfilled', value: typeof raw === 'string' ? raw : '' };
+    } else {
+      out[key] = { status: 'rejected', reason: String(r.reason ?? '') };
     }
   }
-  for (const k of uniq) if (!(k in out)) out[k] = '';
   return out;
 }
 
@@ -218,17 +203,11 @@ export async function setKVValue(key, value) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  const res = await handleApiRequest(
-    'POST',
-    `/api/kv/${encodeURIComponent(key)}/update`,
-    {},
-    req,
+  return safeFetch('POST', `/api/kv/${encodeURIComponent(key)}/update`, {}, req).catch(
+    async (e) => {
+      throw e;
+    },
   );
-  if (!res.ok) {
-    const msg = await res.text().catch(() => '');
-    throw new Error(`${res.status} ${msg}`);
-  }
-  return res.json().catch(() => ({}));
 }
 
 /**

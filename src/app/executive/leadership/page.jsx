@@ -1,16 +1,21 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipPanel from './LeadershipPanel';
-import { fetchLeadershipIds, fetchExecutiveCandidates } from '@/util/fetchAPIData';
+import { getKVValues, fetchExecutiveCandidates } from '@/util/fetchAPIData';
 
 export default async function LeadershipAdminPage() {
-  const [leadershipIds, candidates] = await Promise.all([
-    fetchLeadershipIds(),
+  const [kv, candidates] = await Promise.all([
+    getKVValues(['main-president', 'vice-president']),
     fetchExecutiveCandidates(),
   ]);
 
+  const presidentId =
+    kv['main-president']?.status === 'fulfilled' ? kv['main-president'].value || '' : '';
+  const vicePresidentId =
+    kv['vice-president']?.status === 'fulfilled' ? kv['vice-president'].value || '' : '';
+
   const initialLeadership = {
-    presidentId: leadershipIds.presidentId ?? '',
-    vicePresidentId: leadershipIds.vicePresidentId ?? '',
+    presidentId,
+    vicePresidentId,
   };
 
   return (
