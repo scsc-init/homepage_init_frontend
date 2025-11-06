@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 function renderUserSummary(user) {
   if (!user) return <span>미지정</span>;
@@ -16,10 +17,8 @@ function renderUserSummary(user) {
 }
 
 export default function LeadershipPanel({ initialLeadership, candidates }) {
-  const [storedIds, setStoredIds] = useState({
-    presidentId: initialLeadership?.presidentId ?? '',
-    vicePresidentId: initialLeadership?.vicePresidentId ?? '',
-  });
+  const router = useRouter();
+
   const [selectedPresidentId, setSelectedPresidentId] = useState(
     initialLeadership?.presidentId ?? '',
   );
@@ -46,12 +45,12 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
   );
 
   const registeredPresident = useMemo(
-    () => findCandidate(storedIds.presidentId),
-    [findCandidate, storedIds.presidentId],
+    () => findCandidate(initialLeadership?.presidentId ?? ''),
+    [findCandidate, initialLeadership?.presidentId],
   );
   const registeredVicePresident = useMemo(
-    () => findCandidate(storedIds.vicePresidentId),
-    [findCandidate, storedIds.vicePresidentId],
+    () => findCandidate(initialLeadership?.vicePresidentId ?? ''),
+    [findCandidate, initialLeadership?.vicePresidentId],
   );
 
   const handleSubmit = async (event) => {
@@ -78,18 +77,8 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
         throw new Error(msg || `HTTP ${res.status}`);
       }
 
-      const updated = await res.json();
-      const newPresidentId = updated?.president_id || '';
-      const newVicePresidentId = updated?.vice_president_id || '';
-      setStoredIds({
-        presidentId: typeof newPresidentId === 'string' ? newPresidentId : '',
-        vicePresidentId: typeof newVicePresidentId === 'string' ? newVicePresidentId : '',
-      });
-      setSelectedPresidentId(typeof newPresidentId === 'string' ? newPresidentId : '');
-      setSelectedVicePresidentId(
-        typeof newVicePresidentId === 'string' ? newVicePresidentId : '',
-      );
       alert('임원진 정보가 갱신되었습니다.');
+      router.refresh();
     } catch (error) {
       console.error(error);
       alert('임원진 정보를 저장하지 못했습니다.');
