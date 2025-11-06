@@ -174,9 +174,10 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 ```bash
 #1 Husky 설치(최초 1회)
 npx husky install
+npx husky add .husky/pre-commit "npx lint-staged"
 
 #2 포맷팅
-npm run format         # Prettier로 전체 포맷
+npm run format         # Prettier로 전체 포맷 + ESLint 수정
 
 #3 lint
 npm run lint
@@ -276,7 +277,7 @@ function doSomething(x, y) {
 - **트리거:** `pull_request`
 - **검증:**
   ```bash
-  npm run lint --max-warnings=0
+  npm run lint
   ```
 - **정책:** 오류 발생 시 PR 자동 실패
 
