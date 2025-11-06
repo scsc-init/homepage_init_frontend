@@ -127,3 +127,106 @@ export async function fetchDiscordBotStatus() {
 export async function fetchSCSCGlobalStatus() {
   return safeFetch('GET', '/api/scsc/global/status');
 }
+
+export async function fetchExecutiveCandidates() {
+  const [execRes, prezRes] = await Promise.all([
+    handleApiRequest('GET', '/api/users', { query: { user_role: 'executive' } }),
+    handleApiRequest('GET', '/api/users', { query: { user_role: 'president' } }),
+  ]);
+
+  const execList = execRes.ok ? await execRes.json().catch(() => []) : [];
+  const prezList = prezRes.ok ? await prezRes.json().catch(() => []) : [];
+
+  const merged = new Map();
+  for (const entry of [
+    ...(Array.isArray(execList) ? execList : []),
+    ...(Array.isArray(prezList) ? prezList : []),
+  ]) {
+    if (!entry || typeof entry !== 'object') continue;
+    const key = entry.id || entry.email || `${entry.name || ''}-${entry.phone || ''}`;
+    if (!merged.has(key)) merged.set(key, entry);
+  }
+
+  return Array.from(merged.values()).sort((a, b) => {
+    const nameA = (a?.name || '').toString();
+    const nameB = (b?.name || '').toString();
+    return nameA.localeCompare(nameB, 'ko');
+  });
+}
+
+/**
+ * Get a single KV value.
+ * Returns trimmed string or '' (if not set / invalid).
+ */
+export async function getKVValue(key) {
+  try {
+    const j = await safeFetch('GET', `/api/kv/${encodeURIComponent(key)}`);
+    const v = j?.value;
+    return typeof v === 'string' && v.trim() ? v.trim() : '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Get multiple KV values in parallel.
+ * @param {string[]} keys
+ * @returns {Promise<Record<string, {status: 'fulfilled', value: string} | {status: 'rejected', reason: string}>>}
+ */
+export async function getKVValues(keys) {
+  const list = Array.isArray(keys) ? keys : [];
+  const results = await Promise.allSettled(
+    list.map((k) => safeFetch('GET', `/api/kv/${encodeURIComponent(String(k))}`)),
+  );
+
+  const out = {};
+  for (let i = 0; i < list.length; i++) {
+    const key = String(list[i]);
+    const r = results[i];
+    if (r.status === 'fulfilled') {
+      const raw = r.value?.value;
+      out[key] = { status: 'fulfilled', value: typeof raw === 'string' ? raw : '' };
+    } else {
+      out[key] = { status: 'rejected', reason: String(r.reason ?? '') };
+    }
+  }
+  return out;
+}
+
+/**
+ * Set a single KV value (string or null).
+ */
+export async function setKVValue(key, value) {
+  const body = { value: typeof value === 'string' ? value : null };
+  const req = new Request('http://dummy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return safeFetch('POST', `/api/kv/${encodeURIComponent(key)}/update`, {}, req).catch(
+    async (e) => {
+      throw e;
+    },
+  );
+}
+
+/**
+ * Set multiple KV values in parallel.
+ * @param {Record<string,string|null|undefined>} entries
+ * @returns {Promise<Record<string,boolean>>} - { key: true/false } success map
+ */
+export async function setKVValues(entries) {
+  const pairs = Object.entries(entries || {});
+  const results = await Promise.allSettled(
+    pairs.map(async ([k, v]) => {
+      await setKVValue(k, (v ?? '') === '' ? null : String(v));
+      return [k, true];
+    }),
+  );
+  const out = {};
+  for (let i = 0; i < results.length; i++) {
+    const [k] = pairs[i];
+    out[k] = results[i].status === 'fulfilled';
+  }
+  return out;
+}

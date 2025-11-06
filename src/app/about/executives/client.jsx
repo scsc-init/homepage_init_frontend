@@ -10,10 +10,14 @@ import {
 } from '@/util/constants';
 import { resolveProfileImage } from '@/util/profileImage';
 
-function roleDisplayByEmail(email) {
-  const e = String(email || '').toLowerCase();
-  if (presidentEmails.map((x) => x.toLowerCase()).includes(e)) return '회장';
-  if (vicePresidentEmails.map((x) => x.toLowerCase()).includes(e)) return '부회장';
+function roleDisplay(user, leadershipIds) {
+  if (!user) return '임원';
+  const { presidentId, vicePresidentId } = leadershipIds || {};
+  const userId = String(user.id ?? '').trim();
+  const presidentKey = String(presidentId ?? '').trim();
+  const vicePresidentKey = String(vicePresidentId ?? '').trim();
+  if (presidentKey && userId === presidentKey) return '회장';
+  if (vicePresidentKey && userId === vicePresidentKey) return '부회장';
   return '임원';
 }
 
@@ -35,7 +39,7 @@ export default function ExecutivesClient() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [execRes, prezRes] = await Promise.all([
+        const [execRes, prezRes, leadersRes] = await Promise.all([
           fetch('/api/users?user_role=executive', {
             credentials: 'include',
             cache: 'no-store',
@@ -44,13 +48,17 @@ export default function ExecutivesClient() {
             credentials: 'include',
             cache: 'no-store',
           }),
+          fetch('/api/leadership', {
+            cache: 'no-store',
+          }),
         ]);
 
         if (!execRes.ok && !prezRes.ok) throw new Error('failed');
 
-        const [execJson, prezJson] = await Promise.all([
+        const [execJson, prezJson, leadersJson] = await Promise.all([
           execRes.ok ? execRes.json() : [],
           prezRes.ok ? prezRes.json() : [],
+          leadersRes.ok ? leadersRes.json() : null,
         ]);
 
         if (!execRes.ok || !prezRes.ok) {
@@ -59,6 +67,17 @@ export default function ExecutivesClient() {
             prezOk: prezRes.ok,
           });
         }
+
+        const leadership = {
+          presidentId:
+            leadersJson && typeof leadersJson.president_id === 'string'
+              ? leadersJson.president_id
+              : null,
+          vicePresidentId:
+            leadersJson && typeof leadersJson.vice_president_id === 'string'
+              ? leadersJson.vice_president_id
+              : null,
+        };
 
         const raw = [
           ...(Array.isArray(execJson) ? execJson : []),
@@ -87,7 +106,7 @@ export default function ExecutivesClient() {
           name: u.name,
           email: u.email,
           roleNum: u.level,
-          role: roleDisplayByEmail(u.email),
+          role: roleDisplay(u, leadership),
           image: u.image || DEFAULT_EXECUTIVE_PFP,
         }));
 
