@@ -213,10 +213,17 @@ export async function getKVValues(keys) {
  */
 export async function setKVValue(key, value) {
   const body = { value: typeof value === 'string' ? value : null };
-  const res = await handleApiRequest('POST', `/api/kv/${encodeURIComponent(key)}/update`, {
-    body: JSON.stringify(body),
+  const req = new Request('http://dummy', {
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
   });
+  const res = await handleApiRequest(
+    'POST',
+    `/api/kv/${encodeURIComponent(key)}/update`,
+    {},
+    req,
+  );
   if (!res.ok) {
     const msg = await res.text().catch(() => '');
     throw new Error(`${res.status} ${msg}`);
