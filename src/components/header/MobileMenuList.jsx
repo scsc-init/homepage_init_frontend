@@ -2,77 +2,104 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { fetchUserClient } from '@/util/fetchClientData';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
+import { fetchMeClient } from '@/util/fetchClientData';
+import styles from '@/app/Header.module.css';
 
 function MobileExecutiveButton() {
   const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
-    fetchUserClient().then(setUser);
-  }, [])
-
+    fetchMeClient().then(setUser);
+  }, []);
   useEffect(() => {
-    setIsExecutive(user?.role >= minExecutiveLevel);
-  }, [user])
+    setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
+  }, [user]);
 
-  if (user === undefined || !user) return null;
-
-  if (isExecutive) {
-    return (
-      <Link
-        href={'/executive'}
-        className="unset toAdminPageButton"
-        style={{
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.3rem',
-          textDecoration: 'none',
-        }}
-      >
-        운영진 페이지
-      </Link>
-    );
-  }
-
-  return null;
+  if (!user || !isExecutive) return null;
+  return (
+    <Link
+      href="/executive"
+      className={`${styles.executiveLink} unset`}
+      style={{ fontSize: '0.875rem' }}
+    >
+      운영진 페이지
+    </Link>
+  );
 }
 
-export default function MobileMenuList({ user }) {
+export default function MobileMenuList() {
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setOpenedMenuIndex(null);
+  }, [pathname, searchParams]);
+
+  const wrapperClass = `${styles.mobileWrapper} ${mobileMenuOpen ? styles.mobileWrapperOpen : ''}`;
 
   return (
     <div>
-      <button className="HamburgerButton" onClick={() => setMobileMenuOpen((prev) => !prev)}>
+      <button
+        type="button"
+        aria-expanded={mobileMenuOpen ? 'true' : 'false'}
+        aria-controls="mobileMenuPanel"
+        className={styles.hamburgerButton}
+        onClick={() => setMobileMenuOpen((prev) => !prev)}
+      >
         ☰
       </button>
-      <div className={`MobileMenuWrapper ${mobileMenuOpen ? 'open' : ''}`}>
-        <div className="MobileMenu">
-          <ul className="MobileMenuList">
-            {headerMenuData.map((menu, index) => (
-              <li className="MobileMenuItem" key={menu.title}>
-                <button
-                  className="MobileMenuTrigger"
-                  onClick={() => setOpenedMenuIndex((prev) => (prev === index ? null : index))}
-                >
-                  {menu.title}
-                </button>
-                <div className={`MobileSubMenu ${openedMenuIndex === index ? 'open' : ''}`}>
-                  <ul>
-                    {menu.items.map((item) => (
-                      <li key={item.label}>
-                        <Link href={item.url}>{item.label}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            ))}
+
+      <div id="mobileMenuPanel" className={wrapperClass}>
+        <div className={styles.mobileMenu}>
+          <ul className={styles.mobileMenuList}>
+            {headerMenuData.map((menu, index) => {
+              const items = menu.items || [];
+              if (!items.length) return null;
+
+              const subClass =
+                openedMenuIndex === index
+                  ? `${styles.mobileSubMenu} ${styles.mobileSubMenuOpen}`
+                  : styles.mobileSubMenu;
+
+              return (
+                <li className={styles.mobileMenuItem} key={menu.title}>
+                  <button
+                    type="button"
+                    className={styles.mobileTrigger}
+                    aria-expanded={openedMenuIndex === index ? 'true' : 'false'}
+                    onClick={() =>
+                      setOpenedMenuIndex((prev) => (prev === index ? null : index))
+                    }
+                  >
+                    {menu.title}
+                  </button>
+                  <div className={subClass}>
+                    <ul>
+                      {items.map((item) => (
+                        <li key={item.label}>
+                          <Link
+                            className={styles.mobileSubLink}
+                            href={item.url}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
-          <MobileExecutiveButton user={user} />
+
+          <MobileExecutiveButton />
         </div>
       </div>
     </div>

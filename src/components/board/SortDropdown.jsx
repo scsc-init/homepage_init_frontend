@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import './board.css';
+import styles from './board.module.css';
 
 export default function SortDropdown({ sortOrder, setSortOrder }) {
   const [open, setOpen] = useState(false);
@@ -24,12 +24,12 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
   };
 
   return (
-    <div className="SigSortDropdown" ref={dropdownRef}>
-      <button className="SigSortBtn fixed-width" onClick={() => setOpen((prev) => !prev)}>
+    <div className={`${styles.sigSortDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
+      <button className={styles.sigSortBtn} onClick={() => setOpen((prev) => !prev)}>
         {labelMap[sortOrder]} ▼
       </button>
       {open && (
-        <div className="SigSortMenu open fixed-width">
+        <div className={`${styles.sigSortMenu} ${styles.sigSortMenuOpen} ${styles.fixedWidth}`}>
           <button
             onClick={() => {
               setSortOrder('latest');

@@ -1,28 +1,30 @@
-import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import SigListClient from './SigListClient';
 import './page.css';
+import { fetchSigs, fetchMe } from '@/util/fetchAPIData';
+
 export const metadata = { title: 'SIG' };
 
 export default async function SigListPage() {
-  const res = await fetch(`${getBaseUrl()}/api/sigs`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
+  const [sigs, me] = await Promise.allSettled([fetchSigs(), fetchMe()]);
 
-  if (!res.ok) {
+  if (sigs.status === 'rejected') {
     return <div>시그 정보를 불러올 수 없습니다.</div>;
   }
 
-  const sigs = await res.json();
-  if (!Array.isArray(sigs)) return <div>로딩중...</div>;
-
   const allowed = new Set(['surveying', 'recruiting', 'active']);
-  const visibleSigs = sigs.filter((s) => allowed.has(s.status));
+  const visibleSigs = sigs.value
+    .filter((s) => s.status === 'fulfilled')
+    .map((s) => s.value)
+    .filter((s) => allowed.has(s.status));
+
+  let myId = '';
+  if (me.status === 'fulfilled') {
+    myId = me.value.id;
+  }
 
   return (
     <div id="SigListContainer">
-      <SigListClient sigs={visibleSigs} />
+      <SigListClient sigs={visibleSigs} myId={myId} />
     </div>
   );
 }

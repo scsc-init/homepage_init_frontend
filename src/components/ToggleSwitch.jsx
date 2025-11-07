@@ -8,11 +8,7 @@ export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
 
   return (
     <label className="switch switch--form" title={isOn ? '켜짐' : '꺼짐'}>
-      <input
-        type="checkbox"
-        checked={isOn}
-        onChange={(e) => onChange?.(e.target.checked)}
-      />
+      <input type="checkbox" checked={isOn} onChange={(e) => onChange?.(e.target.checked)} />
       <span className="slider" aria-hidden="true" />
     </label>
   );

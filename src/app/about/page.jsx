@@ -9,8 +9,6 @@ import Sidebar from '@/components/about/Sidebar.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
 
 export default async function AboutPage() {
-  const year = new Date().getFullYear() - 1984;
-
   return (
     <>
       <div className="WallLogo"></div>

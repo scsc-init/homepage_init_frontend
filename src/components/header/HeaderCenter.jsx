@@ -2,47 +2,43 @@
 
 import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
-import { fetchUserClient } from '@/util/fetchClientData';
 import { headerMenuData } from '@/util/constants';
+import styles from '@/app/Header.module.css';
 
 export default function HeaderCenter() {
-  const [user, setUser] = useState(undefined);
   const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
   const timeoutRef = useRef();
 
-  useEffect(() => {
-    return () => clearTimeout(timeoutRef.current);
-  }, []);
+  useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
-  useEffect(() => {
-    fetchUserClient().then(setUser);
-  }, [])
-
-  const handleMouseEnter = (index) => {
+  const open = (i) => {
     clearTimeout(timeoutRef.current);
-    setOpenedMenuIndex(index);
+    setOpenedMenuIndex(i);
   };
-
-  const handleMouseLeave = () => {
+  const close = () => {
     timeoutRef.current = setTimeout(() => setOpenedMenuIndex(null), 300);
   };
 
   return (
-    <div id="HeaderCenter">
-      <ul id="HeaderMenuList">
-        {headerMenuData.map((menu, index) => (
+    <ul className={styles.menuList}>
+      {headerMenuData.map((menu, index) => {
+        const items = menu.items || [];
+        if (!items.length) return null;
+        const openClass = openedMenuIndex === index ? styles.menuContentOpen : '';
+
+        return (
           <li
-            className="HeaderMenuItem"
+            className={styles.menuItem}
             key={menu.title}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => open(index)}
+            onMouseLeave={close}
           >
-            <button className="HeaderMenuTrigger">{menu.title}</button>
-            <div className={`HeaderMenuContent ${openedMenuIndex === index ? 'open' : ''}`}>
+            <button className={styles.menuTrigger}>{menu.title}</button>
+            <div className={`${styles.menuContent} ${openClass}`}>
               <ul>
-                {menu.items.map((item) => (
+                {items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.url === '/us/login' && user ? '/about/welcome' : item.url}>
+                    <Link className={styles.menuLink} href={item.url}>
                       {item.label}
                     </Link>
                   </li>
@@ -50,8 +46,8 @@ export default function HeaderCenter() {
               </ul>
             </div>
           </li>
-        ))}
-      </ul>
-    </div>
+        );
+      })}
+    </ul>
   );
 }

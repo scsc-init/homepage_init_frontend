@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
-import './board.css';
+import styles from './board.module.css';
 
 export default function ArticlesView({ board, sortOrder }) {
   const router = useRouter();
@@ -63,13 +63,13 @@ export default function ArticlesView({ board, sortOrder }) {
   return (
     <div id="SigList">
       {displayArticles.map((article) => (
-        <Link key={article.id} href={`/article/${article.id}`} className="sigLink">
-          <div className="sigCard">
-            <div className="sigTopbar">
-              <span className="sigTitle">{article.title}</span>
-              <span className="sigUserCount">{utc2kst(article.created_at)}</span>
+        <Link key={article.id} href={`/article/${article.id}`} className={styles.sigLink}>
+          <div className={styles.sigCard}>
+            <div className={styles.sigTopbar}>
+              <span className={styles.sigTitle}>{article.title}</span>
+              <span className={styles.sigUserCount}>{utc2kst(article.created_at)}</span>
             </div>
-            <div className="sigDescription">
+            <div className={styles.sigDescription}>
               {article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...
             </div>
           </div>

@@ -85,8 +85,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     applyType === 'contest'
       ? contestName.trim().length > 0
       : applyType === 'pair'
-      ? pairBefore.trim().length > 0 && pairAfter.trim().length > 0
-      : orgCategory && !!watch('target');
+        ? pairBefore.trim().length > 0 && pairAfter.trim().length > 0
+        : orgCategory && !!watch('target');
   const step3Ready = step1Done && step2Done;
 
   useEffect(() => {
@@ -120,12 +120,12 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     t === 'contest'
       ? '대회 참여 지원금'
       : t === 'fund'
-      ? 'SIG/PIG 지원금'
-      : t === 'meal'
-      ? 'SIG/PIG 회식비'
-      : t === 'pair'
-      ? '짝선짝후 지원금'
-      : '';
+        ? 'SIG/PIG 지원금'
+        : t === 'meal'
+          ? 'SIG/PIG 회식비'
+          : t === 'pair'
+            ? '짝선짝후 지원금'
+            : '';
 
   const normalizeLF = (s) => (s ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   const fmtNumber = (n) => new Intl.NumberFormat('ko-KR').format(Number(n || 0));
@@ -141,8 +141,8 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
       data.applyType === 'contest'
         ? data.contestName
         : data.applyType === 'pair'
-        ? `${data.pairBefore} / ${data.pairAfter}`
-        : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
+          ? `${data.pairBefore} / ${data.pairAfter}`
+          : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
 
     const metaLines = [
       `**신청 유형**: ${tLabel}`,
@@ -190,12 +190,12 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     applyType === 'contest'
       ? PLACEHOLDER.contest
       : applyType === 'fund'
-      ? PLACEHOLDER.fund
-      : applyType === 'meal'
-      ? PLACEHOLDER.meal
-      : applyType === 'pair'
-      ? PLACEHOLDER.pair
-      : '';
+        ? PLACEHOLDER.fund
+        : applyType === 'meal'
+          ? PLACEHOLDER.meal
+          : applyType === 'pair'
+            ? PLACEHOLDER.pair
+            : '';
   const hasContent = (content || '').replace(/\s|#/g, '').length > 0;
 
   const updateMinHeight = () => {

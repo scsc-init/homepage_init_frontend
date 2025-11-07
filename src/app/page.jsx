@@ -1,5 +1,6 @@
 import './page.css';
 import { MainLogo } from './checkInAppBrowser';
+import RefreshJWTClient from './RefreshJWTClient';
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
           className="overlay-image right logo"
         />
       </div>
+      <RefreshJWTClient />
 
       {/* 메인 로고 */}
       {/* <div className="main-logo-wrapper">
@@ -30,11 +32,6 @@ export default function HomePage() {
         </div>
       </div> */}
       <MainLogo />
-
-      {/* 학교 로고
-      <div className="school-logo">
-        <img src="/main/school.png" alt="SNU Logo" />
-      </div> */}
     </main>
   );
 }

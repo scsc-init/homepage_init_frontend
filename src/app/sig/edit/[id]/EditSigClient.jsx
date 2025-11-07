@@ -13,13 +13,10 @@ function useMounted() {
   return mounted;
 }
 
-export default function EditSigClient({ sigId }) {
+export default function EditSigClient({ sigId, me, sig, article }) {
   const router = useRouter();
-  const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const [sig, setSig] = useState(null);
-  const [article, setArticle] = useState(null);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
 
@@ -28,7 +25,6 @@ export default function EditSigClient({ sigId }) {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -39,36 +35,6 @@ export default function EditSigClient({ sigId }) {
       is_rolling_admission: false,
     },
   });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
-      if (res.ok) setUser(await res.json());
-      else router.push('/us/login');
-    };
-    fetchProfile();
-
-    const fetchSigData = async () => {
-      const res = await fetch(`/api/sig/${sigId}`);
-      if (!res.ok) {
-        alert('시그 정보를 불러오지 못했습니다.');
-        router.push('/sig');
-        return;
-      }
-      const sig = await res.json();
-      setSig(sig);
-
-      const articleRes = await fetch(`/api/article/${sig.content_id}`);
-      if (!articleRes.ok) {
-        alert('시그 정보를 불러오지 못했습니다.');
-        router.push('/sig');
-        return;
-      }
-      const article = await articleRes.json();
-      setArticle(article);
-    };
-    fetchSigData();
-  }, [router, sigId]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -97,11 +63,26 @@ export default function EditSigClient({ sigId }) {
     };
   }, [isDirty, router]);
 
+  useEffect(() => {
+    if (sig && article && mounted && !isDirty) {
+      reset({
+        title: sig.title ?? '',
+        description: sig.description ?? '',
+        editor: article.content ?? '',
+        should_extend: sig.should_extend ?? false,
+        is_rolling_admission: sig.is_rolling_admission ?? false,
+      });
+      setEditorKey((k) => k + 1);
+    }
+  }, [sig, article, mounted, isDirty, reset]);
+
   const onSubmit = async (data) => {
-    if (!user) {
+    if (submitting) return;
+
+    if (!me) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
-    } else if (!user.discord_id) {
+    } else if (!me.discord_id) {
       if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
     }
@@ -109,7 +90,7 @@ export default function EditSigClient({ sigId }) {
 
     try {
       const res = await fetch(
-        user.role >= minExecutiveLevel
+        me.role >= minExecutiveLevel
           ? `/api/sig/${sigId}/update/executive`
           : `/api/sig/${sigId}/update`,
         {
@@ -144,25 +125,12 @@ export default function EditSigClient({ sigId }) {
     }
   };
 
-  useEffect(() => {
-    if (sig && article && mounted) {
-      reset({
-        title: sig.title ?? '',
-        description: sig.description ?? '',
-        editor: article.content ?? '',
-        should_extend: sig.should_extend ?? false,
-        is_rolling_admission: sig.is_rolling_admission ?? false,
-      });
-      setEditorKey((k) => k + 1);
-    }
-  }, [sig, article, mounted, reset]);
-
   return (
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">SIG 수정</h1>
       </div>
-      <div className="CreateSigCard">
+      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <SigForm
           register={register}
           control={control}

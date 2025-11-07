@@ -1,0 +1,155 @@
+.NF_Root {
+  height: 100dvh;
+  min-height: 100vh;
+  background: var(--main-bg-gradient);
+  color: var(--color-text-body);
+  display: grid;
+  place-items: center;
+  padding: 6rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.NF_Backdrop {
+  position: absolute;
+  inset: -20%;
+  background-image: radial-gradient(circle at 1px 1px, var(--dot-bg) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.NF_Card {
+  position: relative;
+  width: 100%;
+  max-width: 48rem;
+  border: 1px solid var(--header-border-color);
+  background: var(--executive-card-bg);
+  box-shadow: 0 24px 60px var(--executive-card-shadow);
+  border-radius: 1.25rem;
+  padding: 2.25rem 2rem 2rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.NF_Card::after {
+  content: '';
+  position: absolute;
+  inset: -30% -10% auto -10%;
+  height: 60%;
+  background: var(--main-focus-gradient);
+  filter: blur(12px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.NF_Badge {
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--color-text-strong);
+  opacity: 0.08;
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  user-select: none;
+}
+
+.NF_Title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 3.6vw, 2rem);
+  color: var(--color-text-strong);
+}
+
+.NF_Desc {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-subtle);
+}
+
+.NF_Actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.NF_Button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.875rem;
+  border: 1px solid var(--color-button-border);
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  text-decoration: none;
+  font-weight: 600;
+  transition:
+    transform var(--theme-anim-duration) ease,
+    background var(--theme-anim-duration) ease,
+    box-shadow var(--theme-anim-duration) ease;
+  outline: none;
+}
+
+.NF_Button:hover {
+  background: var(--color-button-hover-bg);
+  transform: translateY(-1px);
+}
+
+.NF_Button:focus-visible {
+  box-shadow: 0 0 0 3px var(--selection-bg);
+}
+
+.NF_Secondary {
+  background: transparent;
+  color: var(--color-text-body);
+  border-color: var(--header-border-color);
+}
+
+.NF_Secondary:hover {
+  background: var(--executive-arrow-bg);
+}
+
+.NF_Art {
+  position: absolute;
+  inset: auto 0 -3.5rem auto;
+  width: min(40%, 240px);
+  height: auto;
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.NF_Svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  color: var(--foreground-color);
+}
+
+.NF_SvgRing {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  opacity: 0.35;
+}
+
+.NF_SvgPath {
+  stroke: currentColor;
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+@media (max-width: 480px) {
+  .NF_Card {
+    padding: 1.75rem 1rem 1rem;
+  }
+  .NF_Actions {
+    gap: 0.5rem;
+  }
+  .NF_Button {
+    width: 100%;
+  }
+}

@@ -1,9 +1,7 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function MajorList({ majors: majorsDefault }) {
-  const router = useRouter();
   const [majors, setMajors] = useState(majorsDefault ?? []);
   const [newMajor, setNewMajor] = useState({ college: '', major_name: '' });
 
