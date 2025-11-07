@@ -32,11 +32,6 @@ export default function HomePage() {
         </div>
       </div> */}
       <MainLogo />
-
-      {/* 학교 로고
-      <div className="school-logo">
-        <img src="/main/school.png" alt="SNU Logo" />
-      </div> */}
     </main>
   );
 }
