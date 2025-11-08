@@ -140,7 +140,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
   const normalizeLF = (s) => (s ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   const fmtNumber = (n) => new Intl.NumberFormat('ko-KR').format(Number(n || 0));
-  const sanitizeAccountNumber = (value) => String(value ?? '').replace(/\D/g, '');
+  const sanitizeAccountNumber = (value) => String(value ?? '').replace(/[\s-]/g, '');
 
   const onSubmit = async (data) => {
     if (submitting) return;
@@ -160,6 +160,10 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
       }
       if (!sanitizedAccountNumber) {
         alert('계좌번호를 입력해주세요.');
+        return;
+      }
+      if (!/^\d+$/.test(sanitizedAccountNumber)) {
+        alert('계좌번호는 숫자만 입력해주세요.');
         return;
       }
       if (!accountHolder) {
@@ -368,9 +372,33 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
           {step3Ready && (
             <div className="Step fade-in space-y-8">
+              <div className="AmountSection space-y-4">
+                <div className="PayoutHeader">
+                  <label className="C_Label" htmlFor="fund-amount-input">
+                    신청 금액
+                  </label>
+                </div>
+                <div className="PayoutField max-w-md">
+                  <input
+                    id="fund-amount-input"
+                    type="number"
+                    {...register('amount', {
+                      required: '신청 금액을 입력해주세요.',
+                    })}
+                    placeholder="신청 금액 (숫자만)"
+                    className="C_Input"
+                  />
+                  {errors.amount?.message && (
+                    <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                      {errors.amount.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <div className="PayoutSection space-y-6">
                 <div className="PayoutHeader">
-                  <label className="C_Label">신청 금액 및 지급 방식</label>
+                  <label className="C_Label">지급 방식</label>
                   <p className="PayoutHelpText">
                     카카오페이를 선택하지 않으면 아래 계좌 정보를 모두 입력해주세요.
                   </p>
@@ -384,26 +412,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                   />
                   <span className="C_CheckText">카카오페이로 받겠습니다</span>
                 </label>
-                <div className="PayoutGrid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-                  <div className="PayoutField">
-                    <label className="C_SubLabel" htmlFor="fund-amount-input">
-                      신청 금액
-                    </label>
-                    <input
-                      id="fund-amount-input"
-                      type="number"
-                      {...register('amount', {
-                        required: '신청 금액을 입력해주세요.',
-                      })}
-                      placeholder="신청 금액 (숫자만)"
-                      className="C_Input"
-                    />
-                    {errors.amount?.message && (
-                      <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
-                        {errors.amount.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="PayoutGrid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                   <div className="PayoutField">
                     <label className="C_SubLabel" htmlFor="fund-bank-input">
                       은행
@@ -429,9 +438,11 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                       {...register('accountNumber', {
                         validate: (value) => {
                           if (useKakaoPay) return true;
-                          const cleaned = sanitizeAccountNumber(value);
+                          const raw = String(value ?? '');
+                          const cleaned = sanitizeAccountNumber(raw);
                           if (!cleaned) return '계좌번호를 입력해주세요.';
-                          return /^\d+$/.test(cleaned) || '계좌번호는 숫자만 입력해주세요.';
+                          if (!/^\d+$/.test(cleaned)) return '계좌번호는 숫자만 입력해주세요.';
+                          return true;
                         },
                       })}
                       placeholder="계좌번호 (숫자·하이픈 붙여넣기 가능)"
