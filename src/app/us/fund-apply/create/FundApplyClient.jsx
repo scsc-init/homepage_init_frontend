@@ -140,23 +140,25 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
 
   const normalizeLF = (s) => (s ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   const fmtNumber = (n) => new Intl.NumberFormat('ko-KR').format(Number(n || 0));
+  const sanitizeAccountNumber = (value) => String(value ?? '').replace(/\D/g, '');
 
   const onSubmit = async (data) => {
     if (submitting) return;
     if (!user) return;
 
     const bankName = String(data.bankName || '').trim();
-    const accountNumber = String(data.accountNumber || '').trim();
+    const accountNumberInput = String(data.accountNumber || '').trim();
     const accountHolder = String(data.accountHolder || '').trim();
     const isKakaoPay = Boolean(data.useKakaoPay);
     const amountNumber = Number(data.amount || 0);
+    const sanitizedAccountNumber = sanitizeAccountNumber(accountNumberInput);
 
     if (!isKakaoPay) {
       if (!bankName) {
         alert('은행명을 입력해주세요.');
         return;
       }
-      if (!accountNumber) {
+      if (!sanitizedAccountNumber) {
         alert('계좌번호를 입력해주세요.');
         return;
       }
@@ -177,7 +179,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
           : `${data.orgCategory?.toUpperCase()} - ${data.target}`;
     const payoutInfo = isKakaoPay
       ? '카카오페이로 받겠습니다'
-      : `${bankName} | ${accountNumber} | ${accountHolder}`;
+      : `${bankName} | ${sanitizedAccountNumber} | ${accountHolder}`;
 
     const metaLines = [
       `**신청 유형**: ${tLabel}`,
@@ -421,9 +423,11 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                     </label>
                     <input
                       id="fund-account-input"
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
                       {...register('accountNumber')}
-                      placeholder="계좌번호 (예: 12345678901234)"
+                      placeholder="계좌번호 (숫자·하이픈 붙여넣기 가능)"
                       className="C_Input"
                       disabled={useKakaoPay || submitting}
                     />

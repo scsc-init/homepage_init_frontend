@@ -142,18 +142,14 @@ label[for='fund-amount-input']::after {
 #fund-amount-input {
   border-color: var(--color-button-bg);
   background: rgba(75, 176, 201, 0.08);
+}
+#fund-amount-input,
+#fund-account-input {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 #fund-amount-input:focus {
   box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.35);
-}
-#fund-account-input {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-#fund-account-input:focus {
-  outline: 2px solid rgba(75, 176, 201, 0.35);
 }
 #fund-amount-input::-webkit-outer-spin-button,
 #fund-amount-input::-webkit-inner-spin-button,
