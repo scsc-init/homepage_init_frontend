@@ -426,7 +426,14 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                       type="text"
                       inputMode="numeric"
                       autoComplete="off"
-                      {...register('accountNumber')}
+                      {...register('accountNumber', {
+                        validate: (value) => {
+                          if (useKakaoPay) return true;
+                          const cleaned = sanitizeAccountNumber(value);
+                          if (!cleaned) return '계좌번호를 입력해주세요.';
+                          return /^\d+$/.test(cleaned) || '계좌번호는 숫자만 입력해주세요.';
+                        },
+                      })}
                       placeholder="계좌번호 (숫자·하이픈 붙여넣기 가능)"
                       className="C_Input"
                       disabled={useKakaoPay || submitting}
