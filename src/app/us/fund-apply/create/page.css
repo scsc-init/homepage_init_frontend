@@ -122,6 +122,46 @@ select.C_Input option {
   flex-direction: column;
   gap: 0.25rem;
 }
+label[for='fund-amount-input'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--color-button-bg);
+}
+label[for='fund-amount-input']::after {
+  content: '필수';
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-button-bg);
+  background: rgba(75, 176, 201, 0.12);
+  border: 1px solid rgba(75, 176, 201, 0.3);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+}
+#fund-amount-input {
+  border-color: var(--color-button-bg);
+  background: rgba(75, 176, 201, 0.08);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+#fund-amount-input:focus {
+  box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.35);
+}
+#fund-account-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+#fund-account-input:focus {
+  outline: 2px solid rgba(75, 176, 201, 0.35);
+}
+#fund-amount-input::-webkit-outer-spin-button,
+#fund-amount-input::-webkit-inner-spin-button,
+#fund-account-input::-webkit-outer-spin-button,
+#fund-account-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .PayoutField .C_Input {
   margin-bottom: 0;
 }

@@ -145,12 +145,11 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
     if (submitting) return;
     if (!user) return;
 
-    const rawAmount = String(data.amount || '').replace(/\s+/g, '');
     const bankName = String(data.bankName || '').trim();
     const accountNumber = String(data.accountNumber || '').trim();
     const accountHolder = String(data.accountHolder || '').trim();
     const isKakaoPay = Boolean(data.useKakaoPay);
-    const amountNumber = Number(rawAmount || 0);
+    const amountNumber = Number(data.amount || 0);
 
     if (!isKakaoPay) {
       if (!bankName) {
@@ -165,11 +164,6 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
         alert('예금주를 입력해주세요.');
         return;
       }
-    }
-
-    if (!isKakaoPay && !/^\d+$/.test(accountNumber)) {
-      alert('계좌번호는 숫자만 입력 가능합니다.');
-      return;
     }
 
     setSubmitting(true);
@@ -395,17 +389,12 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                     </label>
                     <input
                       id="fund-amount-input"
-                      type="text"
+                      type="number"
                       {...register('amount', {
                         required: '신청 금액을 입력해주세요.',
-                        pattern: {
-                          value: /^\d+$/,
-                          message: '신청 금액은 숫자만 입력 가능합니다.',
-                        },
                       })}
                       placeholder="신청 금액 (숫자만)"
                       className="C_Input"
-                      inputMode="numeric"
                     />
                     {errors.amount?.message && (
                       <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
@@ -432,16 +421,10 @@ export default function FundApplyClient({ boardInfo, sigs, pigs }) {
                     </label>
                     <input
                       id="fund-account-input"
-                      type="text"
-                      {...register('accountNumber', {
-                        pattern: {
-                          value: /^[\d\s]*$/,
-                          message: '계좌번호는 숫자만 입력 가능합니다.',
-                        },
-                      })}
+                      type="number"
+                      {...register('accountNumber')}
                       placeholder="계좌번호 (예: 12345678901234)"
                       className="C_Input"
-                      inputMode="numeric"
                       disabled={useKakaoPay || submitting}
                     />
                     {!useKakaoPay && errors.accountNumber?.message && (
