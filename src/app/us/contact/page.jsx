@@ -6,8 +6,6 @@ import { DISCORD_INVITE_LINK } from '@/util/constants';
 export default async function Contact() {
   const thisYear = new Date().getFullYear();
 
-  // const discordInviteLink = await fetchDiscordInviteLink();
-
   return (
     <>
       <div className="WallLogo"></div>
