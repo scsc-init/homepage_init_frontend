@@ -52,8 +52,9 @@ export async function generateMetadata({ params }) {
 export default async function SigDetailPage({ params }) {
   const { id } = params;
 
-  const me = await fetchMe();
-  if (!me?.id) redirect('/us/login');
+  const [me] = await Promise.allSettled([fetchMe()]);
+
+  if (me.status === 'rejected') redirect('/us/login');
 
   const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
@@ -73,7 +74,7 @@ export default async function SigDetailPage({ params }) {
       sig={sig}
       members={members}
       articleContent={article.content}
-      me={me}
+      me={me.value}
       sigId={id}
     />
   );

@@ -8,8 +8,8 @@ export const metadata = { title: 'SIG' };
 
 export default async function EditSigPage({ params }) {
   const { id } = params;
-  const me = await fetchMe();
-  if (!me?.id) redirect('/us/login');
+  const [me] = await Promise.allSettled([fetchMe()]);
+  if (me.status === 'rejected') redirect('/us/login');
 
   const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
@@ -27,5 +27,5 @@ export default async function EditSigPage({ params }) {
   const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
   const article = articleRes.ok ? await articleRes.json() : { content: '' };
 
-  return <EditSigClient sigId={id} me={me} sig={sig} article={article} />;
+  return <EditSigClient sigId={id} me={me.value} sig={sig} article={article} />;
 }

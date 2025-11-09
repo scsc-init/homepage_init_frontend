@@ -18,7 +18,7 @@ import {
   InsertImage,
   Separator,
 } from '@mdxeditor/editor';
-import './editor.css';
+import styles from './editor.module.css';
 
 import '@mdxeditor/editor/style.css';
 
@@ -28,6 +28,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 ) {
   return (
     <MDXEditor
+      className={styles.mdxeditor}
       ref={ref}
       markdown={markdown}
       onChange={onChange}

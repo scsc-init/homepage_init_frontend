@@ -1,24 +1,23 @@
 {
-  "name": "24summer-temp",
-  "version": "0.1.0",
+  "name": "scsc-frontend",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write .",
-    "format:chk": "prettier --check .",
+    "lint:fix": "next lint --fix",
+    "lint:chk": "next lint --quiet",
+    "format:prettier": "prettier --write .",
+    "format:chk:prettier": "prettier --check .",
+    "format": "npm run format:prettier && npm run lint:fix",
+    "format:chk": "npm run format:chk:prettier && npm run lint:chk",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.css": [
-      "prettier --write"
-    ]
+    "**/*": "prettier --write --ignore-unknown",
+    "*.{js,jsx,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
     "@mdxeditor/editor": "^3.6.0",
