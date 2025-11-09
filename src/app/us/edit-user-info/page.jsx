@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as validator from '@/util/validator';
 import PfpUpdate from './PfpUpdate';
-import './page.css';
+import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
 
 function EditUserInfoClient() {
@@ -174,61 +174,38 @@ function EditUserInfoClient() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: '25vw',
-        minWidth: '250px',
-        margin: '0 auto',
-        boxSizing: 'border-box',
-      }}
-    >
-      <h2 style={{ marginBottom: '1.5rem', marginTop: '1rem' }}>내 정보 수정</h2>
+    <div className={styles.editUserInfo}>
+      <h2>내 정보 수정</h2>
       <img
         src={form.profile_picture ? form.profile_picture : '/main/default-pfp.png'}
         alt="Profile"
-        className="user-profile-picture"
+        className={styles['user-profile-picture']}
       />
       <PfpUpdate />
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '100px 1fr',
-          rowGap: '1rem',
-          columnGap: '0.5rem',
-          alignItems: 'center',
-        }}
-      >
-        <label style={{ whiteSpace: 'nowrap' }}>이름</label>
-        <input
-          type="text"
-          value={form.name}
-          disabled
-          style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
-        />
+      <div className={styles.userData}>
+        <label>이름</label>
+        <input type="text" value={form.name} disabled />
 
-        <label style={{ whiteSpace: 'nowrap' }}>전화번호</label>
+        <label>전화번호</label>
         <input
           type="text"
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
           placeholder="01012345678"
-          style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
         />
 
-        <label style={{ whiteSpace: 'nowrap' }}>학번</label>
+        <label>학번</label>
         <input
           type="text"
           value={form.student_id}
           onChange={(e) => setForm({ ...form, student_id: e.target.value })}
           placeholder="202512345"
-          style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
         />
 
-        <label style={{ whiteSpace: 'nowrap' }}>전공</label>
+        <label>전공</label>
         <select
           value={form.major_id}
           onChange={(e) => setForm({ ...form, major_id: e.target.value })}
-          style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
         >
           <option value="">전공 선택</option>
           {majors.map((m) => (
@@ -239,52 +216,23 @@ function EditUserInfoClient() {
         </select>
       </div>
 
-      <div
-        style={{
-          marginTop: '2rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          marginBottom: '1rem',
-        }}
-      >
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          style={{ flex: 1, minWidth: '120px' }}
-        >
+      <div className={styles.editUserInfoButton}>
+        <button onClick={handleSubmit} disabled={loading}>
           저장하기
         </button>
-        <button
-          onClick={handleDelete}
-          disabled={loading}
-          style={{ flex: 1, minWidth: '120px' }}
-        >
+        <button onClick={handleDelete} disabled={loading}>
           휴회원으로 전환
         </button>
         {userRole === oldboyLevel ? (
-          <button
-            onClick={handleOBReactivate}
-            disabled={loading}
-            style={{ flex: 1, minWidth: '120px' }}
-          >
+          <button onClick={handleOBReactivate} disabled={loading}>
             정회원 전환 신청
           </button>
         ) : oldboyApplicant === null ? (
-          <button
-            onClick={handleOBRegister}
-            disabled={loading}
-            style={{ flex: 1, minWidth: '120px' }}
-          >
+          <button onClick={handleOBRegister} disabled={loading}>
             졸업생 전환 신청
           </button>
         ) : (
-          <button
-            onClick={handleOBUnregister}
-            disabled={loading}
-            style={{ flex: 1, minWidth: '120px' }}
-          >
+          <button onClick={handleOBUnregister} disabled={loading}>
             졸업생 전환 신청 취소
           </button>
         )}
@@ -295,9 +243,11 @@ function EditUserInfoClient() {
 
 export default function EditUserInfoPage() {
   return (
-    <div id="Home">
-      <div id="EditUserInfoContainer">
-        <EditUserInfoClient />
+    <div className={styles.wrapper}>
+      <div className={styles.home}>
+        <div className={styles.editUserInfoContainer}>
+          <EditUserInfoClient />
+        </div>
       </div>
     </div>
   );
