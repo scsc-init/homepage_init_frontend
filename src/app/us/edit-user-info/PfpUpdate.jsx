@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import styles from './page.module.css';
 
 export default function PfpUpdate() {
   const [mode, setMode] = useState('url');
@@ -60,8 +61,8 @@ export default function PfpUpdate() {
   };
 
   return (
-    <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-      <p style={{ marginBottom: '.5rem', fontWeight: 'bold' }}>프로필 사진 변경</p>
+    <div className={styles.PfpUpdateContainer}>
+      <p>프로필 사진 변경</p>
       <div>
         <label>
           <input
@@ -70,18 +71,18 @@ export default function PfpUpdate() {
             value="url"
             checked={mode === 'url'}
             onChange={() => setMode('url')}
-            style={{ marginRight: '2px' }}
+            className={styles.setMode}
           />
           URL 입력
         </label>
-        <label style={{ marginLeft: '1rem' }}>
+        <label className={styles.PfpUpdateContainerSecondLabel}>
           <input
             type="radio"
             name="mode"
             value="file"
             checked={mode === 'file'}
             onChange={() => setMode('file')}
-            style={{ marginRight: '2px' }}
+            className={styles.setMode}
           />
           이미지 업로드
         </label>
@@ -93,7 +94,7 @@ export default function PfpUpdate() {
           placeholder="이미지 URL 입력"
           value={url}
           onChange={handleUrlChange}
-          style={{ width: '100%', marginTop: '1rem' }}
+          className={styles.imageInput}
         />
       )}
 
@@ -102,23 +103,17 @@ export default function PfpUpdate() {
           type="file"
           accept="image/"
           onChange={handleFileChange}
-          style={{ marginTop: '1rem' }}
+          className={styles.imageInput}
         />
       )}
 
       {preview && (
-        <div style={{ marginTop: '1rem' }}>
-          <img
-            src={preview}
-            alt="Preview"
-            style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-          />
+        <div className={styles.imagePreview}>
+          <img src={preview} alt="Preview" />
         </div>
       )}
 
-      <button onClick={handleSubmit} style={{ marginTop: '.5rem', padding: '0.5rem 1rem' }}>
-        저장
-      </button>
+      <button onClick={handleSubmit}>저장</button>
     </div>
   );
 }
