@@ -13,6 +13,7 @@ export default function HeaderLeft({ year, semester }) {
           className="logo"
           width={100}
           height={40}
+          priority={true}
         />
       </Link>
       {year && semester && (

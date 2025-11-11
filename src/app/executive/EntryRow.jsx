@@ -33,7 +33,6 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           value={entry.status}
           onChange={(e) => onChange(entry.id, 'status', e.target.value)}
         >
-          <option value="surveying">{STATUS_MAP.surveying}</option>
           <option value="recruiting">{STATUS_MAP.recruiting}</option>
           <option value="active">{STATUS_MAP.active}</option>
           <option value="inactive">{STATUS_MAP.inactive}</option>

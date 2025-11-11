@@ -11,7 +11,7 @@ export default async function PigListPage() {
     return <div>피그 정보를 불러올 수 없습니다.</div>;
   }
 
-  const allowed = new Set(['surveying', 'recruiting', 'active']);
+  const allowed = new Set(['recruiting', 'active']);
   const visiblePigs = pigs.value
     .filter((p) => p.status === 'fulfilled')
     .map((p) => p.value)

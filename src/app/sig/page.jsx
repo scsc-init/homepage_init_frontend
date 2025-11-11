@@ -11,7 +11,7 @@ export default async function SigListPage() {
     return <div>시그 정보를 불러올 수 없습니다.</div>;
   }
 
-  const allowed = new Set(['surveying', 'recruiting', 'active']);
+  const allowed = new Set(['recruiting', 'active']);
   const visibleSigs = sigs.value
     .filter((s) => s.status === 'fulfilled')
     .map((s) => s.value)
