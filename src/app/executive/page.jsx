@@ -82,9 +82,10 @@ export default async function AdminPanel() {
           />
         </div>
 
-        <h2>Footer Message 관리</h2>
+        <h2>KV table 관리</h2>
+        <p>Footer 등 사이트 수정은 이곳에서 해주세요.</p>
         <p>
-          <Link href="/executive/footer">Footer Message 관리 페이지로 이동</Link>
+          <Link href="/executive/kv">KV table 관리 페이지로 이동</Link>
         </p>
 
         <h2>전공 관리</h2>
