@@ -50,7 +50,7 @@ async function fetchTargets(type) {
   const base = getBaseUrl();
   const data = await tryFetch(`${base}/api/${type}s`);
   const arr = Array.isArray(data) ? data : (data?.items ?? data?.data ?? data?.results ?? []);
-  const allowed = new Set(['active', 'recruiting']);
+  const allowed = new Set(['recruiting', 'active']);
   const filtered = (Array.isArray(arr) ? arr : []).filter((x) =>
     allowed.has(String(x?.status || '').toLowerCase()),
   );

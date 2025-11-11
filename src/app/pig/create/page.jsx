@@ -6,6 +6,12 @@ import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
 export const metadata = { title: 'PIG' };
 
 export default async function CreatePigPage() {
-  const scscGlobalStatus = await fetchSCSCGlobalStatus();
-  return <CreatePigClient scscGlobalStatus={scscGlobalStatus.status} />;
+  const [scscGlobalStatus] = await Promise.allSettled([fetchSCSCGlobalStatus()]);
+  return (
+    <CreatePigClient
+      scscGlobalStatus={
+        scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.status : null
+      }
+    />
+  );
 }
