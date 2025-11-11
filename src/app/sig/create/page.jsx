@@ -10,7 +10,7 @@ export default async function CreateSigPage() {
   return (
     <CreateSigClient
       scscGlobalStatus={
-        scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.status : null
+        scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.status : null
       }
     />
   );
