@@ -1,6 +1,5 @@
 'use client';
 
-import './Input.css';
 import React from 'react';
 import joinClassName from '@/util/joinClassName';
 

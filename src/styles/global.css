@@ -274,3 +274,41 @@ button {
   text-decoration: none;
   color: var(--color-text-body);
 }
+
+.C_ButtonRoot {
+  background-color: var(--color-button-bg);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+}
+.C_ButtonRoot:hover {
+  background-color: var(--color-button-hover-bg);
+}
+.C_ButtonRoot:active {
+  background-color: var(--color-button-hover-bg);
+}
+
+.C_InputRoot {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+  gap: 0.2rem;
+}
+.C_InputLabel {
+  font-size: 0.8rem;
+  user-select: none;
+}
+.C_Input {
+  all: unset;
+  width: 100%;
+  padding: 0.4em 0;
+  border-bottom: 3px solid var(--executive-card-bg);
+}
+.C_Input:focus {
+  border-bottom: 3px solid var(--executive-overlay-bg);
+}
+.C_Input::placeholder {
+  color: var(--slate-8);
+}

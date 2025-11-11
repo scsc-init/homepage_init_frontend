@@ -1,7 +1,6 @@
 'use client';
 
 import joinClassName from '@/util/joinClassName';
-import './Button.css';
 
 const Root = ({ className = '', children, ...props }) => {
   return (
