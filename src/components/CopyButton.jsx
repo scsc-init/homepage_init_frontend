@@ -1,5 +1,4 @@
 'use client';
-import './CopyButton.css';
 
 export default function CopyButton(props) {
   return (

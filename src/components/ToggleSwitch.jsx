@@ -1,8 +1,6 @@
 // src/components/ToggleSwitch.jsx
 'use client';
 
-import './ToggleSwitch.css';
-
 export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
   const isOn = typeof checked !== 'undefined' ? !!checked : !!valueProp;
 
