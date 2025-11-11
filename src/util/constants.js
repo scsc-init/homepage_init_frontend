@@ -208,3 +208,8 @@ export const excludedExecutiveEmails = [
 ];
 
 export const DEFAULT_EXECUTIVE_PFP = '/main/deafult-pfp.png';
+
+/**
+ * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
+ */
+export const HIDDEN_KV_KEYS = ['main-president', 'vice-president'];

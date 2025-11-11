@@ -24,14 +24,9 @@ export default async function AdminPanel() {
   return (
     <WithAuthorization>
       <div className="admin-panel">
-        <h2>임원진 구성</h2>
-        <p>
-          <Link href="/executive/leadership">임원진 구성 관리 페이지로 이동</Link>
-        </p>
-
         <h2>유저 관리</h2>
         <p>
-          <Link href="/executive/user">유저 관리 페이지로 이동</Link>
+          <Link href="/executive/user">임원진 및 유저 관리 페이지로 이동</Link>
         </p>
 
         <h2>지원금 요청</h2>
