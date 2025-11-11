@@ -35,9 +35,8 @@ export default function KVEditor() {
       if (res.ok) {
         const data = await res.json();
         const raw = typeof data?.value === 'string' ? data.value : '';
-        const v = raw.replace(/\\n/g, '\n');
-        setOriginal(v);
-        setValue(v);
+        setOriginal(raw);
+        setValue(raw);
       } else if (res.status === 404) {
         setOriginal('');
         setValue('');
@@ -59,7 +58,7 @@ export default function KVEditor() {
     if (!window.confirm('저장하시겠습니까?')) return;
     setSaving(true);
     try {
-      const bodyValue = value.replace(/\r\n|\n/g, '\\n');
+      const bodyValue = value;
       const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,9 +67,9 @@ export default function KVEditor() {
       if (res.ok) {
         const data = await res.json();
         const raw = typeof data?.value === 'string' ? data.value : '';
-        const v = raw.replace(/\\n/g, '\n');
-        setOriginal(v);
-        setValue(v);
+        setOriginal(raw);
+        setValue(raw);
+
         router.refresh();
       } else if (res.status === 401 || res.status === 403) {
         alert('편집 권한이 없습니다.');

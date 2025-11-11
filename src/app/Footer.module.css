@@ -70,3 +70,8 @@
     justify-content: flex-start;
   }
 }
+
+.message {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
