@@ -29,10 +29,6 @@
   user-select: text;
 }
 
-.message {
-  margin-bottom: 0.3rem;
-}
-
 .logoList {
   display: flex;
   gap: 1rem;
@@ -72,6 +68,7 @@
 }
 
 .message {
+  margin-bottom: 0.3rem;
   white-space: pre-wrap;
   line-height: 1.6;
 }
