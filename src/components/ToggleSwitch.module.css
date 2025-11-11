@@ -1,0 +1,69 @@
+.switch {
+  position: relative;
+  display: inline-block;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  transition:
+    background-color 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: var(--form-switch-track-off);
+  border: 1px solid var(--form-switch-border-off);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+.thumb {
+  content: '';
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--form-switch-thumb-off);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s,
+    background-color 0.22s;
+}
+
+.form {
+  width: 46px;
+  height: 26px;
+}
+
+/* 상태 */
+.checked {
+  background: var(--form-switch-track-on);
+  border-color: var(--form-switch-border-on);
+}
+.focused {
+  outline: 2px solid var(--form-switch-accent);
+  outline-offset: 3px;
+}
+
+.dark .slider:not(.checked) {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.dark .thumb:not(.checked) {
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.08),
+    0 6px 14px rgba(0, 0, 0, 0.6);
+}

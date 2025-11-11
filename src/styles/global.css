@@ -128,7 +128,7 @@ img {
   width: 92%;
   max-width: 700px;
   margin: 4rem auto;
-  box-shadow: 0 0 20px var(--executive-card-bg);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--color-surface-light);
   transition:
     background-color 0.3s ease,
@@ -138,7 +138,7 @@ img {
 .dark .LoadingCodeWrapper {
   background-color: var(--color-surface-light);
   color: var(--color-text-body);
-  border-color: var(--executive-card-bg);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .LoadingCodeBlock {
@@ -147,12 +147,12 @@ img {
   font-weight: 600;
   line-height: 1.7;
   animation: flicker 1.2s ease-in-out infinite alternate;
-  background-color: var(--executive-card-bg);
+  background-color: rgba(0, 0, 0, 0.03);
   padding: 1rem;
   border-radius: 0.5rem;
 }
 .dark .LoadingCodeBlock {
-  background-color: var(--executive-card-bg);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .LoadingText {
@@ -275,9 +275,6 @@ button {
   color: var(--color-text-body);
 }
 
-/* === COMPONENT STYLES MOVED FROM LOCAL FILES === */
-
-/* Button */
 .C_ButtonRoot {
   background-color: var(--color-button-bg);
   color: white;
@@ -293,7 +290,6 @@ button {
   background-color: var(--color-button-hover-bg);
 }
 
-/* Input */
 .C_InputRoot {
   display: flex;
   flex-direction: column;
@@ -315,69 +311,4 @@ button {
 }
 .C_Input::placeholder {
   color: var(--slate-8);
-}
-
-/* ToggleSwitch */
-.switch {
-  position: relative;
-  display: inline-block;
-}
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-}
-.switch .slider {
-  position: absolute;
-  inset: 0;
-  cursor: pointer;
-  border-radius: 999px;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
-}
-.switch .slider:before {
-  content: '';
-  position: absolute;
-  left: 4px;
-  bottom: 4px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #ffffff;
-  transition: transform 0.2s ease;
-}
-.switch.switch--form {
-  width: 46px;
-  height: 26px;
-}
-.switch.switch--form .slider {
-  background: var(--form-switch-track-off);
-  border: 1px solid var(--form-switch-border-off);
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
-  );
-}
-.switch.switch--form .slider:before {
-  left: 3px;
-  bottom: 3px;
-  width: 20px;
-  height: 20px;
-  background: var(--form-switch-thumb-off);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
-}
-.switch.switch--form input:checked + .slider {
-  background: var(--form-switch-track-on);
-  border-color: var(--form-switch-border-on);
-}
-.switch.switch--form input:checked + .slider:before {
-  transform: translateX(22px);
-  background: var(--form-switch-thumb-on);
-}
-.switch.switch--form input:focus + .slider {
-  outline: 2px solid var(--form-switch-accent);
-  outline-offset: 3px;
 }
