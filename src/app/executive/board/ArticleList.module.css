@@ -1,0 +1,89 @@
+.panel {
+  padding: 3rem;
+  background: var(--background-color);
+  color: var(--color-text-body);
+  min-height: 100vh;
+}
+
+.panel h2 {
+  margin: 2rem 0 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.section {
+  margin-bottom: 2rem;
+  border-top: 1px solid var(--color-button-border);
+  padding-top: 1rem;
+}
+
+.articleSection {
+  margin-bottom: 2rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.wrap {
+  background: var(--executive-card-bg);
+  border: 1px solid var(--color-button-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.table th {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-button-border);
+  background: var(--executive-arrow-bg);
+  color: var(--color-text-body);
+}
+
+.table td {
+  padding: 8px;
+  border-top: 1px solid var(--color-button-border);
+  vertical-align: middle;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-surface-light);
+  color: var(--color-text-body);
+}
+
+.button {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.buttonOutline {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-text-body);
+  margin-right: 0.5rem;
+}

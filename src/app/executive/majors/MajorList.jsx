@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import styles from './MajorList.module.css';
 
 export default function MajorList({ majors: majorsDefault }) {
   const [majors, setMajors] = useState(majorsDefault ?? []);
@@ -45,62 +46,22 @@ export default function MajorList({ majors: majorsDefault }) {
   return (
     <div>
       <h2>전공 목록</h2>
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <div className={styles.wrap}>
+        <table className={styles.table}>
           <thead>
             <tr>
-              <th className="adm-th" style={{ width: '10%' }}>
-                ID
-              </th>
-              <th className="adm-th" style={{ width: '30%' }}>
-                대학
-              </th>
-              <th className="adm-th" style={{ width: '45%' }}>
-                전공명
-              </th>
-              <th className="adm-th" style={{ width: '15%' }}>
-                작업
-              </th>
+              <th style={{ width: '10%' }}>ID</th>
+              <th style={{ width: '30%' }}>대학</th>
+              <th style={{ width: '40%' }}>전공명</th>
+              <th style={{ width: '20%' }}>작업</th>
             </tr>
           </thead>
           <tbody>
-            {majors.map((major) => (
-              <tr key={major.id}>
-                <td className="adm-td">{major.id}</td>
-                <td className="adm-td">
-                  <input
-                    className="adm-input"
-                    value={major.college}
-                    onChange={(e) => updateMajorField(major.id, 'college', e.target.value)}
-                  />
-                </td>
-                <td className="adm-td">
-                  <input
-                    className="adm-input"
-                    value={major.major_name}
-                    onChange={(e) => updateMajorField(major.id, 'major_name', e.target.value)}
-                  />
-                </td>
-                <td className="adm-td">
-                  <div className="adm-flex">
-                    <button className="adm-button" onClick={() => saveMajor(major)}>
-                      저장
-                    </button>
-                    <button
-                      className="adm-button outline"
-                      onClick={() => deleteMajor(major.id)}
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
             <tr>
-              <td className="adm-td"></td>
-              <td className="adm-td">
+              <td></td>
+              <td>
                 <input
-                  className="adm-input"
+                  className={styles.input}
                   placeholder="대학명"
                   value={newMajor.college}
                   onChange={(e) =>
@@ -111,9 +72,9 @@ export default function MajorList({ majors: majorsDefault }) {
                   }
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <input
-                  className="adm-input"
+                  className={styles.input}
                   placeholder="전공명"
                   value={newMajor.major_name}
                   onChange={(e) =>
@@ -124,12 +85,44 @@ export default function MajorList({ majors: majorsDefault }) {
                   }
                 />
               </td>
-              <td className="adm-td">
-                <button className="adm-button" onClick={createMajor}>
+              <td>
+                <button className={styles.button} onClick={createMajor}>
                   추가
                 </button>
               </td>
             </tr>
+            {majors.map((major) => (
+              <tr key={major.id}>
+                <td>{major.id}</td>
+                <td>
+                  <input
+                    className={styles.input}
+                    value={major.college}
+                    onChange={(e) => updateMajorField(major.id, 'college', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    className={styles.input}
+                    value={major.major_name}
+                    onChange={(e) => updateMajorField(major.id, 'major_name', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <div>
+                    <button className={styles.button} onClick={() => saveMajor(major)}>
+                      저장
+                    </button>
+                    <button
+                      className={styles.buttonOutline}
+                      onClick={() => deleteMajor(major.id)}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
