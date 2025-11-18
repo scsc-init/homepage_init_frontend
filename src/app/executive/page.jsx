@@ -74,7 +74,7 @@ export default async function AdminPanel() {
 
         <h2>전공 관리</h2>
         <p>
-          <Link href="/executive/majors">전공 목록 페이지로 이동</Link>
+          <Link href="/executive/major">전공 목록 페이지로 이동</Link>
         </p>
       </div>
     </WithAuthorization>
