@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import styles from './ArticleList.module.css';
 
 export default function ArticleList({ boards: boardsDefault }) {
   const [boards, setBoards] = useState(boardsDefault ?? []);
@@ -112,68 +111,76 @@ export default function ArticleList({ boards: boardsDefault }) {
   };
 
   return (
-    <div className={styles.articleSection}>
+    <div className="adm-section">
       {boards.map((board) => (
-        <div key={board.id} className={styles.articleSection}>
-          <h3 className={styles.articleSection}>게시판 ID {board.id}</h3>
+        <div key={board.id} className="adm-section">
+          <h3>게시판 ID {board.id}</h3>
 
-          <div className={styles.actions}>
+          <div className="adm-actions">
             <input
-              className={styles.input}
+              className="adm-input"
               value={board.name}
               onChange={(e) => handleBoardChange(board.id, e.target.value)}
             />
-            <button className={styles.button} onClick={() => saveBoard(board)}>
+            <button className="adm-button" onClick={() => saveBoard(board)}>
               이름 저장
             </button>
-            <button className={styles.buttonOutline} onClick={() => deleteBoard(board.id)}>
+            <button className="adm-button outline" onClick={() => deleteBoard(board.id)}>
               게시판 삭제
             </button>
           </div>
 
-          <div className={styles.wrap}>
-            <table className={styles.table}>
+          <div className="adm-table-wrap">
+            <table className="adm-table">
               <thead>
                 <tr>
-                  <th style={{ width: '10%' }}>ID</th>
-                  <th style={{ width: '30%' }}>제목</th>
-                  <th style={{ width: '45%' }}>내용</th>
-                  <th style={{ width: '15%' }}>작업</th>
+                  <th className="adm-th" style={{ width: '10%' }}>
+                    ID
+                  </th>
+                  <th className="adm-th" style={{ width: '30%' }}>
+                    제목
+                  </th>
+                  <th className="adm-th" style={{ width: '45%' }}>
+                    내용
+                  </th>
+                  <th className="adm-th" style={{ width: '15%' }}>
+                    작업
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {(articles[board.id] || []).map((article) => (
                   <tr key={article.id}>
-                    <td>{article.id}</td>
-                    <td>
+                    <td className="adm-td">{article.id}</td>
+                    <td className="adm-td">
                       <input
-                        className={styles.input}
+                        className="adm-input"
                         value={article.title}
                         onChange={(e) =>
                           handleArticleChange(board.id, article.id, 'title', e.target.value)
                         }
                       />
                     </td>
-                    <td>
+                    <td className="adm-td">
                       <input
-                        className={styles.input}
+                        className="adm-input"
                         value={article.content}
                         onChange={(e) =>
                           handleArticleChange(board.id, article.id, 'content', e.target.value)
                         }
                       />
                     </td>
-                    <td>
-                      <div>
+                    <td className="adm-td">
+                      <div className="adm-flex">
                         <button
-                          className={styles.button}
+                          className="adm-button"
                           onClick={() => saveArticle(article)}
                           disabled={saving[article.id]}
                         >
                           저장
                         </button>
                         <button
-                          className={styles.buttonOutline}
+                          className="adm-button outline"
                           onClick={() => deleteArticle(article.id, board.id)}
                         >
                           삭제
