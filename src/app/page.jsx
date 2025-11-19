@@ -1,10 +1,12 @@
 import './page.css';
 import { MainLogo } from './checkInAppBrowser';
 import RefreshJWTClient from './RefreshJWTClient';
+import CheckUserStatus from '@/components/CheckUserStatus';
 
 export default function HomePage() {
   return (
     <main className="main-wrapper">
+      <CheckUserStatus />
       {/* Overlay 로고 (배경) */}
       <div className="overlay-container">
         <img

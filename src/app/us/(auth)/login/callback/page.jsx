@@ -16,52 +16,11 @@ export default function OAuthLanding() {
       return;
     }
 
-    let cancelled = false;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      if (cancelled) return;
-      controller.abort();
-      if (session?.registered) {
-        router.replace('/');
-      } else {
-        router.replace('/us/register');
-      }
-    }, 3000);
-
-    const check = async () => {
-      try {
-        const res = await fetch('/api/user/profile', {
-          credentials: 'include',
-          signal: controller.signal,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (cancelled) return;
-          if (data?.status === 'standby') {
-            clearTimeout(timeoutId);
-            router.replace('/about/welcome');
-            return;
-          }
-        }
-      } catch {
-        if (cancelled) return;
-      }
-      if (cancelled) return;
-      clearTimeout(timeoutId);
-      if (session?.registered) {
-        router.replace('/');
-      } else {
-        router.replace('/us/register');
-      }
-    };
-
-    check();
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-      clearTimeout(timeoutId);
-    };
+    if (session.registered) {
+      router.replace('/');
+    } else {
+      router.replace('/us/register');
+    }
   }, [status, session, router]);
 
   return <LoadingSpinner />;
