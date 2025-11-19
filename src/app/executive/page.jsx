@@ -1,23 +1,13 @@
-// src/app/executive/page.jsx
-import ArticleList from './ArticleList';
-import MajorList from './MajorList';
 import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
 import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
-import {
-  fetchBoards,
-  fetchSCSCGlobalStatus,
-  fetchMajors,
-  fetchDiscordBotStatus,
-} from '@/util/fetchAPIData';
+import { fetchSCSCGlobalStatus, fetchDiscordBotStatus } from '@/util/fetchAPIData';
 import './page.css';
 
 export default async function AdminPanel() {
-  const [boards, scscGlobalStatus, majors, discordBotStatus] = await Promise.allSettled([
-    fetchBoards([3, 4, 5, 6]),
+  const [scscGlobalStatus, discordBotStatus] = await Promise.allSettled([
     fetchSCSCGlobalStatus(),
-    fetchMajors(),
     fetchDiscordBotStatus(),
   ]);
 
@@ -40,15 +30,9 @@ export default async function AdminPanel() {
         </p>
 
         <h2>게시글 관리</h2>
-        <div className="adm-section">
-          <ArticleList
-            boards={
-              boards.status === 'fulfilled'
-                ? boards.value.filter((b) => b.status === 'fulfilled').map((b) => b.value)
-                : []
-            }
-          />
-        </div>
+        <p>
+          <Link href="/executive/board">게시글 관리 페이지로 이동</Link>
+        </p>
 
         <h2>SIG 관리</h2>
         <p>
@@ -89,9 +73,9 @@ export default async function AdminPanel() {
         </p>
 
         <h2>전공 관리</h2>
-        <div className="adm-section">
-          <MajorList majors={majors.status === 'fulfilled' ? majors.value : []} />
-        </div>
+        <p>
+          <Link href="/executive/major">전공 목록 페이지로 이동</Link>
+        </p>
       </div>
     </WithAuthorization>
   );
