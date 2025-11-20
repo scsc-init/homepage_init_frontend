@@ -18,8 +18,21 @@ export default function RefreshJWTClient() {
     }
 
     (async () => {
-      const me = await fetchMeClient();
-      if (me) return;
+      let me = null;
+      try {
+        me = await fetchMeClient();
+      } catch {
+        me = null;
+      }
+
+      if (me) {
+        const s = me.status;
+        if (s === 'pending' || s === 'standby') {
+          router.replace('/about/welcome');
+          return;
+        }
+        return;
+      }
 
       if (session?.user?.email && session?.hashToken) {
         const loginRes = await fetch('/api/auth/login', {
@@ -36,6 +49,17 @@ export default function RefreshJWTClient() {
           await signOut({ redirect: false });
           await fetch('/api/auth/logout', { method: 'POST' });
           router.refresh();
+          return;
+        }
+
+        try {
+          const me2 = await fetchMeClient();
+          if (me2 && (me2.status === 'pending' || me2.status === 'standby')) {
+            router.replace('/about/welcome');
+            return;
+          }
+        } catch {
+          return;
         }
       } else {
         await signOut({ redirect: false });
