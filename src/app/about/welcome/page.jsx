@@ -19,6 +19,7 @@ export default async function WelcomePage() {
         <div id="HomeContent">
           <div className="ContentBlock">
             <h1>WELCOME!</h1>
+            <h3 id="noticeImportant">회비를 입금해야 동아리 가입이 완료됩니다!</h3>
             <h3>
               <a href={DISCORD_INVITE_LINK} target="_blank" rel="noopener noreferrer">
                 디스코드 서버 링크
@@ -31,10 +32,12 @@ export default async function WelcomePage() {
               </a>
               <CopyButton link={KAKAO_INVITE_LINK} />
             </h3>
-            <h3>{DEPOSIT_ACC}</h3>
             <h3>
-              회비: 2.5만원 <br />
-              입금자명 : 이름 + 전화번호 마지막 두자리 <br /> ex) 김창섭57
+              {DEPOSIT_ACC} <CopyButton link={DEPOSIT_ACC} />
+            </h3>
+            <h3>
+              회비: <u>25000원</u> <br />
+              입금자명 : <u>이름 + 전화번호 마지막 두자리</u> <br /> ex) 김창섭57
             </h3>
             <div className="EnrollCTA">
               <EnrollButton />
