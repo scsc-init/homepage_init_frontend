@@ -39,9 +39,6 @@ export default async function WelcomePage() {
               회비: <u>25000원</u> <br />
               입금자명 : <u>이름 + 전화번호 마지막 두자리</u> <br /> ex) 김창섭57
             </h3>
-            <div className="EnrollCTA">
-              <EnrollButton />
-            </div>
             <a href="/about/my-page">마이페이지로 이동</a>
           </div>
         </div>
