@@ -137,7 +137,7 @@ export default function MyProfileClient() {
       <div className="user-profile-wrapper">
         {user ? (
           <img
-            src={user.profile_picture || '/main/default-pfp.png'}
+            src={user.profile_picture || '/asset/default-pfp.png'}
             alt="Profile"
             className="user-profile-picture"
           />
@@ -203,19 +203,13 @@ export default function MyProfileClient() {
               <p className="user-status-description">User Status</p>
               <p>{user ? USER_STATUS_MAP[user.status] : ''}</p>
             </div>
-            <button onClick={handleEnroll} className="enroll-button">
-              입금등록
+            <button onClick={() => router.push('/about/welcome')} className="enroll-button">
+              입금안내
             </button>
           </div>
 
           <div className="buttons-container">
             <div className="buttons-grid">
-              <button onClick={() => router.push('/about/welcome')} className="action-button">
-                <span className="btn-icon">
-                  <ArrowIcon />
-                </span>
-                <span className="btn-label">입금안내</span>
-              </button>
               <button
                 onClick={() => router.push('/us/edit-user-info')}
                 className="action-button"

@@ -38,7 +38,7 @@ export default function HeaderRight() {
           )}
           <Link href="/about/my-page" className={`${styles.userLink} unset`}>
             <img
-              src={user.profile_picture || '/main/default-pfp.png'}
+              src={user.profile_picture || '/asset/default-pfp.png'}
               alt="Profile"
               className={styles.userPic}
               width={24}
