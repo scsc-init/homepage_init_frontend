@@ -1,7 +1,7 @@
 // components/sig/MDXEditor.jsx
 'use client';
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import {
   MDXEditor,
   headingsPlugin,
@@ -26,6 +26,37 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
   { markdown = '', onChange = () => {} },
   ref,
 ) {
+  const handleImageUpload = useCallback(async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch('/api/file/image/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) {
+      const msg = data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
+      alert(msg);
+      throw new Error(msg);
+    }
+
+    if (!data?.id) {
+      const msg = '이미지 업로드 응답에 id가 없습니다.';
+      alert(msg);
+      throw new Error(msg);
+    }
+
+    return `/api/image/download/${encodeURIComponent(data.id)}`;
+  }, []);
+
   return (
     <MDXEditor
       className={styles.mdxeditor}
@@ -36,7 +67,9 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
-        imagePlugin(),
+        imagePlugin({
+          imageUploadHandler: handleImageUpload,
+        }),
         thematicBreakPlugin(),
         markdownShortcutPlugin(),
         toolbarPlugin({

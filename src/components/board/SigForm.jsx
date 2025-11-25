@@ -1,4 +1,4 @@
-// components/sig/SigForm.jsx
+import Editor from '@/components/board/EditorWrapper.jsx';
 import SigInputField from './SigInputField';
 import * as Button from '@/components/Button.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
@@ -9,7 +9,6 @@ export default function SigForm({
   control,
   handleSubmit,
   onSubmit,
-  Editor,
   editorKey,
   isCreate,
 }) {

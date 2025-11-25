@@ -1,4 +1,5 @@
 // component를 잘못 설계해서, sig로 재활용하는 양상이 되어버렸습니다. 배포 이전에는 수정하겠습니다.
+import Editor from '@/components/board/EditorWrapper.jsx';
 import SigInputField from './SigInputField';
 import * as Button from '@/components/Button.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
@@ -9,7 +10,6 @@ export default function PigForm({
   control,
   handleSubmit,
   onSubmit,
-  Editor,
   editorKey,
   isCreate,
 }) {
