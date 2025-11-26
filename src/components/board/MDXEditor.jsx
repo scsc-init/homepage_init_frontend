@@ -1,4 +1,3 @@
-// components/sig/MDXEditor.jsx
 'use client';
 
 import React, { forwardRef, useCallback } from 'react';
@@ -30,10 +29,16 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await fetch('/api/file/image/upload', {
-      method: 'POST',
-      body: formData,
-    });
+    let res;
+    try {
+      res = await fetch('/api/file/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+    } catch (e) {
+      alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
+      return null;
+    }
 
     let data = null;
     try {
@@ -45,13 +50,13 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
     if (!res.ok) {
       const msg = data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
       alert(msg);
-      throw new Error(msg);
+      return null;
     }
 
     if (!data?.id) {
       const msg = '이미지 업로드 응답에 id가 없습니다.';
       alert(msg);
-      throw new Error(msg);
+      return null;
     }
 
     return `/api/image/download/${encodeURIComponent(data.id)}`;

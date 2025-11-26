@@ -1,7 +1,6 @@
 // app/api/file/docs/upload/route.js
 import { cookies } from 'next/headers';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 
 export async function POST(req) {
   const base = getBaseUrl();
@@ -10,11 +9,10 @@ export async function POST(req) {
   const appJwt = cookies().get('app_jwt')?.value || null;
 
   const headers = {
-    'x-api-secret': getApiSecret(),
     ...(appJwt ? { 'x-jwt': appJwt } : {}),
   };
 
-  const contentType = req.headers.get('content-type');
+  const contentType = req.headers.get('Content-Type');
   if (contentType) {
     headers['Content-Type'] = contentType;
   }
