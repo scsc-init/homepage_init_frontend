@@ -21,6 +21,8 @@ import styles from './editor.module.css';
 
 import '@mdxeditor/editor/style.css';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+
 const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
   { markdown = '', onChange = () => {} },
   ref,
@@ -31,9 +33,10 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
     let res;
     try {
-      res = await fetch('/api/file/image/upload', {
+      res = await fetch(`${API_BASE}/api/file/image/upload`, {
         method: 'POST',
         body: formData,
+        credentials: 'include', // app_jwt 쿠키를 BE로 직접 보냄
       });
     } catch (e) {
       alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
@@ -59,7 +62,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
       return null;
     }
 
-    return `/api/image/download/${encodeURIComponent(data.id)}`;
+    return `${API_BASE}/api/image/download/${encodeURIComponent(data.id)}`;
   }, []);
 
   return (
