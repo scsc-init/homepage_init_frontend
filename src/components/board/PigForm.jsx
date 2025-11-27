@@ -14,7 +14,14 @@ export default function PigForm({
   isCreate,
 }) {
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmit(onSubmit)(e);
+      }}
+    >
       <SigInputField
         label="피그 이름"
         placeholder="INIT PIG"

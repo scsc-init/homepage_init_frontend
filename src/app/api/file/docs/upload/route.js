@@ -1,4 +1,3 @@
-// app/api/file/docs/upload/route.js
 import { cookies } from 'next/headers';
 import { getBaseUrl } from '@/util/getBaseUrl';
 

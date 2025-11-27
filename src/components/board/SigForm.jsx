@@ -13,7 +13,14 @@ export default function SigForm({
   isCreate,
 }) {
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmit(onSubmit)(e);
+      }}
+    >
       <SigInputField label="시그 이름" placeholder="AI SIG" register={register} name="title" />
       <SigInputField
         label="시그 설명"

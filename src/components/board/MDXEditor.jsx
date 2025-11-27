@@ -18,10 +18,9 @@ import {
   Separator,
 } from '@mdxeditor/editor';
 import styles from './editor.module.css';
+import { directFetch } from '@/util/directFetch';
 
 import '@mdxeditor/editor/style.css';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
   { markdown = '', onChange = () => {} },
@@ -33,12 +32,11 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
     let res;
     try {
-      res = await fetch(`${API_BASE}/api/file/image/upload`, {
+      res = await directFetch('/api/file/image/upload', {
         method: 'POST',
         body: formData,
-        credentials: 'include', // app_jwt 쿠키를 BE로 직접 보냄
       });
-    } catch (e) {
+    } catch {
       alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
       return null;
     }
@@ -51,8 +49,13 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
     }
 
     if (!res.ok) {
-      const msg = data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
-      alert(msg);
+      if (res.status === 401) {
+        alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
+      } else {
+        const msg =
+          data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
+        alert(msg);
+      }
       return null;
     }
 
@@ -62,7 +65,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
       return null;
     }
 
-    return `${API_BASE}/api/image/download/${encodeURIComponent(data.id)}`;
+    return `/api/image/download/${encodeURIComponent(data.id)}`;
   }, []);
 
   return (
