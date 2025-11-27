@@ -1,6 +1,5 @@
 'use client';
 
-import Editor from '@/components/board/EditorWrapper.jsx';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
@@ -137,7 +136,6 @@ export default function CreatePigClient({ scscGlobalStatus }) {
           control={control}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          Editor={Editor}
           editorKey={0}
           isCreate={true}
         />

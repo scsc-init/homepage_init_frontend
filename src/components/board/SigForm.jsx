@@ -1,5 +1,5 @@
-// components/sig/SigForm.jsx
-import SigInputField from './SigInputField';
+import Editor from '@/components/board/EditorWrapper.jsx';
+import InputField from './InputField';
 import * as Button from '@/components/Button.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
 import { Controller } from 'react-hook-form';
@@ -9,14 +9,20 @@ export default function SigForm({
   control,
   handleSubmit,
   onSubmit,
-  Editor,
   editorKey,
   isCreate,
 }) {
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-      <SigInputField label="시그 이름" placeholder="AI SIG" register={register} name="title" />
-      <SigInputField
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmit(onSubmit)(e);
+      }}
+    >
+      <InputField label="시그 이름" placeholder="AI SIG" register={register} name="title" />
+      <InputField
         label="시그 설명"
         placeholder="AI를 공부하는 SIG입니다"
         register={register}

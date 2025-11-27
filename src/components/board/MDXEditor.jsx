@@ -1,7 +1,6 @@
-// components/sig/MDXEditor.jsx
 'use client';
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import {
   MDXEditor,
   headingsPlugin,
@@ -19,6 +18,7 @@ import {
   Separator,
 } from '@mdxeditor/editor';
 import styles from './editor.module.css';
+import { directFetch } from '@/util/directFetch';
 
 import '@mdxeditor/editor/style.css';
 
@@ -26,6 +26,48 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
   { markdown = '', onChange = () => {} },
   ref,
 ) {
+  const handleImageUpload = useCallback(async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    let res;
+    try {
+      res = await directFetch('/api/file/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+    } catch {
+      alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
+      return null;
+    }
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
+      } else {
+        const msg =
+          data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
+        alert(msg);
+      }
+      return null;
+    }
+
+    if (!data?.id) {
+      const msg = '이미지 업로드 응답에 id가 없습니다.';
+      alert(msg);
+      return null;
+    }
+
+    return `/api/image/download/${encodeURIComponent(data.id)}`;
+  }, []);
+
   return (
     <MDXEditor
       className={styles.mdxeditor}
@@ -36,7 +78,9 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
-        imagePlugin(),
+        imagePlugin({
+          imageUploadHandler: handleImageUpload,
+        }),
         thematicBreakPlugin(),
         markdownShortcutPlugin(),
         toolbarPlugin({

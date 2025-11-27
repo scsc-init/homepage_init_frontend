@@ -1,10 +1,10 @@
 'use client';
 
-import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { directFetch } from '@/util/directFetch';
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
@@ -94,7 +94,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/sig/create`, {
+      const res = await directFetch('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -115,11 +115,11 @@ export default function CreateSigClient({ scscGlobalStatus }) {
         alert('로그인이 필요합니다.');
         router.push('/us/login');
       } else {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         alert('SIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err.message || '네트워크 오류');
+      alert(err?.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }
@@ -137,7 +137,6 @@ export default function CreateSigClient({ scscGlobalStatus }) {
           control={control}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          Editor={Editor}
           editorKey={0}
           isCreate={true}
         />
