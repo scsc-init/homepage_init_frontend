@@ -1,6 +1,6 @@
 // component를 잘못 설계해서, sig로 재활용하는 양상이 되어버렸습니다. 배포 이전에는 수정하겠습니다.
 import Editor from '@/components/board/EditorWrapper.jsx';
-import SigInputField from './SigInputField';
+import InputField from './InputField';
 import * as Button from '@/components/Button.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
 import { Controller } from 'react-hook-form';
@@ -22,13 +22,8 @@ export default function PigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <SigInputField
-        label="피그 이름"
-        placeholder="INIT PIG"
-        register={register}
-        name="title"
-      />
-      <SigInputField
+      <InputField label="피그 이름" placeholder="INIT PIG" register={register} name="title" />
+      <InputField
         label="피그 설명"
         placeholder="홈페이지를 관리하는 PIG입니다"
         register={register}
