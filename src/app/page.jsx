@@ -14,7 +14,6 @@ export default function HomePage() {
           className="overlay-image left logo"
           width={1490}
           height={1094}
-          priority
         />
         <Image
           src="/main/logo-overlay-right.png"
