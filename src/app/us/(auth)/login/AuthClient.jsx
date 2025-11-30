@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
@@ -88,10 +89,13 @@ export default function AuthClient() {
     <div id={styles['GoogleSignupContainer']}>
       <div className={styles['GoogleSignupCard']}>
         <div className={styles['main-logo-wrapper__login']}>
-          <img
+          <Image
             src="/main/main-logo.png"
             alt="Main Logo"
             className={`${styles['main-logo__login']} logo`}
+            width={1976}
+            height={670}
+            priority
           />
           <div className={styles['main-subtitle__login']}>
             Seoul National University Computer Study Club
