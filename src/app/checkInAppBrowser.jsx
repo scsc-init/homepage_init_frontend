@@ -2,6 +2,7 @@
 
 import './page.css';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -40,13 +41,13 @@ function InAppBrowserOutButton() {
       return (
         <p>
           상단의 화살표 아이콘({' '}
-          <img
+          <Image
             src="/vectors/open-external-link-icon.svg"
-            width="12px"
-            height="12px"
+            width={12}
+            height={12}
             className="ico"
             alt="arrow button"
-          ></img>{' '}
+          />{' '}
           ) 클릭 &rarr; 외부 브라우저로 열기
         </p>
       );
@@ -86,7 +87,14 @@ export const MainLogo = () => {
     </div>
   ) : (
     <div className="main-logo-wrapper">
-      <img src="/main/main-logo.png" alt="Main Logo" className="main-logo logo" />
+      <Image
+        src="/main/main-logo.png"
+        alt="Main Logo"
+        className="main-logo logo"
+        width={1976}
+        height={670}
+        priority
+      />
       <div className="main-subtitle">Seoul National University Computer Study Club</div>
     </div>
   );
