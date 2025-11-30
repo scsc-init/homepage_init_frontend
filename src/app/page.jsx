@@ -2,10 +2,12 @@ import './page.css';
 import { MainLogo } from './checkInAppBrowser';
 import RefreshJWTClient from './RefreshJWTClient';
 import Image from 'next/image';
+import ClientPageTracker from '@/components/ClientPageTracker';
 
 export default function HomePage() {
   return (
     <main className="main-wrapper">
+      <ClientPageTracker eventName="Main Page Viewed" />
       {/* Overlay 로고 (배경) */}
       <div className="overlay-container">
         <Image

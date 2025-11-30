@@ -1,6 +1,7 @@
 import PigListClient from './PigListClient';
 import './page.css';
 import { fetchPigs, fetchMe } from '@/util/fetchAPIData';
+import ClientPageTracker from '@/components/ClientPageTracker';
 
 export const metadata = { title: 'PIG' };
 
@@ -24,6 +25,7 @@ export default async function PigListPage() {
 
   return (
     <div id="PigListContainer">
+      <ClientPageTracker eventName="PIG List Viewed" />
       <PigListClient pigs={visiblePigs} myId={myId} />
     </div>
   );

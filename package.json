@@ -29,6 +29,7 @@
     "immer": "^10.1.1",
     "marked": "^13.0.1",
     "marked-react": "^2.0.0",
+    "mixpanel-browser": "^2.72.0",
     "next": "^14.2.30",
     "next-auth": "^4.24.11",
     "normalize.css": "^8.0.1",

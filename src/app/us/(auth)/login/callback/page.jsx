@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import ClientPageTracker from '@/components/ClientPageTracker';
 
 export default function OAuthLanding() {
   const router = useRouter();
@@ -22,6 +23,15 @@ export default function OAuthLanding() {
       router.replace('/us/register');
     }
   }, [status, session, router]);
+
+  if (status === 'authenticated') {
+    return (
+      <>
+        <LoadingSpinner />
+        <ClientPageTracker eventName="User Logged In" />
+      </>
+    );
+  }
 
   return <LoadingSpinner />;
 }
