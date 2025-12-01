@@ -1,6 +1,7 @@
 import SigListClient from './SigListClient';
 import './page.css';
 import { fetchSigs, fetchMe } from '@/util/fetchAPIData';
+import ClientPageTracker from '@/components/ClientPageTracker';
 
 export const metadata = { title: 'SIG' };
 
@@ -24,6 +25,7 @@ export default async function SigListPage() {
 
   return (
     <div id="SigListContainer">
+      <ClientPageTracker eventName="SIG List Viewed" />
       <SigListClient sigs={visibleSigs} myId={myId} />
     </div>
   );
