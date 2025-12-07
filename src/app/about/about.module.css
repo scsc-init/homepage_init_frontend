@@ -1,3 +1,139 @@
+/* Regulation Specific */
+.regulationCard {
+  background-color: var(--executive-card-bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 2px solid var(--color-button-border);
+  box-shadow: 0 4px 8px var(--executive-card-shadow);
+  color: var(--color-text-body);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  z-index: 999;
+}
+
+@media (max-width: 768px) {
+  .regulationCard {
+    padding: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    border-radius: 0.75rem;
+  }
+}
+
+.regulationCard h1,
+.regulationCard h2,
+.regulationCard h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.regulationCard ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.regulationCard p {
+  margin-bottom: 0.75rem;
+}
+
+/* Shared Layout Styles */
+.wrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.sidebar {
+  position: fixed;
+  top: 3.5rem;
+  left: 0;
+  width: 180px;
+  height: calc(100vh - 3.5rem);
+  background-color: var(--color-surface-light);
+  padding: 2rem 1rem;
+  border-right: 1px solid var(--header-border-color);
+  z-index: 5;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar a {
+  color: var(--header-foreground-color);
+  text-decoration: none;
+  font-weight: 600;
+  display: block;
+  padding: 0.4rem 0;
+  transition: color 0.2s ease;
+}
+
+.sidebar a:hover {
+  color: var(--foreground-color);
+}
+
+.mainContent {
+  margin-left: 180px;
+  padding: 4rem 3rem 6rem 3rem;
+  flex-grow: 1;
+  z-index: 1;
+}
+
+.centeredMainContent {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 4rem 1rem 6rem 1rem;
+  z-index: 1;
+}
+
+.section {
+  margin-bottom: 6rem;
+}
+
+.anchorOffset {
+  scroll-margin-top: 3.5rem;
+  margin-top: 2rem;
+}
+
+.inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inner h2 {
+  margin: 0 0 1.25rem 0;
+  color: var(--color-text-strong);
+}
+
+.title {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--color-text-strong);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0 !important;
+    padding: 2rem 1rem 6rem 1rem;
+  }
+  .centeredMainContent {
+    padding: 2rem 1rem 4rem 1rem;
+    box-sizing: border-box;
+  }
+  .title {
+    font-size: 3rem;
+  }
+}
+
 .wallLogo,
 .wallLogo2 {
   position: fixed;
@@ -7,6 +143,11 @@
   background-size: contain;
   pointer-events: none;
   z-index: 0;
+}
+
+:global(.dark) .wallLogo,
+:global(.dark) .wallLogo2 {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 .wallLogo {

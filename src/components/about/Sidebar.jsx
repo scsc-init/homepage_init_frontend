@@ -2,9 +2,9 @@
 
 import { scrollToId } from './ScrollToID';
 
-export default function ClientSidebar() {
+export default function ClientSidebar({ className }) {
   return (
-    <aside className="AboutSidebar hide-on-mobile">
+    <aside className={`hide-on-mobile ${className || ''}`}>
       <ul>
         <li>
           <a

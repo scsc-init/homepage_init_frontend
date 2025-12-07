@@ -22,11 +22,11 @@ export default async function RegulationPage() {
     <>
       <div className={styles.wallLogo}></div>
       <div className={styles.wallLogo2}></div>
-      <main className="AboutMain">
-        <section id="rules" className="AboutSection AnchorOffset">
-          <div className="AboutInner">
-            <h1 className="AboutTitle">회칙</h1>
-            <div className="RegulationItem">
+      <main className={styles.centeredMainContent}>
+        <section id="rules" className={`${styles.section} ${styles.anchorOffset}`}>
+          <div className={styles.inner}>
+            <h1 className={styles.title}>회칙</h1>
+            <div className={styles.regulationCard}>
               <ReactMarkdown>{markdown}</ReactMarkdown>
             </div>
           </div>

@@ -134,8 +134,6 @@ html.theme-animating {
 
 .dark .ico,
 .dark .logo,
-.dark .WallLogo,
-.dark .WallLogo2,
 .dark .HeaderUserIcon {
   filter: invert(1) hue-rotate(180deg);
 }

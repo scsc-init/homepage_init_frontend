@@ -15,95 +15,10 @@ body {
   word-break: keep-all;
 }
 
-.AboutWrapper {
-  display: flex;
-  position: relative;
-  width: 100%;
-}
-
-.AboutSidebar {
-  position: fixed;
-  top: 3.5rem;
-  left: 0;
-  width: 180px;
-  height: calc(100vh - 3.5rem);
-  background-color: var(--color-surface-light);
-  padding: 2rem 1rem;
-  border-right: 1px solid var(--header-border-color);
-  z-index: 5;
-}
-
-.AboutSidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.AboutSidebar a {
-  color: var(--header-foreground-color);
-  text-decoration: none;
-  font-weight: 600;
-  display: block;
-  padding: 0.4rem 0;
-  transition: color 0.2s ease;
-}
-
-.AboutSidebar a:hover {
-  color: var(--foreground-color);
-}
-
 .AboutTitleSection {
   background: var(--main-bg-gradient);
   padding: 6rem 2rem;
   text-align: center;
-}
-
-.AboutTitle {
-  font-size: 5rem;
-  font-weight: 900;
-  color: var(--color-text-strong);
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-.AboutMain {
-  margin-left: 180px;
-  padding: 4rem 3rem 6rem 3rem;
-  flex-grow: 1;
-  z-index: 1;
-}
-
-.AboutSection {
-  margin-bottom: 6rem;
-}
-
-.AnchorOffset {
-  scroll-margin-top: 3.5rem;
-  margin-top: 2rem;
-}
-
-.AboutInner {
-  max-width: 1040px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.AboutInner h2 {
-  margin: 0 0 1.25rem 0;
-  color: var(--color-text-strong);
-}
-
-.AboutCard {
-  background-color: var(--executive-card-bg);
-  border: 1px solid var(--header-border-color);
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
-  color: var(--foreground-color);
-  font-size: 1.2rem;
 }
 
 .ClubroomFacilityList {
@@ -274,13 +189,6 @@ body {
   .hide-on-mobile {
     display: none !important;
   }
-  .AboutMain {
-    margin-left: 0 !important;
-    padding: 2rem 1rem 6rem 1rem;
-  }
-  .AboutTitle {
-    font-size: 3rem;
-  }
   .AboutTitleSection {
     padding: 4rem 1rem;
   }
@@ -301,10 +209,4 @@ body {
   gap: 1.5rem;
   margin-top: 1rem;
   align-items: stretch;
-}
-.AboutInner h2 {
-  margin: 0 0 1.75rem 0;
-}
-.AboutInner h2 + .ClubroomFacilityList {
-  margin-top: 1rem;
 }

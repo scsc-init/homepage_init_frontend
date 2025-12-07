@@ -14,13 +14,13 @@ export default async function AboutPage() {
     <>
       <div className={styles.wallLogo}></div>
       <div className={styles.wallLogo2}></div>
-      <div className="AboutWrapper">
-        <Sidebar />
-        <main className="AboutMain">
+      <div className={styles.wrapper}>
+        <Sidebar className={styles.sidebar} />
+        <main className={styles.mainContent}>
           <ScrollEffectWrapper>
-            <section id="scsc" className="AboutIntroSection AnchorOffset">
-              <div className="AboutInner">
-                <h1 className="AboutTitle">About us</h1>
+            <section id="scsc" className={`${styles.section} ${styles.anchorOffset}`}>
+              <div className={styles.inner}>
+                <h1 className={styles.title}>About us</h1>
                 <div className="main-intro">
                   <ScrollEffectWrapper>
                     <p>
@@ -101,8 +101,8 @@ export default async function AboutPage() {
           </ScrollEffectWrapper>
 
           <ScrollEffectWrapper>
-            <section id="activities" className="AboutSection AnchorOffset">
-              <div className="AboutInner">
+            <section id="activities" className={`${styles.section} ${styles.anchorOffset}`}>
+              <div className={styles.inner}>
                 <h2>SCSC는 이러한 활동을 합니다</h2>
                 <div className="ClubroomFacilityList">
                   {[
@@ -155,16 +155,16 @@ export default async function AboutPage() {
           </ScrollEffectWrapper>
 
           <ScrollEffectWrapper>
-            <section id="faq" className="AboutSection AnchorOffset">
-              <div className="AboutInner">
+            <section id="faq" className={`${styles.section} ${styles.anchorOffset}`}>
+              <div className={styles.inner}>
                 <FaqList />
               </div>
             </section>
           </ScrollEffectWrapper>
 
           <ScrollEffectWrapper>
-            <section id="clubroom" className="AboutSection AnchorOffset">
-              <div className="AboutInner">
+            <section id="clubroom" className={`${styles.section} ${styles.anchorOffset}`}>
+              <div className={styles.inner}>
                 <div id="HomeClubroomContainer">
                   <h2>동아리방에는 무엇이 있을까요?</h2>
                   <div className="ClubroomFacilityList">
@@ -217,8 +217,8 @@ export default async function AboutPage() {
           </ScrollEffectWrapper>
 
           <ScrollEffectWrapper>
-            <section id="more" className="AboutSection AnchorOffset">
-              <div className="AboutInner">
+            <section id="more" className={`${styles.section} ${styles.anchorOffset}`}>
+              <div className={styles.inner}>
                 <div className={`${styles.card} AboutCard`}>
                   <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
                   <div className="MoreLinkList">
