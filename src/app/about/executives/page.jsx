@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic';
 import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
 import styles from '../about.module.css';
-import './page.css';
 
 const ExecutivesClient = dynamic(() => import('./client'), { ssr: false });
 
@@ -10,8 +9,8 @@ export default function ExecutivesPage() {
     <>
       <div className={styles.wallLogo}></div>
       <div className={styles.wallLogo2}></div>
-      <div id="ExecutivePage">
-        <h2>임원진 소개</h2>
+      <div className={styles.executivePage}>
+        <h2 className={styles.executiveTitle}>임원진 소개</h2>
         <ScrollEffectWrapper>
           <ExecutivesClient />
         </ScrollEffectWrapper>

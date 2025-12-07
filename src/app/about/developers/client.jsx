@@ -52,7 +52,6 @@ const executives = [
 export default function ExecutivesClient() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const autoRef = useRef();
   const total = executives.length;
 
@@ -65,22 +64,13 @@ export default function ExecutivesClient() {
   }, [total]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (!hovered && !isMobile) {
+    if (!hovered) {
       autoRef.current = setInterval(() => {
         next();
       }, 4000);
     }
     return () => clearInterval(autoRef.current);
-  }, [hovered, isMobile, next]);
+  }, [hovered, next]);
 
   const handlers = useSwipeable({
     onSwipedLeft: next,
@@ -98,8 +88,43 @@ export default function ExecutivesClient() {
     return '';
   };
 
-  if (isMobile) {
-    return (
+  return (
+    <>
+      <div
+        className={styles.carouselWrapper}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        {...handlers}
+      >
+        <div className={styles.carouselCentered}>
+          {executives.map((person, idx) => (
+            <div
+              className={`${styles.carouselCard} ${positionClass(idx)}`}
+              key={idx}
+              style={{
+                transition: 'transform 0.6s ease, opacity 0.6s ease',
+              }}
+            >
+              <div className={styles.imageWrapper}>
+                <Image src={person.image} alt={person.name} fill className={styles.image} />
+              </div>
+              <h3>{person.name}</h3>
+              <p className={styles.roleText}>{person.role}</p>
+              {person.phone && <p className={styles.roleText}>{person.phone}</p>}
+            </div>
+          ))}
+        </div>
+        <div className={styles.carouselDots}>
+          {executives.map((_, i) => (
+            <div
+              key={i}
+              className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
+              onClick={() => setCenterIndex(i)}
+            />
+          ))}
+        </div>
+      </div>
+
       <div className={styles.masonry}>
         {executives.map((person, i) => (
           <div className={styles.masonryCard} key={i}>
@@ -115,43 +140,6 @@ export default function ExecutivesClient() {
           </div>
         ))}
       </div>
-    );
-  }
-
-  return (
-    <div
-      className={styles.carouselWrapper}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      {...handlers}
-    >
-      <div className={styles.carouselCentered}>
-        {executives.map((person, idx) => (
-          <div
-            className={`${styles.carouselCard} ${positionClass(idx)}`}
-            key={idx}
-            style={{
-              transition: 'transform 0.6s ease, opacity 0.6s ease',
-            }}
-          >
-            <div className={styles.imageWrapper}>
-              <Image src={person.image} alt={person.name} fill className={styles.image} />
-            </div>
-            <h3>{person.name}</h3>
-            <p className={styles.roleText}>{person.role}</p>
-            {person.phone && <p className={styles.roleText}>{person.phone}</p>}
-          </div>
-        ))}
-      </div>
-      <div className={styles.carouselDots}>
-        {executives.map((_, i) => (
-          <div
-            key={i}
-            className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
-            onClick={() => setCenterIndex(i)}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }

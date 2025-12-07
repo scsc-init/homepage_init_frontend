@@ -1,10 +1,11 @@
 'use client';
 
 import { scrollToId } from './ScrollToID';
+import styles from '@/app/about/about.module.css';
 
 export default function ClientSidebar({ className }) {
   return (
-    <aside className={`hide-on-mobile ${className || ''}`}>
+    <aside className={`${styles.hideOnMobile} ${className || ''}`}>
       <ul>
         <li>
           <a

@@ -1,6 +1,5 @@
 import ReactMarkdown from 'react-markdown';
 import styles from '../about.module.css';
-import './page.css';
 
 export const dynamic = 'force-dynamic';
 
