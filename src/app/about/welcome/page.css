@@ -53,35 +53,6 @@ a:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.WallLogo,
-.WallLogo2 {
-  position: fixed;
-  background-image: url('/wall-logo.png');
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.WallLogo {
-  top: 80%;
-  right: 2vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  opacity: 0.8;
-}
-
-.WallLogo2 {
-  top: 20%;
-  left: 5vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  opacity: 1;
-}
-
 .EnrollCTA {
   margin-top: 1.25rem;
 }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
 import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
+import styles from './about.module.css';
 import './page.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
@@ -11,8 +12,8 @@ import { DISCORD_INVITE_LINK } from '@/util/constants';
 export default async function AboutPage() {
   return (
     <>
-      <div className="WallLogo"></div>
-      <div className="WallLogo2"></div>
+      <div className={styles.wallLogo}></div>
+      <div className={styles.wallLogo2}></div>
       <div className="AboutWrapper">
         <Sidebar />
         <main className="AboutMain">
@@ -139,14 +140,10 @@ export default async function AboutPage() {
                     },
                   ].map(({ title, description, image }) => (
                     <ScrollEffectWrapper key={title}>
-                      <div className="ClubroomCard">
-                        <Image
-                          src={image}
-                          alt={title}
-                          width={400}
-                          height={250}
-                          className="ClubroomCardImage"
-                        />
+                      <div className={`${styles.card} ${styles.cardHover} ClubroomCard`}>
+                        <div className={styles.imageWrapper} style={{ height: '200px' }}>
+                          <Image src={image} alt={title} fill className={styles.image} />
+                        </div>
                         <h3>{title}</h3>
                         <p>{description}</p>
                       </div>
@@ -204,14 +201,10 @@ export default async function AboutPage() {
                       },
                     ].map(({ title, description, image }) => (
                       <ScrollEffectWrapper key={title}>
-                        <div className="ClubroomCard">
-                          <Image
-                            src={image}
-                            alt={title}
-                            width={400}
-                            height={250}
-                            className="ClubroomCardImage"
-                          />
+                        <div className={`${styles.card} ${styles.cardHover} ClubroomCard`}>
+                          <div className={styles.imageWrapper} style={{ height: '200px' }}>
+                            <Image src={image} alt={title} fill className={styles.image} />
+                          </div>
                           <h3>{title}</h3>
                           <p>{description}</p>
                         </div>
@@ -226,7 +219,7 @@ export default async function AboutPage() {
           <ScrollEffectWrapper>
             <section id="more" className="AboutSection AnchorOffset">
               <div className="AboutInner">
-                <div className="AboutCard">
+                <div className={`${styles.card} AboutCard`}>
                   <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
                   <div className="MoreLinkList">
                     {[

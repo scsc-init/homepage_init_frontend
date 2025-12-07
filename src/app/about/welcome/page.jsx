@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import CopyButton from '@/components/CopyButton';
+import styles from '../about.module.css';
 
 export default async function WelcomePage() {
   const res = await handleApiRequest('GET', '/api/user/profile');
@@ -13,8 +14,8 @@ export default async function WelcomePage() {
 
   return (
     <>
-      <div className="WallLogo"></div>
-      <div className="WallLogo2"></div>
+      <div className={styles.wallLogo}></div>
+      <div className={styles.wallLogo2}></div>
       <div id="Home">
         <div id="HomeContent">
           <div className="ContentBlock">

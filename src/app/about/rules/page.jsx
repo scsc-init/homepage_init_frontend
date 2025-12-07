@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown';
+import styles from '../about.module.css';
 import './page.css';
 
 export const dynamic = 'force-dynamic';
@@ -19,8 +20,8 @@ export default async function RegulationPage() {
 
   return (
     <>
-      <div className="WallLogo"></div>
-      <div className="WallLogo2"></div>
+      <div className={styles.wallLogo}></div>
+      <div className={styles.wallLogo2}></div>
       <main className="AboutMain">
         <section id="rules" className="AboutSection AnchorOffset">
           <div className="AboutInner">

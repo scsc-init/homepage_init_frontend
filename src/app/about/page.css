@@ -123,25 +123,10 @@ body {
 }
 
 .ClubroomCard {
-  background-color: var(--executive-card-bg);
-  border: 1px solid var(--header-border-color);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px var(--executive-card-shadow);
-  text-align: center;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  overflow: hidden;
-  color: var(--foreground-color);
-}
-
-.ClubroomCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px var(--executive-card-shadow);
+  text-align: center;
 }
 
 .ClubroomCard h3 {
@@ -154,13 +139,6 @@ body {
   font-size: 1.05rem;
   color: var(--color-text-subtle);
   margin: 0 0 0.25rem 0;
-}
-
-.ClubroomCardImage {
-  border-radius: 0.75rem;
-  object-fit: cover;
-  width: 100%;
-  height: 200px;
 }
 
 .HomeDescriptionTitle {
@@ -268,35 +246,6 @@ body {
   font-weight: 700;
 }
 
-.WallLogo,
-.WallLogo2 {
-  position: fixed;
-  z-index: 0;
-  background-image: url('/wall-logo.png');
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  pointer-events: none;
-}
-
-.WallLogo {
-  top: 80%;
-  right: 2vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  opacity: 0.8;
-}
-
-.WallLogo2 {
-  top: 20%;
-  left: 5vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  opacity: 1;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -343,18 +292,6 @@ body {
     margin: 3rem auto;
     line-height: 1.8;
     padding: 0 1rem;
-  }
-  .WallLogo {
-    top: 80%;
-    right: 2vw;
-    width: 10vh;
-    height: 30vh;
-  }
-  .WallLogo2 {
-    margin-top: 1rem;
-    left: 0;
-    width: 10vh;
-    height: 30vh;
   }
 }
 

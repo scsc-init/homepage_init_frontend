@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import styles from '../about.module.css';
+
 const executives = [
   {
     name: '강명석',
@@ -88,28 +90,28 @@ export default function ExecutivesClient() {
 
   const positionClass = (idx) => {
     const offset = (idx - centerIndex + total) % total;
-    if (offset === 0) return 'center';
-    if (offset === 1 || offset === -total + 1) return 'right-1';
-    if (offset === 2 || offset === -total + 2) return 'right-2';
-    if (offset === total - 1) return 'left-1';
-    if (offset === total - 2) return 'left-2';
-    return 'hidden';
+    if (offset === 0) return styles.carouselCardCenter;
+    if (offset === 1 || offset === -total + 1) return styles.carouselCardRight1;
+    if (offset === 2 || offset === -total + 2) return styles.carouselCardRight2;
+    if (offset === total - 1) return styles.carouselCardLeft1;
+    if (offset === total - 2) return styles.carouselCardLeft2;
+    return '';
   };
 
   if (isMobile) {
     return (
-      <div className="ExecutiveMasonry">
+      <div className={styles.masonry}>
         {executives.map((person, i) => (
-          <div className="ExecutiveCard" key={i}>
-            <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
-              <div className="ExecutiveOverlay">
-                <p className="ExecutiveDescription">{person.description}</p>
+          <div className={styles.masonryCard} key={i}>
+            <div className={styles.imageWrapper}>
+              <Image src={person.image} alt={person.name} fill className={styles.image} />
+              <div className={styles.overlay}>
+                <p className={styles.description}>{person.description}</p>
               </div>
             </div>
             <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
+            <p className={styles.roleText}>{person.role}</p>
+            {person.phone && <p className={styles.roleText}>{person.phone}</p>}
           </div>
         ))}
       </div>
@@ -118,40 +120,34 @@ export default function ExecutivesClient() {
 
   return (
     <div
-      className="ExecutiveCarouselWrapper"
+      className={styles.carouselWrapper}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       {...handlers}
     >
-      {/*<button className="ExecutiveArrow left" onClick={prev}>
-        ◀
-      </button>*/}
-      <div className="ExecutiveCarouselCentered">
+      <div className={styles.carouselCentered}>
         {executives.map((person, idx) => (
           <div
-            className={`ExecutiveCard ${positionClass(idx)}`}
+            className={`${styles.carouselCard} ${positionClass(idx)}`}
             key={idx}
             style={{
               transition: 'transform 0.6s ease, opacity 0.6s ease',
             }}
           >
-            <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
+            <div className={styles.imageWrapper}>
+              <Image src={person.image} alt={person.name} fill className={styles.image} />
             </div>
             <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
+            <p className={styles.roleText}>{person.role}</p>
+            {person.phone && <p className={styles.roleText}>{person.phone}</p>}
           </div>
         ))}
       </div>
-      {/*<button className="ExecutiveArrow right" onClick={next}>
-        ▶
-      </button>*/}
-      <div className="ExecutiveDots">
+      <div className={styles.carouselDots}>
         {executives.map((_, i) => (
           <div
             key={i}
-            className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
+            className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
             onClick={() => setCenterIndex(i)}
           />
         ))}

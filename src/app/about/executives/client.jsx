@@ -9,6 +9,7 @@ import {
   DEFAULT_EXECUTIVE_PFP,
 } from '@/util/constants';
 import { resolveProfileImage } from '@/util/profileImage';
+import styles from '../about.module.css';
 
 function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
@@ -138,69 +139,69 @@ export default function ExecutivesClient() {
   const positionClass = (idx) => {
     if (!total) return 'hidden';
     const offset = (idx - centerIndex + total) % total;
-    if (offset === 0) return 'center';
-    if (offset === 1 || offset === -total + 1) return 'right-1';
-    if (offset === 2 || offset === -total + 2) return 'right-2';
-    if (offset === total - 1) return 'left-1';
-    if (offset === total - 2) return 'left-2';
-    return 'hidden';
+    if (offset === 0) return styles.carouselCardCenter;
+    if (offset === 1 || offset === -total + 1) return styles.carouselCardRight1;
+    if (offset === 2 || offset === -total + 2) return styles.carouselCardRight2;
+    if (offset === total - 1) return styles.carouselCardLeft1;
+    if (offset === total - 2) return styles.carouselCardLeft2;
+    return '';
   };
 
   return (
     <>
       <div
-        className="ExecutiveCarouselWrapper"
+        className={styles.carouselWrapper}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <div className="ExecutiveCarouselCentered">
+        <div className={styles.carouselCentered}>
           {people.map((person, idx) => (
             <div
-              className={`ExecutiveCard ${positionClass(idx)}`}
+              className={`${styles.carouselCard} ${positionClass(idx)}`}
               key={person.id || idx}
               style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
             >
-              <div className="ExecutiveImageWrapper">
+              <div className={styles.imageWrapper}>
                 <img
                   src={person.image || DEFAULT_EXECUTIVE_PFP}
                   alt={person.name}
                   loading="lazy"
                   decoding="async"
-                  className="ExecutiveImage"
+                  className={styles.image}
                   referrerPolicy="no-referrer"
                 />
               </div>
               <h3>{person.name}</h3>
-              <p className="ExecutiveRole">{person.role}</p>
+              <p className={styles.roleText}>{person.role}</p>
             </div>
           ))}
         </div>
-        <div className="ExecutiveDots">
+        <div className={styles.carouselDots}>
           {people.map((_, i) => (
             <div
               key={i}
-              className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
+              className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
               onClick={() => setCenterIndex(i)}
             />
           ))}
         </div>
       </div>
 
-      <div className="ExecutiveMasonry">
+      <div className={styles.masonry}>
         {people.map((person, i) => (
-          <div className="ExecutiveCard" key={person.id || i}>
-            <div className="ExecutiveImageWrapper">
+          <div className={styles.masonryCard} key={person.id || i}>
+            <div className={styles.imageWrapper}>
               <img
                 src={person.image || DEFAULT_EXECUTIVE_PFP}
                 alt={person.name}
                 loading="lazy"
                 decoding="async"
-                className="ExecutiveImage"
+                className={styles.image}
                 referrerPolicy="no-referrer"
               />
             </div>
             <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
+            <p className={styles.roleText}>{person.role}</p>
           </div>
         ))}
       </div>
