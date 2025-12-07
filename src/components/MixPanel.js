@@ -10,9 +10,6 @@ import { minExecutiveLevel } from '@/util/constants';
  */
 export default function TrackClient({ user, eventName = 'Page Viewed' }) {
   useEffect(() => {
-    // Only run client-side
-    if (typeof window === 'undefined') return;
-
     if (user?.email) {
       mixpanel.identify(user.email);
       mixpanel.people.set({
@@ -22,9 +19,11 @@ export default function TrackClient({ user, eventName = 'Page Viewed' }) {
         isAdmin: (user.role || 0) >= minExecutiveLevel,
       });
     }
+  }, [user?.id, user?.email, user?.name, user?.role]);
 
+  useEffect(() => {
     mixpanel.track(eventName);
-  }, [user?.id, user?.email, user?.name, user?.role, eventName]);
+  }, [eventName]);
 
   return null;
 }
