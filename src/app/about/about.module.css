@@ -277,9 +277,7 @@
 .carouselCard {
   width: 200px;
   background: var(--executive-card-bg);
-  color: var(
-    --executive-name-color
-  ); /* Note: variable name might need update or ensure it exists */
+  color: var(--executive-name-color);
   border-radius: 1rem;
   text-align: center;
   padding: 1rem;
@@ -406,7 +404,6 @@
   justify-content: center;
   align-items: center;
   opacity: 0;
-  transition: opacity 0.3s ease-in-out;
 }
 
 .imageWrapper:hover .overlay {

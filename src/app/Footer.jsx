@@ -39,8 +39,8 @@ export default function Footer() {
           <div>
             <div>
               <p className={styles.message}>
-                {(footerMessage || '').split('\\n').map((line, i) => (
-                  <span key={i}>
+                {(footerMessage || '').split('\n').map((line, i) => (
+                  <span key={`${line}-${i}`}>
                     {line}
                     <br />
                   </span>
