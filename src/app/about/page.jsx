@@ -5,7 +5,6 @@ import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
 import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import styles from './about.module.css';
-import './page.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
 
@@ -21,7 +20,7 @@ export default async function AboutPage() {
             <section id="scsc" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <h1 className={styles.title}>About us</h1>
-                <div className="main-intro">
+                <div className={styles.mainIntro}>
                   <ScrollEffectWrapper>
                     <p>
                       <b>한글, 리니지, 리니지2, 아이온.</b>
@@ -104,7 +103,7 @@ export default async function AboutPage() {
             <section id="activities" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <h2>SCSC는 이러한 활동을 합니다</h2>
-                <div className="ClubroomFacilityList">
+                <div className={styles.facilityList}>
                   {[
                     {
                       title: '세미나',
@@ -140,7 +139,9 @@ export default async function AboutPage() {
                     },
                   ].map(({ title, description, image }) => (
                     <ScrollEffectWrapper key={title}>
-                      <div className={`${styles.card} ${styles.cardHover} ClubroomCard`}>
+                      <div
+                        className={`${styles.card} ${styles.cardHover} ${styles.facilityCard}`}
+                      >
                         <div className={styles.imageWrapper} style={{ height: '200px' }}>
                           <Image src={image} alt={title} fill className={styles.image} />
                         </div>
@@ -165,9 +166,9 @@ export default async function AboutPage() {
           <ScrollEffectWrapper>
             <section id="clubroom" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
-                <div id="HomeClubroomContainer">
+                <div className={styles.clubroomContainer}>
                   <h2>동아리방에는 무엇이 있을까요?</h2>
-                  <div className="ClubroomFacilityList">
+                  <div className={styles.facilityList}>
                     {[
                       {
                         title: '고성능 컴퓨터',
@@ -201,7 +202,9 @@ export default async function AboutPage() {
                       },
                     ].map(({ title, description, image }) => (
                       <ScrollEffectWrapper key={title}>
-                        <div className={`${styles.card} ${styles.cardHover} ClubroomCard`}>
+                        <div
+                          className={`${styles.card} ${styles.cardHover} ${styles.facilityCard}`}
+                        >
                           <div className={styles.imageWrapper} style={{ height: '200px' }}>
                             <Image src={image} alt={title} fill className={styles.image} />
                           </div>
@@ -219,9 +222,9 @@ export default async function AboutPage() {
           <ScrollEffectWrapper>
             <section id="more" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
-                <div className={`${styles.card} AboutCard`}>
+                <div className={styles.card}>
                   <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
-                  <div className="MoreLinkList">
+                  <div className={styles.linkList}>
                     {[
                       { title: '리크루팅 정보 바로가기', url: '/us/contact' },
                       { title: '시그 목록 바로가기', url: '/sig' },
@@ -242,7 +245,7 @@ export default async function AboutPage() {
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="MoreLink"
+                          className={styles.link}
                         >
                           <span>{title}</span>
                           <Arrow
@@ -253,7 +256,7 @@ export default async function AboutPage() {
                           />
                         </a>
                       ) : (
-                        <Link key={i} href={url} className="MoreLink">
+                        <Link key={i} href={url} className={styles.link}>
                           <span>{title}</span>
                           <Arrow
                             width="20px"

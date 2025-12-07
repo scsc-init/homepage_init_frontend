@@ -410,3 +410,293 @@
     display: none !important;
   }
 }
+
+/* --- Added from page.css --- */
+
+.titleSection {
+  background: var(--main-bg-gradient);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.facilityList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 0.25rem;
+  align-items: stretch;
+}
+
+.facilityList > * {
+  height: 100%;
+}
+
+.facilityList > * > .facilityCard {
+  height: 100%;
+}
+
+.facilityCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.facilityCard h3 {
+  margin: 0.25rem 0 0.25rem 0;
+  font-weight: 700;
+  color: var(--foreground-color);
+}
+
+.facilityCard p {
+  font-size: 1.05rem;
+  color: var(--color-text-subtle);
+  margin: 0 0 0.25rem 0;
+}
+
+.clubroomContainer {
+  background-color: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  margin-top: 3rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  color: var(--foreground-color);
+}
+
+.faqContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.faqQuestion h4 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--foreground-color);
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--header-border-color);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: var(--foreground-color);
+  background-color: var(--executive-card-bg);
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.link:hover {
+  background-color: var(--color-surface-light);
+}
+
+.mainIntro {
+  max-width: 800px;
+  margin: 4rem auto 5rem auto;
+  padding: 0 2rem;
+  font-size: 1.3rem;
+  color: var(--color-text-strong);
+  text-align: center;
+  line-height: 2;
+  word-break: keep-all;
+}
+
+.mainIntro p {
+  margin-bottom: 2rem;
+}
+
+.mainIntro b {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeOnScroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+}
+
+.fadeOnScrollVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Added from welcome/page.css --- */
+
+.welcomeContainer {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  color: var(--color-text-body);
+  padding: 4rem 1rem;
+}
+
+.welcomeContent {
+  width: 100%;
+  max-width: 60rem;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.contentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 30rem;
+  margin: 0 auto 3rem auto;
+  padding: 1.5rem;
+  border: 2px solid var(--color-button-border);
+  border-radius: 1rem;
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.contentBlock:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.05rem 2.4rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  border-radius: 999px;
+  border: 2px solid var(--color-button-border);
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 768px) {
+  .actionButton {
+    width: 100%;
+  }
+}
+
+.noticeImportant {
+  color: red;
+}
+
+.textLink {
+  text-decoration: underline;
+  color: var(--color-button-bg);
+}
+
+.textLink:hover {
+  color: var(--foreground-color);
+}
+
+/* --- Added from my-page/page.css --- */
+
+.myPageContainer {
+  min-height: calc(100vh - 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--main-bg-gradient);
+  box-sizing: border-box;
+}
+
+.myPageCard {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  min-width: 300px;
+  width: auto;
+  min-height: 40vh;
+  height: auto;
+}
+
+:global(.dark) .myPageCard {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  color: var(--color-text-body);
+}
+
+.buttonsContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.chatButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: 1px solid var(--color-button-border);
+  border-radius: 12px;
+  padding: 0.625rem 1rem;
+  line-height: 1;
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 40ms ease;
+  box-shadow: 0 2px 10px var(--button-shadow, rgba(0, 0, 0, 0.08));
+}
+
+.chatButton:hover {
+  background-color: var(--color-button-hover-bg);
+  box-shadow: 0 4px 16px var(--button-shadow, rgba(0, 0, 0, 0.12));
+}
+
+.chatButton:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 640px) {
+  .buttonsContainer {
+    gap: 0.5rem;
+  }
+  .buttonsContainer .actionButton,
+  .buttonsContainer .chatButton {
+    flex: 1 1 100%;
+  }
+}
