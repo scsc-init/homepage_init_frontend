@@ -1,17 +1,12 @@
-@import '@radix-ui/colors/indigo.css';
-@import '@radix-ui/colors/slate.css';
-
 .invite-link-copy {
   text-decoration: none;
   color: var(--color-button-bg);
   background-color: var(--executive-card-bg);
 }
-
 .invite-link-copy:hover {
   text-decoration: underline;
   cursor: pointer;
 }
-
 .invite-link-copy:focus {
   outline: 2px solid var(--color-button-bg);
   outline-offset: 2px;

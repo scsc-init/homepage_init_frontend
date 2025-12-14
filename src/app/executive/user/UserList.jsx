@@ -93,7 +93,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
         <ExportUsersButton filteredUsers={filteredUsers} />
       </div>
 
-      <h2>관리자 권한 편집</h2>
+      <h2>유저 편집</h2>
       <div className="adm-table-wrap">
         <table className="adm-table">
           <thead>

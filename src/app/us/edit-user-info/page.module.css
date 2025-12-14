@@ -1,0 +1,115 @@
+.wrapper {
+  overflow-x: hidden;
+  background: var(--main-bg-gradient);
+}
+
+.home {
+  min-height: calc(100vh - 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--main-bg-gradient);
+  box-sizing: border-box;
+}
+
+.editUserInfoContainer {
+  background-color: var(--executive-card-bg);
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  width: 30vw;
+  min-width: 300px;
+  min-height: 40vh;
+  height: auto;
+}
+
+.editUserInfo {
+  max-width: 25vw;
+  min-width: 250px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.editUserInfo h2 {
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.userData {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  row-gap: 1rem;
+  column-gap: 0.5rem;
+  align-items: center;
+}
+
+.userData label {
+  white-space: nowrap;
+}
+
+.userData input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.editUserInfoButton {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.editUserInfoButton button {
+  flex: 1;
+  min-width: 120px;
+  font-weight: bold;
+}
+
+.user-profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.PfpUpdateContainer {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.PfpUpdateContainer p {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.PfpUpdateContainer button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+}
+
+.PfpUpdateContainer img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.PfpUpdateContainerSecondLabel {
+  margin-left: 1rem;
+}
+
+.imagePreview {
+  margin-top: 1rem;
+}
+
+.setMode {
+  margin-right: 2px;
+}
+
+.imageInput {
+  width: 100%;
+  margin-top: 1rem;
+}

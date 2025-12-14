@@ -122,7 +122,13 @@ export async function fetchDiscordBotStatus() {
 /**
  * Fetches current SCSC global status.
  *
- * @returns {Promise<string>} - Current SCSC global status.
+ * @returns {Promise<{
+ * id:number;
+ * year:number;
+ * semester:number;
+ * status:string;
+ * updated_at:string
+ * }>} - Current SCSC global status.
  */
 export async function fetchSCSCGlobalStatus() {
   return safeFetch('GET', '/api/scsc/global/status');

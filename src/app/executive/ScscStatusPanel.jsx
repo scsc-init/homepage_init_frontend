@@ -3,22 +3,15 @@
 import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { STATUS_MAP } from '@/util/constants';
 
-const STATUS_MAP = {
-  surveying: '설문중',
-  recruiting: '모집중',
-  active: '활동중',
-  inactive: '비활성',
-};
 const TRANSITION_MAP_REGULAR = {
-  inactive: 'surveying',
-  surveying: 'recruiting',
+  inactive: 'recruiting',
   recruiting: 'active',
-  active: 'surveying',
+  active: 'recruiting',
 };
 const TRANSITION_MAP_SEASONAL = {
-  inactive: 'surveying',
-  surveying: 'recruiting',
+  inactive: 'recruiting',
   recruiting: 'active',
   active: 'inactive',
 };

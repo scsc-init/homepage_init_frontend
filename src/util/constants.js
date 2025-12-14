@@ -23,7 +23,6 @@ export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 
 export const STATUS_MAP = {
   inactive: '비활성',
-  surveying: '설문중',
   recruiting: '모집중',
   active: '활동중',
 };
@@ -143,8 +142,8 @@ export const hideFooterRoutes = ['/', '/us/login', '/signup', '/about/my-page'];
  * BE의 src/controller/scsc.py에서 정의합니다.
  */
 const CTRL_STATUS_AVAILABLE = {
-  JOIN_SIGPIG: ['surveying', 'recruiting'],
-  JOIN_SIGPIG_ROLLING_ADMISSION: ['surveying', 'recruiting', 'active'],
+  JOIN_SIGPIG: ['recruiting'],
+  JOIN_SIGPIG_ROLLING_ADMISSION: ['recruiting', 'active'],
 };
 
 /**
@@ -209,3 +208,8 @@ export const excludedExecutiveEmails = [
 ];
 
 export const DEFAULT_EXECUTIVE_PFP = '/main/deafult-pfp.png';
+
+/**
+ * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
+ */
+export const HIDDEN_KV_KEYS = ['main-president', 'vice-president'];

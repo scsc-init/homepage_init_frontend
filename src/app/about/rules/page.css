@@ -70,7 +70,6 @@ main.AboutMain {
   margin: 4rem 0;
   padding: 2rem;
   border-radius: 1rem;
-  background-color: var(--slate-2);
 }
 
 @media (max-width: 768px) {

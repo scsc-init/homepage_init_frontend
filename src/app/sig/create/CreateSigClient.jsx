@@ -1,12 +1,12 @@
 'use client';
 
-import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { directFetch } from '@/util/directFetch';
 
-export default function CreateSigClient() {
+export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
@@ -26,7 +26,7 @@ export default function CreateSigClient() {
       title: '',
       description: '',
       editor: '',
-      is_rolling_admission: false,
+      is_rolling_admission: scscGlobalStatus === 'active',
     },
   });
 
@@ -79,6 +79,13 @@ export default function CreateSigClient() {
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
+    } else if (scscGlobalStatus === 'active' && !data.is_rolling_admission) {
+      if (
+        !confirm(
+          '가입 기간 자유화를 활성화하지 않으면 다른 사람이 가입할 수 없습니다. 그래도 계속 진행하시겠습니까?',
+        )
+      )
+        return;
     } else if (!user.discord_id) {
       if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
         return;
@@ -87,7 +94,7 @@ export default function CreateSigClient() {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/sig/create`, {
+      const res = await directFetch('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -108,11 +115,11 @@ export default function CreateSigClient() {
         alert('로그인이 필요합니다.');
         router.push('/us/login');
       } else {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         alert('SIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err.message || '네트워크 오류');
+      alert(err?.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }
@@ -130,7 +137,6 @@ export default function CreateSigClient() {
           control={control}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          Editor={Editor}
           editorKey={0}
           isCreate={true}
         />

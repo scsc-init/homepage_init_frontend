@@ -25,10 +25,10 @@ body {
 .ContentBlock {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   max-width: 30rem;
   margin: 0 auto 3rem auto;
-  padding: 2.5rem 2rem;
+  padding: 1.5rem;
   border: 2px solid var(--color-button-border);
   border-radius: 1rem;
   background-color: var(--executive-card-bg);
@@ -118,4 +118,8 @@ a:hover {
   .enroll-button {
     width: 100%;
   }
+}
+
+#noticeImportant {
+  color: red;
 }

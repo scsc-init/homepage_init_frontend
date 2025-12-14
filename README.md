@@ -72,6 +72,7 @@ src/
 | Key Name                          | Description                                                                                 |
 | --------------------------------- | ------------------------------------------------------------------------------------------- |
 | `BACKEND_URL`                     | 연결된 BE 서버의 외부 URL                                                                   |
+| `NEXT_PUBLIC_API_BASE_URL`        | FE에서 사용하는 BE 서버의 외부 URL                                                          |
 | `API_SECRET`                      | BE 서버에서 처리되는 API KEY                                                                |
 | `GOOGLE_CLIENT_ID`                | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
 | `GOOGLE_CLIENT_SECRET`            | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
@@ -280,6 +281,40 @@ function doSomething(x, y) {
   npm run lint
   ```
 - **정책:** 오류 발생 시 PR 자동 실패
+
+### 디스코드 웹훅 기능 명세서
+
+**최신개정일:** 2025-11-24
+
+**개요**
+
+- 본 레포지토리는 PR에 대해 자동으로 디스코드에 알림을 받을 수 있도록 Github webhook 기능을 디스코드 채널과 연동해 사용하고 있습니다.
+- 연동된 디스코드 채널은 SCSC 공식 디스코드 서버의 scsc_init_backend-pr입니다.
+- Webhook 설정을 위해서는 레포지토리 소유자거나 운영진(admin) 권한을 소유해야 합니다.
+
+**설정 방법**
+
+1. 디스코드
+
+- 웹훅을 추가하고자 하는 채널 선택 > settings > Integrations > Webhooks > New Webhook
+- 웹 후크 URL 복사
+
+2. 깃허브 레포 설정
+
+- settings > Webhooks > Add webhook
+- 복사한 URL을 붙여넣고 끝에 /github 추가
+- Content type을 application/json으로 변경
+- 적절한 트리거 이벤트 설정
+
+**기능**
+
+- PR 이벤트\*가 발생하면 메시지가 채널로 전송됩니다.
+
+---
+
+(\*) PR 이벤트는 다음을 의미합니다:
+
+> Pull request assigned, auto merge disabled, auto merge enabled, closed, converted to draft, demilestoned, dequeued, edited, enqueued, labeled, locked, milestoned, opened, ready for review, reopened, review request removed, review requested, synchronized, unassigned, unlabeled, or unlocked.
 
 ---
 

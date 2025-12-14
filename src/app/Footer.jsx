@@ -32,21 +32,13 @@ export default function Footer() {
 
   if (hideFooterRoutes.includes(pathname)) return null;
 
-  const divideMessage = Array.isArray(String(footerMessage).split('\\n'))
-    ? footerMessage.split('\\n')
-    : ['정보를 불러오지 못했습니다.'];
-
   return (
     <div className={styles.root}>
       <div className={styles.inner}>
         <div className={styles.infoContainer}>
           <div>
             <div>
-              {divideMessage.map((message) => (
-                <p className={styles.message} key={message}>
-                  {message}
-                </p>
-              ))}
+              <p className={styles.message}>{footerMessage}</p>
             </div>
           </div>
         </div>
