@@ -481,13 +481,6 @@
   color: var(--foreground-color);
 }
 
-.faqContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-top: 2rem;
-}
-
 .faqQuestion h4 {
   margin: 0;
   font-size: 1.15rem;
@@ -569,8 +562,8 @@
 .faqContainer {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 1.25rem;
+  margin-top: 2rem;
 }
 
 .faqItem {
