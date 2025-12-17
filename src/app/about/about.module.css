@@ -481,13 +481,6 @@
   color: var(--foreground-color);
 }
 
-.faqQuestion h4 {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--foreground-color);
-}
-
 .linkList {
   display: flex;
   flex-direction: column;
