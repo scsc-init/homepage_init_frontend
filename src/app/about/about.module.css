@@ -661,7 +661,7 @@
 }
 
 .noticeImportant {
-  color: red;
+  color: var(--color-error, #ef4444);
 }
 
 .textLink {
