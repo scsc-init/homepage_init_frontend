@@ -8,7 +8,7 @@
   color: var(--color-text-body);
   font-size: 1.1rem;
   line-height: 1.6;
-  z-index: 999;
+  z-index: 10;
 }
 
 @media (max-width: 768px) {
