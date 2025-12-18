@@ -61,11 +61,7 @@ body {
   width: 18vw;
   height: 27vw;
   opacity: 0.85;
-}
-
-.dark .wallLogo,
-.dark .wallLogo2 {
-  filter: invert(1) hue-rotate(180deg);
+  filter: var(--wall-logo-filter, none);
 }
 
 .wallLogo {
