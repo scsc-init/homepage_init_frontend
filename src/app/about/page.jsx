@@ -11,8 +11,8 @@ import { DISCORD_INVITE_LINK } from '@/util/constants';
 export default async function AboutPage() {
   return (
     <>
-      <div className={styles.wallLogo}></div>
-      <div className={styles.wallLogo2}></div>
+      <div className="wallLogo"></div>
+      <div className="wallLogo2"></div>
       <div className={styles.wrapper}>
         <Sidebar className={styles.sidebar} />
         <main className={styles.mainContent}>

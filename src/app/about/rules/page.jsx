@@ -19,8 +19,8 @@ export default async function RegulationPage() {
 
   return (
     <>
-      <div className={styles.wallLogo}></div>
-      <div className={styles.wallLogo2}></div>
+      <div className="wallLogo"></div>
+      <div className="wallLogo2"></div>
       <main className={styles.centeredMainContent}>
         <section id="rules" className={`${styles.section} ${styles.anchorOffset}`}>
           <div className={styles.inner}>

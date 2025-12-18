@@ -133,55 +133,6 @@
     font-size: 3rem;
   }
 }
-
-.wallLogo,
-.wallLogo2 {
-  position: fixed;
-  background-image: url('/wall-logo.png');
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
-  pointer-events: none;
-  z-index: 1;
-}
-
-:global(.dark) .wallLogo,
-:global(.dark) .wallLogo2 {
-  filter: invert(1) hue-rotate(180deg);
-}
-
-.wallLogo {
-  top: 80%;
-  right: 2vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  opacity: 0.8;
-}
-
-.wallLogo2 {
-  top: 20%;
-  left: 5vw;
-  width: 18vw;
-  height: 27vw;
-  transform: translateY(-50%);
-  opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .wallLogo {
-    width: 10vh;
-    height: 30vh;
-  }
-
-  .wallLogo2 {
-    margin-top: 1rem;
-    left: 0;
-    width: 10vh;
-    height: 30vh;
-  }
-}
-
 /* Shared Card Styles */
 .card {
   background-color: var(--executive-card-bg);
@@ -381,10 +332,10 @@
   width: 100%;
   max-width: 200px;
   height: auto;
-  position: static !important;
-  transform: none !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
+  position: static;
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
   background: var(--executive-card-bg);
   border-radius: 1rem;
   text-align: center;
@@ -398,7 +349,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--executive-overlay-bg);
   color: var(--executive-description-color);
   display: flex;
   justify-content: center;
@@ -556,11 +507,6 @@
   box-shadow: 0 3px 12px var(--executive-card-shadow);
 }
 
-:global(.dark) .faqItem {
-  background-color: var(--executive-card-bg);
-  border-color: var(--header-border-color);
-}
-
 .faqQuestion {
   display: flex;
   align-items: center;
@@ -661,7 +607,7 @@
 }
 
 .noticeImportant {
-  color: var(--color-error, #ef4444);
+  color: var(--color-button-bg);
 }
 
 .textLink {
@@ -685,7 +631,7 @@
 }
 
 .myPageCard {
-  background-color: white;
+  background-color: var(--executive-card-bg);
   padding: 1rem;
   border-radius: 1rem;
   box-shadow: 0 4px 20px var(--executive-card-shadow);
@@ -693,11 +639,6 @@
   width: auto;
   min-height: 40vh;
   height: auto;
-}
-
-:global(.dark) .myPageCard {
-  background-color: var(--executive-card-bg);
-  box-shadow: 0 4px 20px var(--executive-card-shadow);
   color: var(--color-text-body);
 }
 

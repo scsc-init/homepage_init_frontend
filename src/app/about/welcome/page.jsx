@@ -12,8 +12,8 @@ export default async function WelcomePage() {
 
   return (
     <>
-      <div className={styles.wallLogo}></div>
-      <div className={styles.wallLogo2}></div>
+      <div className="wallLogo"></div>
+      <div className="wallLogo2"></div>
       <div className={styles.welcomeContainer}>
         <div className={styles.welcomeContent}>
           <div className={styles.contentBlock}>

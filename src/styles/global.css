@@ -49,6 +49,50 @@ body {
   overflow-x: hidden;
 }
 
+.wallLogo,
+.wallLogo2 {
+  position: fixed;
+  background-image: url('/wall-logo.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 1;
+  width: 18vw;
+  height: 27vw;
+  opacity: 0.85;
+}
+
+.dark .wallLogo,
+.dark .wallLogo2 {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.wallLogo {
+  top: 80%;
+  right: 2vw;
+  transform: translateY(-50%);
+}
+
+.wallLogo2 {
+  top: 20%;
+  left: 5vw;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  .wallLogo,
+  .wallLogo2 {
+    width: 10vh;
+    height: 30vh;
+  }
+
+  .wallLogo2 {
+    margin-top: 1rem;
+    left: 0;
+  }
+}
+
 #RootContainer {
   display: flex;
   flex-direction: column;

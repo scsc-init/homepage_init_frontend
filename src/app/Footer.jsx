@@ -39,12 +39,15 @@ export default function Footer() {
           <div>
             <div>
               <p className={styles.message}>
-                {(footerMessage || '').split('\n').map((line, i) => (
-                  <span key={`${line}-${i}`}>
-                    {line}
-                    <br />
-                  </span>
-                ))}
+                {(footerMessage || '')
+                  .replace(/\\n/g, '\n')
+                  .split('\n')
+                  .map((line, i) => (
+                    <span key={`${line}-${i}`}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
               </p>
             </div>
           </div>
