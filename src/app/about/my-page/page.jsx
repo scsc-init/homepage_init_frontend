@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import './page.css';
+import styles from '../about.module.css';
 
 // 클라이언트 전용 컴포넌트 dynamic import
 const MyPageClient = dynamic(() => import('@/components/about/MyProfileClient'), {
@@ -8,8 +8,8 @@ const MyPageClient = dynamic(() => import('@/components/about/MyProfileClient'),
 
 export default function MyPage() {
   return (
-    <div id="Home">
-      <div id="MyPageContainer">
+    <div className={styles.myPageContainer}>
+      <div className={styles.myPageCard}>
         <MyPageClient />
       </div>
     </div>

@@ -1,32 +1,38 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import styles from '@/app/about/about.module.css';
 
 export default function ScrollEffectWrapper({ children }) {
-  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const domRef = useRef();
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      });
+    });
 
-    const el = ref.current;
-    if (el) observer.observe(el);
+    const { current } = domRef;
+    if (current) {
+      observer.observe(current);
+    }
 
     return () => {
-      if (el) observer.unobserve(el);
+      if (current) {
+        observer.unobserve(current);
+      }
     };
   }, []);
 
   return (
-    <div ref={ref} className="FadeOnScroll">
+    <div
+      className={`${styles.fadeOnScroll} ${isVisible ? styles.fadeOnScrollVisible : ''}`}
+      ref={domRef}
+    >
       {children}
     </div>
   );
