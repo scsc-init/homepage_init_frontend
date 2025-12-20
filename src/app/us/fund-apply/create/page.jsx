@@ -3,12 +3,20 @@ import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
 
 export default async function FundApplyPage() {
-  const [boardInfo, sigs, pigs] = await Promise.all([
+  const [boardInfo, sigs, pigs, globalStatus] = await Promise.all([
     fetchBoardInfo('6'),
     fetchTargets('sig'),
     fetchTargets('pig'),
+    fetchGlobalStatus(),
   ]);
-  return <FundApplyClient boardInfo={boardInfo} sigs={sigs} pigs={pigs} />;
+  return (
+    <FundApplyClient
+      boardInfo={boardInfo}
+      sigs={sigs}
+      pigs={pigs}
+      globalStatus={globalStatus}
+    />
+  );
 }
 
 async function fetchBoardInfo(id) {
@@ -24,12 +32,28 @@ async function fetchBoardInfo(id) {
   }
 }
 
+async function fetchGlobalStatus() {
+  const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
+    headers: { 'x-api-secret': getApiSecret() },
+    cache: 'no-store',
+  });
+  if (!res.ok) return null;
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 function normalizeTargets(arr) {
   if (!Array.isArray(arr)) return [];
   return arr.map((x, i) => ({
     id: x.id ?? x.ig_id ?? x.code ?? x.slug ?? `${i}`,
     title:
       x.title ?? x.name ?? x.sig_name ?? x.pig_name ?? x.displayName ?? x.label ?? String(x),
+    year: x.year ?? x.term_year ?? x.academic_year ?? null,
+    semester: x.semester ?? x.term_semester ?? x.term ?? null,
+    status: x.status ?? null,
   }));
 }
 

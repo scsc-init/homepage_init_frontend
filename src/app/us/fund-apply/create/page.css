@@ -261,3 +261,20 @@ label[for='fund-amount-input']::after {
     font-size: 1.75rem;
   }
 }
+
+.TermToggleBox {
+  margin-top: 0.35rem;
+}
+.TermToggle {
+  margin-top: 0;
+}
+.TermToggleMeta {
+  font-size: 0.85em;
+  color: var(--color-text-subtle, #666);
+  font-weight: 600;
+}
+.TermToggleHelp {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-subtle, #666);
+}
