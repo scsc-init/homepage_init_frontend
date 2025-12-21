@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import { SEMESTER_MAP } from '@/util/constants';
 import './page.css';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), {
@@ -11,7 +12,7 @@ const Editor = dynamic(() => import('@/components/board/EditorWrapper'), {
 });
 
 const GUIDE_URL =
-  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EC%A7%84_%EC%9E%90%EB%A3%8C/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
+  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
 
 const PLACEHOLDER = {
   contest: `아래 항목을 참고해 상세 내용을 작성해주세요.
@@ -51,17 +52,54 @@ function normalizeLF(s) {
   return s.replace(/\r\n/g, '\n');
 }
 
-function stripSpaces(s) {
-  if (typeof s !== 'string') return '';
-  return s.replace(/\s+/g, ' ').trim();
+function isValidDraft(v) {
+  if (v == null) return false;
+  if (typeof v !== 'object') return false;
+  return (
+    typeof v.content === 'string' &&
+    Array.isArray(v.embeds) &&
+    v.embeds.every((e) => e && typeof e === 'object')
+  );
 }
 
-export default function FundApplyClient({ boardInfo, sigs, pigs, globalStatus }) {
+function extractFirstText(v) {
+  if (typeof v === 'string') return v.trim();
+  if (v && typeof v === 'object') {
+    if (typeof v.text === 'string') return v.text.trim();
+    if (typeof v.title === 'string') return v.title.trim();
+    if (typeof v.name === 'string') return v.name.trim();
+    if (typeof v.label === 'string') return v.label.trim();
+  }
+  return '';
+}
+
+export default function FundApplyClient({
+  boardInfo,
+  sigs,
+  pigs,
+  sigsAll,
+  pigsAll,
+  globalStatus,
+}) {
+  const router = useRouter();
+
+  const [initLoading, setInitLoading] = useState(true);
+  const [initError, setInitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const [me, setMe] = useState(null);
+
+  const [content, setContent] = useState({ content: '', embeds: [] });
+  const [hasContent, setHasContent] = useState(false);
+
+  const wrapperRef = useRef(null);
+  const placeholderRef = useRef(null);
+
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -72,366 +110,398 @@ export default function FundApplyClient({ boardInfo, sigs, pigs, globalStatus })
       pairBefore: '',
       pairAfter: '',
       amount: '',
-      editor: '',
-      checked: false,
+      useKakaoPay: false,
       bankName: '',
       accountNumber: '',
       accountHolder: '',
-      useKakaoPay: false,
+      checked: false,
+      editor: { content: '', embeds: [] },
     },
   });
 
-  const router = useRouter();
-  const content = watch('editor');
   const applyType = watch('applyType');
   const orgCategory = watch('orgCategory');
-  const contestName = watch('contestName');
-  const pairBefore = watch('pairBefore');
-  const pairAfter = watch('pairAfter');
   const isChecked = watch('checked');
   const useKakaoPay = watch('useKakaoPay');
 
-  const semesterLabel = (sem) => {
-    const s = Number(sem);
-    if (s === 1) return '1학기';
-    if (s === 2) return '여름학기';
-    if (s === 3) return '2학기';
-    if (s === 4) return '겨울학기';
-    return '';
-  };
-
-  const getPrevTerm = (year, semester) => {
-    const y = Number(year);
-    const s = Number(semester);
-    if (!Number.isFinite(y) || !Number.isFinite(s)) return null;
-    if (s > 1) return { year: y, semester: s - 1 };
-    return { year: y - 1, semester: 4 };
-  };
-
-  const currentYear = globalStatus?.year != null ? Number(globalStatus.year) : null;
-  const currentSemester = globalStatus?.semester != null ? Number(globalStatus.semester) : null;
-
-  const currentTerm =
-    Number.isFinite(currentYear) && Number.isFinite(currentSemester)
-      ? { year: currentYear, semester: currentSemester }
-      : null;
-
-  const prevTerm = currentTerm ? getPrevTerm(currentTerm.year, currentTerm.semester) : null;
-
-  const isSigPigApply = applyType === 'fund' || applyType === 'meal';
-
-  const [user, setUser] = useState(null);
-  const [targetList, setTargetList] = useState([]);
   const [showPrevTerm, setShowPrevTerm] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const isFormSubmitted = useRef(false);
 
-  const placeholderRef = useRef(null);
-  const wrapperRef = useRef(null);
+  const semesterToKo = (s) => {
+    const v = SEMESTER_MAP?.[s];
+    if (!v) return '';
+    return `${v}학기`;
+  };
 
-  const step1Done = !!applyType;
-  const step2Done =
-    applyType === 'contest'
-      ? !!contestName
-      : applyType === 'pair'
-        ? !!pairBefore && !!pairAfter
-        : !!orgCategory && !!watch('target');
-  const step3Ready = step1Done && step2Done;
+  const normalizeTargets = (items) => {
+    if (!Array.isArray(items)) return [];
+    return items
+      .map((it) => ({
+        id: it?.id ?? it?.sig_id ?? it?.pig_id ?? it?.uuid ?? it?.key ?? null,
+        title: it?.title ?? it?.name ?? it?.label ?? '',
+        year: typeof it?.year === 'number' ? it.year : it?.year ? Number(it.year) : null,
+        semester:
+          typeof it?.semester === 'number'
+            ? it.semester
+            : it?.semester
+              ? Number(it.semester)
+              : null,
+        status: it?.status ?? null,
+      }))
+      .filter((it) => it.title);
+  };
 
-  const placeholderText = PLACEHOLDER[applyType] ?? '';
-
-  useEffect(() => {
-    let alive = true;
-
-    (async () => {
-      try {
-        const res = await fetch('/api/user/profile', { cache: 'no-store' });
-        if (!res.ok) throw new Error('profile fetch failed');
-        const data = await res.json();
-        if (alive) setUser(data);
-      } catch {
-        if (alive) setUser(null);
-      }
-    })();
-
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    const list =
-      orgCategory === 'sig'
-        ? Array.isArray(sigs)
-          ? sigs
-          : []
-        : orgCategory === 'pig'
-          ? Array.isArray(pigs)
-            ? pigs
-            : []
-          : [];
-
-    if (!showPrevTerm || !prevTerm) {
-      setTargetList(list);
-      return;
+  const inferLatestTerm = (items) => {
+    let best = null;
+    for (const it of items) {
+      if (!it || typeof it.year !== 'number' || typeof it.semester !== 'number') continue;
+      if (!best) best = { year: it.year, semester: it.semester };
+      else if (it.year > best.year) best = { year: it.year, semester: it.semester };
+      else if (it.year === best.year && it.semester > best.semester)
+        best = { year: it.year, semester: it.semester };
     }
+    return best;
+  };
 
-    const filtered = list.filter(
-      (x) =>
-        Number(x?.year) === Number(prevTerm.year) &&
-        Number(x?.semester) === Number(prevTerm.semester),
-    );
+  const calcPrevTerm = (term) => {
+    if (!term || typeof term.year !== 'number' || typeof term.semester !== 'number')
+      return null;
+    if (term.semester === 1) return { year: term.year - 1, semester: 4 };
+    return { year: term.year, semester: term.semester - 1 };
+  };
 
-    setTargetList(filtered);
-  }, [orgCategory, sigs, pigs, showPrevTerm, prevTerm?.year, prevTerm?.semester]);
+  const sigsList = useMemo(() => normalizeTargets(sigs), [sigs]);
+  const pigsList = useMemo(() => normalizeTargets(pigs), [pigs]);
+  const sigsAllList = useMemo(
+    () => normalizeTargets(Array.isArray(sigsAll) ? sigsAll : sigs),
+    [sigsAll, sigs],
+  );
+  const pigsAllList = useMemo(
+    () => normalizeTargets(Array.isArray(pigsAll) ? pigsAll : pigs),
+    [pigsAll, pigs],
+  );
+
+  const currentTerm = useMemo(() => {
+    const y = globalStatus?.year;
+    const s = globalStatus?.semester;
+    if (typeof y === 'number' && typeof s === 'number') return { year: y, semester: s };
+    const inferred = inferLatestTerm([...sigsAllList, ...pigsAllList]);
+    return inferred;
+  }, [globalStatus?.year, globalStatus?.semester, sigsAllList, pigsAllList]);
+
+  const prevTerm = useMemo(
+    () => calcPrevTerm(currentTerm),
+    [currentTerm?.year, currentTerm?.semester],
+  );
+  const prevTermLabel = prevTerm ? `${prevTerm.year}년 ${semesterToKo(prevTerm.semester)}` : '';
+
+  const [targetList, setTargetList] = useState([]);
 
   useEffect(() => {
-    const selected = watch('target');
-    if (!selected) return;
+    const init = async () => {
+      try {
+        setInitLoading(true);
+        setInitError('');
 
-    const exists = targetList.some(
-      (item) => (item?.title ?? item?.name ?? item?.label) === String(selected),
-    );
+        const res = await fetch('/api/user/profile', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        });
 
-    if (!exists) setValue('target', '');
-  }, [targetList, setValue, watch]);
+        if (!res.ok) {
+          if (res.status === 401) {
+            router.replace('/us/login');
+            return;
+          }
+          throw new Error(`프로필 조회 실패 (${res.status})`);
+        }
+
+        const data = await res.json();
+        if (!data || typeof data !== 'object')
+          throw new Error('프로필 응답이 올바르지 않습니다.');
+
+        setMe(data);
+      } catch (e) {
+        setInitError(e?.message ? String(e.message) : '초기화 중 오류가 발생했습니다.');
+      } finally {
+        setInitLoading(false);
+      }
+    };
+
+    init();
+  }, [router]);
 
   useEffect(() => {
-    if (applyType === 'contest') {
-      setValue('orgCategory', '');
-      setValue('target', '');
-      setValue('pairBefore', '');
-      setValue('pairAfter', '');
-    } else if (applyType === 'pair') {
-      setValue('orgCategory', '');
-      setValue('target', '');
-      setValue('contestName', '');
-    } else {
-      setValue('contestName', '');
+    if (!applyType) return;
+    const placeholder = PLACEHOLDER[applyType] ?? '';
+    const draft = { content: normalizeLF(placeholder), embeds: [] };
+    setContent(draft);
+    setHasContent(Boolean(draft.content.trim()));
+    setValue('editor', draft, { shouldValidate: true, shouldDirty: true });
+  }, [applyType, setValue]);
+
+  useEffect(() => {
+    if (applyType !== 'fund' && applyType !== 'meal') {
+      setShowPrevTerm(false);
+    }
+    if (applyType === 'contest' || applyType === 'pair') {
+      setValue('orgCategory', '', { shouldValidate: true, shouldDirty: true });
+      setValue('target', '', { shouldValidate: true, shouldDirty: true });
+    }
+    if (applyType !== 'contest') setValue('contestName', '');
+    if (applyType !== 'pair') {
       setValue('pairBefore', '');
       setValue('pairAfter', '');
     }
   }, [applyType, setValue]);
 
   useEffect(() => {
-    if (!isSigPigApply) setShowPrevTerm(false);
-  }, [isSigPigApply]);
+    const canUsePrev =
+      (applyType === 'fund' || applyType === 'meal') &&
+      showPrevTerm &&
+      !!prevTerm &&
+      (orgCategory === 'sig' || orgCategory === 'pig');
+
+    const byPrevTerm = (items) => {
+      if (!prevTerm) return items;
+      const hasTermInfo = items.some(
+        (it) => typeof it.year === 'number' && typeof it.semester === 'number',
+      );
+      if (!hasTermInfo) return items;
+      return items.filter(
+        (it) => it.year === prevTerm.year && it.semester === prevTerm.semester,
+      );
+    };
+
+    if (orgCategory === 'sig') {
+      const base = canUsePrev ? sigsAllList : sigsList;
+      setTargetList(canUsePrev ? byPrevTerm(base) : base);
+    } else if (orgCategory === 'pig') {
+      const base = canUsePrev ? pigsAllList : pigsList;
+      setTargetList(canUsePrev ? byPrevTerm(base) : base);
+    } else {
+      setTargetList([]);
+    }
+  }, [
+    applyType,
+    orgCategory,
+    showPrevTerm,
+    prevTerm?.year,
+    prevTerm?.semester,
+    sigsList,
+    pigsList,
+    sigsAllList,
+    pigsAllList,
+  ]);
 
   useEffect(() => {
-    if (!(orgCategory === 'sig' || orgCategory === 'pig')) setShowPrevTerm(false);
-  }, [orgCategory]);
-
-  const typeLabel = (t) =>
-    t === 'contest'
-      ? '대회 참여 지원금'
-      : t === 'fund'
-        ? 'SIG/PIG 지원금'
-        : t === 'meal'
-          ? 'SIG/PIG 회식비'
-          : t === 'pair'
-            ? '짝선짝후 지원금'
-            : t;
-
-  const getTargetDisplay = (t, cat, trg) => {
-    if (t === 'contest') return contestName;
-    if (t === 'pair') return `${pairBefore} → ${pairAfter}`;
-    if (cat === 'sig') return `SIG: ${trg}`;
-    if (cat === 'pig') return `PIG: ${trg}`;
-    return trg;
-  };
-
-  const submitValidate = (data) => {
-    if (!data.applyType) return '신청 유형을 선택해주세요.';
-    if (data.applyType === 'contest') {
-      if (!stripSpaces(data.contestName)) return '대회명을 입력해주세요.';
-    } else if (data.applyType === 'pair') {
-      if (!stripSpaces(data.pairBefore) || !stripSpaces(data.pairAfter))
-        return '짝선/짝후 이름을 입력해주세요.';
-    } else {
-      if (!data.orgCategory) return '대상 유형(SIG/PIG)을 선택해주세요.';
-      if (!data.target) return '대상을 선택해주세요.';
-    }
-
-    if (!stripSpaces(String(data.amount ?? ''))) return '신청 금액을 입력해주세요.';
-    if (!Number.isFinite(Number(data.amount)) || Number(data.amount) <= 0)
-      return '신청 금액은 0보다 큰 숫자여야 합니다.';
-
-    if (!data.useKakaoPay) {
-      if (!stripSpaces(data.bankName)) return '은행명을 입력해주세요.';
-      if (!stripSpaces(data.accountNumber)) return '계좌번호를 입력해주세요.';
-      if (!stripSpaces(data.accountHolder)) return '예금주를 입력해주세요.';
-    }
-
-    if (!data.checked) return '안내사항을 확인해주세요.';
-    if (!stripSpaces(data.editor)) return '상세 내용을 작성해주세요.';
-    if (!user) return '사용자 정보를 불러오지 못했습니다. 다시 로그인해주세요.';
-
-    return null;
-  };
-
-  const onSubmit = async (data) => {
-    if (isFormSubmitted.current) return;
-
-    const errorMsg = submitValidate(data);
-    if (errorMsg) {
-      alert(errorMsg);
+    const draft = watch('editor');
+    if (!isValidDraft(draft)) {
+      setHasContent(false);
       return;
     }
+    const text = String(draft.content ?? '');
+    setHasContent(Boolean(text.trim()));
+  }, [watch]);
 
-    setSubmitting(true);
-    isFormSubmitted.current = true;
+  const disableOrgSelects = submitting || applyType === 'contest' || applyType === 'pair';
 
-    const tLabel = typeLabel(data.applyType);
-    const targetDisplay = getTargetDisplay(data.applyType, data.orgCategory, data.target);
+  const step1Done = Boolean(applyType);
+  const step2Ready = step1Done;
+  const step2Done =
+    applyType === 'contest'
+      ? Boolean(watch('contestName'))
+      : applyType === 'pair'
+        ? Boolean(watch('pairBefore')) && Boolean(watch('pairAfter'))
+        : Boolean(orgCategory) && Boolean(watch('target'));
 
-    const payoutInfo = data.useKakaoPay
-      ? '카카오페이 송금'
-      : `${data.bankName} / ${data.accountNumber} / ${data.accountHolder}`;
+  const step3Ready = step2Done;
 
-    const metaLines = [
-      `**신청 유형**: ${tLabel}`,
-      data.applyType === 'contest' ? `**대회명**: ${stripSpaces(data.contestName)}` : null,
-      data.applyType === 'pair'
-        ? `**짝선/짝후**: ${stripSpaces(data.pairBefore)} → ${stripSpaces(data.pairAfter)}`
-        : null,
-      data.applyType !== 'contest' && data.applyType !== 'pair'
-        ? `**대상**: ${targetDisplay}`
-        : null,
-      `**신청 금액**: ${Number(data.amount).toLocaleString()}원`,
-      `**지급 정보**: ${payoutInfo}`,
-      `**신청자**: ${user.student_id} ${user.name} (${user.email})`,
-    ].filter(Boolean);
+  const computeTitle = (form) => {
+    if (form.applyType === 'contest') {
+      const name = extractFirstText(form.contestName) || '대회 지원';
+      return `[대회] ${name}`;
+    }
+    if (form.applyType === 'pair') {
+      const before = extractFirstText(form.pairBefore);
+      const after = extractFirstText(form.pairAfter);
+      return `[짝후] ${before}${before && after ? '→' : ''}${after}`;
+    }
+    const target = extractFirstText(form.target);
+    const typeLabel = form.applyType === 'meal' ? '회식' : '지원';
+    return `[${typeLabel}] ${target || 'SIG/PIG'}`;
+  };
 
-    const metaBlock = metaLines.join('  \n');
-    const body = normalizeLF(data.editor).trim();
-    const summary = `${metaBlock}\n\n---\n\n### 상세 내용\n\n${body}`;
+  const buildPayload = (form) => {
+    const title = computeTitle(form);
+    const applicantName = me?.name ?? '';
+    const applicantStudentId = me?.student_id ?? me?.studentId ?? '';
 
+    const headerLines = [];
+    headerLines.push(`# ${title}`);
+    if (applicantName || applicantStudentId) {
+      headerLines.push(
+        `- 신청자: ${applicantName}${applicantStudentId ? ` (${applicantStudentId})` : ''}`,
+      );
+    }
+
+    if (form.applyType === 'contest') {
+      headerLines.push(`- 유형: 대회 지원`);
+      headerLines.push(`- 대회명: ${extractFirstText(form.contestName)}`);
+    } else if (form.applyType === 'pair') {
+      headerLines.push(`- 유형: 짝후 지원`);
+      headerLines.push(
+        `- 짝: ${extractFirstText(form.pairBefore)} → ${extractFirstText(form.pairAfter)}`,
+      );
+    } else {
+      headerLines.push(
+        `- 유형: ${form.applyType === 'meal' ? 'SIG/PIG 회식비' : 'SIG/PIG 지원금'}`,
+      );
+      headerLines.push(`- 대상 유형: ${form.orgCategory?.toUpperCase?.() ?? ''}`);
+      headerLines.push(`- 대상: ${extractFirstText(form.target)}`);
+    }
+
+    if (form.applyType === 'fund' || form.applyType === 'meal') {
+      headerLines.push(`- 신청 금액: ${String(form.amount ?? '').trim()}원`);
+      headerLines.push(`- 수령 방식: ${form.useKakaoPay ? '카카오페이' : '계좌이체'}`);
+      if (!form.useKakaoPay) {
+        const bank = extractFirstText(form.bankName);
+        const acc = String(form.accountNumber ?? '').trim();
+        const holder = extractFirstText(form.accountHolder);
+        if (bank) headerLines.push(`- 은행: ${bank}`);
+        if (acc) headerLines.push(`- 계좌번호: ${acc}`);
+        if (holder) headerLines.push(`- 예금주: ${holder}`);
+      }
+    }
+
+    const draft = form.editor;
+    const body = isValidDraft(draft) ? normalizeLF(draft.content) : '';
+
+    const fullContent = `${headerLines.join('\n')}\n\n---\n\n${body}`.trim();
+    const embeds = isValidDraft(draft) ? draft.embeds : [];
+
+    return {
+      title,
+      content: fullContent,
+      embeds,
+    };
+  };
+
+  const onSubmit = async (form) => {
     try {
-      const res = await fetch('/api/article/create', {
+      setSubmitting(true);
+
+      if (!boardInfo?.code) throw new Error('게시판 정보가 올바르지 않습니다.');
+
+      const payload = buildPayload(form);
+
+      const res = await fetch(`/api/boards/${boardInfo.code}/articles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: `[${tLabel}] ${targetDisplay}`,
-          content: summary,
-          board_id: parseInt(boardInfo.id, 10),
-        }),
+        credentials: 'include',
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        const t = await res.text().catch(() => '');
-        throw new Error(t || 'submit failed');
+        const text = await res.text().catch(() => '');
+        throw new Error(text || `신청 실패 (${res.status})`);
       }
 
-      router.push('/us/contact');
+      router.replace('/us/contact');
     } catch (e) {
-      console.error(e);
-      alert('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      isFormSubmitted.current = false;
+      alert(e?.message ? String(e.message) : '신청 중 오류가 발생했습니다.');
+    } finally {
       setSubmitting(false);
     }
   };
 
-  const updateMinHeight = () => {
-    if (!placeholderRef.current || !wrapperRef.current) return;
+  if (initLoading) {
+    return (
+      <div className="CreateSigContainer">
+        <div className="CreateSigCard">
+          <p className="CreateSigSubtitle">불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
-    const ph = placeholderRef.current.getBoundingClientRect().height;
-    const current = wrapperRef.current.getBoundingClientRect().height;
-
-    const min = Math.max(ph, current);
-    wrapperRef.current.style.minHeight = `${min}px`;
-  };
-
-  useEffect(() => {
-    const id = requestAnimationFrame(updateMinHeight);
-    return () => cancelAnimationFrame(id);
-  }, [placeholderText, step3Ready, applyType]);
-
-  useEffect(() => {
-    if (!placeholderRef.current) return;
-
-    const ro = new ResizeObserver(updateMinHeight);
-    ro.observe(placeholderRef.current);
-
-    window.addEventListener('resize', updateMinHeight);
-
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', updateMinHeight);
-    };
-  }, []);
-
-  const disableOrgSelects = applyType === 'contest' || applyType === 'pair';
-
-  const canUsePrevToggle =
-    isSigPigApply &&
-    !disableOrgSelects &&
-    (orgCategory === 'sig' || orgCategory === 'pig') &&
-    !!prevTerm;
-
-  const showPrevToggleUI = isSigPigApply && !!currentTerm && !!prevTerm;
+  if (initError) {
+    return (
+      <div className="CreateSigContainer">
+        <div className="CreateSigCard">
+          <p className="C_ErrorText">{initError}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">지원금 신청</h1>
-        <p className="CreateSigSubtitle">{boardInfo?.description ?? ''}</p>
+        <p className="CreateSigSubtitle">SIG/PIG 지원금 또는 대회/짝후 지원을 신청합니다.</p>
       </div>
 
-      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="Step fade-in">
-            <label className="C_Label">신청 유형</label>
-            <select
-              {...register('applyType', { required: true })}
-              className="C_Input"
-              defaultValue=""
-            >
-              <option value="">신청 유형 선택</option>
-              <option value="contest">대회 참여 지원금</option>
-              <option value="fund">SIG/PIG 지원금</option>
-              <option value="meal">SIG/PIG 회식비</option>
-              <option value="pair">짝선짝후 지원금</option>
-            </select>
+      <div className="CreateSigCard">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+          <div className="Step fade-in space-y-4">
+            <div>
+              <label className="C_Label">신청 유형</label>
+              <select
+                {...register('applyType', { required: true })}
+                className={`C_Input ${submitting ? 'is-disabled' : ''}`}
+                disabled={submitting}
+                defaultValue=""
+              >
+                <option value="">선택</option>
+                <option value="fund">SIG/PIG 지원금</option>
+                <option value="meal">SIG/PIG 회식비</option>
+                <option value="contest">대회 참가 지원</option>
+                <option value="pair">짝후 지원</option>
+              </select>
+            </div>
           </div>
 
-          {step1Done && (
-            <div className="Step fade-in">
-              {applyType === 'contest' ? (
-                <div className="grid grid-cols-1 gap-4">
-                  <label className="C_Label">대회명</label>
-                  <input
-                    type="text"
-                    {...register('contestName', { required: true })}
-                    placeholder="ex) ICPC 본선"
-                    className="C_Input"
-                  />
-                </div>
-              ) : applyType === 'pair' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {step2Ready && (
+            <div className="Step fade-in space-y-4">
+              {applyType === 'contest' || applyType === 'pair' ? (
+                applyType === 'contest' ? (
                   <div>
-                    <label className="C_Label">짝선 이름</label>
+                    <label className="C_Label">대회명</label>
                     <input
-                      type="text"
-                      {...register('pairBefore', { required: true })}
-                      placeholder="짝선 이름"
+                      {...register('contestName', { required: true })}
+                      placeholder="대회명"
                       className="C_Input"
+                      disabled={submitting}
                     />
                   </div>
-                  <div>
-                    <label className="C_Label">짝후 이름</label>
-                    <input
-                      type="text"
-                      {...register('pairAfter', { required: true })}
-                      placeholder="짝후 이름"
-                      className="C_Input"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
+                ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="C_Label">대상 유형</label>
+                      <label className="C_Label">짝선 이름</label>
+                      <input
+                        {...register('pairBefore', { required: true })}
+                        placeholder="짝선 이름"
+                        className="C_Input"
+                        disabled={submitting}
+                      />
+                    </div>
+                    <div>
+                      <label className="C_Label">짝후 이름</label>
+                      <input
+                        {...register('pairAfter', { required: true })}
+                        placeholder="짝후 이름"
+                        className="C_Input"
+                        disabled={submitting}
+                      />
+                    </div>
+                  </div>
+                )
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="C_Label">대상 유형</label>
+                    <div className="SigPigControlRow">
                       <select
                         {...register('orgCategory', { required: true })}
                         className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
@@ -442,54 +512,44 @@ export default function FundApplyClient({ boardInfo, sigs, pigs, globalStatus })
                         <option value="sig">SIG</option>
                         <option value="pig">PIG</option>
                       </select>
-                    </div>
-
-                    <div>
-                      <label className="C_Label">대상 선택</label>
-                      <select
-                        {...register('target', { required: true })}
-                        className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
-                        disabled={disableOrgSelects}
-                        defaultValue=""
-                      >
-                        <option value="">대상 선택</option>
-                        {targetList.map((t, idx) => {
-                          const label = t?.title ?? t?.name ?? t?.label ?? '';
-                          return (
-                            <option key={`${label}-${idx}`} value={label}>
-                              {label}
-                            </option>
-                          );
-                        })}
-                      </select>
+                      {(applyType === 'fund' || applyType === 'meal') && (
+                        <label className="PrevTermInlineCheck">
+                          <input
+                            type="checkbox"
+                            className="C_Checkbox"
+                            checked={showPrevTerm}
+                            onChange={(e) => {
+                              const next = e.target.checked;
+                              setShowPrevTerm(next);
+                              setValue('target', '');
+                            }}
+                            disabled={disableOrgSelects || !prevTerm}
+                          />
+                          <span>이전학기{prevTermLabel ? ` (${prevTermLabel})` : ''}</span>
+                        </label>
+                      )}
                     </div>
                   </div>
-
-                  {showPrevToggleUI && (
-                    <div className="TermToggleBox">
-                      <label
-                        className={`C_CheckRow TermToggle ${!canUsePrevToggle ? 'is-disabled' : ''}`}
-                      >
-                        <input
-                          type="checkbox"
-                          className="C_Checkbox"
-                          checked={showPrevTerm}
-                          onChange={(e) => setShowPrevTerm(e.target.checked)}
-                          disabled={!canUsePrevToggle}
-                        />
-                        <span className="C_CheckText">
-                          이전학기만 보기
-                          <span className="TermToggleMeta">
-                            {' '}
-                            ({prevTerm.year}년 {semesterLabel(prevTerm.semester)})
-                          </span>
-                        </span>
-                      </label>
-                      <p className="TermToggleHelp">
-                        현재 학기: {currentTerm.year}년 {semesterLabel(currentTerm.semester)}
-                      </p>
-                    </div>
-                  )}
+                  <div>
+                    <label className="C_Label">대상 선택</label>
+                    <select
+                      {...register('target', { required: true })}
+                      className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
+                      disabled={disableOrgSelects}
+                      defaultValue=""
+                    >
+                      <option value="">대상 선택</option>
+                      {targetList.length === 0 ? (
+                        <option disabled>목록이 없습니다</option>
+                      ) : (
+                        targetList.map((item) => (
+                          <option key={item.id ?? item.title} value={item.title}>
+                            {item.title}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
                 </div>
               )}
             </div>
@@ -497,96 +557,99 @@ export default function FundApplyClient({ boardInfo, sigs, pigs, globalStatus })
 
           {step3Ready && (
             <div className="Step fade-in space-y-8">
-              <div className="PayoutSection">
-                <div className="PayoutHeader">
-                  <label className="C_Label">신청 금액</label>
-                </div>
+              {(applyType === 'fund' || applyType === 'meal') && (
+                <div className="PayoutSection">
+                  <div className="PayoutHeader">
+                    <label className="C_Label">신청 금액</label>
+                  </div>
 
-                <div className="PayoutField max-w-md">
-                  <input
-                    id="fund-amount-input"
-                    type="number"
-                    {...register('amount', {
-                      required: '신청 금액을 입력해주세요.',
-                    })}
-                    placeholder="신청 금액 (숫자만)"
-                    className="C_Input"
-                  />
-                  {errors.amount?.message && (
-                    <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
-                      {String(errors.amount.message)}
-                    </p>
-                  )}
-                </div>
-
-                <div className="PayoutKakaoToggle">
-                  <label className="C_CheckRow">
+                  <div className="PayoutField max-w-md">
                     <input
-                      type="checkbox"
-                      className="C_Checkbox"
-                      {...register('useKakaoPay')}
+                      id="fund-amount-input"
+                      type="number"
+                      {...register('amount', {
+                        required: '신청 금액을 입력해주세요.',
+                      })}
+                      placeholder="신청 금액 (숫자만)"
+                      className="C_Input"
                       disabled={submitting}
                     />
-                    <span className="C_CheckText">카카오페이로 받기</span>
-                  </label>
-                </div>
-
-                {!useKakaoPay && (
-                  <div className="PayoutGrid">
-                    <div className="PayoutField">
-                      <label className="C_SubLabel" htmlFor="fund-bank-input">
-                        은행
-                      </label>
-                      <input
-                        id="fund-bank-input"
-                        type="text"
-                        {...register('bankName')}
-                        placeholder="은행 (예: 토스뱅크)"
-                        className="C_Input"
-                        disabled={useKakaoPay || submitting}
-                      />
-                    </div>
-
-                    <div className="PayoutField">
-                      <label className="C_SubLabel" htmlFor="fund-account-input">
-                        계좌번호
-                      </label>
-                      <input
-                        id="fund-account-input"
-                        type="text"
-                        {...register('accountNumber', {
-                          pattern: {
-                            value: /^[0-9-]+$/,
-                            message: '계좌번호는 숫자와 -만 입력 가능합니다.',
-                          },
-                        })}
-                        placeholder="계좌번호"
-                        className="C_Input"
-                        disabled={useKakaoPay || submitting}
-                      />
-                      {errors.accountNumber?.message && (
-                        <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
-                          {String(errors.accountNumber.message)}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="PayoutField">
-                      <label className="C_SubLabel" htmlFor="fund-holder-input">
-                        예금주
-                      </label>
-                      <input
-                        id="fund-holder-input"
-                        type="text"
-                        {...register('accountHolder')}
-                        placeholder="예금주"
-                        className="C_Input"
-                        disabled={useKakaoPay || submitting}
-                      />
-                    </div>
+                    {errors.amount?.message && (
+                      <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                        {String(errors.amount.message)}
+                      </p>
+                    )}
                   </div>
-                )}
-              </div>
+
+                  <div className="PayoutKakaoToggle">
+                    <label className="C_CheckRow">
+                      <input
+                        type="checkbox"
+                        className="C_Checkbox"
+                        {...register('useKakaoPay')}
+                        disabled={submitting}
+                      />
+                      <span className="C_CheckText">카카오페이로 받기</span>
+                    </label>
+                  </div>
+
+                  {!useKakaoPay && (
+                    <div className="PayoutGrid">
+                      <div className="PayoutField">
+                        <label className="C_SubLabel" htmlFor="fund-bank-input">
+                          은행
+                        </label>
+                        <input
+                          id="fund-bank-input"
+                          type="text"
+                          {...register('bankName')}
+                          placeholder="은행 (예: 토스뱅크)"
+                          className="C_Input"
+                          disabled={useKakaoPay || submitting}
+                        />
+                      </div>
+
+                      <div className="PayoutField">
+                        <label className="C_SubLabel" htmlFor="fund-account-input">
+                          계좌번호
+                        </label>
+                        <input
+                          id="fund-account-input"
+                          type="text"
+                          {...register('accountNumber', {
+                            pattern: {
+                              value: /^[0-9-]+$/,
+                              message: '계좌번호는 숫자와 -만 입력 가능합니다.',
+                            },
+                          })}
+                          placeholder="계좌번호"
+                          className="C_Input"
+                          disabled={useKakaoPay || submitting}
+                        />
+                        {errors.accountNumber?.message && (
+                          <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                            {String(errors.accountNumber.message)}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="PayoutField">
+                        <label className="C_SubLabel" htmlFor="fund-holder-input">
+                          예금주
+                        </label>
+                        <input
+                          id="fund-holder-input"
+                          type="text"
+                          {...register('accountHolder')}
+                          placeholder="예금주"
+                          className="C_Input"
+                          disabled={useKakaoPay || submitting}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="EditorSection">
                 <div className="EditorHeader">
@@ -606,7 +669,7 @@ export default function FundApplyClient({ boardInfo, sigs, pigs, globalStatus })
                   </div>
 
                   <div ref={placeholderRef} className="EditorPlaceholder" aria-hidden="true">
-                    {placeholderText}
+                    {(PLACEHOLDER[applyType] ?? '').trim()}
                   </div>
                 </div>
 
@@ -615,13 +678,18 @@ export default function FundApplyClient({ boardInfo, sigs, pigs, globalStatus })
                     type="checkbox"
                     className="C_Checkbox"
                     {...register('checked', { required: true })}
+                    disabled={submitting}
                   />
                   <span className="C_CheckText">안내사항을 확인했습니다.</span>
                 </label>
               </div>
 
               <div className="SubmitRow">
-                <button type="submit" className="C_Button" disabled={!isChecked || submitting}>
+                <button
+                  type="submit"
+                  className="SigCreateBtn"
+                  disabled={!isChecked || submitting}
+                >
                   {submitting ? '신청 중...' : '신청하기'}
                 </button>
               </div>

@@ -1,48 +1,33 @@
 import FundApplyClient from './FundApplyClient';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
+import { fetchBoards, fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
 
 export default async function FundApplyPage() {
-  const [boardInfo, sigs, pigs, globalStatus] = await Promise.all([
-    fetchBoardInfo('6'),
-    fetchTargets('sig'),
-    fetchTargets('pig'),
-    fetchGlobalStatus(),
+  const [boardsSettled, sigs, pigs, sigsAll, pigsAll, globalStatus] = await Promise.all([
+    fetchBoards([6]),
+    fetchTargets('sig', true),
+    fetchTargets('pig', true),
+    fetchTargets('sig', false),
+    fetchTargets('pig', false),
+    fetchSCSCGlobalStatus(),
   ]);
+
+  const boardInfo =
+    Array.isArray(boardsSettled) && boardsSettled[0]?.status === 'fulfilled'
+      ? boardsSettled[0].value
+      : { id: '6', description: '' };
+
   return (
     <FundApplyClient
       boardInfo={boardInfo}
       sigs={sigs}
       pigs={pigs}
+      sigsAll={sigsAll}
+      pigsAll={pigsAll}
       globalStatus={globalStatus}
     />
   );
-}
-
-async function fetchBoardInfo(id) {
-  const res = await fetch(`${getBaseUrl()}/api/board/${id}`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
-  if (!res.ok) return { id, description: '' };
-  try {
-    return await res.json();
-  } catch {
-    return { id, description: '' };
-  }
-}
-
-async function fetchGlobalStatus() {
-  const res = await fetch(`${getBaseUrl()}/api/scsc/global/status`, {
-    headers: { 'x-api-secret': getApiSecret() },
-    cache: 'no-store',
-  });
-  if (!res.ok) return null;
-  try {
-    return await res.json();
-  } catch {
-    return null;
-  }
 }
 
 function normalizeTargets(arr) {
@@ -70,15 +55,18 @@ async function tryFetch(url) {
   }
 }
 
-async function fetchTargets(type) {
+async function fetchTargets(type, filterStatus) {
   const base = getBaseUrl();
   const data = await tryFetch(`${base}/api/${type}s`);
   const arr = Array.isArray(data) ? data : (data?.items ?? data?.data ?? data?.results ?? []);
-  const allowed = new Set(['recruiting', 'active']);
-  const filtered = (Array.isArray(arr) ? arr : []).filter((x) =>
-    allowed.has(String(x?.status || '').toLowerCase()),
-  );
-  const norm = normalizeTargets(filtered);
-  if (norm.length) return norm;
-  return [];
+
+  const list = Array.isArray(arr) ? arr : [];
+  const used = filterStatus
+    ? list.filter((x) =>
+        new Set(['recruiting', 'active']).has(String(x?.status || '').toLowerCase()),
+      )
+    : list;
+
+  const norm = normalizeTargets(used);
+  return norm.length ? norm : [];
 }
