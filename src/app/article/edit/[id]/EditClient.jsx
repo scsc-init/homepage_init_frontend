@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import '@/app/board/[id]/create/page.css';
+import AttachmentSection from '@/components/board/AttachmentSection';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
@@ -14,6 +15,7 @@ export default function EditClient({ articleId }) {
   const [loading, setLoading] = useState(true);
   const [boardId, setBoardId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [attachmentIds, setAttachmentIds] = useState([]);
   const isFormSubmitted = useRef(false);
 
   const {
@@ -51,6 +53,9 @@ export default function EditClient({ articleId }) {
         setValue('title', article.title || '');
         setValue('editor', article.content || '');
         setBoardId(article.board_id);
+
+        const ids = Array.isArray(article.attachments) ? article.attachments : [];
+        setAttachmentIds(ids.map((x) => String(x)));
       } catch {
         alert('게시글 정보를 불러오지 못했습니다.');
         router.replace(`/article/${articleId}`);
@@ -95,6 +100,7 @@ export default function EditClient({ articleId }) {
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardId ?? 0),
+          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
         }),
       });
 
@@ -136,6 +142,8 @@ export default function EditClient({ articleId }) {
             placeholder="제목을 입력하세요"
             className="w-full border p-2 rounded"
           />
+
+          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
 
           <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
 

@@ -355,3 +355,80 @@ button {
 .C_Input::placeholder {
   color: var(--slate-8);
 }
+
+.AttachmentSection {
+  width: 100%;
+  overflow: hidden;
+}
+
+.AttachmentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.AttachmentLabel {
+  font-weight: 600;
+}
+
+.AttachmentInput {
+  display: none;
+}
+
+.AttachmentPick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.AttachmentPick.is-busy {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.AttachmentEmpty {
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.AttachmentList {
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px; /* 무제한 대비 */
+  overflow: auto;
+}
+
+.AttachmentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.AttachmentLink {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.AttachmentRemove {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+  cursor: pointer;
+}
