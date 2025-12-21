@@ -236,3 +236,121 @@ export async function setKVValues(entries) {
   }
   return out;
 }
+
+/**
+ * Fetches initial data for the SIG/PIG fund-apply create page.
+ *
+ * - Current-term list (sigs/pigs): filters by status only (recruiting/active) to preserve existing behavior.
+ * - Previous-term list (prevSigs/prevPigs): filters only by (year, semester) and does NOT filter by status.
+ * - Term resolution: prefers /api/scsc/global/status; if missing, falls back to inferring the latest (year, semester)
+ *   from returned sig/pig records.
+ *
+ * @param {number} boardId - Board id for the fund-apply board (default: 6).
+ * @returns {Promise<{
+ *  boardInfo: any;
+ *  globalStatus: { id:number; year:number; semester:number; status:string; updated_at:string } | null;
+ *  prevTerm: { year:number; semester:number } | null;
+ *  sigs: any[];
+ *  pigs: any[];
+ *  prevSigs: any[];
+ *  prevPigs: any[];
+ * }>} - Data required by FundApplyClient.
+ */
+export async function fetchFundApplyCreateData(boardId = 6) {
+  const asArray = (v) => {
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') {
+      if (Array.isArray(v.items)) return v.items;
+      if (Array.isArray(v.data)) return v.data;
+      if (Array.isArray(v.results)) return v.results;
+      if (Array.isArray(v.sigs)) return v.sigs;
+      if (Array.isArray(v.pigs)) return v.pigs;
+    }
+    return [];
+  };
+
+  const normalizeTargets = (list) =>
+    asArray(list)
+      .filter((x) => x && typeof x === 'object')
+      .map((x) => ({
+        ...x,
+        id: x.id ?? null,
+        title: x.title ?? x.name ?? x.label ?? '',
+        year:
+          typeof x.year === 'number'
+            ? x.year
+            : Number.isFinite(Number(x.year))
+              ? Number(x.year)
+              : null,
+        semester:
+          typeof x.semester === 'number'
+            ? x.semester
+            : Number.isFinite(Number(x.semester))
+              ? Number(x.semester)
+              : null,
+        status: typeof x.status === 'string' ? x.status : '',
+      }));
+
+  const inferLatestTerm = (items) => {
+    const withTerm = items.filter(
+      (x) =>
+        typeof x?.year === 'number' &&
+        Number.isFinite(x.year) &&
+        typeof x?.semester === 'number' &&
+        Number.isFinite(x.semester),
+    );
+    if (withTerm.length === 0) return null;
+    withTerm.sort((a, b) => (a.year !== b.year ? a.year - b.year : a.semester - b.semester));
+    const last = withTerm[withTerm.length - 1];
+    return { year: last.year, semester: last.semester };
+  };
+
+  const calcPrevTerm = (term) => {
+    if (!term || typeof term.year !== 'number' || typeof term.semester !== 'number')
+      return null;
+    if (term.semester === 1) return { year: term.year - 1, semester: 4 };
+    return { year: term.year, semester: term.semester - 1 };
+  };
+
+  const [boardsSettled, globalStatus, sigsRaw, pigsRaw] = await Promise.all([
+    fetchBoards([boardId]),
+    fetchSCSCGlobalStatus().catch(() => null),
+    safeFetch('GET', '/api/sigs').catch(() => []),
+    safeFetch('GET', '/api/pigs').catch(() => []),
+  ]);
+
+  const boardInfo =
+    Array.isArray(boardsSettled) && boardsSettled[0]?.status === 'fulfilled'
+      ? boardsSettled[0].value
+      : { id: String(boardId), code: String(boardId), description: '' };
+
+  const sigsAll = normalizeTargets(sigsRaw);
+  const pigsAll = normalizeTargets(pigsRaw);
+
+  const currentTerm =
+    globalStatus &&
+    typeof globalStatus.year === 'number' &&
+    typeof globalStatus.semester === 'number'
+      ? { year: globalStatus.year, semester: globalStatus.semester }
+      : inferLatestTerm([...sigsAll, ...pigsAll]);
+
+  const prevTerm = calcPrevTerm(currentTerm);
+
+  const isCurrentSelectable = (x) =>
+    typeof x?.status === 'string' && (x.status === 'recruiting' || x.status === 'active');
+
+  const sigs = sigsAll.filter(isCurrentSelectable);
+  const pigs = pigsAll.filter(isCurrentSelectable);
+
+  const prevSigs =
+    prevTerm && typeof prevTerm.year === 'number' && typeof prevTerm.semester === 'number'
+      ? sigsAll.filter((x) => x.year === prevTerm.year && x.semester === prevTerm.semester)
+      : [];
+
+  const prevPigs =
+    prevTerm && typeof prevTerm.year === 'number' && typeof prevTerm.semester === 'number'
+      ? pigsAll.filter((x) => x.year === prevTerm.year && x.semester === prevTerm.semester)
+      : [];
+
+  return { boardInfo, globalStatus, prevTerm, sigs, pigs, prevSigs, prevPigs };
+}
