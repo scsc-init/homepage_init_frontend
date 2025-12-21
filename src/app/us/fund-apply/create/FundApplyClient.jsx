@@ -7,9 +7,7 @@ import { useRouter } from 'next/navigation';
 import { SEMESTER_MAP } from '@/util/constants';
 import './page.css';
 
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), {
-  ssr: false,
-});
+const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
 const GUIDE_URL =
   'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
@@ -77,9 +75,10 @@ export default function FundApplyClient({
   boardInfo,
   sigs,
   pigs,
-  sigsAll,
-  pigsAll,
+  prevSigs,
+  prevPigs,
   globalStatus,
+  prevTerm: prevTermProp,
 }) {
   const router = useRouter();
 
@@ -123,6 +122,7 @@ export default function FundApplyClient({
   const orgCategory = watch('orgCategory');
   const isChecked = watch('checked');
   const useKakaoPay = watch('useKakaoPay');
+  const editorDraft = watch('editor');
 
   const [showPrevTerm, setShowPrevTerm] = useState(false);
 
@@ -150,49 +150,31 @@ export default function FundApplyClient({
       .filter((it) => it.title);
   };
 
-  const inferLatestTerm = (items) => {
-    let best = null;
-    for (const it of items) {
-      if (!it || typeof it.year !== 'number' || typeof it.semester !== 'number') continue;
-      if (!best) best = { year: it.year, semester: it.semester };
-      else if (it.year > best.year) best = { year: it.year, semester: it.semester };
-      else if (it.year === best.year && it.semester > best.semester)
-        best = { year: it.year, semester: it.semester };
-    }
-    return best;
-  };
-
-  const calcPrevTerm = (term) => {
-    if (!term || typeof term.year !== 'number' || typeof term.semester !== 'number')
-      return null;
-    if (term.semester === 1) return { year: term.year - 1, semester: 4 };
-    return { year: term.year, semester: term.semester - 1 };
-  };
-
-  const sigsList = useMemo(() => normalizeTargets(sigs), [sigs]);
-  const pigsList = useMemo(() => normalizeTargets(pigs), [pigs]);
-  const sigsAllList = useMemo(
-    () => normalizeTargets(Array.isArray(sigsAll) ? sigsAll : sigs),
-    [sigsAll, sigs],
-  );
-  const pigsAllList = useMemo(
-    () => normalizeTargets(Array.isArray(pigsAll) ? pigsAll : pigs),
-    [pigsAll, pigs],
-  );
-
   const currentTerm = useMemo(() => {
     const y = globalStatus?.year;
     const s = globalStatus?.semester;
     if (typeof y === 'number' && typeof s === 'number') return { year: y, semester: s };
-    const inferred = inferLatestTerm([...sigsAllList, ...pigsAllList]);
-    return inferred;
-  }, [globalStatus?.year, globalStatus?.semester, sigsAllList, pigsAllList]);
+    return null;
+  }, [globalStatus?.year, globalStatus?.semester]);
 
-  const prevTerm = useMemo(
-    () => calcPrevTerm(currentTerm),
-    [currentTerm?.year, currentTerm?.semester],
-  );
+  const prevTerm = useMemo(() => {
+    if (
+      prevTermProp &&
+      typeof prevTermProp.year === 'number' &&
+      typeof prevTermProp.semester === 'number'
+    )
+      return prevTermProp;
+    if (!currentTerm) return null;
+    if (currentTerm.semester === 1) return { year: currentTerm.year - 1, semester: 4 };
+    return { year: currentTerm.year, semester: currentTerm.semester - 1 };
+  }, [prevTermProp, currentTerm]);
+
   const prevTermLabel = prevTerm ? `${prevTerm.year}년 ${semesterToKo(prevTerm.semester)}` : '';
+
+  const sigsList = useMemo(() => normalizeTargets(sigs), [sigs]);
+  const pigsList = useMemo(() => normalizeTargets(pigs), [pigs]);
+  const prevSigsList = useMemo(() => normalizeTargets(prevSigs), [prevSigs]);
+  const prevPigsList = useMemo(() => normalizeTargets(prevPigs), [prevPigs]);
 
   const [targetList, setTargetList] = useState([]);
 
@@ -256,53 +238,23 @@ export default function FundApplyClient({
   }, [applyType, setValue]);
 
   useEffect(() => {
-    const canUsePrev =
-      (applyType === 'fund' || applyType === 'meal') &&
-      showPrevTerm &&
-      !!prevTerm &&
-      (orgCategory === 'sig' || orgCategory === 'pig');
-
-    const byPrevTerm = (items) => {
-      if (!prevTerm) return items;
-      const hasTermInfo = items.some(
-        (it) => typeof it.year === 'number' && typeof it.semester === 'number',
-      );
-      if (!hasTermInfo) return items;
-      return items.filter(
-        (it) => it.year === prevTerm.year && it.semester === prevTerm.semester,
-      );
-    };
-
     if (orgCategory === 'sig') {
-      const base = canUsePrev ? sigsAllList : sigsList;
-      setTargetList(canUsePrev ? byPrevTerm(base) : base);
+      setTargetList(showPrevTerm ? prevSigsList : sigsList);
     } else if (orgCategory === 'pig') {
-      const base = canUsePrev ? pigsAllList : pigsList;
-      setTargetList(canUsePrev ? byPrevTerm(base) : base);
+      setTargetList(showPrevTerm ? prevPigsList : pigsList);
     } else {
       setTargetList([]);
     }
-  }, [
-    applyType,
-    orgCategory,
-    showPrevTerm,
-    prevTerm?.year,
-    prevTerm?.semester,
-    sigsList,
-    pigsList,
-    sigsAllList,
-    pigsAllList,
-  ]);
+  }, [orgCategory, showPrevTerm, sigsList, pigsList, prevSigsList, prevPigsList]);
 
   useEffect(() => {
-    const draft = watch('editor');
-    if (!isValidDraft(draft)) {
+    if (!isValidDraft(editorDraft)) {
       setHasContent(false);
       return;
     }
-    const text = String(draft.content ?? '');
+    const text = String(editorDraft.content ?? '');
     setHasContent(Boolean(text.trim()));
-  }, [watch]);
+  }, [editorDraft]);
 
   const disableOrgSelects = submitting || applyType === 'contest' || applyType === 'pair';
 
@@ -359,6 +311,9 @@ export default function FundApplyClient({
       );
       headerLines.push(`- 대상 유형: ${form.orgCategory?.toUpperCase?.() ?? ''}`);
       headerLines.push(`- 대상: ${extractFirstText(form.target)}`);
+      headerLines.push(
+        `- 학기: ${showPrevTerm && prevTermLabel ? `이전학기(${prevTermLabel})` : '이번학기'}`,
+      );
     }
 
     if (form.applyType === 'fund' || form.applyType === 'meal') {
@@ -376,15 +331,10 @@ export default function FundApplyClient({
 
     const draft = form.editor;
     const body = isValidDraft(draft) ? normalizeLF(draft.content) : '';
-
     const fullContent = `${headerLines.join('\n')}\n\n---\n\n${body}`.trim();
     const embeds = isValidDraft(draft) ? draft.embeds : [];
 
-    return {
-      title,
-      content: fullContent,
-      embeds,
-    };
+    return { title, content: fullContent, embeds };
   };
 
   const onSubmit = async (form) => {
@@ -512,6 +462,7 @@ export default function FundApplyClient({
                         <option value="sig">SIG</option>
                         <option value="pig">PIG</option>
                       </select>
+
                       {(applyType === 'fund' || applyType === 'meal') && (
                         <label className="PrevTermInlineCheck">
                           <input
@@ -521,7 +472,10 @@ export default function FundApplyClient({
                             onChange={(e) => {
                               const next = e.target.checked;
                               setShowPrevTerm(next);
-                              setValue('target', '');
+                              setValue('target', '', {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
                             }}
                             disabled={disableOrgSelects || !prevTerm}
                           />
@@ -530,6 +484,7 @@ export default function FundApplyClient({
                       )}
                     </div>
                   </div>
+
                   <div>
                     <label className="C_Label">대상 선택</label>
                     <select
@@ -542,8 +497,11 @@ export default function FundApplyClient({
                       {targetList.length === 0 ? (
                         <option disabled>목록이 없습니다</option>
                       ) : (
-                        targetList.map((item) => (
-                          <option key={item.id ?? item.title} value={item.title}>
+                        targetList.map((item, idx) => (
+                          <option
+                            key={`${item.id ?? 'na'}-${item.title}-${idx}`}
+                            value={item.title}
+                          >
                             {item.title}
                           </option>
                         ))
@@ -567,9 +525,7 @@ export default function FundApplyClient({
                     <input
                       id="fund-amount-input"
                       type="number"
-                      {...register('amount', {
-                        required: '신청 금액을 입력해주세요.',
-                      })}
+                      {...register('amount', { required: '신청 금액을 입력해주세요.' })}
                       placeholder="신청 금액 (숫자만)"
                       className="C_Input"
                       disabled={submitting}
@@ -659,11 +615,14 @@ export default function FundApplyClient({
                   </a>
                 </div>
 
-                <div className="EditorWrapper">
+                <div className={`EditorWrapper ${hasContent ? 'has-content' : ''}`}>
                   <div ref={wrapperRef} className="EditorMinHeight">
                     <Editor
                       value={content}
-                      onChange={(v) => setValue('editor', v)}
+                      onChange={(v) => {
+                        setContent(v);
+                        setValue('editor', v, { shouldValidate: true, shouldDirty: true });
+                      }}
                       disabled={submitting}
                     />
                   </div>
