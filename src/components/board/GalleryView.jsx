@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
 
@@ -70,7 +71,7 @@ function extractFirstImageUrlFromText(text) {
 }
 
 function toThumbSrc(rawUrl) {
-  const u = normalizeUrl(rawUrl);
+  let u = normalizeUrl(rawUrl);
   if (!u) return '';
 
   const m = u.match(API_IMG_ID_REGEX);
@@ -82,9 +83,15 @@ function toThumbSrc(rawUrl) {
     return u;
   }
 
-  if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('//')) return u;
-
+  if (u.startsWith('//')) u = `https:${u}`;
   return u;
+}
+
+function isLocalThumbSrc(src) {
+  const s = String(src || '');
+  if (!s) return false;
+  if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('//')) return false;
+  return s.startsWith('/');
 }
 
 async function pLimitMap(items, limit, fn) {
@@ -242,12 +249,23 @@ export default function GalleryView({ board, sortOrder }) {
           <a key={it.articleId} className={styles.galleryLink} href={href}>
             <div className={styles.galleryCard}>
               {it.thumbSrc ? (
-                <img
-                  className={styles.galleryImg}
-                  src={it.thumbSrc}
-                  alt={it.title || 'image'}
-                  loading="lazy"
-                />
+                isLocalThumbSrc(it.thumbSrc) ? (
+                  <Image
+                    className={styles.galleryImg}
+                    src={it.thumbSrc}
+                    alt={it.title || 'image'}
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  />
+                ) : (
+                  <img
+                    className={styles.galleryImg}
+                    src={it.thumbSrc}
+                    alt={it.title || 'image'}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )
               ) : (
                 <div className={styles.galleryNoImg} />
               )}
