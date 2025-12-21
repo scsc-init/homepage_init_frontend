@@ -3,13 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
 
-const UUID_RE = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
-const API_IMG_ID_RE = new RegExp(
-  String.raw`\/api\/(?:image\/download|file\/image\/download)\/(${UUID_RE.source})(?=[^\w-]|$)`,
+const UUID_REGEX =
+  /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
+const API_IMG_ID_REGEX = new RegExp(
+  String.raw`\/api\/file\/image\/download\/(${UUID_REGEX.source})(?=[^\w-]|$)`,
   'i',
 );
-const MD_IMG_RE = /!\[[^\]]*?\]\(([^)]+)\)/g;
-const HTML_IMG_RE = /<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i;
+
+const MD_IMG_REGEX = /!\[[^\]]*?\]\(([^)]+)\)/g;
+const HTML_IMG_REGEX = /<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i;
 
 function sortArticles(items, sortOrder) {
   const arr = items.slice();
@@ -54,15 +56,15 @@ function normalizeUrl(u) {
 
 function extractFirstImageUrlFromText(text) {
   const s = String(text || '');
-  const html = s.match(HTML_IMG_RE);
+  const html = s.match(HTML_IMG_REGEX);
   if (html?.[1]) return normalizeUrl(html[1]);
 
-  MD_IMG_RE.lastIndex = 0;
-  const md = MD_IMG_RE.exec(s);
+  MD_IMG_REGEX.lastIndex = 0;
+  const md = MD_IMG_REGEX.exec(s);
   if (md?.[1]) return normalizeUrl(md[1]);
 
-  const api = s.match(API_IMG_ID_RE);
-  if (api?.[1]) return `/api/image/download/${api[1]}`;
+  const api = s.match(API_IMG_ID_REGEX);
+  if (api?.[1]) return `/api/file/image/download/${api[1]}`;
 
   return '';
 }
@@ -71,12 +73,12 @@ function toThumbSrc(rawUrl) {
   const u = normalizeUrl(rawUrl);
   if (!u) return '';
 
-  const m = u.match(API_IMG_ID_RE);
-  if (m?.[1]) return `/api/image/download/${encodeURIComponent(m[1])}`;
+  const m = u.match(API_IMG_ID_REGEX);
+  if (m?.[1]) return `/api/file/image/download/${encodeURIComponent(m[1])}`;
 
-  if (u.startsWith('/api/image/download/') || u.startsWith('/api/file/image/download/')) {
-    const mm = u.match(new RegExp(String.raw`(${UUID_RE.source})`, 'i'));
-    if (mm?.[1]) return `/api/image/download/${encodeURIComponent(mm[1])}`;
+  if (u.startsWith('/api/file/image/download/')) {
+    const mm = u.match(new RegExp(String.raw`(${UUID_REGEX.source})`, 'i'));
+    if (mm?.[1]) return `/api/file/image/download/${encodeURIComponent(mm[1])}`;
     return u;
   }
 
