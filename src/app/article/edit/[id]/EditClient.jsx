@@ -143,10 +143,9 @@ export default function EditClient({ articleId }) {
             className="w-full border p-2 rounded"
           />
 
-          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
-
           <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
 
+          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
           <button type="submit" className="SigCreateBtn" disabled={submitting}>
             {submitting ? '수정 중...' : '수정 완료'}
           </button>

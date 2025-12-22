@@ -118,30 +118,6 @@ export default function ArticleDetail({ params }) {
       )}
 
       <hr className="SigDivider" />
-      {Array.isArray(article.attachments) && article.attachments.length > 0 ? (
-        <>
-          <div className="AttachmentSection">
-            <div className="AttachmentHeader">
-              <div className="AttachmentLabel">첨부파일</div>
-            </div>
-            <ul className="AttachmentList">
-              {article.attachments.map((id) => (
-                <li key={id} className="AttachmentItem">
-                  <a
-                    className="AttachmentLink"
-                    href={`/api/file/docs/download/${encodeURIComponent(id)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {String(id)}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <hr className="SigDivider" />
-        </>
-      ) : null}
 
       <div className="SigContent">
         <ReactMarkdown
@@ -166,6 +142,31 @@ export default function ArticleDetail({ params }) {
         >
           {markdown}
         </ReactMarkdown>
+
+        <hr className="SigDivider" />
+        {Array.isArray(article.attachments) && article.attachments.length > 0 ? (
+          <>
+            <div className="AttachmentSection">
+              <div className="AttachmentHeader">
+                <div className="AttachmentLabel">첨부파일</div>
+              </div>
+              <ul className="AttachmentList">
+                {article.attachments.map((id) => (
+                  <li key={id} className="AttachmentItem">
+                    <a
+                      className="AttachmentLink"
+                      href={`/api/file/docs/download/${encodeURIComponent(id)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {String(id)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        ) : null}
       </div>
       <Comments articleId={id} initialComments={comments} user={user} />
     </div>

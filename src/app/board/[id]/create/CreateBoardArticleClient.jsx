@@ -121,10 +121,8 @@ export default function CreateBoardArticleClient({ boardInfo }) {
             className="w-full border p-2 rounded"
           />
 
-          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
-
           <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
-
+          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
           <button type="submit" className="SigCreateBtn" disabled={submitting}>
             {submitting ? '작성 중...' : '작성 완료'}
           </button>
