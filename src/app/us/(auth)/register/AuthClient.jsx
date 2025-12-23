@@ -7,6 +7,7 @@ import styles from '../auth.module.css';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
+import InquiryButton from '@/components/InquiryButton';
 
 function cleanName(raw) {
   if (!raw) return '';
@@ -309,6 +310,7 @@ export default function AuthClient({ session }) {
           </div>
         )}
       </div>
+      <InquiryButton />
     </div>
   );
 }
