@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
+import AttachmentSection from '@/components/board/AttachmentSection';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
@@ -22,6 +23,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
   const router = useRouter();
   const content = watch('editor');
   const [submitting, setSubmitting] = useState(false);
+  const [attachmentIds, setAttachmentIds] = useState([]);
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardInfo.id),
+          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
         }),
       });
 
@@ -119,7 +122,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
           />
 
           <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
-
+          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
           <button type="submit" className="SigCreateBtn" disabled={submitting}>
             {submitting ? '작성 중...' : '작성 완료'}
           </button>
