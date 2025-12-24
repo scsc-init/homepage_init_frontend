@@ -9,7 +9,7 @@ COPY . ./
 RUN npm run build
 
 # ===== Runtime Stage =====
-FROM node:24-bookworm-slim AS runner
+FROM node:24-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production
 
