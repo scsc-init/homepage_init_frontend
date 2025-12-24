@@ -1,4 +1,3 @@
-# ===== Build Stage =====
 FROM node:24-bookworm-slim AS builder
 WORKDIR /app
 
@@ -13,9 +12,10 @@ FROM node:24-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/node_modules ./node_modules
 
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
