@@ -41,11 +41,11 @@ export default function ExecutivesClient() {
     const load = async () => {
       try {
         const [execRes, prezRes, leadersRes] = await Promise.all([
-          fetch('/api/users?user_role=executive', {
+          fetch('/api/executive/users?user_role=executive', {
             credentials: 'include',
             cache: 'no-store',
           }),
-          fetch('/api/users?user_role=president', {
+          fetch('/api/executive/users?user_role=president', {
             credentials: 'include',
             cache: 'no-store',
           }),
