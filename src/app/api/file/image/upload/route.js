@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 
 export async function POST(req) {
   const base = getBaseUrl();
@@ -12,7 +11,6 @@ export async function POST(req) {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
-      'x-api-secret': getApiSecret(),
       ...(appJwt ? { 'x-jwt': appJwt } : {}),
     },
     body: formData,
