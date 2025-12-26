@@ -432,3 +432,31 @@ button {
   background: transparent;
   cursor: pointer;
 }
+.InquiryButton {
+  position: fixed;
+  right: 2rem;
+  bottom: calc(2rem + 3.2rem);
+  z-index: 999901;
+
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--foreground-color);
+  color: var(--background-color);
+  text-decoration: none;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  font-size: 1.2rem; /* 아이콘/한 글자용 */
+  line-height: 1;
+}
+
+.InquiryButton:hover {
+  background: var(--color-text-subtle);
+  color: var(--color-text-body);
+  transform: scale(1.05);
+}
