@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 
 function sanitizeId(value) {
   if (value === null || value === undefined) return '';
@@ -24,16 +23,8 @@ export async function POST(request) {
   const appJwt = cookieStore.get('app_jwt')?.value || null;
 
   try {
-    let apiSecret = getApiSecret();
-    if (!apiSecret) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error('Missing API_SECRET environment variable');
-      }
-      apiSecret = 'development-missing-api-secret';
-    }
     const hdrs = {
       'Content-Type': 'application/json',
-      'x-api-secret': apiSecret,
     };
     if (appJwt) hdrs['x-jwt'] = appJwt;
 

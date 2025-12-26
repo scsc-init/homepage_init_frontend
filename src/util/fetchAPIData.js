@@ -31,7 +31,7 @@ export async function fetchMe() {
  * Fetches all users.
  */
 export async function fetchUsers() {
-  return safeFetch('GET', `/api/users`);
+  return safeFetch('GET', `/api/executive/users`);
 }
 
 /**
@@ -136,8 +136,8 @@ export async function fetchSCSCGlobalStatus() {
 
 export async function fetchExecutiveCandidates() {
   const [execRes, prezRes] = await Promise.all([
-    handleApiRequest('GET', '/api/users', { query: { user_role: 'executive' } }),
-    handleApiRequest('GET', '/api/users', { query: { user_role: 'president' } }),
+    handleApiRequest('GET', '/api/executive/users', { query: { user_role: 'executive' } }),
+    handleApiRequest('GET', '/api/executive/users', { query: { user_role: 'president' } }),
   ]);
 
   const execList = execRes.ok ? await execRes.json().catch(() => []) : [];

@@ -1,4 +1,3 @@
-import { getApiSecret } from '@/util/getApiSecret';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -9,7 +8,6 @@ export async function GET(_, { params }) {
       return await notFoundPage();
     }
     const res = await fetch(`${getBaseUrl()}/api/w/${encodeURIComponent(params.slug)}`, {
-      headers: { 'x-api-secret': getApiSecret() },
       cache: 'no-store',
     });
     if (!res.ok) {

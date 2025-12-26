@@ -31,7 +31,10 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const hasIncoming = Boolean(request);
   const bodyJson = hasIncoming ? await request.json() : undefined;
 
-  const hdrs = { 'x-api-secret': getApiSecret() };
+  const hdrs = {};
+  if (fullPath === '/api/user/login' || fullPath === '/api/user/create') {
+    hdrs['x-api-secret'] = getApiSecret();
+  }
   if (appJwt) hdrs['x-jwt'] = appJwt;
   if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
 

@@ -1,12 +1,10 @@
 import './page.css';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import BoardClient from '@/components/board/BoardClient';
 
 export async function generateMetadata({ params }) {
   try {
     const res = await fetch(`${getBaseUrl()}/api/board/${params.id}`, {
-      headers: { 'x-api-secret': getApiSecret() },
       cache: 'no-store',
     });
     if (!res.ok) return { title: '게시판' };
@@ -23,7 +21,6 @@ export default async function BoardPage({ params }) {
   const boardId = params.id;
 
   const boardRes = await fetch(`${getBaseUrl()}/api/board/${boardId}`, {
-    headers: { 'x-api-secret': getApiSecret() },
     cache: 'no-store',
   });
 
