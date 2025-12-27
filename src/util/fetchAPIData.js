@@ -291,20 +291,6 @@ export async function fetchFundApplyCreateData(boardId = 6) {
         status: typeof x.status === 'string' ? x.status : '',
       }));
 
-  const inferLatestTerm = (items) => {
-    const withTerm = items.filter(
-      (x) =>
-        typeof x?.year === 'number' &&
-        Number.isFinite(x.year) &&
-        typeof x?.semester === 'number' &&
-        Number.isFinite(x.semester),
-    );
-    if (withTerm.length === 0) return null;
-    withTerm.sort((a, b) => (a.year !== b.year ? a.year - b.year : a.semester - b.semester));
-    const last = withTerm[withTerm.length - 1];
-    return { year: last.year, semester: last.semester };
-  };
-
   const calcPrevTerm = (term) => {
     if (!term || typeof term.year !== 'number' || typeof term.semester !== 'number')
       return null;
@@ -312,11 +298,9 @@ export async function fetchFundApplyCreateData(boardId = 6) {
     return { year: term.year, semester: term.semester - 1 };
   };
 
-  const [boardsSettled, globalStatus, sigsRaw, pigsRaw] = await Promise.all([
+  const [boardsSettled, globalStatus] = await Promise.all([
     fetchBoards([boardId]),
     fetchSCSCGlobalStatus().catch(() => null),
-    safeFetch('GET', '/api/sigs').catch(() => []),
-    safeFetch('GET', '/api/pigs').catch(() => []),
   ]);
 
   const boardInfo =
@@ -324,33 +308,54 @@ export async function fetchFundApplyCreateData(boardId = 6) {
       ? boardsSettled[0].value
       : { id: String(boardId), code: String(boardId), description: '' };
 
-  const sigsAll = normalizeTargets(sigsRaw);
-  const pigsAll = normalizeTargets(pigsRaw);
-
-  const currentTerm =
-    globalStatus &&
-    typeof globalStatus.year === 'number' &&
-    typeof globalStatus.semester === 'number'
-      ? { year: globalStatus.year, semester: globalStatus.semester }
-      : inferLatestTerm([...sigsAll, ...pigsAll]);
+  const currentTerm = globalStatus
+    ? {
+        year: globalStatus.year,
+        semester: globalStatus.semester,
+        status: globalStatus.status,
+      }
+    : null;
 
   const prevTerm = calcPrevTerm(currentTerm);
 
-  const isCurrentSelectable = (x) =>
-    typeof x?.status === 'string' && (x.status === 'recruiting' || x.status === 'active');
+  if (!currentTerm)
+    return {
+      boardInfo,
+      globalStatus,
+      prevTerm,
+      sigs: [],
+      pigs: [],
+      prevSigs: [],
+      prevPigs: [],
+    };
 
-  const sigs = sigsAll.filter(isCurrentSelectable);
-  const pigs = pigsAll.filter(isCurrentSelectable);
+  const [currentSigsRaw, prevSigsRaw, currentPigsRaw, prevPigsRaw] = await Promise.all([
+    safeFetch('GET', '/api/sigs', {
+      query: {
+        year: currentTerm.year,
+        semester: currentTerm.semester,
+        status: currentTerm.status,
+      },
+    }).catch(() => []),
+    safeFetch('GET', '/api/sigs', {
+      query: { year: prevTerm.year, semester: prevTerm.semester },
+    }).catch(() => []),
+    safeFetch('GET', '/api/pigs', {
+      query: {
+        year: currentTerm.year,
+        semester: currentTerm.semester,
+        status: currentTerm.status,
+      },
+    }).catch(() => []),
+    safeFetch('GET', '/api/pigs', {
+      query: { year: prevTerm.year, semester: prevTerm.semester },
+    }).catch(() => []),
+  ]);
 
-  const prevSigs =
-    prevTerm && typeof prevTerm.year === 'number' && typeof prevTerm.semester === 'number'
-      ? sigsAll.filter((x) => x.year === prevTerm.year && x.semester === prevTerm.semester)
-      : [];
-
-  const prevPigs =
-    prevTerm && typeof prevTerm.year === 'number' && typeof prevTerm.semester === 'number'
-      ? pigsAll.filter((x) => x.year === prevTerm.year && x.semester === prevTerm.semester)
-      : [];
+  const sigs = normalizeTargets(currentSigsRaw);
+  const pigs = normalizeTargets(currentPigsRaw);
+  const prevSigs = normalizeTargets(prevSigsRaw);
+  const prevPigs = normalizeTargets(prevPigsRaw);
 
   return { boardInfo, globalStatus, prevTerm, sigs, pigs, prevSigs, prevPigs };
 }
