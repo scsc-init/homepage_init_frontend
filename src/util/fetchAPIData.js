@@ -303,12 +303,30 @@ export async function fetchFundApplyCreateData(boardId = 6) {
     fetchSCSCGlobalStatus().catch(() => null),
   ]);
 
-  const currentTerm = globalStatus && {
-    year: globalStatus.year,
-    semester: globalStatus.semester,
-  };
+  const boardInfo =
+    Array.isArray(boardsSettled) && boardsSettled[0]?.status === 'fulfilled'
+      ? boardsSettled[0].value
+      : { id: String(boardId), code: String(boardId), description: '' };
+
+  const currentTerm = globalStatus
+    ? {
+        year: globalStatus.year,
+        semester: globalStatus.semester,
+      }
+    : null;
 
   const prevTerm = calcPrevTerm(currentTerm);
+
+  if (!currentTerm)
+    return {
+      boardInfo,
+      globalStatus,
+      prevTerm,
+      sigs: [],
+      pigs: [],
+      prevSigs: [],
+      prevPigs: [],
+    };
 
   const [
     currentActiveSigsRaw,
@@ -337,11 +355,6 @@ export async function fetchFundApplyCreateData(boardId = 6) {
       query: { year: prevTerm.year, semester: prevTerm.semester },
     }).catch(() => []),
   ]);
-
-  const boardInfo =
-    Array.isArray(boardsSettled) && boardsSettled[0]?.status === 'fulfilled'
-      ? boardsSettled[0].value
-      : { id: String(boardId), code: String(boardId), description: '' };
 
   const sigs = [
     ...normalizeTargets(currentActiveSigsRaw),
