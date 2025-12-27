@@ -312,6 +312,7 @@ export async function fetchFundApplyCreateData(boardId = 6) {
     ? {
         year: globalStatus.year,
         semester: globalStatus.semester,
+        status: globalStatus.status,
       }
     : null;
 
@@ -328,42 +329,31 @@ export async function fetchFundApplyCreateData(boardId = 6) {
       prevPigs: [],
     };
 
-  const [
-    currentActiveSigsRaw,
-    currentRecruitingSigsRaw,
-    prevSigsRaw,
-    currentActivePigsRaw,
-    currentRecruitingPigsRaw,
-    prevPigsRaw,
-  ] = await Promise.all([
+  const [currentSigsRaw, prevSigsRaw, currentPigsRaw, prevPigsRaw] = await Promise.all([
     safeFetch('GET', '/api/sigs', {
-      query: { year: currentTerm.year, semester: currentTerm.semester, status: 'active' },
-    }).catch(() => []),
-    safeFetch('GET', '/api/sigs', {
-      query: { year: currentTerm.year, semester: currentTerm.semester, status: 'recruiting' },
+      query: {
+        year: currentTerm.year,
+        semester: currentTerm.semester,
+        status: currentTerm.status,
+      },
     }).catch(() => []),
     safeFetch('GET', '/api/sigs', {
       query: { year: prevTerm.year, semester: prevTerm.semester },
     }).catch(() => []),
     safeFetch('GET', '/api/pigs', {
-      query: { year: currentTerm.year, semester: currentTerm.semester, status: 'active' },
-    }).catch(() => []),
-    safeFetch('GET', '/api/pigs', {
-      query: { year: currentTerm.year, semester: currentTerm.semester, status: 'recruiting' },
+      query: {
+        year: currentTerm.year,
+        semester: currentTerm.semester,
+        status: currentTerm.status,
+      },
     }).catch(() => []),
     safeFetch('GET', '/api/pigs', {
       query: { year: prevTerm.year, semester: prevTerm.semester },
     }).catch(() => []),
   ]);
 
-  const sigs = [
-    ...normalizeTargets(currentActiveSigsRaw),
-    ...normalizeTargets(currentRecruitingSigsRaw),
-  ];
-  const pigs = [
-    ...normalizeTargets(currentActivePigsRaw),
-    ...normalizeTargets(currentRecruitingPigsRaw),
-  ];
+  const sigs = normalizeTargets(currentSigsRaw);
+  const pigs = normalizeTargets(currentPigsRaw);
   const prevSigs = normalizeTargets(prevSigsRaw);
   const prevPigs = normalizeTargets(prevPigsRaw);
 
