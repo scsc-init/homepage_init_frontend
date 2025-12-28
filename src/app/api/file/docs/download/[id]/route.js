@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 
 export async function GET(_req, { params }) {
   const rawId = params?.id;
@@ -23,7 +22,6 @@ export async function GET(_req, { params }) {
     res = await fetch(url, {
       method: 'GET',
       headers: {
-        'x-api-secret': getApiSecret(),
         ...(appJwt ? { 'x-jwt': appJwt } : {}),
       },
       cache: 'no-store',

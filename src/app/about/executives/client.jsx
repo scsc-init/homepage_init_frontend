@@ -40,13 +40,8 @@ export default function ExecutivesClient() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [execRes, prezRes, leadersRes] = await Promise.all([
-          fetch('/api/users?user_role=executive', {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-          fetch('/api/users?user_role=president', {
-            credentials: 'include',
+        const [execRes, leadersRes] = await Promise.all([
+          fetch('/api/user/executives', {
             cache: 'no-store',
           }),
           fetch('/api/leadership', {
@@ -54,20 +49,12 @@ export default function ExecutivesClient() {
           }),
         ]);
 
-        if (!execRes.ok && !prezRes.ok) throw new Error('failed');
+        if (!execRes.ok) throw new Error('failed');
 
-        const [execJson, prezJson, leadersJson] = await Promise.all([
-          execRes.ok ? execRes.json() : [],
-          prezRes.ok ? prezRes.json() : [],
+        const [execJson, leadersJson] = await Promise.all([
+          execRes.json(),
           leadersRes.ok ? leadersRes.json() : null,
         ]);
-
-        if (!execRes.ok || !prezRes.ok) {
-          console.warn('Partial executive data load', {
-            execOk: execRes.ok,
-            prezOk: prezRes.ok,
-          });
-        }
 
         const leadership = {
           presidentId:
@@ -80,13 +67,12 @@ export default function ExecutivesClient() {
               : null,
         };
 
-        const raw = [
-          ...(Array.isArray(execJson) ? execJson : []),
-          ...(Array.isArray(prezJson) ? prezJson : []),
-        ];
+        const raw = Array.isArray(execJson) ? execJson : [];
+
         const excludedSet = new Set(
           excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
         );
+
         const normalized = raw
           .map(normUser)
           .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
@@ -95,7 +81,8 @@ export default function ExecutivesClient() {
         const dedup = [];
         const seen = new Set();
         for (const u of normalized) {
-          const key = u.id || u.email;
+          const key = String(u.id || u.email || '').trim();
+          if (!key) continue;
           if (!seen.has(key)) {
             seen.add(key);
             dedup.push(u);
