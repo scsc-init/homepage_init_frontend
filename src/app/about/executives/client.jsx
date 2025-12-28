@@ -11,22 +11,21 @@ import {
 import { resolveProfileImage } from '@/util/profileImage';
 import styles from '../about.module.css';
 
-function roleDisplay(user) {
+function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
-  const email = String(user.email || '')
-    .toLowerCase()
-    .trim();
-  const prezSet = new Set(presidentEmails.map((x) => String(x).toLowerCase().trim()));
-  const vprezSet = new Set(vicePresidentEmails.map((x) => String(x).toLowerCase().trim()));
-  if (email && prezSet.has(email)) return '회장';
-  if (email && vprezSet.has(email)) return '부회장';
+  const { presidentId, vicePresidentId } = leadershipIds || {};
+  const userId = String(user.id ?? '').trim();
+  const presidentKey = String(presidentId ?? '').trim();
+  const vicePresidentKey = String(vicePresidentId ?? '').trim();
+  if (presidentKey && userId === presidentKey) return '회장';
+  if (vicePresidentKey && userId === vicePresidentKey) return '부회장';
   return '임원';
 }
 
 function normUser(u) {
   const email = u?.email || '';
-  const name = u?.name || '';
-  const id = email || name;
+  const name = u?.name || email || '';
+  const id = u?.id || email || name;
   const level = Number.isFinite(Number(u?.role)) ? Number(u.role) : 0;
   const image = resolveProfileImage(u, DEFAULT_EXECUTIVE_PFP);
   return { id, name, email, level, image };
@@ -41,20 +40,39 @@ export default function ExecutivesClient() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [execRes] = await Promise.all([
+        const [execRes, leadersRes] = await Promise.all([
           fetch('/api/user/executives', {
+            cache: 'no-store',
+          }),
+          fetch('/api/leadership', {
             cache: 'no-store',
           }),
         ]);
 
         if (!execRes.ok) throw new Error('failed');
 
-        const execJson = await execRes.json();
+        const [execJson, leadersJson] = await Promise.all([
+          execRes.json(),
+          leadersRes.ok ? leadersRes.json() : null,
+        ]);
+
+        const leadership = {
+          presidentId:
+            leadersJson && typeof leadersJson.president_id === 'string'
+              ? leadersJson.president_id
+              : null,
+          vicePresidentId:
+            leadersJson && typeof leadersJson.vice_president_id === 'string'
+              ? leadersJson.vice_president_id
+              : null,
+        };
 
         const raw = Array.isArray(execJson) ? execJson : [];
+
         const excludedSet = new Set(
           excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
         );
+
         const normalized = raw
           .map(normUser)
           .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
@@ -63,7 +81,8 @@ export default function ExecutivesClient() {
         const dedup = [];
         const seen = new Set();
         for (const u of normalized) {
-          const key = u.email || u.id;
+          const key = String(u.id || u.email || '').trim();
+          if (!key) continue;
           if (!seen.has(key)) {
             seen.add(key);
             dedup.push(u);
@@ -75,7 +94,7 @@ export default function ExecutivesClient() {
           name: u.name,
           email: u.email,
           roleNum: u.level,
-          role: roleDisplay(u),
+          role: roleDisplay(u, leadership),
           image: u.image || DEFAULT_EXECUTIVE_PFP,
         }));
 
