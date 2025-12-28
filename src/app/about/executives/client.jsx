@@ -25,7 +25,7 @@ function roleDisplay(user) {
 
 function normUser(u) {
   const email = u?.email || '';
-  const name = u?.name || email || '';
+  const name = u?.name || '';
   const id = email || name;
   const level = Number.isFinite(Number(u?.role)) ? Number(u.role) : 0;
   const image = resolveProfileImage(u, DEFAULT_EXECUTIVE_PFP);
