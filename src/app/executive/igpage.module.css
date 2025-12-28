@@ -33,13 +33,22 @@
   border: 1px solid var(--color-button-border);
   border-radius: 12px;
   box-shadow: 0 4px 20px var(--executive-card-shadow);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .adm-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+}
+
+.adm-table-wide {
+  min-width: 1100px;
+}
+
+.adm-table-scroll {
+  width: 100%;
+  overflow-x: auto;
 }
 .adm-th {
   text-align: left;
@@ -68,6 +77,8 @@
 }
 
 .adm-textarea {
+  white-space: pre;
+  overflow-x: auto;
   min-height: 6rem;
   resize: vertical;
 }

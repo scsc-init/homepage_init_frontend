@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
@@ -78,6 +78,8 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           onChange={(e) => updateFilterCriteria('member', e.target.value)}
         />
       </td>
+      <td className={styles['adm-td']} />
+      <td className={styles['adm-td']} />
     </tr>
   );
 }
@@ -135,6 +137,8 @@ export default function SigList({ sigs: sigsDefault }) {
           status: sig.status,
           year: sig.year,
           semester: sig.semester,
+          should_extend: Boolean(sig.should_extend),
+          is_rolling_admission: Boolean(sig.is_rolling_admission),
         }),
       });
       if (res.status === 204) alert('저장 완료');
@@ -166,34 +170,38 @@ export default function SigList({ sigs: sigsDefault }) {
 
   return (
     <div className={styles['adm-table-wrap']}>
-      <table className={styles['adm-table']}>
-        <thead>
-          <tr className={styles['adm-tr']}>
-            <th className={styles['adm-th']}>ID</th>
-            <th className={styles['adm-th']}>이름</th>
-            <th className={styles['adm-th']}>설명</th>
-            <th className={styles['adm-th']}>내용</th>
-            <th className={styles['adm-th']}>상태</th>
-            <th className={styles['adm-th']}>연도</th>
-            <th className={styles['adm-th']}>학기</th>
-            <th className={styles['adm-th']}>구성원</th>
-            <th className={styles['adm-th']}>작업</th>
-          </tr>
-          <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
-        </thead>
-        <tbody>
-          {filteredSigs.map((sig) => (
-            <EntryRow
-              key={sig.id}
-              entry={sig}
-              onChange={updateSigField}
-              onSave={handleSave}
-              onDelete={handleDelete}
-              saving={saving}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className={styles['adm-table-scroll']}>
+        <table className={`${styles['adm-table']} ${styles['adm-table-wide']}`}>
+          <thead>
+            <tr className={styles['adm-tr']}>
+              <th className={styles['adm-th']}>ID</th>
+              <th className={styles['adm-th']}>이름</th>
+              <th className={styles['adm-th']}>설명</th>
+              <th className={styles['adm-th']}>내용</th>
+              <th className={styles['adm-th']}>상태</th>
+              <th className={styles['adm-th']}>연도</th>
+              <th className={styles['adm-th']}>학기</th>
+              <th className={styles['adm-th']}>연장 신청</th>
+              <th className={styles['adm-th']}>가입기간 자유화</th>
+              <th className={styles['adm-th']}>구성원</th>
+              <th className={styles['adm-th']}>작업</th>
+            </tr>
+            <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
+          </thead>
+          <tbody>
+            {filteredSigs.map((sig) => (
+              <EntryRow
+                key={sig.id}
+                entry={sig}
+                onChange={updateSigField}
+                onSave={handleSave}
+                onDelete={handleDelete}
+                saving={saving}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
