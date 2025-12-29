@@ -129,6 +129,46 @@
   gap: 0.5rem;
   align-items: center;
 }
+
+.adm-table col.adm-col-id {
+  width: 80px;
+  min-width: 80px;
+}
+
+.adm-table col.adm-col-bool {
+  width: 120px;
+  min-width: 120px;
+}
+
+.adm-table col.adm-col-bool-wide {
+  width: 150px;
+  min-width: 150px;
+}
+
+.adm-input-id {
+  min-width: 4rem;
+}
+
+.adm-td .adm-input.adm-input-id {
+  min-width: 4rem;
+}
+
+.adm-select-bool {
+  min-width: 6rem;
+}
+
+.adm-td .adm-select.adm-select-bool {
+  min-width: 6rem;
+}
+
+.adm-select-bool-wide {
+  min-width: 7rem;
+}
+
+.adm-td .adm-select.adm-select-bool-wide {
+  min-width: 7rem;
+}
+
 :global(.dark) .adm-th {
   background: var(--color-surface-light);
 }

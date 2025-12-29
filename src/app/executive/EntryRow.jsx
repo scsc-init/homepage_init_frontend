@@ -3,10 +3,13 @@ import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from './igpage.module.css';
 
 export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) {
+  const idCellStyle = { width: '80px' };
+  const boolCellStyle = { width: '120px' };
+
   const renderBooleanCell = (field, label, value) => {
     const checked = Boolean(value);
     return (
-      <td className={styles['adm-td']}>
+      <td className={styles['adm-td']} style={boolCellStyle}>
         <label className={styles['adm-flex']}>
           <input
             type="checkbox"
@@ -22,7 +25,9 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
 
   return (
     <tr key={entry.id}>
-      <td className={styles['adm-td']}>{entry.id}</td>
+      <td className={styles['adm-td']} style={idCellStyle}>
+        {entry.id}
+      </td>
       <td className={styles['adm-td']}>
         <input
           className={styles['adm-input']}
