@@ -40,16 +40,9 @@
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-}
-
-.adm-table-wide {
   min-width: 1100px;
 }
 
-.adm-table-scroll {
-  width: 100%;
-  overflow-x: auto;
-}
 .adm-th {
   text-align: left;
   padding: 10px;

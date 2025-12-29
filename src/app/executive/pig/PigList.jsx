@@ -170,38 +170,36 @@ export default function PigList({ pigs: pigsDefault }) {
 
   return (
     <div className={styles['adm-table-wrap']}>
-      <div className={styles['adm-table-scroll']}>
-        <table className={`${styles['adm-table']} ${styles['adm-table-wide']}`}>
-          <thead>
-            <tr className={styles['adm-tr']}>
-              <th className={styles['adm-th']}>ID</th>
-              <th className={styles['adm-th']}>이름</th>
-              <th className={styles['adm-th']}>설명</th>
-              <th className={styles['adm-th']}>내용</th>
-              <th className={styles['adm-th']}>상태</th>
-              <th className={styles['adm-th']}>연도</th>
-              <th className={styles['adm-th']}>학기</th>
-              <th className={styles['adm-th']}>연장 신청</th>
-              <th className={styles['adm-th']}>가입기간 자유화</th>
-              <th className={styles['adm-th']}>구성원</th>
-              <th className={styles['adm-th']}>작업</th>
-            </tr>
-            <PigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
-          </thead>
-          <tbody>
-            {filteredPigs.map((pig) => (
-              <EntryRow
-                key={pig.id}
-                entry={pig}
-                onChange={updatePigField}
-                onSave={handleSave}
-                onDelete={handleDelete}
-                saving={saving}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <table className={styles['adm-table']}>
+        <thead>
+          <tr className={styles['adm-tr']}>
+            <th className={styles['adm-th']}>ID</th>
+            <th className={styles['adm-th']}>이름</th>
+            <th className={styles['adm-th']}>설명</th>
+            <th className={styles['adm-th']}>내용</th>
+            <th className={styles['adm-th']}>상태</th>
+            <th className={styles['adm-th']}>연도</th>
+            <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>연장 신청</th>
+            <th className={styles['adm-th']}>가입기간 자유화</th>
+            <th className={styles['adm-th']}>구성원</th>
+            <th className={styles['adm-th']}>작업</th>
+          </tr>
+          <PigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
+        </thead>
+        <tbody>
+          {filteredPigs.map((pig) => (
+            <EntryRow
+              key={pig.id}
+              entry={pig}
+              onChange={updatePigField}
+              onSave={handleSave}
+              onDelete={handleDelete}
+              saving={saving}
+            />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
