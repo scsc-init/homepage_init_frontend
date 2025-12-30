@@ -212,3 +212,10 @@ export const HIDDEN_KV_KEYS = ['main-president', 'vice-president'];
  * 앨범 게시판의 id입니다.
  */
 export const ALBUM_BOARD_ID = 4;
+
+/**
+ * 각각 이미지 업로드가 허용되는 최대 용량, 서버에 전송시 막히는 용량, 이미지 압축 용량입니다.
+ */
+export const IMAGE_UPLOAD_MAX_ORIGINAL_BYTES = 10_000_000; // 10MB
+export const IMAGE_UPLOAD_VERCEL_BLOCK_BYTES = 5_000_000; // 5MB
+export const IMAGE_UPLOAD_TARGET_BYTES = 4_800_000; // ~4.8MB
