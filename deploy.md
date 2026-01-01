@@ -2,6 +2,14 @@
 
 본 문서는 **SCSC Frontend(Next.js)** 를 동방 서버에서 **80 포트(HTTP)** 로 서비스하기 위한 배포 메뉴얼입니다.
 
+> 작성일: 2025-12-29
+>
+> 최신개정일 : 2026-01-01
+>
+> 작성자 : 이한경 윤영우 [강명석](mailto: tomskang@naver.com) 박성현
+>
+> 최신개정자 : [박성현](mailto: coshaman@snu.ac.kr)
+
 - 서버 IP: `147.46.102.118`
 - SSH 포트: `77`
 - 사용자: `owner`
@@ -133,24 +141,7 @@ curl -I -m 3 http://127.0.0.1:3000/ | head -n 20
 
 > nginx는 호스트에서 실행합니다.
 
-### 6.1 nginx 설정 파일 배치
-
-`init.conf`가 없는 경우, `init.conf`를 아래 경로로 복사합니다.
-
-```bash
-mkdir -p ~/scsc-init/frontend/nginx
-sudo cp -a ./nginx/init.conf ~/scsc-init/frontend/nginx/init.conf
-```
-
-### 6.2 nginx.conf에 include 추가
-
-`/etc/nginx/nginx.conf`의 `http { ... }` 블록 안에 아래 한 줄을 추가합니다.
-
-```nginx
-include /home/owner/scsc-init/frontend/nginx/init.conf;
-```
-
-### 6.3 설정 테스트 및 재시작
+### 6.1 설정 테스트 및 재시작
 
 ```bash
 sudo nginx -t
@@ -210,5 +201,3 @@ docker run -d \
 ```
 
 ---
-
-작성일: 2025-12-29
