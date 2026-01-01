@@ -139,7 +139,7 @@ curl -I -m 3 http://127.0.0.1:3000/ | head -n 20
 
 ```bash
 mkdir -p ~/scsc-init/frontend/nginx
-sudo cp -a ./nginx-init.conf ~/scsc-init/frontend/nginx/init.conf
+sudo cp -a ./nginx/init.conf ~/scsc-init/frontend/nginx/init.conf
 ```
 
 ### 6.2 nginx.conf에 include 추가
