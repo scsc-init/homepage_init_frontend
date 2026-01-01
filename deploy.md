@@ -85,7 +85,7 @@ docker build -t scsc-frontend:latest .
 
 ### 5.1 환경변수 파일 준비
 
-- 운영에서는 `.env.production` 을 사용합니다.
+- 운영에서는 `.env.local` 대신 `.env.production` 을 사용합니다.
 - README를 참고해 env를 작성합니다.
 
 확인:
