@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
@@ -6,11 +6,27 @@ import EntryRow from '../EntryRow.jsx';
 import styles from '../igpage.module.css';
 
 function PigFilterRow({ filter, updateFilterCriteria }) {
+  const renderBoolSelect = (field, label, extraClass) => {
+    const selectClasses = [styles['adm-select'], styles['adm-select-bool']];
+    if (extraClass) selectClasses.push(styles[extraClass]);
+    return (
+      <select
+        className={selectClasses.join(' ')}
+        value={filter[field]}
+        onChange={(e) => updateFilterCriteria(field, e.target.value)}
+      >
+        <option value="">전체</option>
+        <option value="true">예</option>
+        <option value="false">아니오</option>
+      </select>
+    );
+  };
+
   return (
     <tr>
       <td className={styles['adm-td']}>
         <input
-          className={styles['adm-input']}
+          className={`${styles['adm-input']} ${styles['adm-input-id']}`}
           value={filter.id}
           onChange={(e) => updateFilterCriteria('id', e.target.value)}
         />
@@ -71,6 +87,10 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
           ))}
         </select>
       </td>
+      <td className={styles['adm-td']}>{renderBoolSelect('should_extend', '연장')}</td>
+      <td className={styles['adm-td']}>
+        {renderBoolSelect('is_rolling_admission', '가입 자유화', 'adm-select-bool-wide')}
+      </td>
       <td className={styles['adm-td']}>
         <input
           className={styles['adm-input']}
@@ -81,6 +101,12 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
     </tr>
   );
 }
+
+const boolMatches = (value, filterValue) => {
+  if (!filterValue) return true;
+  const normalized = value ? 'true' : 'false';
+  return normalized === filterValue;
+};
 
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);
@@ -95,6 +121,8 @@ export default function PigList({ pigs: pigsDefault }) {
     year: '',
     semester: '',
     member: '',
+    should_extend: '',
+    is_rolling_admission: '',
   });
 
   const updatePigField = (id, field, value) => {
@@ -118,7 +146,9 @@ export default function PigList({ pigs: pigsDefault }) {
       (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
       (!newFilter.member ||
-        pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member))));
+        pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member)))) &&
+      boolMatches(pig.should_extend, newFilter.should_extend) &&
+      boolMatches(pig.is_rolling_admission, newFilter.is_rolling_admission);
     setFilteredPigs(pigs.filter(matches));
   };
 
@@ -135,6 +165,8 @@ export default function PigList({ pigs: pigsDefault }) {
           status: pig.status,
           year: pig.year,
           semester: pig.semester,
+          should_extend: Boolean(pig.should_extend),
+          is_rolling_admission: Boolean(pig.is_rolling_admission),
         }),
       });
       if (res.status === 204) alert('저장 완료');
@@ -167,6 +199,19 @@ export default function PigList({ pigs: pigsDefault }) {
   return (
     <div className={styles['adm-table-wrap']}>
       <table className={styles['adm-table']}>
+        <colgroup>
+          <col className={styles['adm-col-id']} />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col className={styles['adm-col-bool']} />
+          <col className={styles['adm-col-bool-wide']} />
+          <col />
+          <col />
+        </colgroup>
         <thead>
           <tr className={styles['adm-tr']}>
             <th className={styles['adm-th']}>ID</th>
@@ -176,6 +221,8 @@ export default function PigList({ pigs: pigsDefault }) {
             <th className={styles['adm-th']}>상태</th>
             <th className={styles['adm-th']}>연도</th>
             <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>연장 신청</th>
+            <th className={styles['adm-th']}>가입기간 자유화</th>
             <th className={styles['adm-th']}>구성원</th>
             <th className={styles['adm-th']}>작업</th>
           </tr>

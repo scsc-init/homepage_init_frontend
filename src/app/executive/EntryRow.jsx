@@ -1,11 +1,33 @@
-// src/app/executive/EntryRow.jsx (CLIENT)
+﻿// src/app/executive/EntryRow.jsx (CLIENT)
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from './igpage.module.css';
 
 export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) {
+  const idCellStyle = { width: '80px' };
+  const boolCellStyle = { width: '120px' };
+
+  const renderBooleanCell = (field, label, value) => {
+    const checked = Boolean(value);
+    return (
+      <td className={styles['adm-td']} style={boolCellStyle}>
+        <label className={styles['adm-flex']}>
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => onChange(entry.id, field, e.target.checked)}
+            aria-label={label}
+          />
+          <span>{checked ? '예' : '아니오'}</span>
+        </label>
+      </td>
+    );
+  };
+
   return (
     <tr key={entry.id}>
-      <td className={styles['adm-td']}>{entry.id}</td>
+      <td className={styles['adm-td']} style={idCellStyle}>
+        {entry.id}
+      </td>
       <td className={styles['adm-td']}>
         <input
           className={styles['adm-input']}
@@ -60,6 +82,8 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           <option value={4}>{SEMESTER_MAP[4]}학기</option>
         </select>
       </td>
+      {renderBooleanCell('should_extend', '다음 학기 연장 신청', entry.should_extend)}
+      {renderBooleanCell('is_rolling_admission', '가입기간 자유화', entry.is_rolling_admission)}
       <td className={styles['adm-td']}>
         <select className={styles['adm-select']}>
           {entry.members.map((m) => (
