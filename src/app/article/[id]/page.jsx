@@ -68,6 +68,10 @@ export default function ArticleDetail({ params }) {
   );
 
   useEffect(() => {
+    console.log(article);
+  }, [article]);
+
+  useEffect(() => {
     if (attachmentIds.length === 0) {
       setAttachmentMeta([]);
       return;
