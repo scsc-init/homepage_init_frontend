@@ -3,6 +3,20 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { directFetch } from '@/util/directFetch';
 
+function formatBytes(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v) || v <= 0) return '';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let x = v;
+  let i = 0;
+  while (x >= 1024 && i < units.length - 1) {
+    x /= 1024;
+    i += 1;
+  }
+  const s = i === 0 ? String(Math.round(x)) : x.toFixed(1);
+  return `${s} ${units[i]}`;
+}
+
 export default function AttachmentSection({ valueIds, onChangeIds, label = '첨부파일' }) {
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState({});
