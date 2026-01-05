@@ -68,10 +68,6 @@ export default function ArticleDetail({ params }) {
   );
 
   useEffect(() => {
-    console.log(article);
-  }, [article]);
-
-  useEffect(() => {
     if (attachmentIds.length === 0) {
       setAttachmentMeta([]);
       return;
@@ -82,9 +78,7 @@ export default function ArticleDetail({ params }) {
         const params = new URLSearchParams();
         attachmentIds.forEach((id) => params.append('ids', id));
         const query = params.toString();
-        const res = await directFetch(
-          query ? `/api/file/metadata?${query}` : '/api/file/metadata',
-        );
+        const res = await directFetch(`/api/file/metadata?${query}`);
         const data = await res.json().catch(() => []);
         if (!res.ok) throw new Error('metadata failed');
         if (!cancelled) {
