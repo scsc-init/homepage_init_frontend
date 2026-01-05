@@ -51,11 +51,12 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = 'ì²¨ë
 
     const fetchMetadata = async () => {
       try {
-        const res = await directFetch('/api/file/metadata', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ids: missingIds }),
-        });
+        const params = new URLSearchParams();
+        missingIds.forEach((id) => params.append('ids', id));
+        const query = params.toString();
+        const res = await directFetch(
+          query ? `/api/file/metadata?${query}` : '/api/file/metadata',
+        );
         const data = await res.json().catch(() => []);
         if (!res.ok) {
           throw new Error('failed to load metadata');

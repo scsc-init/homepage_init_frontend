@@ -79,11 +79,12 @@ export default function ArticleDetail({ params }) {
     let cancelled = false;
     const fetchMeta = async () => {
       try {
-        const res = await directFetch('/api/file/metadata', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ids: attachmentIds }),
-        });
+        const params = new URLSearchParams();
+        attachmentIds.forEach((id) => params.append('ids', id));
+        const query = params.toString();
+        const res = await directFetch(
+          query ? `/api/file/metadata?${query}` : '/api/file/metadata',
+        );
         const data = await res.json().catch(() => []);
         if (!res.ok) throw new Error('metadata failed');
         if (!cancelled) {
