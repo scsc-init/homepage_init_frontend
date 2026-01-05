@@ -1,6 +1,7 @@
 /* 페이지 전체 컨테이너 */
 .SigDetailContainer {
   max-width: 60vw;
+  min-width: 320px;
   margin: 1.5rem auto;
   padding: 1.5rem;
   border-radius: 1rem;
@@ -106,7 +107,7 @@ body {
   color: var(--color-text);
   font-weight: 600;
   line-height: 1;
-  min-width: 9rem; /* 초기 페인트 시 공간 확보 -> 레이아웃 점프 방지 */
+  min-width: 7rem; /* 초기 페인트 시 공간 확보 -> 레이아웃 점프 방지 */
   min-height: 2.5rem;
   transition:
     transform 120ms ease,
@@ -277,13 +278,13 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.55rem 0.9rem;
-  border-radius: 0.625rem;
-  background: var(--color-button-bg);
-  color: var(--color-button-text);
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.9rem;
+  color: var(--color-button-bg);
+  background: var(--executive-card-bg);
   border: 1px solid var(--color-button-border);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 450;
+  font-size: 0.85rem;
   transition:
     transform 120ms ease,
     background-color 120ms ease,
@@ -293,8 +294,9 @@ body {
 }
 
 .SigButton:hover {
-  background: var(--color-button-hover-bg);
+  background: var(--color-button-bg);
   transform: translateY(-1px);
+  color: var(--color-button-text);
 }
 
 .SigButton:active {
@@ -318,12 +320,14 @@ body {
 }
 
 .SigButton.is-delete:not(:hover) {
-  background-color: var(--color-button-alert-bg);
+  color: var(--color-button-alert-bg);
   border-style: solid;
+  border-color: var(--color-button-alert-hover-bg);
 }
 
 .SigButton.is-delete:hover {
-  background-color: var(--color-button-alert-hover-bg);
+  background-color: var(--color-button-alert-bg);
+  color: var(--color-button-text);
   border-style: solid;
 }
 
@@ -335,20 +339,22 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-button-bg);
-  color: var(--color-button-text);
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
+  color: var(--color-button-bg);
+  background-color: var(--executive-card-bg);
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--color-button-border);
+  font-weight: 450;
+  font-size: 0.85rem;
   cursor: pointer;
-  border: none;
   transition: background-color 0.2s ease;
   min-width: 0;
 }
 
 .SigMemberBtn:hover {
-  background-color: var(--color-button-hover-bg);
+  background-color: var(--color-button-bg);
   transform: translateY(-1px);
+  color: var(--color-button-text);
 }
 
 .SigMemberMenu {
@@ -373,10 +379,11 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.8rem;
   background: transparent;
   border: none;
   text-align: center;
+  font-size: 0.85rem;
   color: var(--color-text-body);
   cursor: pointer;
   width: 100%;
@@ -396,20 +403,20 @@ body {
 
 @media (max-width: 560px) {
   .SigActionRow {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
   }
   .SigButton {
     width: 100%;
-    max-width: 100%;
+    max-width: 5rem;
   }
   .SigMemberBtn {
     width: 100%;
-    max-width: 100%;
+    max-width: 7rem;
   }
   .SigMemberMenu {
     width: 100%;
-    max-width: 100%;
+    max-width: 7rem;
   }
 }
 

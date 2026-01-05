@@ -70,7 +70,7 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {'시그 비활성화'}
+      {'비활성화'}
     </button>
   ) : null;
 }

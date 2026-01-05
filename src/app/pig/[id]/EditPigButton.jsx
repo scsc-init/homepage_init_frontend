@@ -11,7 +11,7 @@ export default function EditPigButton({ pigId, canEdit }) {
       onClick={() => router.push(`/pig/edit/${pigId}`)}
       type="button"
     >
-      내용 수정하기
+      수정하기
     </button>
   );
 }
