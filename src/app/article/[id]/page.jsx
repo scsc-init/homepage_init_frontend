@@ -7,10 +7,11 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import './page.css';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
+import { directFetch } from '@/util/directFetch';
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function ArticleDetail({ params }) {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [attachmentMeta, setAttachmentMeta] = useState([]);
   const { id } = params;
 
   useEffect(() => {
@@ -57,9 +59,53 @@ export default function ArticleDetail({ params }) {
     loadAll();
   }, [router, id]);
 
+  const attachmentIds = useMemo(
+    () =>
+      Array.isArray(article?.attachments)
+        ? article.attachments.map((value) => String(value))
+        : [],
+    [article?.attachments],
+  );
+
   useEffect(() => {
-    console.log(article);
-  }, [article]);
+    if (attachmentIds.length === 0) {
+      setAttachmentMeta([]);
+      return;
+    }
+    let cancelled = false;
+    const fetchMeta = async () => {
+      try {
+        const params = new URLSearchParams();
+        attachmentIds.forEach((id) => params.append('ids', id));
+        const query = params.toString();
+        const res = await directFetch(`/api/file/metadata?${query}`);
+        const data = await res.json().catch(() => []);
+        if (!res.ok) throw new Error('metadata failed');
+        if (!cancelled) {
+          setAttachmentMeta(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        console.warn('첨부파일 정보를 불러오지 못했습니다.', err);
+        if (!cancelled) setAttachmentMeta([]);
+      }
+    };
+
+    fetchMeta();
+    return () => {
+      cancelled = true;
+    };
+  }, [attachmentIds]);
+
+  const attachmentMetaMap = useMemo(() => {
+    const map = new Map();
+    attachmentMeta.forEach((item) => {
+      const key = item?.id ? String(item.id) : '';
+      if (key) {
+        map.set(key, item);
+      }
+    });
+    return map;
+  }, [attachmentMeta]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -151,18 +197,21 @@ export default function ArticleDetail({ params }) {
                 <div className="AttachmentLabel">첨부파일</div>
               </div>
               <ul className="AttachmentList">
-                {article.attachments.map((id) => (
-                  <li key={id} className="AttachmentItem">
-                    <a
-                      className="AttachmentLink"
-                      href={`/api/file/docs/download/${encodeURIComponent(id)}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {String(id)}
-                    </a>
-                  </li>
-                ))}
+                {article.attachments.map((value) => {
+                  const attachmentId = String(value);
+                  return (
+                    <li key={attachmentId} className="AttachmentItem">
+                      <a
+                        className="AttachmentLink"
+                        href={`/api/file/docs/download/${encodeURIComponent(attachmentId)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {attachmentMetaMap.get(attachmentId)?.original_filename || attachmentId}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </>

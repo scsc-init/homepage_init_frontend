@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { directFetch } from '@/util/directFetch';
 
 function formatBytes(n) {
@@ -19,8 +19,61 @@ function formatBytes(n) {
 
 export default function AttachmentSection({ valueIds, onChangeIds, label = '첨부파일' }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [metadataMap, setMetadataMap] = useState({});
 
-  const ids = useMemo(() => (Array.isArray(valueIds) ? valueIds : []), [valueIds]);
+  const ids = useMemo(
+    () => (Array.isArray(valueIds) ? valueIds.map((id) => String(id)) : []),
+    [valueIds],
+  );
+
+  const registerMetadata = useCallback((items) => {
+    if (!Array.isArray(items) || items.length === 0) return;
+    setMetadataMap((prev) => {
+      const next = { ...prev };
+      items.forEach((item) => {
+        const key = item?.id ? String(item.id) : '';
+        if (key) {
+          next[key] = item;
+        }
+      });
+      return next;
+    });
+  }, []);
+
+  const missingIds = useMemo(
+    () => ids.filter((id) => id && !metadataMap[id]),
+    [ids, metadataMap],
+  );
+
+  useEffect(() => {
+    if (missingIds.length === 0) return;
+    let cancelled = false;
+
+    const fetchMetadata = async () => {
+      try {
+        const params = new URLSearchParams();
+        missingIds.forEach((id) => params.append('ids', id));
+        const query = params.toString();
+        const res = await directFetch(
+          query ? `/api/file/metadata?${query}` : '/api/file/metadata',
+        );
+        const data = await res.json().catch(() => []);
+        if (!res.ok) {
+          throw new Error('failed to load metadata');
+        }
+        if (!cancelled) {
+          registerMetadata(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        console.warn('첨부파일 정보를 불러오지 못했습니다.', err);
+      }
+    };
+
+    fetchMetadata();
+    return () => {
+      cancelled = true;
+    };
+  }, [missingIds, registerMetadata]);
 
   const onPickFiles = useCallback(
     async (e) => {
@@ -32,7 +85,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
 
       setIsUploading(true);
 
-      const uploadedIds = [];
+      const uploadedItems = [];
       try {
         for (const file of files) {
           const formData = new FormData();
@@ -72,18 +125,24 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
             continue;
           }
 
-          uploadedIds.push(String(data.id));
+          uploadedItems.push({
+            id: String(data.id),
+            original_filename: data.original_filename || file.name,
+            size: data.size,
+            mime_type: data.mime_type,
+          });
         }
       } finally {
         setIsUploading(false);
       }
 
-      if (uploadedIds.length > 0) {
-        const merged = Array.from(new Set([...ids, ...uploadedIds]));
+      if (uploadedItems.length > 0) {
+        const merged = Array.from(new Set([...ids, ...uploadedItems.map((item) => item.id)]));
         onChangeIds?.(merged);
+        registerMetadata(uploadedItems);
       }
     },
-    [ids, isUploading, onChangeIds],
+    [ids, isUploading, onChangeIds, registerMetadata],
   );
 
   const removeId = useCallback(
@@ -122,7 +181,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
                 target="_blank"
                 rel="noreferrer"
               >
-                {id}
+                {metadataMap[id]?.original_filename || id}
               </a>
               <button
                 type="button"
