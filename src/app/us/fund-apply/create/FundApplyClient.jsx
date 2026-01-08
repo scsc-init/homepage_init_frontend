@@ -676,9 +676,6 @@ export default function FundApplyClient({
               <div className="EditorSection">
                 <div className="EditorHeader">
                   <label className="C_Label">상세 내용</label>
-                  <a className="GuideLink" href={GUIDE_URL} target="_blank" rel="noreferrer">
-                    작성 가이드
-                  </a>
                 </div>
 
                 <div className="EditorWrapper has-content">
