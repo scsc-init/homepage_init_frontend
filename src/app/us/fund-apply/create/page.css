@@ -67,6 +67,7 @@ body {
     border-color 0.2s ease,
     opacity 0.2s ease;
   appearance: none;
+  box-sizing: border-box;
 }
 .C_Input:focus {
   border-color: var(--color-button-bg);
@@ -183,7 +184,7 @@ label[for='fund-amount-input']::after {
 .C_Link {
   text-decoration: underline;
   text-underline-offset: 2px;
-  color: var(--color-button-bg);
+  color: var(--color-text-subtle);
 }
 
 .EditorWrapper {
@@ -314,6 +315,12 @@ label[for='fund-amount-input']::after {
 .SigPigControlRow > .C_Input {
   flex: 1 1 auto;
   margin-bottom: 0.2rem;
+}
+.C_Input[type='file'] {
+  appearance: auto;
+  -webkit-appearance: auto;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 .PrevTermInlineCheck {

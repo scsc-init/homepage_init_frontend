@@ -1,13 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { SEMESTER_MAP } from '@/util/constants';
 import './page.css';
-
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
 const GUIDE_URL =
   'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
@@ -50,16 +47,6 @@ function normalizeLF(s) {
   return s.replace(/\r\n/g, '\n');
 }
 
-function isValidDraft(v) {
-  if (v == null) return false;
-  if (typeof v !== 'object') return false;
-  return (
-    typeof v.content === 'string' &&
-    Array.isArray(v.embeds) &&
-    v.embeds.every((e) => e && typeof e === 'object')
-  );
-}
-
 function extractFirstText(v) {
   if (typeof v === 'string') return v.trim();
   if (v && typeof v === 'object') {
@@ -88,11 +75,8 @@ export default function FundApplyClient({
 
   const [me, setMe] = useState(null);
 
-  const [content, setContent] = useState({ content: '', embeds: [] });
-  const [hasContent, setHasContent] = useState(false);
-
-  const wrapperRef = useRef(null);
-  const placeholderRef = useRef(null);
+  const [imageIds, setImageIds] = useState([]);
+  const [imageUploading, setImageUploading] = useState(false);
 
   const {
     register,
@@ -114,7 +98,8 @@ export default function FundApplyClient({
       accountNumber: '',
       accountHolder: '',
       checked: false,
-      editor: { content: '', embeds: [] },
+      reasonText: '',
+      imageIds: [],
     },
   });
 
@@ -122,7 +107,6 @@ export default function FundApplyClient({
   const orgCategory = watch('orgCategory');
   const isChecked = watch('checked');
   const useKakaoPay = watch('useKakaoPay');
-  const editorDraft = watch('editor');
 
   const [showPrevTerm, setShowPrevTerm] = useState(false);
 
@@ -214,15 +198,6 @@ export default function FundApplyClient({
   }, [router]);
 
   useEffect(() => {
-    if (!applyType) return;
-    const placeholder = PLACEHOLDER[applyType] ?? '';
-    const draft = { content: normalizeLF(placeholder), embeds: [] };
-    setContent(draft);
-    setHasContent(Boolean(draft.content.trim()));
-    setValue('editor', draft, { shouldValidate: true, shouldDirty: true });
-  }, [applyType, setValue]);
-
-  useEffect(() => {
     if (applyType !== 'fund' && applyType !== 'meal') {
       setShowPrevTerm(false);
     }
@@ -235,6 +210,10 @@ export default function FundApplyClient({
       setValue('pairBefore', '');
       setValue('pairAfter', '');
     }
+
+    setValue('reasonText', '', { shouldValidate: true, shouldDirty: true });
+    setImageIds([]);
+    setValue('imageIds', [], { shouldValidate: true, shouldDirty: true });
   }, [applyType, setValue]);
 
   useEffect(() => {
@@ -246,15 +225,6 @@ export default function FundApplyClient({
       setTargetList([]);
     }
   }, [orgCategory, showPrevTerm, sigsList, pigsList, prevSigsList, prevPigsList]);
-
-  useEffect(() => {
-    if (!isValidDraft(editorDraft)) {
-      setHasContent(false);
-      return;
-    }
-    const text = String(editorDraft.content ?? '');
-    setHasContent(Boolean(text.trim()));
-  }, [editorDraft]);
 
   const disableOrgSelects = submitting || applyType === 'contest' || applyType === 'pair';
 
@@ -329,27 +299,123 @@ export default function FundApplyClient({
       }
     }
 
-    const draft = form.editor;
-    const body = isValidDraft(draft) ? normalizeLF(draft.content) : '';
-    const fullContent = `${headerLines.join('\n')}\n\n---\n\n${body}`.trim();
-    const embeds = isValidDraft(draft) ? draft.embeds : [];
+    const reason = normalizeLF(String(form.reasonText ?? '')).trim();
+    const ids = (Array.isArray(form.imageIds) ? form.imageIds : [])
+      .map((id) => String(id))
+      .filter(Boolean);
 
-    return { title, content: fullContent, embeds };
+    const imgs = ids.map((id) => `![image](/api/image/download/${encodeURIComponent(id)})`);
+
+    const blocks = [];
+    blocks.push(`${headerLines.join('\n')}\n\n---\n`);
+    blocks.push(`## 지원 사유/기타\n\n${reason}\n`);
+    if (imgs.length > 0) blocks.push(`\n## 첨부 이미지\n\n${imgs.join('\n')}\n`);
+
+    return { title, content: blocks.join('\n').trim(), attachments: ids };
+  };
+
+  const uploadImages = async (files) => {
+    const arr = Array.isArray(files)
+      ? files.filter(Boolean)
+      : Array.from(files || []).filter(Boolean);
+    if (arr.length === 0) return;
+    if (imageUploading) return;
+
+    const ids = [];
+
+    setImageUploading(true);
+    try {
+      for (const f of arr) {
+        const formData = new FormData();
+        formData.append('file', f);
+
+        let res;
+        try {
+          res = await fetch('/api/file/image/upload', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+          });
+        } catch {
+          alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
+          continue;
+        }
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch {
+          data = null;
+        }
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
+          } else if (res.status === 413 || res.status === 403) {
+            alert('이미지 용량이 너무 큽니다. (10MB 이하로 줄인 뒤 다시 시도해 주세요.)');
+          } else {
+            const msg =
+              data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
+            alert(msg);
+          }
+          continue;
+        }
+
+        if (!data?.id) {
+          alert('이미지 업로드 응답에 id가 없습니다.');
+          continue;
+        }
+
+        ids.push(String(data.id));
+      }
+    } finally {
+      setImageUploading(false);
+    }
+
+    if (ids.length > 0) {
+      const next = Array.from(new Set([...imageIds, ...ids]));
+      setImageIds(next);
+      setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const removeImageId = (id) => {
+    const next = imageIds.filter((x) => x !== id);
+    setImageIds(next);
+    setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
   };
 
   const onSubmit = async (form) => {
     try {
       setSubmitting(true);
 
-      if (!boardInfo?.code) throw new Error('게시판 정보가 올바르지 않습니다.');
+      const boardIdRaw = boardInfo?.id;
+      const boardId =
+        typeof boardIdRaw === 'number'
+          ? boardIdRaw
+          : Number.isFinite(Number(boardIdRaw))
+            ? Number(boardIdRaw)
+            : null;
+
+      if (!boardId) throw new Error('게시판 정보가 올바르지 않습니다.');
+
+      const reason = String(form.reasonText ?? '').trim();
+      if (!reason) throw new Error('지원 사유/기타를 입력해주세요.');
+      if (!Array.isArray(form.imageIds) || form.imageIds.length === 0)
+        throw new Error('이미지를 1장 이상 첨부해주세요.');
 
       const payload = buildPayload(form);
 
-      const res = await fetch(`/api/boards/${boardInfo.code}/articles`, {
+      const res = await fetch('/api/article/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          title: payload.title,
+          content: payload.content,
+          board_id: boardId,
+          attachments: payload.attachments,
+        }),
       });
 
       if (!res.ok) {
@@ -610,25 +676,106 @@ export default function FundApplyClient({
               <div className="EditorSection">
                 <div className="EditorHeader">
                   <label className="C_Label">상세 내용</label>
-                  <a className="GuideLink" href={GUIDE_URL} target="_blank" rel="noreferrer">
-                    작성 가이드
-                  </a>
                 </div>
 
-                <div className={`EditorWrapper ${hasContent ? 'has-content' : ''}`}>
-                  <div ref={wrapperRef} className="EditorMinHeight">
-                    <Editor
-                      value={content}
-                      onChange={(v) => {
-                        setContent(v);
-                        setValue('editor', v, { shouldValidate: true, shouldDirty: true });
-                      }}
-                      disabled={submitting}
-                    />
-                  </div>
+                <div className="EditorWrapper has-content">
+                  <div className="EditorMinHeight">
+                    <div className="EditorPlaceholderText">
+                      {(PLACEHOLDER[applyType] ?? '').trim()}
+                    </div>
 
-                  <div ref={placeholderRef} className="EditorPlaceholder" aria-hidden="true">
-                    {(PLACEHOLDER[applyType] ?? '').trim()}
+                    <div style={{ marginTop: '1rem' }}>
+                      <label className="C_Label">이미지 첨부</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="C_Input"
+                        disabled={submitting || imageUploading}
+                        onChange={async (e) => {
+                          const picked = Array.from(e.target.files || []);
+                          e.target.value = '';
+                          await uploadImages(picked);
+                        }}
+                      />
+
+                      <input
+                        type="hidden"
+                        {...register('imageIds', {
+                          validate: (v) =>
+                            Array.isArray(v) && v.length > 0
+                              ? true
+                              : '이미지를 1장 이상 첨부해주세요.',
+                        })}
+                      />
+
+                      {errors.imageIds?.message && (
+                        <p className="C_ErrorText" style={{ marginTop: '0.25rem' }}>
+                          {String(errors.imageIds.message)}
+                        </p>
+                      )}
+
+                      {imageIds.length > 0 && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          {imageIds.map((id) => (
+                            <div
+                              key={id}
+                              style={{
+                                display: 'flex',
+                                gap: '0.5rem',
+                                alignItems: 'center',
+                                marginTop: '0.25rem',
+                              }}
+                            >
+                              <a
+                                className="C_Link"
+                                href={`/api/image/download/${encodeURIComponent(id)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {id}
+                              </a>
+                              <button
+                                type="button"
+                                className="C_Link"
+                                onClick={() => removeImageId(id)}
+                                disabled={submitting || imageUploading}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  padding: 0,
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                삭제
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ marginTop: '1rem' }}>
+                      <label className="C_Label">지원 사유/기타</label>
+                      <textarea
+                        {...register('reasonText', {
+                          required: '지원 사유/기타를 입력해주세요.',
+                          validate: (v) =>
+                            String(v ?? '').trim().length > 0 ||
+                            '지원 사유/기타를 입력해주세요.',
+                        })}
+                        placeholder="지원 사유/기타"
+                        className="C_Input"
+                        disabled={submitting}
+                        rows={8}
+                        style={{ resize: 'vertical' }}
+                      />
+                      {errors.reasonText?.message && (
+                        <p className="C_ErrorText" style={{ marginTop: '0.25rem' }}>
+                          {String(errors.reasonText.message)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -639,7 +786,12 @@ export default function FundApplyClient({
                     {...register('checked', { required: true })}
                     disabled={submitting}
                   />
-                  <span className="C_CheckText">안내사항을 확인했습니다.</span>
+                  <span className="C_CheckText">
+                    <a className="C_Link" href={GUIDE_URL} target="_blank" rel="noreferrer">
+                      SCSC 지원 가이드라인
+                    </a>
+                    을 확인했습니다.
+                  </span>
                 </label>
               </div>
 
@@ -647,9 +799,13 @@ export default function FundApplyClient({
                 <button
                   type="submit"
                   className="SigCreateBtn"
-                  disabled={!isChecked || submitting}
+                  disabled={!isChecked || submitting || imageUploading}
                 >
-                  {submitting ? '신청 중...' : '신청하기'}
+                  {submitting
+                    ? '신청 중...'
+                    : imageUploading
+                      ? '이미지 업로드 중...'
+                      : '신청하기'}
                 </button>
               </div>
             </div>
