@@ -3,6 +3,7 @@
 import './page.css';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { MainLogoImage } from '@/components/common/MainLogoImage';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -87,14 +88,7 @@ export const MainLogo = () => {
     </div>
   ) : (
     <div className="main-logo-wrapper">
-      <Image
-        src="/main/main-logo.png"
-        alt="Main Logo"
-        className="main-logo logo"
-        width={1976}
-        height={670}
-        priority
-      />
+      <MainLogoImage className="main-logo logo" width={1976} height={670} loading="eager" />
       <div className="main-subtitle">Seoul National University Computer Study Club</div>
     </div>
   );

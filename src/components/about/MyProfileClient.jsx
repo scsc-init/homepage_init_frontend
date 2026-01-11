@@ -6,6 +6,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { fetchMeClient } from '@/util/fetchClientData';
 import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import './myProfile.css';
+import { MainLogoImage } from '@/components/common/MainLogoImage';
 
 const USER_STATUS_MAP = {
   active: '활동 중(입금 확인 완료)',
@@ -131,7 +132,12 @@ export default function MyProfileClient() {
     <div>
       <div className="main-logo-wrapper__mypage">
         <p className="main-logo-description">My Page</p>
-        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo__mypage logo" />
+        <MainLogoImage
+          className="main-logo__mypage logo"
+          width={1976}
+          height={670}
+          loading="eager"
+        />
       </div>
 
       <div className="user-profile-wrapper">
