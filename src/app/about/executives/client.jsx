@@ -14,7 +14,9 @@ function roleDisplay(user, leadershipIds) {
   const { presidentId, vicePresidentIds } = leadershipIds || {};
   const userId = String(user.id ?? '').trim();
   const presidentKey = String(presidentId ?? '').trim();
-  const vicePresidentKey = String(vicePresidentIds ?? '').trim().split(';');
+  const vicePresidentKey = String(vicePresidentIds ?? '')
+    .trim()
+    .split(';');
   if (presidentKey && userId === presidentKey) return '회장';
   if (vicePresidentKey && vicePresidentKey.includes(userId)) return '부회장';
   return '임원';

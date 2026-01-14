@@ -25,8 +25,9 @@ export default async function ExecutiveUserPage() {
 
   const presidentId =
     kv['main-president']?.status === 'fulfilled' ? kv['main-president'].value || '' : '';
-  const vicePresidentIds =
-    (kv['vice-president']?.status === 'fulfilled' ? kv['vice-president'].value || '' : '').split(';');
+  const vicePresidentIds = (
+    kv['vice-president']?.status === 'fulfilled' ? kv['vice-president'].value || '' : ''
+  ).split(';');
 
   const initialLeadership = { presidentId, vicePresidentIds };
 
