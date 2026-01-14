@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { SEMESTER_MAP } from '@/util/constants';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+
 import './page.css';
 
 const GUIDE_URL =

@@ -30,20 +30,11 @@ export default function OAuthLanding() {
   const didNavigateRef = useRef(false);
 
   useEffect(() => {
-    log('oauth_landing_effect', {
-      status,
-      registered: session?.registered,
-      didNavigate: didNavigateRef.current,
-      href: typeof window !== 'undefined' ? window.location.href : null,
-      cookie: typeof document !== 'undefined' ? document.cookie : null,
-    });
-
     if (didNavigateRef.current) return;
     if (status === 'loading') return;
 
     if (status === 'unauthenticated') {
       didNavigateRef.current = true;
-      log('oauth_landing_unauthenticated_redirect_to_login', {});
       replaceLoginWithRedirect(router);
       return;
     }
@@ -51,13 +42,11 @@ export default function OAuthLanding() {
     if (session?.registered) {
       const redirectTo = consumeRedirectAfterLogin();
       didNavigateRef.current = true;
-      log('oauth_landing_registered_redirect', { redirectTo });
       router.replace(redirectTo || '/');
       return;
     }
 
     didNavigateRef.current = true;
-    log('oauth_landing_unregistered_redirect_to_register', {});
     router.replace('/us/register');
   }, [status, session, router]);
 
