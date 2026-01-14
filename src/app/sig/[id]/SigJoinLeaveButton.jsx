@@ -74,7 +74,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? '시그 탈퇴하기' : '시그 가입하기'}
+      {isMember ? '탈퇴하기' : '가입하기'}
     </button>
   );
 }

@@ -8,3 +8,10 @@
   box-sizing: border-box;
   cursor: text;
 }
+
+.mdxeditor [role='dialog'] input,
+.mdxeditor [role='dialog'] textarea {
+  min-height: unset;
+  padding: 6px;
+  width: auto;
+}
