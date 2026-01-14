@@ -176,7 +176,7 @@ export default function FundApplyClient({
 
         if (!res.ok) {
           if (res.status === 401) {
-            router.replace('/us/login');
+            replaceLoginWithRedirect(router);
             return;
           }
           throw new Error(`프로필 조회 실패 (${res.status})`);

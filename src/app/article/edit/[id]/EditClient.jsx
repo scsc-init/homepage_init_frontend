@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import '@/app/board/[id]/create/page.css';
 import AttachmentSection from '@/components/board/AttachmentSection';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
@@ -37,7 +38,7 @@ export default function EditClient({ articleId }) {
         ]);
         if (userRes.status === 401) {
           alert('로그인이 필요합니다.');
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
           return;
         }
         if (!articleRes.ok || !userRes.ok) throw new Error();
@@ -110,7 +111,7 @@ export default function EditClient({ articleId }) {
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
         alert('다시 로그인해주세요.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         let errText = '수정 실패';
         try {

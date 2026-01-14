@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function ClientAuthGate({ children }) {
     let cancelled = false;
 
     const goLogin = () => {
-      Promise.resolve().then(() => router.replace('/us/login'));
+      Promise.resolve().then(() => replaceLoginWithRedirect(router));
     };
 
     (async () => {

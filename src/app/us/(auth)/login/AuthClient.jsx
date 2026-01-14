@@ -7,6 +7,7 @@ import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import styles from '../auth.module.css';
 
 const IN_APP_BROWSER_NAMES = {
@@ -59,7 +60,7 @@ export default function AuthClient() {
       url.searchParams.delete('error');
       router.replace(url.pathname + url.search);
     } catch {
-      router.replace('/us/login');
+      replaceLoginWithRedirect(router);
     }
   }, [error, router]);
 
