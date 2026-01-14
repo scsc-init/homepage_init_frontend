@@ -87,13 +87,13 @@ export default function UserList({ users: usersDefault, majors = [] }) {
 
   return (
     <div>
-      <h2>유저 csv 다운로드</h2>
+      <h3>유저 csv 다운로드</h3>
       <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
       <div className="adm-actions">
         <ExportUsersButton filteredUsers={filteredUsers} />
       </div>
 
-      <h2>유저 편집</h2>
+      <h3>유저 편집</h3>
       <div className="adm-table-wrap">
         <table className="adm-table">
           <thead>
