@@ -47,5 +47,7 @@ export const config = {
     '/article/:path*',
     '/sig/:path*',
     '/pig/:path*',
+    '/us/edit-user-info/:path*',
+    '/executive/:path*',
   ],
 };
