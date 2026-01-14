@@ -24,11 +24,15 @@ export default async function LoginPage() {
 
   if (jwt) {
     const raw = cookieStore.get('redirect_after_login')?.value;
+
     if (raw) {
+      cookieStore.delete('redirect_after_login');
+
       let decoded = raw;
       try {
         decoded = decodeURIComponent(raw);
       } catch {}
+
       const base = String(decoded).split('?')[0] || '';
 
       if (isSafeInternalPath(decoded) && !isLoginPath(base)) {
