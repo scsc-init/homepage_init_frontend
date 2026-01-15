@@ -1,7 +1,8 @@
 import { ALLOWED_REDIRECT_PREFIXES } from '@/util/constants';
 
-const REDIRECT_COOKIE = 'redirect_after_login';
-const LOGIN_PREFIX = '/us/login';
+export const REDIRECT_COOKIE = 'redirect_after_login';
+export const AUTH_COOKIE = 'app_jwt';
+export const LOGIN_PREFIX = '/us/login';
 
 export function isSafeInternalPath(value) {
   if (!value || typeof value !== 'string') return false;

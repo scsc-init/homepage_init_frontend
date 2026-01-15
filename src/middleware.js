@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isAllowedRedirectPath } from '@/util/loginRedirect';
-
-const REDIRECT_COOKIE = 'redirect_after_login';
-const AUTH_COOKIE = 'app_jwt';
+import { AUTH_COOKIE, REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
 
 function buildReturnPath(req) {
   const { pathname, search } = req.nextUrl;
