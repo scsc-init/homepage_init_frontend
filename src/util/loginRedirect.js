@@ -1,7 +1,9 @@
+import { ALLOWED_REDIRECT_PREFIXES } from '@/util/constants';
+
 const REDIRECT_COOKIE = 'redirect_after_login';
 const LOGIN_PREFIX = '/us/login';
 
-function isSafeInternalPath(value) {
+export function isSafeInternalPath(value) {
   if (!value || typeof value !== 'string') return false;
   if (!value.startsWith('/')) return false;
   if (value.startsWith('//')) return false;
@@ -10,9 +12,27 @@ function isSafeInternalPath(value) {
   return true;
 }
 
-function isLoginPath(pathname) {
+export function isLoginPath(pathname) {
   if (!pathname) return false;
   return pathname === '/login' || pathname === '/us/login' || pathname.startsWith(LOGIN_PREFIX);
+}
+
+export function isAllowedRedirectPath(pathname) {
+  if (!isSafeInternalPath(pathname)) return false;
+  const base = String(pathname).split('?')[0] || '';
+  if (isLoginPath(base)) return false;
+  return ALLOWED_REDIRECT_PREFIXES.some((p) => base === p || base.startsWith(`${p}/`));
+}
+
+export function normalizeRedirectTarget(raw) {
+  if (!raw) return null;
+
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {}
+
+  return isAllowedRedirectPath(decoded) ? decoded : null;
 }
 
 function getCurrentPath() {
@@ -68,16 +88,11 @@ function clearCookie(name) {
 
 export function setRedirectAfterLogin(path) {
   const target = path || getCurrentPath();
-  const base = String(target).split('?')[0] || '';
 
-  debugLog('set_redirect_after_login_attempt', { target, base });
+  debugLog('set_redirect_after_login_attempt', { target });
 
-  if (!isSafeInternalPath(target)) {
-    debugLog('set_redirect_after_login_rejected', { reason: 'unsafe_path', target });
-    return;
-  }
-  if (isLoginPath(base)) {
-    debugLog('set_redirect_after_login_rejected', { reason: 'login_path', target });
+  if (!isAllowedRedirectPath(target)) {
+    debugLog('set_redirect_after_login_rejected', { reason: 'not_allowed', target });
     return;
   }
 
@@ -101,23 +116,14 @@ export function consumeRedirectAfterLogin() {
 
   clearCookie(REDIRECT_COOKIE);
 
-  let decoded = raw;
-  try {
-    decoded = decodeURIComponent(raw);
-  } catch {}
-
-  const base = String(decoded).split('?')[0] || '';
-  if (!isSafeInternalPath(decoded)) {
-    debugLog('consume_redirect_after_login_rejected', { reason: 'unsafe_path', decoded });
-    return null;
-  }
-  if (isLoginPath(base)) {
-    debugLog('consume_redirect_after_login_rejected', { reason: 'login_path', decoded });
+  const target = normalizeRedirectTarget(raw);
+  if (!target) {
+    debugLog('consume_redirect_after_login_rejected', { reason: 'not_allowed', raw });
     return null;
   }
 
-  debugLog('consume_redirect_after_login_ok', { decoded });
-  return decoded;
+  debugLog('consume_redirect_after_login_ok', { decoded: target });
+  return target;
 }
 
 export function pushLoginWithRedirect(router, options = {}) {

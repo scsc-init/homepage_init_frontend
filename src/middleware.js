@@ -1,21 +1,13 @@
 import { NextResponse } from 'next/server';
+import { isAllowedRedirectPath } from '@/util/loginRedirect';
 
 const REDIRECT_COOKIE = 'redirect_after_login';
 const AUTH_COOKIE = 'app_jwt';
 
-function isSafeInternalPath(value) {
-  if (!value || typeof value !== 'string') return false;
-  if (!value.startsWith('/')) return false;
-  if (value.startsWith('//')) return false;
-  if (value.includes('://')) return false;
-  if (value.toLowerCase().startsWith('/javascript:')) return false;
-  return true;
-}
-
 function buildReturnPath(req) {
   const { pathname, search } = req.nextUrl;
   const target = `${pathname}${search || ''}`;
-  return isSafeInternalPath(target) ? target : '/';
+  return isAllowedRedirectPath(target) ? target : null;
 }
 
 export function middleware(req) {
@@ -30,12 +22,14 @@ export function middleware(req) {
 
   const res = NextResponse.redirect(loginUrl);
 
-  res.cookies.set(REDIRECT_COOKIE, returnTo, {
-    path: '/',
-    maxAge: 300,
-    sameSite: 'lax',
-    secure: req.nextUrl.protocol === 'https:',
-  });
+  if (returnTo) {
+    res.cookies.set(REDIRECT_COOKIE, returnTo, {
+      path: '/',
+      maxAge: 300,
+      sameSite: 'lax',
+      secure: req.nextUrl.protocol === 'https:',
+    });
+  }
 
   return res;
 }
@@ -47,7 +41,5 @@ export const config = {
     '/article/:path*',
     '/sig/:path*',
     '/pig/:path*',
-    '/us/edit-user-info/:path*',
-    '/executive/:path*',
   ],
 };

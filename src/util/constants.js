@@ -219,3 +219,19 @@ export const ALBUM_BOARD_ID = 4;
 export const IMAGE_UPLOAD_MAX_ORIGINAL_BYTES = 10_000_000; // 10MB
 export const IMAGE_UPLOAD_VERCEL_BLOCK_BYTES = 5_000_000; // 5MB
 export const IMAGE_UPLOAD_TARGET_BYTES = 4_800_000; // ~4.8MB
+
+/**
+ * 로그인 이후 돌아갈 수 있는 리다이렉트 경로의 화이트리스트(prefix)입니다.
+ * 이 목록에 포함되지 않은 경로로는 리다이렉트하지 않습니다.
+ * 특히 /us/login을 넣으면 무한로딩에 걸리니 주의하십시오.
+ * @type {string[]}
+ */
+export const ALLOWED_REDIRECT_PREFIXES = [
+  '/us/fund-apply',
+  '/board',
+  '/article',
+  '/sig',
+  '/pig',
+  '/us/edit-user-info',
+  '/executive',
+];
