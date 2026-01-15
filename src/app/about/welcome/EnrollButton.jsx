@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function EnrollButton() {
   const [ready, setReady] = useState(false);
@@ -13,12 +14,12 @@ export default function EnrollButton() {
         const res = await fetch('/api/user/profile', { cache: 'no-store' });
         if (!res.ok) {
           alert('로그인이 필요합니다.');
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
           return;
         }
         setReady(true);
       } catch {
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       }
     };
     check();

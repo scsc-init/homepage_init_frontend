@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { minExecutiveLevel } from '@/util/constants';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function buildTree(flat) {
   const idMap = {};
@@ -147,7 +148,7 @@ export default function Comments({ articleId, initialComments, user }) {
     try {
       const res = await fetch(`/api/comments/${articleId}`);
       if (res.status === 401) {
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
         return;
       }
       if (!res.ok) {
@@ -179,7 +180,7 @@ export default function Comments({ articleId, initialComments, user }) {
         await fetchComments();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         alert('댓글 작성 실패: ' + (await readErrorText(res)));
       }

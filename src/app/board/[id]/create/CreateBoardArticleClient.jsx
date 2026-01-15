@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
 import AttachmentSection from '@/components/board/AttachmentSection';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
@@ -32,10 +33,10 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         const res = await fetch(`/api/user/profile`, { cache: 'no-store' });
         if (res.status === 401) {
           alert('로그인이 필요합니다.');
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
         }
       } catch {
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       }
     };
     check();
@@ -89,7 +90,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
         alert('다시 로그인해주세요.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
         throw new Error('작성 실패: ' + (err.detail ?? JSON.stringify(err)));
