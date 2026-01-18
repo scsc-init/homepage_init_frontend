@@ -1,9 +1,10 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function POST(request) {
-  const cookieStore = cookies();
-  const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
   const hdrs = {};
   if (appJwt) hdrs['x-jwt'] = appJwt;
 

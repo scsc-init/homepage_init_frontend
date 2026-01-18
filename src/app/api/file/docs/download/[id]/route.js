@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function GET(_req, { params }) {
@@ -11,7 +12,8 @@ export async function GET(_req, { params }) {
   const base = getBaseUrl();
   const url = `${base}/api/file/docs/download/${id}`;
 
-  const appJwt = cookies().get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
 
   const controller = new AbortController();
   const timeoutMs = 20_000;

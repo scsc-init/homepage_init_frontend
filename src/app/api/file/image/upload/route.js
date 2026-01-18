@@ -1,11 +1,13 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function POST(req) {
   const base = getBaseUrl();
   const url = `${base}/api/file/image/upload`;
 
-  const appJwt = cookies().get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
   const formData = await req.formData();
 
   const res = await fetch(url, {
