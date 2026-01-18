@@ -69,7 +69,7 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {'피그 비활성화'}
+      {'비활성화'}
     </button>
   ) : null;
 }

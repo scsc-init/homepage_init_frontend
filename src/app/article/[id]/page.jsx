@@ -12,6 +12,7 @@ import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
 import { directFetch } from '@/util/directFetch';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function ArticleDetail({ params }) {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function ArticleDetail({ params }) {
         ]);
 
         if (userRes.status === 401) {
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
           return;
         }
         if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
@@ -126,7 +127,7 @@ export default function ArticleDetail({ params }) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/us/login');
       } else if (res.status === 401) {
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         alert('삭제에 실패했습니다.');
       }

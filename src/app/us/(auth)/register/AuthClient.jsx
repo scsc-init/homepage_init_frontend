@@ -128,8 +128,13 @@ export default function AuthClient() {
       body: JSON.stringify({ email, hashToken: session.hashToken }),
     });
 
-    const data = await loginRes.json();
-    if (loginRes.ok && data.jwt) {
+    let data = null;
+    try {
+      data = await loginRes.json();
+    } catch {
+      data = null;
+    }
+    if (loginRes.ok && data?.jwt) {
       await update({ backendJwt: data.jwt });
       log('login_complete');
       window.location.href = '/about/welcome';

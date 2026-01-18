@@ -14,7 +14,7 @@ export async function POST(request) {
   const res = await fetch(`${getBaseUrl()}/api/user/update-pfp-file`, {
     method: 'POST',
     headers: {
-      ...(jwt ? { 'x-jwt': appJwt } : {}),
+      ...(appJwt ? { 'x-jwt': appJwt } : {}),
     },
     body: formData,
     cache: 'no-store',

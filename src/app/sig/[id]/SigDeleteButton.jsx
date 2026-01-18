@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
@@ -31,7 +32,7 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
       } else {
         alert('SIG 비활성화 실패: ' + (await readError(res)));
       }
@@ -51,7 +52,7 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
       } else {
         alert('SIG 비활성화 실패: ' + (await readError(res)));
       }
@@ -70,7 +71,7 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {'시그 비활성화'}
+      {'비활성화'}
     </button>
   ) : null;
 }

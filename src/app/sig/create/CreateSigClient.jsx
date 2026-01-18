@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { directFetch } from '@/util/directFetch';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     const fetchProfile = async () => {
       const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
-      else router.push('/us/login');
+      else pushLoginWithRedirect(router);
     };
     fetchProfile();
   }, [router]);
@@ -113,7 +114,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         const err = await res.json().catch(() => ({}));
         alert('SIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));

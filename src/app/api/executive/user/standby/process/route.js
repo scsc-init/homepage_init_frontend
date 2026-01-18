@@ -7,7 +7,7 @@ import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function POST(request) {
   const session = await getServerSession(authOptions);
-  const jwt = session.backendJwt || null;
+  const jwt = session?.backendJwt || null;
 
   const formData = await request.formData();
 

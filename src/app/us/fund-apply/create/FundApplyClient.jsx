@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { SEMESTER_MAP } from '@/util/constants';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+
 import './page.css';
 
 const GUIDE_URL =
@@ -176,7 +178,7 @@ export default function FundApplyClient({
 
         if (!res.ok) {
           if (res.status === 401) {
-            router.replace('/us/login');
+            replaceLoginWithRedirect(router);
             return;
           }
           throw new Error(`프로필 조회 실패 (${res.status})`);

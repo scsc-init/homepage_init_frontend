@@ -4,7 +4,7 @@ import { fetchMe } from '@/util/fetchAPIData';
 
 export default async function LoginPage() {
   const [me] = await Promise.allSettled([fetchMe()]);
-  if (me.status === 'fulfilled') redirect('/');
+  if (me.status === 'fulfilled') redirect('/api/auth/consume-redirect');
 
   return <AuthClient />;
 }

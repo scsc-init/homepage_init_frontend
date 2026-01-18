@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { fetchMeClient } from '@/util/fetchClientData';
 import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 
@@ -73,7 +74,7 @@ export default function MyProfileClient() {
 
       if (status === 'unauthenticated') {
         await onAuthFail();
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
         return;
       }
 
@@ -95,21 +96,21 @@ export default function MyProfileClient() {
             data = await fetchMeClient();
           } else {
             await onAuthFail();
-            router.replace('/us/login');
+            replaceLoginWithRedirect(router);
           }
         } else {
           await onAuthFail();
-          router.replace('/us/login');
+          replaceLoginWithRedirect(router);
         }
         if (!data || !data.email) {
           await onAuthFail();
-          router.replace('/us/login');
+          replaceLoginWithRedirect(router);
           return;
         }
         setUser(data);
       } catch {
         await onAuthFail();
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
       }
     };
     load();
