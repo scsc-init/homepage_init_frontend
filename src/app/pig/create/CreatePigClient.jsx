@@ -6,22 +6,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
-function mapInitialFormValues(parsed, scscGlobalStatus) {
-  if (parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0) {
-    return parsed;
-  }
-  return {
-    title: parsed?.title ?? '',
-    description: parsed?.description ?? '',
-    editor: parsed?.editor ?? '',
-    is_rolling_admission:
-      typeof parsed?.is_rolling_admission === 'boolean'
-        ? parsed.is_rolling_admission
-        : scscGlobalStatus === 'active',
-    websites: [{ url: '' }],
-  };
-}
-
 const sanitizeWebsites = (websites = []) =>
   (Array.isArray(websites) ? websites : [])
     .map((site, index) => {
@@ -39,6 +23,20 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const saved = typeof window !== 'undefined' ? sessionStorage.getItem('pigForm') : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
+  const defaultFormValues = {
+    title: parsed?.title ?? '',
+    description: parsed?.description ?? '',
+    editor: parsed?.editor ?? '',
+    is_rolling_admission:
+      typeof parsed?.is_rolling_admission === 'boolean'
+        ? parsed.is_rolling_admission
+        : scscGlobalStatus === 'active',
+    websites:
+      parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
+        ? parsed.websites
+        : [{ url: '' }],
+  };
+
   const {
     register,
     control,
@@ -46,7 +44,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: mapInitialFormValues(parsed, scscGlobalStatus),
+    defaultValues: defaultFormValues,
   });
 
   useEffect(() => {

@@ -35,10 +35,10 @@ export default function PigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputField label="PIG 이름" placeholder="INIT PIG" register={register} name="title" />
+      <InputField label="피그 이름" placeholder="INIT PIG" register={register} name="title" />
       <InputField
-        label="PIG 설명"
-        placeholder="어떤 활동을 하는지 소개해 주세요"
+        label="피그 설명"
+        placeholder="홈페이지를 관리하는 PIG입니다"
         register={register}
         name="description"
       />
@@ -91,7 +91,7 @@ export default function PigForm({
       </div>
 
       <div className="form-toggle-row">
-        <span className="form-toggle-label">상시 모집</span>
+        <span className="form-toggle-label">가입 기간 자유화</span>
         <span className="form-toggle-right">
           <Controller
             name="is_rolling_admission"
@@ -105,7 +105,7 @@ export default function PigForm({
 
       {isCreate ? null : (
         <div className="form-toggle-row">
-          <span className="form-toggle-label">다음 학기 연장 신청</span>
+          <span className="form-toggle-label">다음 학기에 연장 신청</span>
           <span className="form-toggle-right">
             <Controller
               name="should_extend"
