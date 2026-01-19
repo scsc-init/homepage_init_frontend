@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   minExecutiveLevel,
-  presidentEmails,
-  vicePresidentEmails,
   excludedExecutiveEmails,
   DEFAULT_EXECUTIVE_PFP,
 } from '@/util/constants';
@@ -13,12 +11,14 @@ import styles from '../about.module.css';
 
 function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
-  const { presidentId, vicePresidentId } = leadershipIds || {};
+  const { presidentId, vicePresidentIds } = leadershipIds || {};
   const userId = String(user.id ?? '').trim();
   const presidentKey = String(presidentId ?? '').trim();
-  const vicePresidentKey = String(vicePresidentId ?? '').trim();
+  const vicePresidentKey = String(vicePresidentIds ?? '')
+    .trim()
+    .split(';');
   if (presidentKey && userId === presidentKey) return '회장';
-  if (vicePresidentKey && userId === vicePresidentKey) return '부회장';
+  if (vicePresidentKey && vicePresidentKey.includes(userId)) return '부회장';
   return '임원';
 }
 
@@ -61,7 +61,7 @@ export default function ExecutivesClient() {
             leadersJson && typeof leadersJson.president_id === 'string'
               ? leadersJson.president_id
               : null,
-          vicePresidentId:
+          vicePresidentIds:
             leadersJson && typeof leadersJson.vice_president_id === 'string'
               ? leadersJson.vice_president_id
               : null,
