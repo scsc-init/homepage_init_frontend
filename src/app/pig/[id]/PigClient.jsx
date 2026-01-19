@@ -15,6 +15,7 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || pig?.owner === me?.id);
   const isOwner = !!me && pig?.owner === me?.id;
   const semesterLabel = SEMESTER_MAP[Number(pig?.semester)] ?? `${pig?.semester}`;
+  const websites = Array.isArray(pig?.websites) ? pig.websites : [];
 
   return (
     <div className="PigDetailContainer">
@@ -36,7 +37,33 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
       <hr className="PigDivider" />
       <PigContents content={articleContent} />
       <hr />
+      <PigWebsites websites={websites} />
       <PigMembers owner={pig?.owner} members={members} />
     </div>
+  );
+}
+
+function PigWebsites({ websites }) {
+  if (!Array.isArray(websites) || websites.length === 0) return null;
+
+  return (
+    <section className="PigWebsitesSection" aria-labelledby="pig-websites-heading">
+      <h2 id="pig-websites-heading" className="PigWebsitesTitle">
+        관련 웹사이트
+      </h2>
+      <ul className="PigWebsitesList">
+        {websites.map((website, idx) => {
+          const label = website?.label?.trim() || website?.url;
+          const key = website?.id ?? `${website?.url}-${idx}`;
+          return (
+            <li key={key} className="PigWebsitesItem">
+              <a href={website?.url} target="_blank" rel="noreferrer noopener">
+                {label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
