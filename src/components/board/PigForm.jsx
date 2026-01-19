@@ -16,15 +16,9 @@ export default function PigForm({
 }) {
   const { fields, append, remove } = useFieldArray({ control, name: 'websites' });
 
-  const handleUrlKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        append({ url: '' });
-      }
-    },
-    [append],
-  );
+  const handleAddWebsite = useCallback(() => {
+    append({ url: '' });
+  }, [append]);
 
   return (
     <form
@@ -58,35 +52,44 @@ export default function PigForm({
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2" style={{ marginTop: '1.5rem' }}>
         <span className="font-semibold">웹사이트</span>
-        <p className="text-sm text-gray-500">Enter를 누르면 다음 줄이 자동으로 추가됩니다.</p>
+
         <div className="space-y-3">
-          {fields.map((field, index) => (
-            <div key={field.id} className="space-y-2">
-              <Input.Root>
-                <Input.Label>URL</Input.Label>
-                <Input.Input
-                  type="text"
-                  inputMode="url"
-                  placeholder="https://example.com"
-                  {...register(`websites.${index}.url`)}
-                  onKeyDown={handleUrlKeyDown}
-                />
-              </Input.Root>
-              {fields.length > 1 && (
-                <div className="text-right">
+          {fields.map((field, index) => {
+            const fieldId = `website-url-${index}`;
+            return (
+              <div key={field.id} className="PigUrlRow">
+                <Input.Root className="PigUrlField">
+                  <Input.Label htmlFor={fieldId}>URL</Input.Label>
+                  <Input.Input
+                    id={fieldId}
+                    className="PigUrlInput"
+                    type="text"
+                    inputMode="url"
+                    placeholder="https://example.com"
+                    {...register(`websites.${index}.url`)}
+                  />
+                </Input.Root>
+                {fields.length > 1 && (
                   <button
                     type="button"
-                    className="text-sm text-red-500 hover:underline"
+                    className="PigUrlRemove text-sm text-red-500 hover:underline"
                     onClick={() => remove(index)}
                   >
                     삭제
                   </button>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
+          <button
+            type="button"
+            className="text-sm text-blue-500 hover:underline"
+            onClick={handleAddWebsite}
+          >
+            웹사이트 추가
+          </button>
         </div>
       </div>
 

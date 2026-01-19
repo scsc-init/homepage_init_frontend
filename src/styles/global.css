@@ -356,6 +356,30 @@ button {
   color: var(--slate-8);
 }
 
+.PigUrlRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.PigUrlField {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.PigUrlInput {
+  border-bottom: 2px solid var(--executive-card-bg);
+  padding-bottom: 0.2em;
+}
+
+.PigUrlInput:focus {
+  border-bottom-color: var(--executive-overlay-bg);
+}
+
+.PigUrlRemove {
+  flex-shrink: 0;
+}
+
 .AttachmentSection {
   width: 100%;
   overflow: hidden;
