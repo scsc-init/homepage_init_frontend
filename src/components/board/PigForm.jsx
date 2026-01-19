@@ -1,8 +1,10 @@
+﻿import { useCallback } from 'react';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import InputField from './InputField';
 import * as Button from '@/components/Button.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
-import { Controller } from 'react-hook-form';
+import * as Input from '@/components/Input.jsx';
+import { Controller, useFieldArray } from 'react-hook-form';
 
 export default function PigForm({
   register,
@@ -12,6 +14,18 @@ export default function PigForm({
   editorKey,
   isCreate,
 }) {
+  const { fields, append, remove } = useFieldArray({ control, name: 'websites' });
+
+  const handleUrlKeyDown = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        append({ url: '' });
+      }
+    },
+    [append],
+  );
+
   return (
     <form
       className="space-y-4"
@@ -21,10 +35,10 @@ export default function PigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputField label="피그 이름" placeholder="INIT PIG" register={register} name="title" />
+      <InputField label="PIG 이름" placeholder="INIT PIG" register={register} name="title" />
       <InputField
-        label="피그 설명"
-        placeholder="홈페이지를 관리하는 PIG입니다"
+        label="PIG 설명"
+        placeholder="어떤 활동을 하는지 소개해 주세요"
         register={register}
         name="description"
       />
@@ -44,8 +58,40 @@ export default function PigForm({
         />
       </div>
 
+      <div className="space-y-2">
+        <span className="font-semibold">웹사이트</span>
+        <p className="text-sm text-gray-500">Enter를 누르면 다음 줄이 자동으로 추가됩니다.</p>
+        <div className="space-y-3">
+          {fields.map((field, index) => (
+            <div key={field.id} className="space-y-2">
+              <Input.Root>
+                <Input.Label>URL</Input.Label>
+                <Input.Input
+                  type="text"
+                  inputMode="url"
+                  placeholder="https://example.com"
+                  {...register(`websites.${index}.url`)}
+                  onKeyDown={handleUrlKeyDown}
+                />
+              </Input.Root>
+              {fields.length > 1 && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    className="text-sm text-red-500 hover:underline"
+                    onClick={() => remove(index)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="form-toggle-row">
-        <span className="form-toggle-label">가입 기간 자유화</span>
+        <span className="form-toggle-label">상시 모집</span>
         <span className="form-toggle-right">
           <Controller
             name="is_rolling_admission"
@@ -59,7 +105,7 @@ export default function PigForm({
 
       {isCreate ? null : (
         <div className="form-toggle-row">
-          <span className="form-toggle-label">다음 학기에 연장 신청</span>
+          <span className="form-toggle-label">다음 학기 연장 신청</span>
           <span className="form-toggle-right">
             <Controller
               name="should_extend"
