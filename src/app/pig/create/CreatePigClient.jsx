@@ -49,7 +49,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await fetch('/api/user/profile');
+      const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
       else pushLoginWithRedirect(router);
     };
@@ -73,7 +73,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 나가시겠습니까?');
+        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
           router.events.emit('routeChangeError');
           throw 'Route change aborted by user.';
@@ -94,20 +94,20 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     if (submitting) return;
 
     if (!user) {
-      alert('잠시 후 다시 시도해 주세요.');
+      alert('잠시 뒤 다시 시도해주세요');
       return;
     }
 
     if (scscGlobalStatus === 'active' && !data.is_rolling_admission) {
       const confirmed = confirm(
-        '가입 기간 자유화를 끄면 다른 학회원이 가입할 수 없습니다. 그래도 계속 진행할까요?',
+        '가입 기간 자유화를 활성화하지 않으면 다른 사람이 가입할 수 없습니다. 그래도 계속 진행하시겠습니까?',
       );
       if (!confirmed) return;
     }
 
     if (!user.discord_id) {
       const confirmed = confirm(
-        '디스코드 계정이 아직 연동되지 않았습니다. 그래도 계속 진행할까요?',
+        '계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까',
       );
       if (!confirmed) return;
     }
@@ -115,7 +115,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/pig/create', {
+      const res = await fetch(`/api/pig/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,10 +138,10 @@ export default function CreatePigClient({ scscGlobalStatus }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
-        alert(`PIG 생성 실패: ${err.detail ?? JSON.stringify(err)}`);
+        alert('PIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err.message || '네트워크 오류가 발생했습니다.');
+      alert(err.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }

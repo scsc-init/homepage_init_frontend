@@ -66,7 +66,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
 
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 나가시겠습니까?');
+        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
           router.events.emit('routeChangeError');
           throw 'Route change aborted by user.';
@@ -94,13 +94,13 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     if (submitting) return;
 
     if (!me) {
-      alert('잠시 후 다시 시도해 주세요.');
+      alert('잠시 뒤 다시 시도해주세요');
       return;
     }
 
     if (!me.discord_id) {
       const confirmed = confirm(
-        '디스코드 계정이 아직 연동되지 않았습니다. 그래도 계속 진행할까요?',
+        '계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?',
       );
       if (!confirmed) return;
     }
@@ -128,7 +128,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
 
       if (res.status === 204) {
         isFormSubmitted.current = true;
-        alert('PIG 수정이 완료되었습니다.');
+        alert('PIG 수정 성공!');
         router.push(`/pig/${pigId}`);
         router.refresh();
       } else if (res.status === 401) {
@@ -136,10 +136,10 @@ export default function EditPigClient({ pigId, me, pig, article }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
-        alert(`PIG 수정 실패: ${err.detail ?? JSON.stringify(err)}`);
+        alert('PIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err.message || '네트워크 오류가 발생했습니다.');
+      alert(err.message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }
