@@ -96,20 +96,16 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
-    }
-
-    if (scscGlobalStatus === 'active' && !data.is_rolling_admission) {
-      const confirmed = confirm(
-        '가입 기간 자유화를 활성화하지 않으면 다른 사람이 가입할 수 없습니다. 그래도 계속 진행하시겠습니까?',
-      );
-      if (!confirmed) return;
-    }
-
-    if (!user.discord_id) {
-      const confirmed = confirm(
-        '계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까',
-      );
-      if (!confirmed) return;
+    } else if (scscGlobalStatus === 'active' && !data.is_rolling_admission) {
+      if (
+        !confirm(
+          '가입 기간 자유화를 활성화하지 않으면 다른 사람이 가입할 수 없습니다. 그래도 계속 진행하시겠습니까?',
+        )
+      )
+        return;
+    } else if (!user.discord_id) {
+      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
+        return;
     }
 
     setSubmitting(true);
