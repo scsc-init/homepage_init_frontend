@@ -6,7 +6,7 @@ import { fetchMeClient } from '@/util/fetchClientData';
 import { useRouter } from 'next/navigation';
 
 export default function RefreshJWTClient() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -52,6 +52,9 @@ export default function RefreshJWTClient() {
           return;
         }
 
+        const data = await loginRes.json();
+        if (data.jwt) await update({ backendJwt: data.jwt });
+
         try {
           const me2 = await fetchMeClient();
           if (me2 && (me2.status === 'pending' || me2.status === 'standby')) {
@@ -67,5 +70,5 @@ export default function RefreshJWTClient() {
         router.refresh();
       }
     })();
-  }, [session, status, router]);
+  }, [session, status, router, update]);
 }

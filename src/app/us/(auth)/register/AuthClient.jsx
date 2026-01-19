@@ -8,6 +8,7 @@ import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
 import InquiryButton from '@/components/InquiryButton';
+import { useSession } from 'next-auth/react';
 
 function cleanName(raw) {
   if (!raw) return '';
@@ -37,7 +38,8 @@ function log(event, data = {}) {
   } catch {}
 }
 
-export default function AuthClient({ session }) {
+export default function AuthClient() {
+  const { data: session, update } = useSession();
   const [stage, setStage] = useState(1);
   const [form, setForm] = useState({
     email: '',
@@ -126,7 +128,14 @@ export default function AuthClient({ session }) {
       body: JSON.stringify({ email, hashToken: session.hashToken }),
     });
 
-    if (loginRes.ok) {
+    let data = null;
+    try {
+      data = await loginRes.json();
+    } catch {
+      data = null;
+    }
+    if (loginRes.ok && data?.jwt) {
+      await update({ backendJwt: data.jwt });
       log('login_complete');
       window.location.href = '/about/welcome';
     } else {

@@ -45,5 +45,5 @@ export default async function RegisterPage() {
   };
   discordLogin();
 
-  return <AuthClient session={session} />;
+  return <AuthClient />;
 }

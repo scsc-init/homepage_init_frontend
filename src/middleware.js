@@ -1,5 +1,6 @@
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import { AUTH_COOKIE, REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
+import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
 
 function buildReturnPath(req) {
   const { pathname, search } = req.nextUrl;
@@ -7,8 +8,9 @@ function buildReturnPath(req) {
   return isAllowedRedirectPath(target) ? target : null;
 }
 
-export function middleware(req) {
-  const jwt = req.cookies.get(AUTH_COOKIE)?.value;
+export async function middleware(req) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const jwt = token?.backendJwt || null;
   if (jwt) return NextResponse.next();
 
   const returnTo = buildReturnPath(req);

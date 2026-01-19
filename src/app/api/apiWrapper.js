@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
 /**
@@ -12,8 +13,8 @@ import { getApiSecret } from '@/util/getApiSecret';
  * @returns {Promise<Response>} - A Next.js Response object.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
-  const cookieStore = cookies();
-  const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
 
   let fullPath = pathTemplate;
   if (options.params) {

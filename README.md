@@ -154,7 +154,7 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 
 1. 사용자가 Google 로그인
 2. `AuthClient.jsx` → `/api/auth/[...nextauth]/route.js` 호출
-3. 성공 시 JWT 세션 쿠키 `app_jwt` 생성
+3. 성공 시 BE에서 반환된 jwt를 nextauth session에 저장
 
 ---
 
@@ -251,12 +251,11 @@ function doSomething(x, y) {
 
 ## Cookie & Storage
 
-| Key       | Storage        | TTL      | 접근성               | 설명                                                   |
-| --------- | -------------- | -------- | -------------------- | ------------------------------------------------------ |
-| `theme`   | Cookie         | 1년      | 클라이언트 접근 가능 | 테마 설정                                              |
-| `app_jwt` | Cookie         | 7일      | 클라이언트 접근 불가 | 로그인 성공 시 생성되는 JWT 세션 토큰. 로그아웃시 삭제 |
-| `sigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장                                   |
-| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | PIG 생성 폼 임시저장                                   |
+| Key       | Storage        | TTL      | 접근성               | 설명                 |
+| --------- | -------------- | -------- | -------------------- | -------------------- |
+| `theme`   | Cookie         | 1년      | 클라이언트 접근 가능 | 테마 설정            |
+| `sigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장 |
+| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | PIG 생성 폼 임시저장 |
 
 ## CI: Continuous Integration
 

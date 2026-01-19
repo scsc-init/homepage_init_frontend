@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { NextResponse } from 'next/server';
 import { getBaseUrl } from '@/util/getBaseUrl';
 
@@ -19,8 +20,8 @@ export async function POST(request) {
   const presidentId = sanitizeId(body?.president_id);
   const vicePresidentId = sanitizeId(body?.vice_president_id);
 
-  const cookieStore = cookies();
-  const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
 
   try {
     const hdrs = {
