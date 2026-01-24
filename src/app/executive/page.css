@@ -132,3 +132,37 @@
 .adm-td .adm-select {
   min-width: 8rem;
 }
+
+/* Long tables: constrain height + make each section independently scrollable */
+.adm-table-wrap {
+  /* 기존 스타일 유지하면서 “세로 길이만” 제한 */
+  max-height: min(70vh, 640px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* Optional: keep header visible while scrolling (works well for long lists) */
+.adm-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+/* UserList has a 2-row header (filter row). Make 2nd row sticky too. */
+.adm-table thead tr:nth-child(2) td {
+  position: sticky;
+  top: 44px; /* 1st header row height approximation */
+  z-index: 2;
+}
+
+/* Ensure sticky header cells look right */
+.adm-table thead th,
+.adm-table thead tr:nth-child(2) td {
+  background: var(--box-color);
+}
+
+/* Dark mode header background */
+:global(.dark) .adm-table thead th,
+:global(.dark) .adm-table thead tr:nth-child(2) td {
+  background: var(--color-surface-light);
+}
