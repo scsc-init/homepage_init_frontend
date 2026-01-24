@@ -38,7 +38,7 @@ export const config = {
     '/us/fund-apply/:path*',
     '/board/:path*',
     '/article/:path*',
-    '/sig/:path*',
-    '/pig/:path*',
+    '/sig/:id(\\d+)',
+    '/pig/:id(\\d+)',
   ],
 };
