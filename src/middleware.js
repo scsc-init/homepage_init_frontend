@@ -40,5 +40,9 @@ export const config = {
     '/article/:path*',
     '/sig/:id(\\d+)',
     '/pig/:id(\\d+)',
+    '/sig/create',
+    '/pig/create',
+    '/sig/edit/:id(\\d+)',
+    '/pig/edit/:id(\\d+)',
   ],
 };
