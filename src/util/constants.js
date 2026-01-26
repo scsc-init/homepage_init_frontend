@@ -235,3 +235,8 @@ export const ALLOWED_REDIRECT_PREFIXES = [
   '/us/edit-user-info',
   '/executive',
 ];
+
+/**
+ * 테스트 유틸리티 페이지 활성화 여부입니다.
+ */
+export const ENABLE_TEST_UTILS = process.env.ENABLE_TEST_UTILS === 'TRUE' ?? false;
