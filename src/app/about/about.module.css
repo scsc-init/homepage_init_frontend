@@ -509,7 +509,7 @@
 
 .faqQuestion {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
@@ -522,6 +522,8 @@
 .faqQuestion h4 {
   margin: 0;
   font-size: 1.1rem;
+  text-align: left;
+  word-break: keep-all;
   font-weight: 700;
   color: var(--foreground-color);
 }
