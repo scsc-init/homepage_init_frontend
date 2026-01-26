@@ -160,9 +160,3 @@
 .adm-table thead tr:nth-child(2) td {
   background: var(--box-color);
 }
-
-/* Dark mode header background */
-:global(.dark) .adm-table thead th,
-:global(.dark) .adm-table thead tr:nth-child(2) td {
-  background: var(--color-surface-light);
-}
