@@ -88,7 +88,10 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
       </td>
       <td className={styles['adm-td']}>{renderBoolSelect('should_extend')}</td>
       <td className={styles['adm-td']}>
-        {renderBoolSelect('is_rolling_admission', 'adm-select-bool-wide')}
+        {renderBoolSelect(
+          'is_rolling_admission',
+          styles['adm-select-bool-wide'] ? 'adm-select-bool-wide' : undefined,
+        )}
       </td>
       <td className={styles['adm-td']}>
         <input
@@ -111,12 +114,8 @@ const boolMatches = (value, filterValue) => {
 const lower = (v) => v?.toString().toLowerCase() || '';
 
 const getLeaderUserId = (sig) => {
-  const ownerId = sig?.owner != null ? String(sig.owner) : '';
-  const members = Array.isArray(sig?.members) ? sig.members : [];
-  const leader = members.find((m) => String(m?.user_id) === ownerId);
-  if (leader?.user_id != null) return String(leader.user_id);
-  if (members[0]?.user_id != null) return String(members[0].user_id);
-  return '';
+  if (sig?.owner == null) return '';
+  return String(sig.owner);
 };
 
 export default function SigList({ sigs: sigsDefault }) {
@@ -163,7 +162,7 @@ export default function SigList({ sigs: sigsDefault }) {
       (!newFilter.description ||
         lower(sig.description).includes(lower(newFilter.description))) &&
       (!newFilter.content || lower(sig.content).includes(lower(newFilter.content))) &&
-      (!newFilter.status || sig.status.toString() === newFilter.status.toString()) &&
+      (!newFilter.status || sig.status?.toString() === newFilter.status.toString()) &&
       (!newFilter.year || lower(sig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(sig.semester).toString() === newFilter.semester) &&
       (!newFilter.member ||
@@ -220,6 +219,146 @@ export default function SigList({ sigs: sigsDefault }) {
     }
   };
 
+  const renderSigRow = (sig) => {
+    const sigIdStr = String(sig.id);
+    const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
+    const members = Array.isArray(sig?.members) ? sig.members : [];
+    const leaderId = getLeaderUserId(sig);
+    const selected = selectedMemberBySigId[sigIdStr] ?? leaderId;
+
+    return (
+      <tr key={sig.id} className={styles['adm-tr']}>
+        <td className={styles['adm-td']}>{sig.id}</td>
+
+        <td className={styles['adm-td']}>
+          <input
+            className={styles['adm-input']}
+            value={sig.title ?? ''}
+            onChange={(e) => updateSigField(sig.id, 'title', e.target.value)}
+          />
+        </td>
+
+        <td className={styles['adm-td']}>
+          <input
+            className={styles['adm-input']}
+            value={sig.description ?? ''}
+            onChange={(e) => updateSigField(sig.id, 'description', e.target.value)}
+          />
+        </td>
+
+        <td className={styles['adm-td']}>
+          <input
+            className={styles['adm-input']}
+            value={sig.content ?? ''}
+            onChange={(e) => updateSigField(sig.id, 'content', e.target.value)}
+          />
+        </td>
+
+        <td className={styles['adm-td']}>
+          <select
+            className={styles['adm-select']}
+            value={sig.status ?? ''}
+            onChange={(e) => updateSigField(sig.id, 'status', e.target.value)}
+          >
+            {Object.keys(STATUS_MAP).map((key) => (
+              <option key={key} value={key}>
+                {STATUS_MAP[key]}
+              </option>
+            ))}
+          </select>
+        </td>
+
+        <td className={styles['adm-td']}>
+          <input
+            className={styles['adm-input']}
+            value={sig.year ?? ''}
+            onChange={(e) => updateSigField(sig.id, 'year', e.target.value)}
+          />
+        </td>
+
+        <td className={styles['adm-td']}>
+          <select
+            className={styles['adm-select']}
+            value={sig.semester ?? ''}
+            onChange={(e) => updateSigField(sig.id, 'semester', e.target.value)}
+          >
+            {Object.keys(SEMESTER_MAP).map((key) => (
+              <option key={key} value={key}>
+                {SEMESTER_MAP[key]}학기
+              </option>
+            ))}
+          </select>
+        </td>
+
+        <td className={styles['adm-td']}>
+          <select
+            className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
+            value={String(Boolean(sig.should_extend))}
+            onChange={(e) => updateSigField(sig.id, 'should_extend', e.target.value === 'true')}
+          >
+            <option value="true">예</option>
+            <option value="false">아니오</option>
+          </select>
+        </td>
+
+        <td className={styles['adm-td']}>
+          <select
+            className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
+            value={String(Boolean(sig.is_rolling_admission))}
+            onChange={(e) =>
+              updateSigField(sig.id, 'is_rolling_admission', e.target.value === 'true')
+            }
+          >
+            <option value="true">예</option>
+            <option value="false">아니오</option>
+          </select>
+        </td>
+
+        <td className={styles['adm-td']}>
+          <select
+            className={styles['adm-select']}
+            value={selected || ''}
+            onChange={(e) =>
+              setSelectedMemberBySigId((prev) => ({
+                ...prev,
+                [sigIdStr]: e.target.value,
+              }))
+            }
+          >
+            {members.length === 0 ? <option value="">(없음)</option> : null}
+            {members.map((m) => {
+              const mid = m?.user_id != null ? String(m.user_id) : '';
+              const name = m?.user?.name ?? '';
+              const label = mid && mid === ownerIdStr ? `[SIG장] ${name}` : name;
+              return (
+                <option key={mid || name} value={mid}>
+                  {label}
+                </option>
+              );
+            })}
+          </select>
+        </td>
+
+        <td className={styles['adm-td']}>
+          <button
+            className={styles['adm-button']}
+            onClick={() => handleSave(sig)}
+            disabled={Boolean(saving[sig.id])}
+          >
+            저장
+          </button>
+          <button
+            className={styles['adm-button']}
+            onClick={() => handleDelete(sig.id)}
+            disabled={Boolean(saving[sig.id])}
+          >
+            삭제
+          </button>
+        </td>
+      </tr>
+    );
+  };
+
   return (
     <div className={styles['adm-table-wrap']}>
       <table className={styles['adm-table']}>
@@ -252,149 +391,7 @@ export default function SigList({ sigs: sigsDefault }) {
           </tr>
           <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
         </thead>
-        <tbody>
-          {filteredSigs.map((sig) => {
-            const sigIdStr = String(sig.id);
-            const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
-            const members = Array.isArray(sig?.members) ? sig.members : [];
-            const leaderId = getLeaderUserId(sig);
-            const selected = selectedMemberBySigId[sigIdStr] ?? leaderId;
-
-            return (
-              <tr key={sig.id} className={styles['adm-tr']}>
-                <td className={styles['adm-td']}>{sig.id}</td>
-
-                <td className={styles['adm-td']}>
-                  <input
-                    className={styles['adm-input']}
-                    value={sig.title ?? ''}
-                    onChange={(e) => updateSigField(sig.id, 'title', e.target.value)}
-                  />
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <input
-                    className={styles['adm-input']}
-                    value={sig.description ?? ''}
-                    onChange={(e) => updateSigField(sig.id, 'description', e.target.value)}
-                  />
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <input
-                    className={styles['adm-input']}
-                    value={sig.content ?? ''}
-                    onChange={(e) => updateSigField(sig.id, 'content', e.target.value)}
-                  />
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <select
-                    className={styles['adm-select']}
-                    value={sig.status ?? ''}
-                    onChange={(e) => updateSigField(sig.id, 'status', e.target.value)}
-                  >
-                    {Object.keys(STATUS_MAP).map((key) => (
-                      <option key={key} value={key}>
-                        {STATUS_MAP[key]}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <input
-                    className={styles['adm-input']}
-                    value={sig.year ?? ''}
-                    onChange={(e) => updateSigField(sig.id, 'year', e.target.value)}
-                  />
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <select
-                    className={styles['adm-select']}
-                    value={sig.semester ?? ''}
-                    onChange={(e) => updateSigField(sig.id, 'semester', e.target.value)}
-                  >
-                    {Object.keys(SEMESTER_MAP).map((key) => (
-                      <option key={key} value={key}>
-                        {SEMESTER_MAP[key]}학기
-                      </option>
-                    ))}
-                  </select>
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <select
-                    className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
-                    value={String(Boolean(sig.should_extend))}
-                    onChange={(e) =>
-                      updateSigField(sig.id, 'should_extend', e.target.value === 'true')
-                    }
-                  >
-                    <option value="true">예</option>
-                    <option value="false">아니오</option>
-                  </select>
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <select
-                    className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
-                    value={String(Boolean(sig.is_rolling_admission))}
-                    onChange={(e) =>
-                      updateSigField(sig.id, 'is_rolling_admission', e.target.value === 'true')
-                    }
-                  >
-                    <option value="true">예</option>
-                    <option value="false">아니오</option>
-                  </select>
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <select
-                    className={styles['adm-select']}
-                    value={selected || ''}
-                    onChange={(e) =>
-                      setSelectedMemberBySigId((prev) => ({
-                        ...prev,
-                        [sigIdStr]: e.target.value,
-                      }))
-                    }
-                  >
-                    {members.length === 0 ? <option value="">(없음)</option> : null}
-                    {members.map((m) => {
-                      const mid = m?.user_id != null ? String(m.user_id) : '';
-                      const name = m?.user?.name ?? '';
-                      const label = mid && mid === ownerIdStr ? `[SIG장] ${name}` : name;
-                      return (
-                        <option key={mid || name} value={mid}>
-                          {label}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-
-                <td className={styles['adm-td']}>
-                  <button
-                    className={styles['adm-button']}
-                    onClick={() => handleSave(sig)}
-                    disabled={Boolean(saving[sig.id])}
-                  >
-                    저장
-                  </button>
-                  <button
-                    className={styles['adm-button']}
-                    onClick={() => handleDelete(sig.id)}
-                    disabled={Boolean(saving[sig.id])}
-                  >
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
+        <tbody>{filteredSigs.map(renderSigRow)}</tbody>
       </table>
     </div>
   );
