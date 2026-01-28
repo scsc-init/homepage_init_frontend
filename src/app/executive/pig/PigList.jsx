@@ -118,6 +118,148 @@ const getLeaderUserId = (pig) => {
   return String(pig.owner);
 };
 
+const renderPigRow = (pig, ctx) => {
+  const pigIdStr = String(pig.id);
+  const ownerIdStr = pig?.owner != null ? String(pig.owner) : '';
+  const members = Array.isArray(pig?.members) ? pig.members : [];
+  const leaderId = getLeaderUserId(pig);
+  const selected = ctx.selectedMemberByPigId[pigIdStr] ?? leaderId;
+
+  return (
+    <tr key={pig.id} className={styles['adm-tr']}>
+      <td className={styles['adm-td']}>{pig.id}</td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.title ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'title', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.description ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'description', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.content ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'content', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={pig.status ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'status', e.target.value)}
+        >
+          {Object.keys(STATUS_MAP).map((key) => (
+            <option key={key} value={key}>
+              {STATUS_MAP[key]}
+            </option>
+          ))}
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.year ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'year', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={pig.semester ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'semester', e.target.value)}
+        >
+          {Object.keys(SEMESTER_MAP).map((key) => (
+            <option key={key} value={key}>
+              {SEMESTER_MAP[key]}학기
+            </option>
+          ))}
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
+          value={String(Boolean(pig.should_extend))}
+          onChange={(e) =>
+            ctx.updatePigField(pig.id, 'should_extend', e.target.value === 'true')
+          }
+        >
+          <option value="true">예</option>
+          <option value="false">아니오</option>
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
+          value={String(Boolean(pig.is_rolling_admission))}
+          onChange={(e) =>
+            ctx.updatePigField(pig.id, 'is_rolling_admission', e.target.value === 'true')
+          }
+        >
+          <option value="true">예</option>
+          <option value="false">아니오</option>
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={selected || ''}
+          onChange={(e) =>
+            ctx.setSelectedMemberByPigId((prev) => ({
+              ...prev,
+              [pigIdStr]: e.target.value,
+            }))
+          }
+        >
+          {members.length === 0 ? <option value="">(없음)</option> : null}
+          {members.map((m, idx) => {
+            const mid = m?.user_id != null ? String(m.user_id) : '';
+            const name = m?.user?.name ?? '';
+            const label = mid && mid === ownerIdStr ? `[PIG장] ${name}` : name;
+            return (
+              <option key={`${pigIdStr}-${mid || name}-${idx}`} value={mid}>
+                {label}
+              </option>
+            );
+          })}
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <button
+          className={styles['adm-button']}
+          onClick={() => ctx.handleSave(pig)}
+          disabled={Boolean(ctx.saving[pig.id])}
+        >
+          저장
+        </button>
+        <button
+          className={styles['adm-button']}
+          onClick={() => ctx.handleDelete(pig.id)}
+          disabled={Boolean(ctx.saving[pig.id])}
+        >
+          삭제
+        </button>
+      </td>
+    </tr>
+  );
+};
+
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);
   const [filteredPigs, setFilteredPigs] = useState(pigsDefault ?? []);
@@ -219,144 +361,13 @@ export default function PigList({ pigs: pigsDefault }) {
     }
   };
 
-  const renderPigRow = (pig) => {
-    const pigIdStr = String(pig.id);
-    const ownerIdStr = pig?.owner != null ? String(pig.owner) : '';
-    const members = Array.isArray(pig?.members) ? pig.members : [];
-    const leaderId = getLeaderUserId(pig);
-    const selected = selectedMemberByPigId[pigIdStr] ?? leaderId;
-
-    return (
-      <tr key={pig.id} className={styles['adm-tr']}>
-        <td className={styles['adm-td']}>{pig.id}</td>
-
-        <td className={styles['adm-td']}>
-          <input
-            className={styles['adm-input']}
-            value={pig.title ?? ''}
-            onChange={(e) => updatePigField(pig.id, 'title', e.target.value)}
-          />
-        </td>
-
-        <td className={styles['adm-td']}>
-          <input
-            className={styles['adm-input']}
-            value={pig.description ?? ''}
-            onChange={(e) => updatePigField(pig.id, 'description', e.target.value)}
-          />
-        </td>
-
-        <td className={styles['adm-td']}>
-          <input
-            className={styles['adm-input']}
-            value={pig.content ?? ''}
-            onChange={(e) => updatePigField(pig.id, 'content', e.target.value)}
-          />
-        </td>
-
-        <td className={styles['adm-td']}>
-          <select
-            className={styles['adm-select']}
-            value={pig.status ?? ''}
-            onChange={(e) => updatePigField(pig.id, 'status', e.target.value)}
-          >
-            {Object.keys(STATUS_MAP).map((key) => (
-              <option key={key} value={key}>
-                {STATUS_MAP[key]}
-              </option>
-            ))}
-          </select>
-        </td>
-
-        <td className={styles['adm-td']}>
-          <input
-            className={styles['adm-input']}
-            value={pig.year ?? ''}
-            onChange={(e) => updatePigField(pig.id, 'year', e.target.value)}
-          />
-        </td>
-
-        <td className={styles['adm-td']}>
-          <select
-            className={styles['adm-select']}
-            value={pig.semester ?? ''}
-            onChange={(e) => updatePigField(pig.id, 'semester', e.target.value)}
-          >
-            {Object.keys(SEMESTER_MAP).map((key) => (
-              <option key={key} value={key}>
-                {SEMESTER_MAP[key]}학기
-              </option>
-            ))}
-          </select>
-        </td>
-
-        <td className={styles['adm-td']}>
-          <select
-            className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
-            value={String(Boolean(pig.should_extend))}
-            onChange={(e) => updatePigField(pig.id, 'should_extend', e.target.value === 'true')}
-          >
-            <option value="true">예</option>
-            <option value="false">아니오</option>
-          </select>
-        </td>
-
-        <td className={styles['adm-td']}>
-          <select
-            className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
-            value={String(Boolean(pig.is_rolling_admission))}
-            onChange={(e) =>
-              updatePigField(pig.id, 'is_rolling_admission', e.target.value === 'true')
-            }
-          >
-            <option value="true">예</option>
-            <option value="false">아니오</option>
-          </select>
-        </td>
-
-        <td className={styles['adm-td']}>
-          <select
-            className={styles['adm-select']}
-            value={selected || ''}
-            onChange={(e) =>
-              setSelectedMemberByPigId((prev) => ({
-                ...prev,
-                [pigIdStr]: e.target.value,
-              }))
-            }
-          >
-            {members.length === 0 ? <option value="">(없음)</option> : null}
-            {members.map((m) => {
-              const mid = m?.user_id != null ? String(m.user_id) : '';
-              const name = m?.user?.name ?? '';
-              const label = mid && mid === ownerIdStr ? `[PIG장] ${name}` : name;
-              return (
-                <option key={mid || name} value={mid}>
-                  {label}
-                </option>
-              );
-            })}
-          </select>
-        </td>
-
-        <td className={styles['adm-td']}>
-          <button
-            className={styles['adm-button']}
-            onClick={() => handleSave(pig)}
-            disabled={Boolean(saving[pig.id])}
-          >
-            저장
-          </button>
-          <button
-            className={styles['adm-button']}
-            onClick={() => handleDelete(pig.id)}
-            disabled={Boolean(saving[pig.id])}
-          >
-            삭제
-          </button>
-        </td>
-      </tr>
-    );
+  const rowCtx = {
+    saving,
+    selectedMemberByPigId,
+    setSelectedMemberByPigId,
+    updatePigField,
+    handleSave,
+    handleDelete,
   };
 
   return (
@@ -391,7 +402,7 @@ export default function PigList({ pigs: pigsDefault }) {
           </tr>
           <PigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
         </thead>
-        <tbody>{filteredPigs.map(renderPigRow)}</tbody>
+        <tbody>{filteredPigs.map((pig) => renderPigRow(pig, rowCtx))}</tbody>
       </table>
     </div>
   );
