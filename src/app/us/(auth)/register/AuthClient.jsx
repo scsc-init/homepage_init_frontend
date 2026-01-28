@@ -9,6 +9,7 @@ import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
 import InquiryButton from '@/components/InquiryButton';
 import { useSession } from 'next-auth/react';
+import { ENABLE_TEST_UTILS } from '@/util/constants';
 
 function cleanName(raw) {
   if (!raw) return '';
@@ -88,7 +89,7 @@ export default function AuthClient() {
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
 
-    const createRes = await fetch(`/api/user/create`, {
+    const createRes = await fetch(ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -98,7 +99,6 @@ export default function AuthClient() {
         student_id,
         phone,
         major_id: Number(form.major_id),
-        status: 'pending',
         profile_picture: form.profile_picture_url,
         profile_picture_is_url: true,
         hashToken: session.hashToken,
@@ -314,7 +314,7 @@ export default function AuthClient() {
               disabled={signupBusy}
               aria-disabled={signupBusy}
             >
-              가입하기
+              {ENABLE_TEST_UTILS && '[테스트] 관리자로'} 가입하기
             </button>
           </div>
         )}

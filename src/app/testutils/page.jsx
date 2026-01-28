@@ -1,6 +1,7 @@
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { notFound } from 'next/navigation';
 import NextauthConsole from './NextauthConsole';
+import UserConsole from './UserConsole';
 import styles from './page.module.css';
 
 export default function TestutilsPage() {
@@ -11,6 +12,7 @@ export default function TestutilsPage() {
     <main className={styles['main-page']}>
       <h1>Test Utils Console</h1>
       <NextauthConsole />
+      <UserConsole />
     </main>
   );
 }

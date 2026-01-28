@@ -2,6 +2,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
+import { ENABLE_TEST_UTILS } from '@/util/constants';
+
 /**
  * Handles forwarding requests to an internal API.
  * @param {string} method - The HTTP method (e.g., "POST").
@@ -33,7 +35,11 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const bodyJson = hasIncoming ? await request.json() : undefined;
 
   const hdrs = {};
-  if (fullPath.startsWith('/api/user/login') || fullPath.startsWith('/api/user/create')) {
+  if (
+    fullPath.startsWith('/api/user/login') ||
+    fullPath.startsWith('/api/user/create') ||
+    (ENABLE_TEST_UTILS && fullPath.startsWith('/api/test'))
+  ) {
     hdrs['x-api-secret'] = getApiSecret();
   }
   if (appJwt) hdrs['x-jwt'] = appJwt;
