@@ -1,12 +1,11 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
-import EntryRow from '../EntryRow.jsx';
 import styles from '../igpage.module.css';
 
 function PigFilterRow({ filter, updateFilterCriteria }) {
-  const renderBoolSelect = (field, label, extraClass) => {
+  const renderBoolSelect = (field, extraClass) => {
     const selectClasses = [styles['adm-select'], styles['adm-select-bool']];
     if (extraClass) selectClasses.push(styles[extraClass]);
     return (
@@ -87,9 +86,12 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
           ))}
         </select>
       </td>
-      <td className={styles['adm-td']}>{renderBoolSelect('should_extend', '연장')}</td>
+      <td className={styles['adm-td']}>{renderBoolSelect('should_extend')}</td>
       <td className={styles['adm-td']}>
-        {renderBoolSelect('is_rolling_admission', '가입 자유화', 'adm-select-bool-wide')}
+        {renderBoolSelect(
+          'is_rolling_admission',
+          styles['adm-select-bool-wide'] ? 'adm-select-bool-wide' : undefined,
+        )}
       </td>
       <td className={styles['adm-td']}>
         <input
@@ -98,6 +100,7 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
           onChange={(e) => updateFilterCriteria('member', e.target.value)}
         />
       </td>
+      <td className={styles['adm-td']}></td>
     </tr>
   );
 }
@@ -106,6 +109,155 @@ const boolMatches = (value, filterValue) => {
   if (!filterValue) return true;
   const normalized = value ? 'true' : 'false';
   return normalized === filterValue;
+};
+
+const lower = (v) => v?.toString().toLowerCase() || '';
+
+const getLeaderUserId = (pig) => {
+  if (pig?.owner == null) return '';
+  return String(pig.owner);
+};
+
+const renderPigRow = (pig, ctx) => {
+  const pigIdStr = String(pig.id);
+  const ownerIdStr = pig?.owner != null ? String(pig.owner) : '';
+  const members = Array.isArray(pig?.members) ? pig.members : [];
+  const leaderId = getLeaderUserId(pig);
+  const selected = ctx.selectedMemberByPigId[pigIdStr] ?? leaderId;
+
+  return (
+    <tr key={pig.id} className={styles['adm-tr']}>
+      <td className={styles['adm-td']}>{pig.id}</td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.title ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'title', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.description ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'description', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.content ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'content', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={pig.status ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'status', e.target.value)}
+        >
+          {Object.keys(STATUS_MAP).map((key) => (
+            <option key={key} value={key}>
+              {STATUS_MAP[key]}
+            </option>
+          ))}
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={pig.year ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'year', e.target.value)}
+        />
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={pig.semester ?? ''}
+          onChange={(e) => ctx.updatePigField(pig.id, 'semester', e.target.value)}
+        >
+          {Object.keys(SEMESTER_MAP).map((key) => (
+            <option key={key} value={key}>
+              {SEMESTER_MAP[key]}학기
+            </option>
+          ))}
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
+          value={String(Boolean(pig.should_extend))}
+          onChange={(e) =>
+            ctx.updatePigField(pig.id, 'should_extend', e.target.value === 'true')
+          }
+        >
+          <option value="true">예</option>
+          <option value="false">아니오</option>
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
+          value={String(Boolean(pig.is_rolling_admission))}
+          onChange={(e) =>
+            ctx.updatePigField(pig.id, 'is_rolling_admission', e.target.value === 'true')
+          }
+        >
+          <option value="true">예</option>
+          <option value="false">아니오</option>
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={selected || ''}
+          onChange={(e) =>
+            ctx.setSelectedMemberByPigId((prev) => ({
+              ...prev,
+              [pigIdStr]: e.target.value,
+            }))
+          }
+        >
+          {members.length === 0 ? <option value="">(없음)</option> : null}
+          {members.map((m, idx) => {
+            const mid = m?.user_id != null ? String(m.user_id) : '';
+            const name = m?.user?.name ?? '';
+            const label = mid && mid === ownerIdStr ? `[PIG장] ${name}` : name;
+            return (
+              <option key={`${pigIdStr}-${mid || name}-${idx}`} value={mid}>
+                {label}
+              </option>
+            );
+          })}
+        </select>
+      </td>
+
+      <td className={styles['adm-td']}>
+        <button
+          className={styles['adm-button']}
+          onClick={() => ctx.handleSave(pig)}
+          disabled={Boolean(ctx.saving[pig.id])}
+        >
+          저장
+        </button>
+        <button
+          className={styles['adm-button']}
+          onClick={() => ctx.handleDelete(pig.id)}
+          disabled={Boolean(ctx.saving[pig.id])}
+        >
+          삭제
+        </button>
+      </td>
+    </tr>
+  );
 };
 
 export default function PigList({ pigs: pigsDefault }) {
@@ -125,6 +277,16 @@ export default function PigList({ pigs: pigsDefault }) {
     is_rolling_admission: '',
   });
 
+  const initialSelectedMembers = useMemo(() => {
+    const m = {};
+    (pigsDefault ?? []).forEach((pig) => {
+      m[String(pig.id)] = getLeaderUserId(pig);
+    });
+    return m;
+  }, [pigsDefault]);
+
+  const [selectedMemberByPigId, setSelectedMemberByPigId] = useState(initialSelectedMembers);
+
   const updatePigField = (id, field, value) => {
     setPigs((prev) => prev.map((pig) => (pig.id === id ? { ...pig, [field]: value } : pig)));
     setFilteredPigs((prev) =>
@@ -135,20 +297,23 @@ export default function PigList({ pigs: pigsDefault }) {
   const updateFilterCriteria = (field, value) => {
     const newFilter = { ...filter, [field]: value };
     setFilter(newFilter);
-    const lower = (v) => v?.toString().toLowerCase() || '';
+
     const matches = (pig) =>
       (!newFilter.id || lower(pig.id).includes(lower(newFilter.id))) &&
       (!newFilter.title || lower(pig.title).includes(lower(newFilter.title))) &&
       (!newFilter.description ||
         lower(pig.description).includes(lower(newFilter.description))) &&
       (!newFilter.content || lower(pig.content).includes(lower(newFilter.content))) &&
-      (!newFilter.status || pig.status.toString() === newFilter.status.toString()) &&
+      (!newFilter.status || pig.status?.toString() === newFilter.status.toString()) &&
       (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
       (!newFilter.member ||
-        pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member)))) &&
-      boolMatches(pig.should_extend, newFilter.should_extend) &&
-      boolMatches(pig.is_rolling_admission, newFilter.is_rolling_admission);
+        (pig.members ?? []).some((m) =>
+          lower(m?.user?.name).includes(lower(newFilter.member)),
+        )) &&
+      boolMatches(Boolean(pig.should_extend), newFilter.should_extend) &&
+      boolMatches(Boolean(pig.is_rolling_admission), newFilter.is_rolling_admission);
+
     setFilteredPigs(pigs.filter(matches));
   };
 
@@ -182,18 +347,27 @@ export default function PigList({ pigs: pigsDefault }) {
     setSaving((prev) => ({ ...prev, [id]: true }));
     try {
       if (!confirm('정말 삭제하시겠습니까?')) return;
-      const res = await fetch(`/api/executive/pig/${id}/delete`, {
-        method: 'POST',
-      });
+      const res = await fetch(`/api/executive/pig/${id}/delete`, { method: 'POST' });
       if (res.status === 204) {
         setPigs((prev) => prev.filter((p) => p.id !== id));
         setFilteredPigs((prev) => prev.filter((p) => p.id !== id));
-      } else alert('삭제 실패: ' + res.status);
+      } else {
+        alert('삭제 실패: ' + res.status);
+      }
     } catch {
-      alert('저장 실패: 네트워크 오류');
+      alert('삭제 실패: 네트워크 오류');
     } finally {
       setSaving((prev) => ({ ...prev, [id]: false }));
     }
+  };
+
+  const rowCtx = {
+    saving,
+    selectedMemberByPigId,
+    setSelectedMemberByPigId,
+    updatePigField,
+    handleSave,
+    handleDelete,
   };
 
   return (
@@ -228,18 +402,7 @@ export default function PigList({ pigs: pigsDefault }) {
           </tr>
           <PigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
         </thead>
-        <tbody>
-          {filteredPigs.map((pig) => (
-            <EntryRow
-              key={pig.id}
-              entry={pig}
-              onChange={updatePigField}
-              onSave={handleSave}
-              onDelete={handleDelete}
-              saving={saving}
-            />
-          ))}
-        </tbody>
+        <tbody>{filteredPigs.map((pig) => renderPigRow(pig, rowCtx))}</tbody>
       </table>
     </div>
   );
