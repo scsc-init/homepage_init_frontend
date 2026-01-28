@@ -314,7 +314,7 @@ export default function AuthClient() {
               disabled={signupBusy}
               aria-disabled={signupBusy}
             >
-              {ENABLE_TEST_UTILS && '[테스트] 관리자로'} 가입하기
+              {ENABLE_TEST_UTILS && '[테스트] 관리자로 '}가입하기
             </button>
           </div>
         )}
