@@ -11,6 +11,7 @@ Disallow: /sig/edit/
 Disallow: /pig/edit/
 Disallow: /draft/
 Disallow: /internal/
+Disallow: /testutils/
 
 Sitemap: https://scsc.dev/sitemap.xml
 Host: https://scsc.dev
