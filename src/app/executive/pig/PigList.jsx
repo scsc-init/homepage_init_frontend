@@ -22,6 +22,23 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
     );
   };
 
+  const renderTextSelect = (field, label, extraClass) => {
+    const selectClasses = [styles['adm-select'], styles['adm-select-bool']];
+    if (extraClass) selectClasses.push(styles[extraClass]);
+    return (
+      <select
+        className={selectClasses.join(' ')}
+        value={filter[field]}
+        onChange={(e) => updateFilterCriteria(field, e.target.value)}
+      >
+        <option value="">전체</option>
+        <option value="always">항상 가입 받기</option>
+        <option value="never">항상 가입 받지 않기</option>
+        <option value="during_recruiting_period">SIG 가입 기간에만 받기</option>
+      </select>
+    );
+  };
+
   return (
     <tr>
       <td className={styles['adm-td']}>
@@ -89,7 +106,7 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
       </td>
       <td className={styles['adm-td']}>{renderBoolSelect('should_extend', '연장')}</td>
       <td className={styles['adm-td']}>
-        {renderBoolSelect('is_rolling_admission', '가입 자유화', 'adm-select-bool-wide')}
+        {renderTextSelect('is_rolling_admission', '가입 자유화', 'adm-select-bool-wide')}
       </td>
       <td className={styles['adm-td']}>
         <input
@@ -105,6 +122,12 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
 const boolMatches = (value, filterValue) => {
   if (!filterValue) return true;
   const normalized = value ? 'true' : 'false';
+  return normalized === filterValue;
+};
+
+const textMatches = (value, filterValue) => {
+  if (!filterValue) return true;
+  const normalized = value ? 'always' : value ? 'never' : 'during_recruiting_period';
   return normalized === filterValue;
 };
 
@@ -148,7 +171,7 @@ export default function PigList({ pigs: pigsDefault }) {
       (!newFilter.member ||
         pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member)))) &&
       boolMatches(pig.should_extend, newFilter.should_extend) &&
-      boolMatches(pig.is_rolling_admission, newFilter.is_rolling_admission);
+      textMatches(pig.is_rolling_admission, newFilter.is_rolling_admission);
     setFilteredPigs(pigs.filter(matches));
   };
 
@@ -166,7 +189,7 @@ export default function PigList({ pigs: pigsDefault }) {
           year: pig.year,
           semester: pig.semester,
           should_extend: Boolean(pig.should_extend),
-          is_rolling_admission: Boolean(pig.is_rolling_admission),
+          is_rolling_admission: String(pig.is_rolling_admission),
         }),
       });
       if (res.status === 204) alert('저장 완료');

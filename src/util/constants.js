@@ -161,6 +161,22 @@ export function is_sigpig_join_available(status, is_rolling_admission) {
   return CTRL_STATUS_AVAILABLE[key].includes(status);
 }
 
+/**
+ *
+ * @param {String} status sig/pig status
+ * @param {String} is_rolling_admission pig is_rolling_admission
+ * @returns {Boolean}
+ */
+export function is_pig_join_available(status, is_rolling_admission) {
+  if (is_rolling_admission === 'never') {
+    return false;
+  } else {
+    const rolling = is_rolling_admission === 'always' ? true : false;
+    const key = rolling ? 'JOIN_SIGPIG_ROLLING_ADMISSION' : 'JOIN_SIGPIG';
+    return CTRL_STATUS_AVAILABLE[key].includes(status);
+  }
+}
+
 /*
  * 전체적인 색상 정의와 관련된 설정입니다.
  * 반드시 @/styles/theme.css와 함께 수정해야 합니다.

@@ -5,6 +5,7 @@ import * as Button from '@/components/Button.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
 import * as Input from '@/components/Input.jsx';
 import { Controller, useFieldArray } from 'react-hook-form';
+import PigAdmissionDropdown from '@/components/board/PigAdmissionDropdown.jsx';
 
 export default function PigForm({
   register,
