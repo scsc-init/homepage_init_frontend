@@ -6,6 +6,7 @@ import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
 import styles from './board.module.css';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function ArticlesView({ board, sortOrder }) {
   const router = useRouter();
@@ -26,17 +27,17 @@ export default function ArticlesView({ board, sortOrder }) {
       try {
         const res = await fetch(`/api/articles/${boardId}`);
         if (res.status === 401) {
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
           return;
         }
         if (!res.ok) {
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
           return;
         }
         const data = await res.json();
         setArticles(data);
       } catch (_) {
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       }
     };
 

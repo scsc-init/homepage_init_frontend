@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import '@/app/board/[id]/create/page.css';
+import AttachmentSection from '@/components/board/AttachmentSection';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
@@ -14,6 +16,7 @@ export default function EditClient({ articleId }) {
   const [loading, setLoading] = useState(true);
   const [boardId, setBoardId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [attachmentIds, setAttachmentIds] = useState([]);
   const isFormSubmitted = useRef(false);
 
   const {
@@ -35,7 +38,7 @@ export default function EditClient({ articleId }) {
         ]);
         if (userRes.status === 401) {
           alert('로그인이 필요합니다.');
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
           return;
         }
         if (!articleRes.ok || !userRes.ok) throw new Error();
@@ -51,6 +54,9 @@ export default function EditClient({ articleId }) {
         setValue('title', article.title || '');
         setValue('editor', article.content || '');
         setBoardId(article.board_id);
+
+        const ids = Array.isArray(article.attachments) ? article.attachments : [];
+        setAttachmentIds(ids.map((x) => String(x)));
       } catch {
         alert('게시글 정보를 불러오지 못했습니다.');
         router.replace(`/article/${articleId}`);
@@ -95,6 +101,7 @@ export default function EditClient({ articleId }) {
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardId ?? 0),
+          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
         }),
       });
 
@@ -104,7 +111,7 @@ export default function EditClient({ articleId }) {
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
         alert('다시 로그인해주세요.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         let errText = '수정 실패';
         try {
@@ -139,6 +146,7 @@ export default function EditClient({ articleId }) {
 
           <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
 
+          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
           <button type="submit" className="SigCreateBtn" disabled={submitting}>
             {submitting ? '수정 중...' : '수정 완료'}
           </button>

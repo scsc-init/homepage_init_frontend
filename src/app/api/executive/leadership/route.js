@@ -1,7 +1,7 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { NextResponse } from 'next/server';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 
 function sanitizeId(value) {
   if (value === null || value === undefined) return '';
@@ -20,20 +20,12 @@ export async function POST(request) {
   const presidentId = sanitizeId(body?.president_id);
   const vicePresidentId = sanitizeId(body?.vice_president_id);
 
-  const cookieStore = cookies();
-  const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
 
   try {
-    let apiSecret = getApiSecret();
-    if (!apiSecret) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error('Missing API_SECRET environment variable');
-      }
-      apiSecret = 'development-missing-api-secret';
-    }
     const hdrs = {
       'Content-Type': 'application/json',
-      'x-api-secret': apiSecret,
     };
     if (appJwt) hdrs['x-jwt'] = appJwt;
 

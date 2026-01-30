@@ -1,16 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import SortDropdown from './SortDropdown';
 import ArticlesView from './ArticlesView';
+import GalleryView from './GalleryView';
 import styles from './board.module.css';
+import { ALBUM_BOARD_ID } from '@/util/constants';
 
 export default function BoardClient({ board }) {
   const [sortOrder, setSortOrder] = useState('latest');
+  const isAlbum = useMemo(() => String(board?.id) === String(ALBUM_BOARD_ID), [board?.id]);
 
   return (
     <>
-      {/* 상단 버튼 영역 */}
       <div className={styles.boardActions}>
         <div className={styles.leftAction}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
@@ -22,8 +24,11 @@ export default function BoardClient({ board }) {
         </div>
       </div>
 
-      {/* 글 목록 */}
-      <ArticlesView board={board} sortOrder={sortOrder} />
+      {isAlbum ? (
+        <GalleryView board={board} sortOrder={sortOrder} />
+      ) : (
+        <ArticlesView board={board} sortOrder={sortOrder} />
+      )}
     </>
   );
 }

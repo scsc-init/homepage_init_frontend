@@ -1,9 +1,18 @@
-'use client';
+﻿'use client';
 
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site, index) => {
+      const url = site?.url?.trim() ?? '';
+      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
+    })
+    .filter((site) => site.url);
 
 export default function CreatePigClient({ scscGlobalStatus }) {
   const router = useRouter();
@@ -14,6 +23,20 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const saved = typeof window !== 'undefined' ? sessionStorage.getItem('pigForm') : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
+  const defaultFormValues = {
+    title: parsed?.title ?? '',
+    description: parsed?.description ?? '',
+    editor: parsed?.editor ?? '',
+    is_rolling_admission:
+      typeof parsed?.is_rolling_admission === 'boolean'
+        ? parsed.is_rolling_admission
+        : scscGlobalStatus === 'active',
+    websites:
+      parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
+        ? parsed.websites
+        : [{ url: '' }],
+  };
+
   const {
     register,
     control,
@@ -21,19 +44,14 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed || {
-      title: '',
-      description: '',
-      editor: '',
-      is_rolling_admission: scscGlobalStatus === 'active',
-    },
+    defaultValues: defaultFormValues,
   });
 
   useEffect(() => {
     const fetchProfile = async () => {
       const res = await fetch(`/api/user/profile`);
       if (res.ok) setUser(await res.json());
-      else router.push('/us/login');
+      else pushLoginWithRedirect(router);
     };
     fetchProfile();
   }, [router]);
@@ -101,6 +119,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
         }),
       });
 
@@ -112,7 +131,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
         alert('PIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));

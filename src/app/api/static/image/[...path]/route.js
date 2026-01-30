@@ -1,6 +1,6 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 
 export async function GET(_req, { params }) {
   const segments = Array.isArray(params?.path) ? params.path : [];
@@ -9,12 +9,12 @@ export async function GET(_req, { params }) {
   const base = getBaseUrl();
   const url = `${base}/static/image/${targetPath}`;
 
-  const appJwt = cookies().get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
 
   const res = await fetch(url, {
     method: 'GET',
     headers: {
-      'x-api-secret': getApiSecret(),
       ...(appJwt ? { 'x-jwt': appJwt } : {}),
     },
     cache: 'no-store',

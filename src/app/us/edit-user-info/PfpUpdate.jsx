@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './page.module.css';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function PfpUpdate() {
   const [mode, setMode] = useState('url');
@@ -37,7 +38,7 @@ export default function PfpUpdate() {
       });
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
         return;
       }
       alert(res.status === 204 ? '변경 완료' : `변경 실패`);
@@ -52,7 +53,7 @@ export default function PfpUpdate() {
       });
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
         return;
       }
       alert(res.status === 204 ? '변경 완료' : `변경 실패`);

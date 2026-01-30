@@ -1,6 +1,9 @@
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
+import { ENABLE_TEST_UTILS } from '@/util/constants';
+
 /**
  * Handles forwarding requests to an internal API.
  * @param {string} method - The HTTP method (e.g., "POST").
@@ -12,8 +15,8 @@ import { getApiSecret } from '@/util/getApiSecret';
  * @returns {Promise<Response>} - A Next.js Response object.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
-  const cookieStore = cookies();
-  const appJwt = cookieStore.get('app_jwt')?.value || null;
+  const session = await getServerSession(authOptions);
+  const appJwt = session?.backendJwt || null;
 
   let fullPath = pathTemplate;
   if (options.params) {
@@ -31,7 +34,14 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   const hasIncoming = Boolean(request);
   const bodyJson = hasIncoming ? await request.json() : undefined;
 
-  const hdrs = { 'x-api-secret': getApiSecret() };
+  const hdrs = {};
+  if (
+    fullPath.startsWith('/api/user/login') ||
+    fullPath.startsWith('/api/user/create') ||
+    (ENABLE_TEST_UTILS && fullPath.startsWith('/api/test'))
+  ) {
+    hdrs['x-api-secret'] = getApiSecret();
+  }
   if (appJwt) hdrs['x-jwt'] = appJwt;
   if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
 

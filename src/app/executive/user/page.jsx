@@ -25,17 +25,22 @@ export default async function ExecutiveUserPage() {
 
   const presidentId =
     kv['main-president']?.status === 'fulfilled' ? kv['main-president'].value || '' : '';
-  const vicePresidentId =
-    kv['vice-president']?.status === 'fulfilled' ? kv['vice-president'].value || '' : '';
+  const vicePresidentIds = (
+    kv['vice-president']?.status === 'fulfilled' ? kv['vice-president'].value || '' : ''
+  ).split(';');
 
-  const initialLeadership = { presidentId, vicePresidentId };
+  const initialLeadership = { presidentId, vicePresidentIds };
 
+  const majorsSafe = Array.isArray(majors) ? majors : [];
+  const majorsMap = Object.fromEntries(
+    majorsSafe.map((m) => [m.id, `${m.college} - ${m.major_name}`]),
+  );
   const usersSorted = Array.from(
     new Map((Array.isArray(users) ? users : []).map((u) => [u.id, u])),
   )
     .map(([, v]) => v)
-    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'));
-  const majorsSafe = Array.isArray(majors) ? majors : [];
+    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
+    .map((u) => ({ ...u, major: majorsMap[u.major_id] }));
 
   return (
     <WithAuthorization>
@@ -51,7 +56,7 @@ export default async function ExecutiveUserPage() {
 
         <details open className="adm-section">
           <summary className="adm-flex" style={{ cursor: 'pointer', fontWeight: 700 }}>
-            유저 목록 접기/펼치기
+            <h2>유저 목록 접기/펼치기</h2>
           </summary>
           <div className="adm-section" style={{ marginTop: '0.75rem' }}>
             <UserList users={usersSorted} majors={majorsSafe} />

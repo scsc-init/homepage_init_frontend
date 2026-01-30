@@ -193,12 +193,6 @@ export function utc2kst(date) {
   });
 }
 
-/** 회장 이메일 */
-export const presidentEmails = ['sungjae0506@snu.ac.kr'];
-
-/** 부회장 이메일 */
-export const vicePresidentEmails = ['lycoris1600@snu.ac.kr'];
-
 /** 임원진 페이지에서 제외할 이메일 목록 */
 export const excludedExecutiveEmails = [
   'bot@discord.com',
@@ -207,9 +201,42 @@ export const excludedExecutiveEmails = [
   '1n1tial@snu.ac.kr',
 ];
 
-export const DEFAULT_EXECUTIVE_PFP = '/main/deafult-pfp.png';
+export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.png';
 
 /**
  * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
  */
 export const HIDDEN_KV_KEYS = ['main-president', 'vice-president'];
+
+/**
+ * 앨범 게시판의 id입니다.
+ */
+export const ALBUM_BOARD_ID = 4;
+
+/**
+ * 각각 이미지 업로드가 허용되는 최대 용량, 서버에 전송시 막히는 용량, 이미지 압축 용량입니다.
+ */
+export const IMAGE_UPLOAD_MAX_ORIGINAL_BYTES = 10_000_000; // 10MB
+export const IMAGE_UPLOAD_VERCEL_BLOCK_BYTES = 5_000_000; // 5MB
+export const IMAGE_UPLOAD_TARGET_BYTES = 4_800_000; // ~4.8MB
+
+/**
+ * 로그인 이후 돌아갈 수 있는 리다이렉트 경로의 화이트리스트(prefix)입니다.
+ * 이 목록에 포함되지 않은 경로로는 리다이렉트하지 않습니다.
+ * 특히 /us/login을 넣으면 무한로딩에 걸리니 주의하십시오.
+ * @type {string[]}
+ */
+export const ALLOWED_REDIRECT_PREFIXES = [
+  '/us/fund-apply',
+  '/board',
+  '/article',
+  '/sig',
+  '/pig',
+  '/us/edit-user-info',
+  '/executive',
+];
+
+/**
+ * 테스트 유틸리티 페이지 활성화 여부입니다.
+ */
+export const ENABLE_TEST_UTILS = process.env.NEXT_PUBLIC_ENABLE_TEST_UTILS === 'TRUE' ?? false;

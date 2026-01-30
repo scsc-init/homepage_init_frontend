@@ -11,7 +11,7 @@ export default function EditSigButton({ sigId, canEdit }) {
       onClick={() => router.push(`/sig/edit/${sigId}`)}
       type="button"
     >
-      내용 수정하기
+      수정하기
     </button>
   );
 }

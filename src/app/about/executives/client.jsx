@@ -3,21 +3,22 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   minExecutiveLevel,
-  presidentEmails,
-  vicePresidentEmails,
   excludedExecutiveEmails,
   DEFAULT_EXECUTIVE_PFP,
 } from '@/util/constants';
 import { resolveProfileImage } from '@/util/profileImage';
+import styles from '../about.module.css';
 
 function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
-  const { presidentId, vicePresidentId } = leadershipIds || {};
+  const { presidentId, vicePresidentIds } = leadershipIds || {};
   const userId = String(user.id ?? '').trim();
   const presidentKey = String(presidentId ?? '').trim();
-  const vicePresidentKey = String(vicePresidentId ?? '').trim();
+  const vicePresidentKey = String(vicePresidentIds ?? '')
+    .trim()
+    .split(';');
   if (presidentKey && userId === presidentKey) return '회장';
-  if (vicePresidentKey && userId === vicePresidentKey) return '부회장';
+  if (vicePresidentKey && vicePresidentKey.includes(userId)) return '부회장';
   return '임원';
 }
 
@@ -39,13 +40,8 @@ export default function ExecutivesClient() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [execRes, prezRes, leadersRes] = await Promise.all([
-          fetch('/api/users?user_role=executive', {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-          fetch('/api/users?user_role=president', {
-            credentials: 'include',
+        const [execRes, leadersRes] = await Promise.all([
+          fetch('/api/user/executives', {
             cache: 'no-store',
           }),
           fetch('/api/leadership', {
@@ -53,39 +49,30 @@ export default function ExecutivesClient() {
           }),
         ]);
 
-        if (!execRes.ok && !prezRes.ok) throw new Error('failed');
+        if (!execRes.ok) throw new Error('failed');
 
-        const [execJson, prezJson, leadersJson] = await Promise.all([
-          execRes.ok ? execRes.json() : [],
-          prezRes.ok ? prezRes.json() : [],
+        const [execJson, leadersJson] = await Promise.all([
+          execRes.json(),
           leadersRes.ok ? leadersRes.json() : null,
         ]);
-
-        if (!execRes.ok || !prezRes.ok) {
-          console.warn('Partial executive data load', {
-            execOk: execRes.ok,
-            prezOk: prezRes.ok,
-          });
-        }
 
         const leadership = {
           presidentId:
             leadersJson && typeof leadersJson.president_id === 'string'
               ? leadersJson.president_id
               : null,
-          vicePresidentId:
+          vicePresidentIds:
             leadersJson && typeof leadersJson.vice_president_id === 'string'
               ? leadersJson.vice_president_id
               : null,
         };
 
-        const raw = [
-          ...(Array.isArray(execJson) ? execJson : []),
-          ...(Array.isArray(prezJson) ? prezJson : []),
-        ];
+        const raw = Array.isArray(execJson) ? execJson : [];
+
         const excludedSet = new Set(
           excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
         );
+
         const normalized = raw
           .map(normUser)
           .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
@@ -94,7 +81,8 @@ export default function ExecutivesClient() {
         const dedup = [];
         const seen = new Set();
         for (const u of normalized) {
-          const key = u.id || u.email;
+          const key = String(u.id || u.email || '').trim();
+          if (!key) continue;
           if (!seen.has(key)) {
             seen.add(key);
             dedup.push(u);
@@ -138,69 +126,69 @@ export default function ExecutivesClient() {
   const positionClass = (idx) => {
     if (!total) return 'hidden';
     const offset = (idx - centerIndex + total) % total;
-    if (offset === 0) return 'center';
-    if (offset === 1 || offset === -total + 1) return 'right-1';
-    if (offset === 2 || offset === -total + 2) return 'right-2';
-    if (offset === total - 1) return 'left-1';
-    if (offset === total - 2) return 'left-2';
-    return 'hidden';
+    if (offset === 0) return styles.carouselCardCenter;
+    if (offset === 1 || offset === -total + 1) return styles.carouselCardRight1;
+    if (offset === 2 || offset === -total + 2) return styles.carouselCardRight2;
+    if (offset === total - 1) return styles.carouselCardLeft1;
+    if (offset === total - 2) return styles.carouselCardLeft2;
+    return '';
   };
 
   return (
     <>
       <div
-        className="ExecutiveCarouselWrapper"
+        className={styles.carouselWrapper}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <div className="ExecutiveCarouselCentered">
+        <div className={styles.carouselCentered}>
           {people.map((person, idx) => (
             <div
-              className={`ExecutiveCard ${positionClass(idx)}`}
+              className={`${styles.carouselCard} ${positionClass(idx)}`}
               key={person.id || idx}
               style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
             >
-              <div className="ExecutiveImageWrapper">
+              <div className={styles.imageWrapper}>
                 <img
                   src={person.image || DEFAULT_EXECUTIVE_PFP}
                   alt={person.name}
                   loading="lazy"
                   decoding="async"
-                  className="ExecutiveImage"
+                  className={styles.image}
                   referrerPolicy="no-referrer"
                 />
               </div>
               <h3>{person.name}</h3>
-              <p className="ExecutiveRole">{person.role}</p>
+              <p className={styles.roleText}>{person.role}</p>
             </div>
           ))}
         </div>
-        <div className="ExecutiveDots">
+        <div className={styles.carouselDots}>
           {people.map((_, i) => (
             <div
               key={i}
-              className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
+              className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
               onClick={() => setCenterIndex(i)}
             />
           ))}
         </div>
       </div>
 
-      <div className="ExecutiveMasonry">
+      <div className={styles.masonry}>
         {people.map((person, i) => (
-          <div className="ExecutiveCard" key={person.id || i}>
-            <div className="ExecutiveImageWrapper">
+          <div className={styles.masonryCard} key={person.id || i}>
+            <div className={styles.imageWrapper}>
               <img
                 src={person.image || DEFAULT_EXECUTIVE_PFP}
                 alt={person.name}
                 loading="lazy"
                 decoding="async"
-                className="ExecutiveImage"
+                className={styles.image}
                 referrerPolicy="no-referrer"
               />
             </div>
             <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
+            <p className={styles.roleText}>{person.role}</p>
           </div>
         ))}
       </div>

@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import styles from '../about.module.css';
+
 const executives = [
   {
     name: '강명석',
@@ -50,7 +52,6 @@ const executives = [
 export default function ExecutivesClient() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const autoRef = useRef();
   const total = executives.length;
 
@@ -63,22 +64,13 @@ export default function ExecutivesClient() {
   }, [total]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (!hovered && !isMobile) {
+    if (!hovered) {
       autoRef.current = setInterval(() => {
         next();
       }, 4000);
     }
     return () => clearInterval(autoRef.current);
-  }, [hovered, isMobile, next]);
+  }, [hovered, next]);
 
   const handlers = useSwipeable({
     onSwipedLeft: next,
@@ -88,74 +80,66 @@ export default function ExecutivesClient() {
 
   const positionClass = (idx) => {
     const offset = (idx - centerIndex + total) % total;
-    if (offset === 0) return 'center';
-    if (offset === 1 || offset === -total + 1) return 'right-1';
-    if (offset === 2 || offset === -total + 2) return 'right-2';
-    if (offset === total - 1) return 'left-1';
-    if (offset === total - 2) return 'left-2';
-    return 'hidden';
+    if (offset === 0) return styles.carouselCardCenter;
+    if (offset === 1 || offset === -total + 1) return styles.carouselCardRight1;
+    if (offset === 2 || offset === -total + 2) return styles.carouselCardRight2;
+    if (offset === total - 1) return styles.carouselCardLeft1;
+    if (offset === total - 2) return styles.carouselCardLeft2;
+    return '';
   };
 
-  if (isMobile) {
-    return (
-      <div className="ExecutiveMasonry">
+  return (
+    <>
+      <div
+        className={styles.carouselWrapper}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        {...handlers}
+      >
+        <div className={styles.carouselCentered}>
+          {executives.map((person, idx) => (
+            <div
+              className={`${styles.carouselCard} ${positionClass(idx)}`}
+              key={idx}
+              style={{
+                transition: 'transform 0.6s ease, opacity 0.6s ease',
+              }}
+            >
+              <div className={styles.imageWrapper}>
+                <Image src={person.image} alt={person.name} fill className={styles.image} />
+              </div>
+              <h3>{person.name}</h3>
+              <p className={styles.roleText}>{person.role}</p>
+              {person.phone && <p className={styles.roleText}>{person.phone}</p>}
+            </div>
+          ))}
+        </div>
+        <div className={styles.carouselDots}>
+          {executives.map((_, i) => (
+            <div
+              key={i}
+              className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
+              onClick={() => setCenterIndex(i)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.masonry}>
         {executives.map((person, i) => (
-          <div className="ExecutiveCard" key={i}>
-            <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
-              <div className="ExecutiveOverlay">
-                <p className="ExecutiveDescription">{person.description}</p>
+          <div className={styles.masonryCard} key={i}>
+            <div className={styles.imageWrapper}>
+              <Image src={person.image} alt={person.name} fill className={styles.image} />
+              <div className={styles.overlay}>
+                <p className={styles.description}>{person.description}</p>
               </div>
             </div>
             <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
+            <p className={styles.roleText}>{person.role}</p>
+            {person.phone && <p className={styles.roleText}>{person.phone}</p>}
           </div>
         ))}
       </div>
-    );
-  }
-
-  return (
-    <div
-      className="ExecutiveCarouselWrapper"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      {...handlers}
-    >
-      {/*<button className="ExecutiveArrow left" onClick={prev}>
-        ◀
-      </button>*/}
-      <div className="ExecutiveCarouselCentered">
-        {executives.map((person, idx) => (
-          <div
-            className={`ExecutiveCard ${positionClass(idx)}`}
-            key={idx}
-            style={{
-              transition: 'transform 0.6s ease, opacity 0.6s ease',
-            }}
-          >
-            <div className="ExecutiveImageWrapper">
-              <Image src={person.image} alt={person.name} fill className="ExecutiveImage" />
-            </div>
-            <h3>{person.name}</h3>
-            <p className="ExecutiveRole">{person.role}</p>
-            {person.phone && <p className="ExecutivePhone">{person.phone}</p>}
-          </div>
-        ))}
-      </div>
-      {/*<button className="ExecutiveArrow right" onClick={next}>
-        ▶
-      </button>*/}
-      <div className="ExecutiveDots">
-        {executives.map((_, i) => (
-          <div
-            key={i}
-            className={`ExecutiveDot ${i === centerIndex ? 'active' : ''}`}
-            onClick={() => setCenterIndex(i)}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import Arrow from './Arrow';
-import './faq.css';
+import styles from '@/app/about/about.module.css';
 
 export default function FaqList() {
   const faqs = [
@@ -42,12 +42,12 @@ export default function FaqList() {
   const contentRefs = useRef([]);
 
   return (
-    <div id="HomeFQAContainer">
+    <div className={styles.faqContainer}>
       <h2>자주 묻는 질문</h2>
       {faqs.map((faq, idx) => (
-        <div className="HomeFQA" key={idx}>
+        <div className={styles.faqItem} key={idx}>
           <button
-            className="HomeFQAQuestion"
+            className={styles.faqQuestion}
             onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
           >
             <h4>{faq.question}</h4>
@@ -60,7 +60,7 @@ export default function FaqList() {
           </button>
 
           <div
-            className="HomeFQAHiddenJS"
+            className={styles.faqContent}
             ref={(el) => (contentRefs.current[idx] = el)}
             style={{
               height: openIdx === idx ? `${contentRefs.current[idx]?.scrollHeight}px` : '0px',

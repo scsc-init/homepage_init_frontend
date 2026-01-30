@@ -44,6 +44,49 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--background-color);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+.wallLogo,
+.wallLogo2 {
+  position: fixed;
+  background-image: url('/wall-logo.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 1;
+  width: 18vw;
+  height: 27vw;
+  opacity: 0.85;
+  filter: var(--wall-logo-filter, none);
+}
+
+.wallLogo {
+  top: 80%;
+  right: 2vw;
+  transform: translateY(-50%);
+}
+
+.wallLogo2 {
+  top: 20%;
+  left: 5vw;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  .wallLogo,
+  .wallLogo2 {
+    width: 10vh;
+    height: 30vh;
+  }
+
+  .wallLogo2 {
+    margin-top: 1rem;
+    left: 0;
+  }
 }
 
 #RootContainer {
@@ -311,4 +354,133 @@ button {
 }
 .C_Input::placeholder {
   color: var(--slate-8);
+}
+
+.PigUrlRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.PigUrlField {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.PigUrlInput {
+  border-bottom: 2px solid var(--executive-card-bg);
+  padding-bottom: 0.2em;
+}
+
+.PigUrlInput:focus {
+  border-bottom-color: var(--executive-overlay-bg);
+}
+
+.PigUrlRemove {
+  flex-shrink: 0;
+}
+
+.AttachmentSection {
+  width: 100%;
+  overflow: hidden;
+}
+
+.AttachmentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.AttachmentLabel {
+  font-weight: 600;
+}
+
+.AttachmentInput {
+  display: none;
+}
+
+.AttachmentPick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.AttachmentPick.is-busy {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.AttachmentEmpty {
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.AttachmentList {
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px; /* 무제한 대비 */
+  overflow: auto;
+}
+
+.AttachmentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.AttachmentLink {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.AttachmentRemove {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+  cursor: pointer;
+}
+.InquiryButton {
+  position: fixed;
+  right: 2rem;
+  bottom: calc(2rem + 3.2rem);
+  z-index: 999901;
+
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--foreground-color);
+  color: var(--background-color);
+  text-decoration: none;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  font-size: 1.2rem; /* 아이콘/한 글자용 */
+  line-height: 1;
+}
+
+.InquiryButton:hover {
+  background: var(--color-text-subtle);
+  color: var(--color-text-body);
+  transform: scale(1.05);
 }

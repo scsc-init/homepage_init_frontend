@@ -75,7 +75,7 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? '피그 탈퇴하기' : '피그 가입하기'}
+      {isMember ? '탈퇴하기' : '가입하기'}
     </button>
   );
 }

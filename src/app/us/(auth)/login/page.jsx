@@ -1,11 +1,10 @@
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import AuthClient from './AuthClient';
+import { fetchMe } from '@/util/fetchAPIData';
 
 export default async function LoginPage() {
-  const cookieStore = cookies();
-  const jwt = cookieStore.get('app_jwt');
-  if (jwt) redirect('/');
+  const [me] = await Promise.allSettled([fetchMe()]);
+  if (me.status === 'fulfilled') redirect('/api/auth/consume-redirect');
 
   return <AuthClient />;
 }

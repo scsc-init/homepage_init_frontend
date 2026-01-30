@@ -31,7 +31,7 @@ export async function fetchMe() {
  * Fetches all users.
  */
 export async function fetchUsers() {
-  return safeFetch('GET', `/api/users`);
+  return safeFetch('GET', `/api/executive/users`);
 }
 
 /**
@@ -50,25 +50,34 @@ export async function fetchBoards(boardIds) {
  * @returns {Promise<PromiseSettledResult<any>[]>} - Promise that resolves to object that contains information for each sigs.
  */
 export async function fetchSigs() {
-  try {
-    const sigsRaw = await safeFetch('GET', '/api/sigs');
-    const sigsWithContentMembers = await Promise.allSettled(
-      sigsRaw.map(async (sig) => {
-        try {
-          const [article, members] = await Promise.all([
-            safeFetch('GET', `/api/article/${sig.content_id}`),
-            safeFetch('GET', `/api/sig/${sig.id}/members`),
-          ]);
-          return { ...sig, content: article.content, members: members };
-        } catch (err) {
-          throw new Error(`sig fetch failed: ${err}`);
-        }
-      }),
-    );
-    return sigsWithContentMembers;
-  } catch (err) {
-    throw err;
-  }
+  const softFetch = async (path) => {
+    try {
+      const res = await handleApiRequest('GET', path);
+      if (!res.ok) return null;
+      return await res.json().catch(() => null);
+    } catch {
+      return null;
+    }
+  };
+
+  const sigsRaw = await safeFetch('GET', '/api/sigs');
+
+  const sigsWithContentMembers = await Promise.allSettled(
+    (Array.isArray(sigsRaw) ? sigsRaw : []).map(async (sig) => {
+      const [article, members] = await Promise.all([
+        softFetch(`/api/article/${sig.content_id}`),
+        softFetch(`/api/sig/${sig.id}/members`),
+      ]);
+
+      return {
+        ...sig,
+        content: article?.content ?? '',
+        members: Array.isArray(members) ? members : [],
+      };
+    }),
+  );
+
+  return sigsWithContentMembers;
 }
 
 /**
@@ -77,25 +86,34 @@ export async function fetchSigs() {
  * @returns {Promise<PromiseSettledResult<any>[]>} - Promise that resolves to object that contains information for each pigs.
  */
 export async function fetchPigs() {
-  try {
-    const pigsRaw = await safeFetch('GET', '/api/pigs');
-    const pigsWithContentMembers = await Promise.allSettled(
-      pigsRaw.map(async (pig) => {
-        try {
-          const [article, members] = await Promise.all([
-            safeFetch('GET', `/api/article/${pig.content_id}`),
-            safeFetch('GET', `/api/pig/${pig.id}/members`),
-          ]);
-          return { ...pig, content: article.content, members: members };
-        } catch (err) {
-          throw new Error(`pig fetch failed: ${err}`);
-        }
-      }),
-    );
-    return pigsWithContentMembers;
-  } catch (err) {
-    throw err;
-  }
+  const softFetch = async (path) => {
+    try {
+      const res = await handleApiRequest('GET', path);
+      if (!res.ok) return null;
+      return await res.json().catch(() => null);
+    } catch {
+      return null;
+    }
+  };
+
+  const pigsRaw = await safeFetch('GET', '/api/pigs');
+
+  const pigsWithContentMembers = await Promise.allSettled(
+    (Array.isArray(pigsRaw) ? pigsRaw : []).map(async (pig) => {
+      const [article, members] = await Promise.all([
+        softFetch(`/api/article/${pig.content_id}`),
+        softFetch(`/api/pig/${pig.id}/members`),
+      ]);
+
+      return {
+        ...pig,
+        content: article?.content ?? '',
+        members: Array.isArray(members) ? members : [],
+      };
+    }),
+  );
+
+  return pigsWithContentMembers;
 }
 
 /**
@@ -136,8 +154,8 @@ export async function fetchSCSCGlobalStatus() {
 
 export async function fetchExecutiveCandidates() {
   const [execRes, prezRes] = await Promise.all([
-    handleApiRequest('GET', '/api/users', { query: { user_role: 'executive' } }),
-    handleApiRequest('GET', '/api/users', { query: { user_role: 'president' } }),
+    handleApiRequest('GET', '/api/executive/users', { query: { user_role: 'executive' } }),
+    handleApiRequest('GET', '/api/executive/users', { query: { user_role: 'president' } }),
   ]);
 
   const execList = execRes.ok ? await execRes.json().catch(() => []) : [];
@@ -235,4 +253,127 @@ export async function setKVValues(entries) {
     out[k] = results[i].status === 'fulfilled';
   }
   return out;
+}
+
+/**
+ * Fetches initial data for the SIG/PIG fund-apply create page.
+ *
+ * - Current-term list (sigs/pigs): filters by status only (recruiting/active) to preserve existing behavior.
+ * - Previous-term list (prevSigs/prevPigs): filters only by (year, semester) and does NOT filter by status.
+ * - Term resolution: prefers /api/scsc/global/status; if missing, falls back to inferring the latest (year, semester)
+ *   from returned sig/pig records.
+ *
+ * @param {number} boardId - Board id for the fund-apply board (default: 6).
+ * @returns {Promise<{
+ *  boardInfo: any;
+ *  globalStatus: { id:number; year:number; semester:number; status:string; updated_at:string } | null;
+ *  prevTerm: { year:number; semester:number } | null;
+ *  sigs: any[];
+ *  pigs: any[];
+ *  prevSigs: any[];
+ *  prevPigs: any[];
+ * }>} - Data required by FundApplyClient.
+ */
+export async function fetchFundApplyCreateData(boardId = 6) {
+  const asArray = (v) => {
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') {
+      if (Array.isArray(v.items)) return v.items;
+      if (Array.isArray(v.data)) return v.data;
+      if (Array.isArray(v.results)) return v.results;
+      if (Array.isArray(v.sigs)) return v.sigs;
+      if (Array.isArray(v.pigs)) return v.pigs;
+    }
+    return [];
+  };
+
+  const normalizeTargets = (list) =>
+    asArray(list)
+      .filter((x) => x && typeof x === 'object')
+      .map((x) => ({
+        ...x,
+        id: x.id ?? null,
+        title: x.title ?? x.name ?? x.label ?? '',
+        year:
+          typeof x.year === 'number'
+            ? x.year
+            : Number.isFinite(Number(x.year))
+              ? Number(x.year)
+              : null,
+        semester:
+          typeof x.semester === 'number'
+            ? x.semester
+            : Number.isFinite(Number(x.semester))
+              ? Number(x.semester)
+              : null,
+        status: typeof x.status === 'string' ? x.status : '',
+      }));
+
+  const calcPrevTerm = (term) => {
+    if (!term || typeof term.year !== 'number' || typeof term.semester !== 'number')
+      return null;
+    if (term.semester === 1) return { year: term.year - 1, semester: 4 };
+    return { year: term.year, semester: term.semester - 1 };
+  };
+
+  const [boardsSettled, globalStatus] = await Promise.all([
+    fetchBoards([boardId]),
+    fetchSCSCGlobalStatus().catch(() => null),
+  ]);
+
+  const boardInfo =
+    Array.isArray(boardsSettled) && boardsSettled[0]?.status === 'fulfilled'
+      ? boardsSettled[0].value
+      : { id: String(boardId), code: String(boardId), description: '' };
+
+  const currentTerm = globalStatus
+    ? {
+        year: globalStatus.year,
+        semester: globalStatus.semester,
+        status: globalStatus.status,
+      }
+    : null;
+
+  const prevTerm = calcPrevTerm(currentTerm);
+
+  if (!currentTerm)
+    return {
+      boardInfo,
+      globalStatus,
+      prevTerm,
+      sigs: [],
+      pigs: [],
+      prevSigs: [],
+      prevPigs: [],
+    };
+
+  const [currentSigsRaw, prevSigsRaw, currentPigsRaw, prevPigsRaw] = await Promise.all([
+    safeFetch('GET', '/api/sigs', {
+      query: {
+        year: currentTerm.year,
+        semester: currentTerm.semester,
+        status: currentTerm.status,
+      },
+    }).catch(() => []),
+    safeFetch('GET', '/api/sigs', {
+      query: { year: prevTerm.year, semester: prevTerm.semester },
+    }).catch(() => []),
+    safeFetch('GET', '/api/pigs', {
+      query: {
+        year: currentTerm.year,
+        semester: currentTerm.semester,
+        status: currentTerm.status,
+      },
+    }).catch(() => []),
+    safeFetch('GET', '/api/pigs', {
+      query: { year: prevTerm.year, semester: prevTerm.semester },
+    }).catch(() => []),
+  ]);
+
+  const sigs = normalizeTargets(currentSigsRaw);
+  const pigs = normalizeTargets(currentPigsRaw);
+  const prevSigs = normalizeTargets(prevSigsRaw);
+  const prevPigs = normalizeTargets(prevPigsRaw);
+
+  return { boardInfo, globalStatus, prevTerm, sigs, pigs, prevSigs, prevPigs };
 }

@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import Google from 'next-auth/providers/google';
 import crypto from 'crypto';
 import { getBaseUrl } from '@/util/getBaseUrl';
@@ -6,7 +5,10 @@ import { getApiSecret } from '@/util/getApiSecret';
 import * as validator from '@/util/validator';
 
 export const authOptions = {
-  session: { strategy: 'jwt' },
+  session: {
+    strategy: 'jwt',
+    maxAge: 10 * 24 * 60 * 60,
+  },
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -62,14 +64,7 @@ export const authOptions = {
           return '/us/login?error=default';
         }
 
-        cookies().set('app_jwt', data.jwt, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7,
-        });
-
+        user.backendJwt = data.jwt;
         user.registered = true;
         user.hashToken = hash;
 
@@ -83,16 +78,21 @@ export const authOptions = {
 
       return '/us/login?error=default';
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
+        token.backendJwt = user.backendJwt;
         token.registered = user.registered || false;
         token.hashToken = user.hashToken || null;
+      }
+      if (trigger === 'update' && session?.backendJwt) {
+        token.backendJwt = session.backendJwt;
       }
       return token;
     },
 
     async session({ session, token }) {
       if (token) {
+        session.backendJwt = token.backendJwt;
         session.registered = token.registered || false;
         session.hashToken = token.hashToken || null;
       }

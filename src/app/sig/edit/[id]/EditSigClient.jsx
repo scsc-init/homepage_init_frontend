@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -113,7 +114,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
         alert('SIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));

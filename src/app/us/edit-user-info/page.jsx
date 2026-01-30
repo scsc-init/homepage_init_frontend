@@ -6,6 +6,7 @@ import * as validator from '@/util/validator';
 import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function EditUserInfoClient() {
   const router = useRouter();
@@ -31,7 +32,7 @@ function EditUserInfoClient() {
 
       if (!resUser.ok) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
         return;
       }
       const user = await resUser.json();

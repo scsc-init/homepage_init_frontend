@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Editor from '@/components/board/EditorWrapper.jsx';
 import PigForm from '@/components/board/PigForm';
@@ -6,12 +6,26 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   return mounted;
 }
+
+const mapWebsitesForForm = (websites = []) =>
+  (Array.isArray(websites) ? websites : []).map((site) => ({
+    url: site?.url ?? '',
+  }));
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site, index) => {
+      const url = site?.url?.trim() ?? '';
+      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
+    })
+    .filter((site) => site.url);
 
 export default function EditPigClient({ pigId, me, pig, article }) {
   const router = useRouter();
@@ -20,6 +34,18 @@ export default function EditPigClient({ pigId, me, pig, article }) {
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
 
+  const defaultFormValues = {
+    title: pig?.title ?? '',
+    description: pig?.description ?? '',
+    editor: article?.content ?? '',
+    should_extend: pig?.should_extend ?? false,
+    is_rolling_admission: pig?.is_rolling_admission ?? false,
+    websites:
+      pig && Array.isArray(pig.websites) && pig.websites.length > 0
+        ? mapWebsitesForForm(pig.websites)
+        : [{ url: '' }],
+  };
+
   const {
     register,
     control,
@@ -27,13 +53,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: {
-      title: '',
-      description: '',
-      editor: '',
-      should_extend: false,
-      is_rolling_admission: false,
-    },
+    defaultValues: defaultFormValues,
   });
 
   useEffect(() => {
@@ -65,14 +85,8 @@ export default function EditPigClient({ pigId, me, pig, article }) {
 
   useEffect(() => {
     if (pig && article && mounted && !isDirty) {
-      reset({
-        title: pig.title ?? '',
-        description: pig.description ?? '',
-        editor: article.content ?? '',
-        should_extend: pig.should_extend ?? false,
-        is_rolling_admission: pig.is_rolling_admission ?? false,
-      });
-      setEditorKey((k) => k + 1);
+      reset({ ...defaultFormValues });
+      setEditorKey((key) => key + 1);
     }
   }, [pig, article, mounted, isDirty, reset]);
 
@@ -89,22 +103,23 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(
+      const endpoint =
         me.role >= minExecutiveLevel
           ? `/api/pig/${pigId}/update/executive`
-          : `/api/pig/${pigId}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            content: data.editor,
-            should_extend: data.should_extend,
-            is_rolling_admission: data.is_rolling_admission,
-          }),
-        },
-      );
+          : `/api/pig/${pigId}/update`;
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          content: data.editor,
+          should_extend: data.should_extend,
+          is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
+        }),
+      });
 
       if (res.status === 204) {
         isFormSubmitted.current = true;
@@ -113,7 +128,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
         alert('PIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));

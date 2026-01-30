@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { fetchMeClient } from '@/util/fetchClientData';
 import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
+import { MainLogoImage } from '@/components/common/MainLogoImage';
 
 const USER_STATUS_MAP = {
   active: '활동 중(입금 확인 완료)',
@@ -62,7 +64,7 @@ function ArrowIcon() {
 }
 
 export default function MyProfileClient() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const [user, setUser] = useState(null);
   const router = useRouter();
 
@@ -72,7 +74,7 @@ export default function MyProfileClient() {
 
       if (status === 'unauthenticated') {
         await onAuthFail();
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
         return;
       }
 
@@ -89,49 +91,46 @@ export default function MyProfileClient() {
             body: JSON.stringify({ email: session.user.email, hashToken: session.hashToken }),
           });
           if (loginRes.ok) {
+            const loginData = await loginRes.json();
+            if (loginData.jwt) await update({ backendJwt: loginData.jwt });
             data = await fetchMeClient();
           } else {
             await onAuthFail();
-            router.replace('/us/login');
+            replaceLoginWithRedirect(router);
           }
         } else {
           await onAuthFail();
-          router.replace('/us/login');
+          replaceLoginWithRedirect(router);
         }
         if (!data || !data.email) {
           await onAuthFail();
-          router.replace('/us/login');
+          replaceLoginWithRedirect(router);
           return;
         }
         setUser(data);
       } catch {
         await onAuthFail();
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
       }
     };
     load();
-  }, [router, session, status]);
+  }, [router, session, status, update]);
 
   const handleLogout = async () => {
     await onAuthFail();
     window.location.href = '/';
   };
 
-  const handleEnroll = async () => {
-    const res = await fetch('/api/user/enroll', { method: 'POST', credentials: 'include' });
-    if (res.status === 204) alert('등록 되었습니다. 임원진이 입금 확인 후 가입이 완료됩니다.');
-    else if (res.status === 400) alert('이미 등록 처리되었거나 제명된 회원입니다.');
-    else if (res.status === 401) {
-      await onAuthFail();
-      router.replace('/us/login');
-    } else alert('등록에 실패하였습니다. 다시 시도해주세요.');
-  };
-
   return (
     <div>
       <div className="main-logo-wrapper__mypage">
         <p className="main-logo-description">My Page</p>
-        <img src="/main/main-logo.png" alt="Main Logo" className="main-logo__mypage logo" />
+        <MainLogoImage
+          className="main-logo__mypage logo"
+          width={1976}
+          height={670}
+          loading="eager"
+        />
       </div>
 
       <div className="user-profile-wrapper">

@@ -1,5 +1,5 @@
 import ReactMarkdown from 'react-markdown';
-import './page.css';
+import styles from '../about.module.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,13 +19,13 @@ export default async function RegulationPage() {
 
   return (
     <>
-      <div className="WallLogo"></div>
-      <div className="WallLogo2"></div>
-      <main className="AboutMain">
-        <section id="rules" className="AboutSection AnchorOffset">
-          <div className="AboutInner">
-            <h1 className="AboutTitle">회칙</h1>
-            <div className="RegulationItem">
+      <div className="wallLogo"></div>
+      <div className="wallLogo2"></div>
+      <main className={styles.centeredMainContent}>
+        <section id="rules" className={`${styles.section} ${styles.anchorOffset}`}>
+          <div className={styles.inner}>
+            <h1 className={styles.title}>회칙</h1>
+            <div className={styles.regulationCard}>
               <ReactMarkdown>{markdown}</ReactMarkdown>
             </div>
           </div>

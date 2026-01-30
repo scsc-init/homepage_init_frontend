@@ -7,6 +7,9 @@ import styles from '../auth.module.css';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
+import InquiryButton from '@/components/InquiryButton';
+import { useSession } from 'next-auth/react';
+import { ENABLE_TEST_UTILS } from '@/util/constants';
 
 function cleanName(raw) {
   if (!raw) return '';
@@ -36,7 +39,8 @@ function log(event, data = {}) {
   } catch {}
 }
 
-export default function AuthClient({ session }) {
+export default function AuthClient() {
+  const { data: session, update } = useSession();
   const [stage, setStage] = useState(1);
   const [form, setForm] = useState({
     email: '',
@@ -85,7 +89,7 @@ export default function AuthClient({ session }) {
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
 
-    const createRes = await fetch(`/api/user/create`, {
+    const createRes = await fetch(ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -95,7 +99,6 @@ export default function AuthClient({ session }) {
         student_id,
         phone,
         major_id: Number(form.major_id),
-        status: 'pending',
         profile_picture: form.profile_picture_url,
         profile_picture_is_url: true,
         hashToken: session.hashToken,
@@ -125,7 +128,14 @@ export default function AuthClient({ session }) {
       body: JSON.stringify({ email, hashToken: session.hashToken }),
     });
 
-    if (loginRes.ok) {
+    let data = null;
+    try {
+      data = await loginRes.json();
+    } catch {
+      data = null;
+    }
+    if (loginRes.ok && data?.jwt) {
+      await update({ backendJwt: data.jwt });
       log('login_complete');
       window.location.href = '/about/welcome';
     } else {
@@ -304,11 +314,12 @@ export default function AuthClient({ session }) {
               disabled={signupBusy}
               aria-disabled={signupBusy}
             >
-              가입하기
+              {ENABLE_TEST_UTILS && '[테스트] 관리자로 '}가입하기
             </button>
           </div>
         )}
       </div>
+      <InquiryButton />
     </div>
   );
 }

@@ -82,6 +82,7 @@ src/
 | `NEXT_PUBLIC_DEPOSIT_ACC`         | 동비 입금 계좌와 입금자명                                                                   |
 | `NEXT_PUBLIC_DISCORD_INVITE_LINK` | 디스코드 초대 링크                                                                          |
 | `NEXT_PUBLIC_KAKAO_INVITE_LINK`   | 카카오톡 초대 링크                                                                          |
+| `ENABLE_TEST_UTILS`               | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
 
 ## Install & Execute
 
@@ -154,7 +155,7 @@ NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
 
 1. 사용자가 Google 로그인
 2. `AuthClient.jsx` → `/api/auth/[...nextauth]/route.js` 호출
-3. 성공 시 JWT 세션 쿠키 `app_jwt` 생성
+3. 성공 시 BE에서 반환된 jwt를 nextauth session에 저장
 
 ---
 
@@ -245,18 +246,19 @@ function doSomething(x, y) {
 본 레포지토리는 footer message 와 같은 런타임 환경 변수 관리를 위해, BE의 KV table 기능을 사용하고 있습니다.  
 사용하고 있는 Key 값들은 아래와 같습니다.
 
-| Key              | 예시 값                                                                 | 설명        | 형식   |
-| ---------------- | ----------------------------------------------------------------------- | ----------- | ------ |
-| `footer-message` | 서울대학교 컴퓨터 연구회\n회장 한성재 010-5583-1811\nscsc.snu@gmail.com | 푸터 메시지 | 문자열 |
+| Key              | 예시 값                                                                 | 설명                          | 형식   |
+| ---------------- | ----------------------------------------------------------------------- | ----------------------------- | ------ |
+| `footer-message` | 서울대학교 컴퓨터 연구회\n회장 한성재 010-5583-1811\nscsc.snu@gmail.com | 푸터 메시지                   | 문자열 |
+| `main-president` | id1                                                                     | 회장 사용자 id                | 문자열 |
+| `vice-president` | id2;id3                                                                 | `;`로 연결된 부회장 사용자 id | 문자열 |
 
 ## Cookie & Storage
 
-| Key       | Storage        | TTL      | 접근성               | 설명                                                   |
-| --------- | -------------- | -------- | -------------------- | ------------------------------------------------------ |
-| `theme`   | Cookie         | 1년      | 클라이언트 접근 가능 | 테마 설정                                              |
-| `app_jwt` | Cookie         | 7일      | 클라이언트 접근 불가 | 로그인 성공 시 생성되는 JWT 세션 토큰. 로그아웃시 삭제 |
-| `sigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장                                   |
-| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | PIG 생성 폼 임시저장                                   |
+| Key       | Storage        | TTL      | 접근성               | 설명                 |
+| --------- | -------------- | -------- | -------------------- | -------------------- |
+| `theme`   | Cookie         | 1년      | 클라이언트 접근 가능 | 테마 설정            |
+| `sigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | SIG 생성 폼 임시저장 |
+| `pigForm` | SessionStorage | 세션종료 | 클라이언트 접근 가능 | PIG 생성 폼 임시저장 |
 
 ## CI: Continuous Integration
 

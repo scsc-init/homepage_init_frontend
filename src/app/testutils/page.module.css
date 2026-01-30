@@ -1,0 +1,19 @@
+.main-page {
+  padding: 0 5%;
+  width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: baseline;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: baseline;
+  width: 100%;
+}

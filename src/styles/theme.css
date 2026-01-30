@@ -59,6 +59,7 @@ html.theme-animating {
     rgba(0, 0, 0, 0.16)
   );
   --form-switch-thumb-on: #ffffff;
+  --wall-logo-filter: none;
 
   --main-bg-gradient: radial-gradient(
     circle at center,
@@ -122,6 +123,7 @@ html.theme-animating {
   );
   --form-switch-thumb-on: #0e0e0e;
   --form-switch-aura-rgb: 160, 200, 255;
+  --wall-logo-filter: invert(1) hue-rotate(180deg);
 
   --main-bg-gradient: radial-gradient(circle at center, #1e1e1e 0%, #151515 40%, #121212 100%);
 
@@ -134,8 +136,6 @@ html.theme-animating {
 
 .dark .ico,
 .dark .logo,
-.dark .WallLogo,
-.dark .WallLogo2,
 .dark .HeaderUserIcon {
   filter: invert(1) hue-rotate(180deg);
 }

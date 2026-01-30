@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
       } else {
         alert('SIG 가입 실패: ' + (await readError(res)));
       }
@@ -55,7 +56,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
-        router.replace('/us/login');
+        replaceLoginWithRedirect(router);
       } else {
         alert('SIG 탈퇴 실패: ' + (await readError(res)));
       }
@@ -74,7 +75,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? '시그 탈퇴하기' : '시그 가입하기'}
+      {isMember ? '탈퇴하기' : '가입하기'}
     </button>
   );
 }

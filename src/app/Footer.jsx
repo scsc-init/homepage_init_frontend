@@ -38,7 +38,17 @@ export default function Footer() {
         <div className={styles.infoContainer}>
           <div>
             <div>
-              <p className={styles.message}>{footerMessage}</p>
+              <p className={styles.message}>
+                {(footerMessage || '')
+                  .replace(/\\n/g, '\n')
+                  .split('\n')
+                  .map((line, i) => (
+                    <span key={`${line}-${i}`}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
+              </p>
             </div>
           </div>
         </div>

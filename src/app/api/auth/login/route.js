@@ -18,15 +18,5 @@ export async function POST(request) {
 
   if (!jwt) return NextResponse.json({ error: 'login failed' }, { status: 400 });
 
-  const response = NextResponse.json({ success: true });
-
-  response.cookies.set('app_jwt', jwt, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-  });
-
-  return response;
+  return NextResponse.json({ success: true, jwt });
 }

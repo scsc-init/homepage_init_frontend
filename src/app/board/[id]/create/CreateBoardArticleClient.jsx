@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
+import AttachmentSection from '@/components/board/AttachmentSection';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
@@ -22,6 +24,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
   const router = useRouter();
   const content = watch('editor');
   const [submitting, setSubmitting] = useState(false);
+  const [attachmentIds, setAttachmentIds] = useState([]);
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
@@ -30,10 +33,10 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         const res = await fetch(`/api/user/profile`, { cache: 'no-store' });
         if (res.status === 401) {
           alert('로그인이 필요합니다.');
-          router.push('/us/login');
+          pushLoginWithRedirect(router);
         }
       } catch {
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       }
     };
     check();
@@ -78,6 +81,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardInfo.id),
+          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
         }),
       });
 
@@ -86,7 +90,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
         alert('다시 로그인해주세요.');
-        router.push('/us/login');
+        pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
         throw new Error('작성 실패: ' + (err.detail ?? JSON.stringify(err)));
@@ -119,7 +123,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
           />
 
           <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
-
+          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
           <button type="submit" className="SigCreateBtn" disabled={submitting}>
             {submitting ? '작성 중...' : '작성 완료'}
           </button>
