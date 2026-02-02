@@ -1,4 +1,4 @@
-﻿import { ENABLE_TEST_UTILS } from '@/util/constants';
+import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { notFound } from 'next/navigation';
 import NextauthConsole from './NextauthConsole';
 import UserConsole from './UserConsole';
