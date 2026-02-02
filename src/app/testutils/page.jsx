@@ -1,5 +1,7 @@
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { notFound } from 'next/navigation';
+import NextauthConsole from './NextauthConsole';
+import UserConsole from './UserConsole';
 import Link from 'next/link';
 import styles from './page.module.css';
 
@@ -19,6 +21,8 @@ export default function TestutilsPage() {
   return (
     <main className={styles['main-page']}>
       <h1>Test Utils Console</h1>
+      <NextauthConsole />
+      <UserConsole />
       {MANAGEMENT_SECTIONS.map(({ title, href }) => (
         <section key={href} className="adm-section">
           <div className="adm-actions">
