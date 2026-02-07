@@ -70,6 +70,7 @@ export const headerMenuData = [
     title: 'About us',
     items: [
       { label: 'SCSC', url: '/about' },
+      { label: 'Welcome Guide', url: '/about/welcome' },
       { label: 'Executives', url: '/about/executives' },
       { label: 'Developers', url: '/about/developers' },
       { label: 'Rules', url: '/about/rules' },
