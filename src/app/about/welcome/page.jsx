@@ -6,10 +6,11 @@ import styles from '../about.module.css';
 
 const PENDING_STATUSES = new Set(['pending', 'standby']);
 
+const WELCOME_LOGIN_PATH = '/about/welcome';
 export default async function WelcomePage() {
   const res = await handleApiRequest('GET', '/api/user/profile');
   if (!res.ok) {
-    redirect('/us/login');
+    redirect(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
   }
 
   const profile = await res.json();

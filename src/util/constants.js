@@ -234,6 +234,7 @@ export const ALLOWED_REDIRECT_PREFIXES = [
   '/sig',
   '/pig',
   '/us/edit-user-info',
+  '/about/welcome',
   '/executive',
 ];
 

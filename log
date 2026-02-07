@@ -1,0 +1,20 @@
+⚠️ Potential issue | 🟡 Minor
+
+🧩 Analysis chain
+Remove the unused WelcomeGuideClient component—it's dead code that duplicates the server-side implementation.
+
+src/app/about/welcome/page.jsx already handles all profile fetching, status derivation, and conditional rendering on the server. The WelcomeGuideClient component is never imported anywhere in the codebase and provides no value. It also diverges from the established error-handling pattern: page.jsx redirects on any non-OK response (following the maintainer's preference from the previous PR), whereas WelcomeGuideClient distinguishes between 401/403 and other errors, then returns null for PENDING users, creating an unnecessary blank screen.
+
+Remove src/components/welcome/WelcomeGuideClient.jsx to eliminate dead code and avoid future confusion.
+
+⚠️ Potential issue | 🟡 Minor
+
+Error handling deviates from established pattern.
+
+The maintainer preference for protected pages is to redirect to login on any non-OK response, not just 401/403. Here, 401/403 → UNAUTHENTICATED and other errors → ERROR, which shows a generic error message instead of redirecting. If this component is kept, consider aligning with the server-side page's behavior (redirect on any failure). Based on learnings, the maintainer prefers to redirect to login on any non-OK response from profile/auth API calls.
+
+⚠️ Potential issue | 🟠 Major
+
+Returning null for PENDING means pending users see a blank screen from this component.
+
+If this component were rendered standalone (without the server component wrapping it), pending users — the primary audience for the deposit instructions — would see nothing. The PENDING state should either render the deposit/payment instructions or delegate to a parent that does.
