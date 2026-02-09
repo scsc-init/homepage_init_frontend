@@ -82,6 +82,7 @@ src/
 | `NEXT_PUBLIC_DEPOSIT_ACC`         | 동비 입금 계좌와 입금자명                                                                   |
 | `NEXT_PUBLIC_DISCORD_INVITE_LINK` | 디스코드 초대 링크                                                                          |
 | `NEXT_PUBLIC_KAKAO_INVITE_LINK`   | 카카오톡 초대 링크                                                                          |
+| `ENABLE_TEST_UTILS`               | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
 
 ## Install & Execute
 

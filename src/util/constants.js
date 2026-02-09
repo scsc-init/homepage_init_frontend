@@ -70,6 +70,7 @@ export const headerMenuData = [
     title: 'About us',
     items: [
       { label: 'SCSC', url: '/about' },
+      { label: 'Welcome Guide', url: '/about/welcome' },
       { label: 'Executives', url: '/about/executives' },
       { label: 'Developers', url: '/about/developers' },
       { label: 'Rules', url: '/about/rules' },
@@ -249,5 +250,11 @@ export const ALLOWED_REDIRECT_PREFIXES = [
   '/sig',
   '/pig',
   '/us/edit-user-info',
+  '/about/welcome',
   '/executive',
 ];
+
+/**
+ * 테스트 유틸리티 페이지 활성화 여부입니다.
+ */
+export const ENABLE_TEST_UTILS = process.env.NEXT_PUBLIC_ENABLE_TEST_UTILS === 'TRUE' ?? false;

@@ -7,7 +7,7 @@ import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
-import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+import { replaceLoginWithRedirect, setRedirectAfterLogin } from '@/util/loginRedirect';
 import styles from '../auth.module.css';
 
 const IN_APP_BROWSER_NAMES = {
@@ -35,13 +35,18 @@ function log(event, data = {}) {
   } catch {}
 }
 
-export default function AuthClient() {
+export default function AuthClient({ initialRedirect = null }) {
   const [inAppWarning, setInAppWarning] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
 
   const router = useRouter();
   const params = useSearchParams();
   const error = params.get('error');
+
+  useEffect(() => {
+    if (!initialRedirect) return;
+    setRedirectAfterLogin(initialRedirect);
+  }, [initialRedirect]);
 
   useEffect(() => {
     if (!error) return;

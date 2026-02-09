@@ -31,12 +31,16 @@ export default async function ExecutiveUserPage() {
 
   const initialLeadership = { presidentId, vicePresidentIds };
 
+  const majorsSafe = Array.isArray(majors) ? majors : [];
+  const majorsMap = Object.fromEntries(
+    majorsSafe.map((m) => [m.id, `${m.college} - ${m.major_name}`]),
+  );
   const usersSorted = Array.from(
     new Map((Array.isArray(users) ? users : []).map((u) => [u.id, u])),
   )
     .map(([, v]) => v)
-    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'));
-  const majorsSafe = Array.isArray(majors) ? majors : [];
+    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
+    .map((u) => ({ ...u, major: majorsMap[u.major_id] }));
 
   return (
     <WithAuthorization>

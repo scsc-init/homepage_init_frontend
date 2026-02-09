@@ -176,3 +176,15 @@
 .adm-td .adm-select {
   min-width: 8rem;
 }
+
+.adm-table-wrap {
+  max-height: min(70vh, 640px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.adm-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
