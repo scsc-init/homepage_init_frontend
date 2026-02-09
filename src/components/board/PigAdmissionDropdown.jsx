@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './board.module.css';
 
-export default function PigAdmissionDropdown({ sortOrder, setSortOrder }) {
+export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissionState }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -24,35 +24,37 @@ export default function PigAdmissionDropdown({ sortOrder, setSortOrder }) {
   };
 
   return (
-    <div className={`${styles.sigSortDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
-      <button className={styles.sigSortBtn} onClick={() => setOpen((prev) => !prev)}>
-        {labelMap[sortOrder]} ▼
+    <div className={`${styles.pigAdmissionDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
+      <button className={styles.pigAdmissionBtn} onClick={() => setOpen((prev) => !prev)}>
+        {labelMap[pigAdmissionState]} ▼
       </button>
       {open && (
-        <div className={`${styles.sigSortMenu} ${styles.sigSortMenuOpen} ${styles.fixedWidth}`}>
+        <div
+          className={`${styles.pigAdmissionMenu} ${styles.pigAdmissionMenuOpen} ${styles.fixedWidth}`}
+        >
           <button
             onClick={() => {
-              setSortOrder('always');
+              setPigAdmissionState('always');
               setOpen(false);
             }}
           >
-            항상 가입 받기
+            항상 받기
           </button>
           <button
             onClick={() => {
-              setSortOrder('during_recruiting_period');
+              setPigAdmissionState('during_recruiting_period');
               setOpen(false);
             }}
           >
-            SIG 가입 기간에만 가입 받기
+            SIG 가입 기간에만 받기
           </button>
           <button
             onClick={() => {
-              setSortOrder('never');
+              setPigAdmissionState('never');
               setOpen(false);
             }}
           >
-            항상 가입 받지 않기
+            항상 받지 않기
           </button>
         </div>
       )}

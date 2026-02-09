@@ -126,9 +126,7 @@ const boolMatches = (value, filterValue) => {
 };
 
 const textMatches = (value, filterValue) => {
-  if (!filterValue) return true;
-  const normalized = value ? 'always' : value ? 'never' : 'during_recruiting_period';
-  return normalized === filterValue;
+  return value === filterValue;
 };
 
 export default function PigList({ pigs: pigsDefault }) {

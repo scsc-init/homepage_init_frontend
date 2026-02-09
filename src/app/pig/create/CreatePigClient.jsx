@@ -100,7 +100,8 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       return;
     } else if (
       scscGlobalStatus === 'active' &&
-      (data.is_rolling_admission === 'during_recruiting_period' || 'never')
+      (data.is_rolling_admission === 'during_recruiting_period' ||
+        data.is_rolling_admission === 'never')
     ) {
       if (
         !confirm(

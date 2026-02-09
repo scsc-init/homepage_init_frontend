@@ -96,15 +96,17 @@ export default function PigForm({
 
       <div className="form-toggle-row">
         <span className="form-toggle-label">가입 기간 자유화</span>
-        <span className="form-toggle-right">
-          <Controller
-            name="is_rolling_admission"
-            control={control}
-            render={({ field }) => (
-              <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
-            )}
-          />
-        </span>
+        <Controller
+          name="is_rolling_admission"
+          control={control}
+          defaultValue="always"
+          render={({ field }) => (
+            <PigAdmissionDropdown
+              pigAdmissionState={field.value}
+              setPigAdmissionState={field.onChange}
+            />
+          )}
+        />
       </div>
 
       {isCreate ? null : (
