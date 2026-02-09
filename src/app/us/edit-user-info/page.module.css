@@ -37,17 +37,20 @@
 
 .userData {
   display: grid;
-  grid-template-columns: 100px 1fr;
+  grid-template-columns: minmax(90px, 120px) minmax(0, 1fr);
   row-gap: 1rem;
   column-gap: 0.5rem;
   align-items: center;
 }
 
 .userData label {
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
-.userData input {
+.userData input,
+.userData select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -112,4 +115,15 @@
 .imageInput {
   width: 100%;
   margin-top: 1rem;
+}
+
+@media (max-width: 540px) {
+  .userData {
+    grid-template-columns: 1fr;
+    row-gap: 0.5rem;
+  }
+
+  .userData label {
+    margin-bottom: 0.25rem;
+  }
 }
