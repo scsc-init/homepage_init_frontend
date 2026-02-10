@@ -25,7 +25,11 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
 
   return (
     <div className={`${styles.pigAdmissionDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
-      <button className={styles.pigAdmissionBtn} onClick={() => setOpen((prev) => !prev)}>
+      <button
+        type="button"
+        className={styles.pigAdmissionBtn}
+        onClick={() => setOpen((prev) => !prev)}
+      >
         {labelMap[pigAdmissionState]} ▼
       </button>
       {open && (
@@ -33,6 +37,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
           className={`${styles.pigAdmissionMenu} ${styles.pigAdmissionMenuOpen} ${styles.fixedWidth}`}
         >
           <button
+            type="button"
             onClick={() => {
               setPigAdmissionState('always');
               setOpen(false);
@@ -41,6 +46,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
             항상 받기
           </button>
           <button
+            type="button"
             onClick={() => {
               setPigAdmissionState('during_recruiting_period');
               setOpen(false);
@@ -49,6 +55,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
             SIG 가입 기간에만 받기
           </button>
           <button
+            type="button"
             onClick={() => {
               setPigAdmissionState('never');
               setOpen(false);

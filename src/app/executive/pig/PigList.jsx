@@ -31,7 +31,6 @@ const renderTextSelect = (pig, field, ctx, extraClass) => {
       value={pig[field] ?? ''}
       onChange={(e) => ctx.updatePigField(pig.id, field, e.target.value)}
     >
-      <option value="">전체</option>
       <option value="always">항상 받기</option>
       <option value="never">항상 받지 않기</option>
       <option value="during_recruiting_period">SIG 가입 기간에만 받기</option>
