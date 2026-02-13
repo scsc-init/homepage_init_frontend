@@ -19,7 +19,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
 
   const labelMap = {
     always: '항상 가입 받기',
-    during_recruiting_period: 'SIG 가입 기간에만 가입 받기',
+    during_recruiting: 'SIG 가입 기간에만 가입 받기',
     never: '항상 가입 받지 않기',
   };
 
@@ -48,7 +48,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
           <button
             type="button"
             onClick={() => {
-              setPigAdmissionState('during_recruiting_period');
+              setPigAdmissionState('during_recruiting');
               setOpen(false);
             }}
           >

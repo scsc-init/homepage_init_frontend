@@ -169,13 +169,20 @@ export function is_sigpig_join_available(status, is_rolling_admission) {
  * @returns {Boolean}
  */
 export function is_pig_join_available(status, is_rolling_admission) {
-  if (is_rolling_admission === 'never') {
-    return false;
-  } else {
-    const rolling = is_rolling_admission === 'always' ? true : false;
-    const key = rolling ? 'JOIN_SIGPIG_ROLLING_ADMISSION' : 'JOIN_SIGPIG';
-    return CTRL_STATUS_AVAILABLE[key].includes(status);
+  const s = String(status).toLowerCase();
+  const r = String(is_rolling_admission).toLowerCase();
+
+  if (r === 'never') return false;
+
+  if (r === 'always') {
+    return s === 'recruiting' || s === 'active';
   }
+
+  if (r === 'during_recruiting') {
+    return s === 'recruiting';
+  }
+
+  return false;
 }
 
 /*

@@ -31,7 +31,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       typeof parsed?.is_rolling_admission === 'string'
         ? String(parsed.is_rolling_admission)
         : scscGlobalStatus === 'active'
-          ? 'during_recruiting_period'
+          ? 'during_recruiting'
           : 'always',
     websites:
       parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
@@ -100,7 +100,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       return;
     } else if (
       scscGlobalStatus === 'active' &&
-      (data.is_rolling_admission === 'during_recruiting_period' ||
+      (data.is_rolling_admission === 'during_recruiting' ||
         data.is_rolling_admission === 'never')
     ) {
       if (

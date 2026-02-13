@@ -42,7 +42,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     is_rolling_admission:
       typeof pig?.is_rolling_admission === 'string'
         ? pig.is_rolling_admission
-        : 'during_recruiting_period',
+        : 'during_recruiting',
     websites:
       pig && Array.isArray(pig.websites) && pig.websites.length > 0
         ? mapWebsitesForForm(pig.websites)
