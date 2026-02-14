@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useMemo, useState } from 'react';
-import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
+import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 import styles from '../igpage.module.css';
 
 function PigFilterRow({ filter, updateFilterCriteria }) {
@@ -31,9 +31,9 @@ const renderTextSelect = (pig, field, ctx, extraClass) => {
       value={pig[field] ?? ''}
       onChange={(e) => ctx.updatePigField(pig.id, field, e.target.value)}
     >
-      <option value="always">항상 받기</option>
-      <option value="never">항상 받지 않기</option>
-      <option value="during_recruiting">SIG 가입 기간에만 받기</option>
+      <option value="always">{PIG_ADMISSION_LABEL_MAP.always}</option>
+      <option value="never">{PIG_ADMISSION_LABEL_MAP.never}</option>
+      <option value="during_recruiting">{PIG_ADMISSION_LABEL_MAP.during_recruiting}</option>
     </select>
   );
 };
@@ -184,10 +184,6 @@ const boolMatches = (value, filterValue) => {
   return normalized === filterValue;
 };
 
-const textMatches = (value, filterValue) => {
-  return value === filterValue;
-};
-
 export default function PigList({ pigs: pigsDefault }) {
   const [pigs, setPigs] = useState(pigsDefault ?? []);
   const [filteredPigs, setFilteredPigs] = useState(pigsDefault ?? []);
@@ -238,7 +234,7 @@ export default function PigList({ pigs: pigsDefault }) {
       (!newFilter.member ||
         pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member)))) &&
       boolMatches(pig.should_extend, newFilter.should_extend) &&
-      textMatches(pig.is_rolling_admission, newFilter.is_rolling_admission);
+      pig.is_rolling_admission === newFilter.is_rolling_admission;
     setFilteredPigs(pigs.filter(matches));
   };
 

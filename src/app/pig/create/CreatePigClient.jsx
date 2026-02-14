@@ -31,8 +31,8 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       typeof parsed?.is_rolling_admission === 'string'
         ? String(parsed.is_rolling_admission)
         : scscGlobalStatus === 'active'
-          ? 'during_recruiting'
-          : 'always',
+          ? 'always'
+          : 'during_recruiting',
     websites:
       parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
         ? parsed.websites

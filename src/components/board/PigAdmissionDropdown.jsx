@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import styles from './board.module.css';
+import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 
 export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissionState }) {
   const [open, setOpen] = useState(false);
@@ -17,12 +18,6 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const labelMap = {
-    always: '항상 가입 받기',
-    during_recruiting: 'SIG 가입 기간에만 가입 받기',
-    never: '항상 가입 받지 않기',
-  };
-
   return (
     <div className={`${styles.pigAdmissionDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
       <button
@@ -30,7 +25,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
         className={styles.pigAdmissionBtn}
         onClick={() => setOpen((prev) => !prev)}
       >
-        {labelMap[pigAdmissionState]} ▼
+        {PIG_ADMISSION_LABEL_MAP[pigAdmissionState]} ▼
       </button>
       {open && (
         <div
@@ -43,7 +38,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
               setOpen(false);
             }}
           >
-            항상 받기
+            {PIG_ADMISSION_LABEL_MAP.always}
           </button>
           <button
             type="button"
@@ -52,7 +47,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
               setOpen(false);
             }}
           >
-            SIG 가입 기간에만 받기
+            {PIG_ADMISSION_LABEL_MAP.during_recruiting}
           </button>
           <button
             type="button"
@@ -61,7 +56,7 @@ export default function PigAdmissionDropdown({ pigAdmissionState, setPigAdmissio
               setOpen(false);
             }}
           >
-            항상 받지 않기
+            {PIG_ADMISSION_LABEL_MAP.never}
           </button>
         </div>
       )}
