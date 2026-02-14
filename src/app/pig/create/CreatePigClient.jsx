@@ -28,9 +28,11 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     description: parsed?.description ?? '',
     editor: parsed?.editor ?? '',
     is_rolling_admission:
-      typeof parsed?.is_rolling_admission === 'boolean'
-        ? parsed.is_rolling_admission
-        : scscGlobalStatus === 'active',
+      typeof parsed?.is_rolling_admission === 'string'
+        ? String(parsed.is_rolling_admission)
+        : scscGlobalStatus === 'active'
+          ? 'always'
+          : 'during_recruiting',
     websites:
       parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
         ? parsed.websites
@@ -96,7 +98,11 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     if (!user) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
-    } else if (scscGlobalStatus === 'active' && !data.is_rolling_admission) {
+    } else if (
+      scscGlobalStatus === 'active' &&
+      (data.is_rolling_admission === 'during_recruiting' ||
+        data.is_rolling_admission === 'never')
+    ) {
       if (
         !confirm(
           '가입 기간 자유화를 활성화하지 않으면 다른 사람이 가입할 수 없습니다. 그래도 계속 진행하시겠습니까?',

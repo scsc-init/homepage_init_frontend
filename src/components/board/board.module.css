@@ -136,8 +136,59 @@
   background-color: var(--color-button-hover-bg);
 }
 
+.pigAdmissionDropdown {
+  width: 100%;
+}
+
+.pigAdmissionBtn {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 400;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  min-width: 12rem;
+  text-align: left;
+  white-space: normal;
+}
+
+.pigAdmissionBtn:hover {
+  background-color: var(--color-button-hover-bg);
+}
+
+.pigAdmissionMenu {
+  display: none;
+  margin-top: 0.4rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.pigAdmissionMenuOpen {
+  display: flex;
+  flex-direction: column;
+}
+
+.pigAdmissionMenu button {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-button-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.pigAdmissionMenu button:hover {
+  background-color: var(--color-button-hover-bg);
+}
+
 .fixedWidth {
-  width: 7.5rem;
+  width: 9.5rem;
   text-align: center;
 }
 
