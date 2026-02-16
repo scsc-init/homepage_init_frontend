@@ -86,6 +86,27 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           ))}
         </select>
       </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.created_year}
+          onChange={(e) => updateFilterCriteria('created_year', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={filter.created_semester}
+          onChange={(e) => updateFilterCriteria('created_semester', e.target.value)}
+        >
+          <option value="">학기 전체</option>
+          {Object.keys(SEMESTER_MAP).map((key) => (
+            <option key={key} value={key}>
+              {SEMESTER_MAP[key]}학기
+            </option>
+          ))}
+        </select>
+      </td>
       <td className={styles['adm-td']}>{renderBoolSelect('should_extend')}</td>
       <td className={styles['adm-td']}>
         {renderBoolSelect(
@@ -189,6 +210,13 @@ const renderSigRow = (sig, ctx) => {
         </select>
       </td>
 
+      <td className={styles['adm-td']}>{sig.created_year ?? ''}</td>
+      <td className={styles['adm-td']}>
+        {sig.created_semester != null
+          ? `${SEMESTER_MAP[Number(sig.created_semester)] ?? sig.created_semester}학기`
+          : ''}
+      </td>
+
       <td className={styles['adm-td']}>
         <select
           className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
@@ -272,6 +300,8 @@ export default function SigList({ sigs: sigsDefault }) {
     status: '',
     year: '',
     semester: '',
+    created_year: '',
+    created_semester: '',
     member: '',
     should_extend: '',
     is_rolling_admission: '',
@@ -307,6 +337,10 @@ export default function SigList({ sigs: sigsDefault }) {
       (!newFilter.status || sig.status?.toString() === newFilter.status.toString()) &&
       (!newFilter.year || lower(sig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(sig.semester).toString() === newFilter.semester) &&
+      (!newFilter.created_year ||
+        lower(sig.created_year).includes(lower(newFilter.created_year))) &&
+      (!newFilter.created_semester ||
+        lower(sig.created_semester).toString() === newFilter.created_semester) &&
       (!newFilter.member ||
         (sig.members ?? []).some((m) =>
           lower(m?.user?.name).includes(lower(newFilter.member)),
@@ -381,6 +415,8 @@ export default function SigList({ sigs: sigsDefault }) {
           <col />
           <col />
           <col />
+          <col />
+          <col />
           <col className={styles['adm-col-bool']} />
           <col className={styles['adm-col-bool-wide']} />
           <col />
@@ -395,6 +431,8 @@ export default function SigList({ sigs: sigsDefault }) {
             <th className={styles['adm-th']}>상태</th>
             <th className={styles['adm-th']}>연도</th>
             <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>최초생성 연도</th>
+            <th className={styles['adm-th']}>최초생성 학기</th>
             <th className={styles['adm-th']}>연장 신청</th>
             <th className={styles['adm-th']}>가입기간 자유화</th>
             <th className={styles['adm-th']}>구성원</th>

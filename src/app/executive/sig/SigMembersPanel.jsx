@@ -29,6 +29,8 @@ function SigSelect({
             <th className={styles['adm-th']}>상태</th>
             <th className={styles['adm-th']}>연도</th>
             <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>최초생성 연도</th>
+            <th className={styles['adm-th']}>최초생성 학기</th>
             <th className={styles['adm-th']}>구성원</th>
             <th className={styles['adm-th']}>작업</th>
           </tr>
@@ -41,6 +43,8 @@ function SigSelect({
               <td className={styles['adm-td']}>{sig.status}</td>
               <td className={styles['adm-td']}>{sig.year}</td>
               <td className={styles['adm-td']}>{sig.semester}</td>
+              <td className={styles['adm-td']}>{sig.created_year ?? ''}</td>
+              <td className={styles['adm-td']}>{sig.created_semester ?? ''}</td>
               <td className={styles['adm-td']}>
                 <select className={styles['adm-select']} value={''}>
                   {sig.members.map((m) => (
@@ -301,6 +305,11 @@ export default function SigMembersPanel({ sigs, users }) {
           <div>
             <hr></hr>
             <h3>{selectedSig.title}</h3>
+            {selectedSig.created_year != null && selectedSig.created_semester != null ? (
+              <p>
+                최초 생성: {selectedSig.created_year}학년도 {selectedSig.created_semester}학기
+              </p>
+            ) : null}
             <SigMemberAdd
               userFilter={userFilter}
               filteredUsers={filteredUsers}
