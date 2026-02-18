@@ -1,8 +1,6 @@
-import dynamic from 'next/dynamic';
 import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
 import styles from '../about.module.css';
-
-const ExecutivesClient = dynamic(() => import('./client'), { ssr: false });
+import ExecutivesClient from './client';
 
 export default function ExecutivesPage() {
   return (

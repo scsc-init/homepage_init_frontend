@@ -15,11 +15,17 @@ export default function SigClient({ sig, members, articleContent, me, sigId }) {
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || sig?.owner === me?.id);
   const isOwner = !!me && sig?.owner === me?.id;
   const semesterLabel = SEMESTER_MAP[Number(sig?.semester)] ?? `${sig?.semester}`;
+  const createdSemesterLabel =
+    SEMESTER_MAP[Number(sig?.created_semester)] ?? `${sig?.created_semester}`;
+  const hasCreated = sig?.created_year != null && sig?.created_semester != null;
 
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{sig.title}</h1>
       <p className="SigInfo">
+        {hasCreated
+          ? `최초 생성: ${sig.created_year}학년도 ${createdSemesterLabel}학기 · `
+          : ''}
         {sig.year}학년도 {semesterLabel}학기 · 상태: {sig.status}
       </p>
       <p className="SigDescription">{sig.description}</p>

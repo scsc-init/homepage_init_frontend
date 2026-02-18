@@ -1,10 +1,7 @@
-import dynamic from 'next/dynamic';
 import styles from '../about.module.css';
 
-// 클라이언트 전용 컴포넌트 dynamic import
-const MyPageClient = dynamic(() => import('@/components/about/MyProfileClient'), {
-  ssr: false,
-});
+// 클라이언트 전용 컴포넌트 import
+import MyPageClient from '@/components/about/MyProfileClient';
 
 export default function MyPage() {
   return (

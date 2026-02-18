@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useMemo, useState } from 'react';
-import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
+import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 import styles from '../igpage.module.css';
 
 function PigFilterRow({ filter, updateFilterCriteria }) {
@@ -20,95 +20,22 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
       </select>
     );
   };
-
-  return (
-    <tr>
-      <td className={styles['adm-td']}>
-        <input
-          className={`${styles['adm-input']} ${styles['adm-input-id']}`}
-          value={filter.id}
-          onChange={(e) => updateFilterCriteria('id', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.title}
-          onChange={(e) => updateFilterCriteria('title', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.description}
-          onChange={(e) => updateFilterCriteria('description', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.content}
-          onChange={(e) => updateFilterCriteria('content', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <select
-          className={styles['adm-select']}
-          value={filter.status}
-          onChange={(e) => updateFilterCriteria('status', e.target.value)}
-        >
-          <option value="">상태 전체</option>
-          {Object.keys(STATUS_MAP).map((key) => (
-            <option key={key} value={key}>
-              {STATUS_MAP[key]}
-            </option>
-          ))}
-        </select>
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.year}
-          onChange={(e) => updateFilterCriteria('year', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <select
-          className={styles['adm-select']}
-          value={filter.semester}
-          onChange={(e) => updateFilterCriteria('semester', e.target.value)}
-        >
-          <option value="">학기 전체</option>
-          {Object.keys(SEMESTER_MAP).map((key) => (
-            <option key={key} value={key}>
-              {SEMESTER_MAP[key]}학기
-            </option>
-          ))}
-        </select>
-      </td>
-      <td className={styles['adm-td']}>{renderBoolSelect('should_extend')}</td>
-      <td className={styles['adm-td']}>
-        {renderBoolSelect(
-          'is_rolling_admission',
-          styles['adm-select-bool-wide'] ? 'adm-select-bool-wide' : undefined,
-        )}
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.member}
-          onChange={(e) => updateFilterCriteria('member', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}></td>
-    </tr>
-  );
 }
 
-const boolMatches = (value, filterValue) => {
-  if (!filterValue) return true;
-  const normalized = value ? 'true' : 'false';
-  return normalized === filterValue;
+const renderTextSelect = (pig, field, ctx, extraClass) => {
+  const selectClasses = [styles['adm-select'], styles['adm-select-bool']];
+  if (extraClass) selectClasses.push(styles[extraClass]);
+  return (
+    <select
+      className={selectClasses.join(' ')}
+      value={pig[field] ?? ''}
+      onChange={(e) => ctx.updatePigField(pig.id, field, e.target.value)}
+    >
+      <option value="always">{PIG_ADMISSION_LABEL_MAP.always}</option>
+      <option value="never">{PIG_ADMISSION_LABEL_MAP.never}</option>
+      <option value="during_recruiting">{PIG_ADMISSION_LABEL_MAP.during_recruiting}</option>
+    </select>
+  );
 };
 
 const lower = (v) => v?.toString().toLowerCase() || '';
@@ -203,16 +130,7 @@ const renderPigRow = (pig, ctx) => {
       </td>
 
       <td className={styles['adm-td']}>
-        <select
-          className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
-          value={String(Boolean(pig.is_rolling_admission))}
-          onChange={(e) =>
-            ctx.updatePigField(pig.id, 'is_rolling_admission', e.target.value === 'true')
-          }
-        >
-          <option value="true">예</option>
-          <option value="false">아니오</option>
-        </select>
+        {renderTextSelect(pig, 'is_rolling_admission', ctx, 'adm-select-bool-wide')}
       </td>
 
       <td className={styles['adm-td']}>
@@ -258,6 +176,12 @@ const renderPigRow = (pig, ctx) => {
       </td>
     </tr>
   );
+};
+
+const boolMatches = (value, filterValue) => {
+  if (!filterValue) return true;
+  const normalized = value ? 'true' : 'false';
+  return normalized === filterValue;
 };
 
 export default function PigList({ pigs: pigsDefault }) {
@@ -308,12 +232,9 @@ export default function PigList({ pigs: pigsDefault }) {
       (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
       (!newFilter.member ||
-        (pig.members ?? []).some((m) =>
-          lower(m?.user?.name).includes(lower(newFilter.member)),
-        )) &&
-      boolMatches(Boolean(pig.should_extend), newFilter.should_extend) &&
-      boolMatches(Boolean(pig.is_rolling_admission), newFilter.is_rolling_admission);
-
+        pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member)))) &&
+      boolMatches(pig.should_extend, newFilter.should_extend) &&
+      pig.is_rolling_admission === newFilter.is_rolling_admission;
     setFilteredPigs(pigs.filter(matches));
   };
 
@@ -331,7 +252,7 @@ export default function PigList({ pigs: pigsDefault }) {
           year: pig.year,
           semester: pig.semester,
           should_extend: Boolean(pig.should_extend),
-          is_rolling_admission: Boolean(pig.is_rolling_admission),
+          is_rolling_admission: String(pig.is_rolling_admission),
         }),
       });
       if (res.status === 204) alert('저장 완료');

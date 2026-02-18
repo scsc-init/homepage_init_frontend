@@ -39,7 +39,10 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     description: pig?.description ?? '',
     editor: article?.content ?? '',
     should_extend: pig?.should_extend ?? false,
-    is_rolling_admission: pig?.is_rolling_admission ?? false,
+    is_rolling_admission:
+      typeof pig?.is_rolling_admission === 'string'
+        ? pig.is_rolling_admission
+        : 'during_recruiting',
     websites:
       pig && Array.isArray(pig.websites) && pig.websites.length > 0
         ? mapWebsitesForForm(pig.websites)
