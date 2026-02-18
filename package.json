@@ -29,7 +29,7 @@
     "immer": "^10.1.1",
     "marked": "^13.0.1",
     "marked-react": "^2.0.0",
-    "next": "^14.2.30",
+    "next": "15.5.10",
     "next-auth": "^4.24.13",
     "normalize.css": "^8.0.1",
     "react": "^18",
@@ -51,7 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35",
+    "eslint-config-next": "15.5.10",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.3",
@@ -59,11 +59,8 @@
     "prettier": "^3.6.2",
     "typescript": "^5"
   },
-  "pnpm": {
-    "overrides": {
-      "glob": "10.5.0",
-      "preact": "10.28.2"
-    }
-  },
-  "packageManager": "pnpm@9.8.0+sha512.8e4c3550fb500e808dbc30bb0ce4dd1eb614e30b1c55245f211591ec2cdf9c611cabd34e1364b42f564bd54b3945ed0f49d61d1bbf2ec9bd74b866fcdc723276"
+  "overrides": {
+    "glob": "10.5.0",
+    "preact": "10.28.2"
+  }
 }
