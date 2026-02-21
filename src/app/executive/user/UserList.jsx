@@ -21,6 +21,22 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
     );
   };
+  const updateUserStatus = (userId, value) => {
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === userId
+          ? { ...u, is_active: value === 'active', is_banned: value === 'banned' }
+          : u,
+      ),
+    );
+    setFilteredUsers((prev) =>
+      prev.map((u) =>
+        u.id === userId
+          ? { ...u, is_active: value === 'active', is_banned: value === 'banned' }
+          : u,
+      ),
+    );
+  };
 
   const updateFilterCriteria = (field, value) => {
     const newFilter = { ...filter, [field]: value };
@@ -52,12 +68,13 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   const sendUserData = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const updated = {
-      name: user.name?.trim() || '이름없음',
-      phone: user.phone?.trim() || '01000000000',
-      student_id: user.student_id?.trim() || '202500000',
-      major_id: user.major_id ? Number(user.major_id) : 1,
+      name: user.name?.trim(),
+      phone: user.phone?.trim(),
+      student_id: user.student_id?.trim(),
+      major_id: user.major_id ? Number(user.major_id) : undefined,
       role: roleNumberToString(user.role),
-      status: user.status || 'active',
+      is_active: user.is_active,
+      is_banned: user.is_banned,
     };
     const res = await fetch(`/api/executive/user/${user.id}`, {
       method: 'POST',
@@ -219,12 +236,11 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 <td className="adm-td">
                   <select
                     className="adm-select"
-                    value={user.status}
-                    onChange={(e) => updateUserField(user.id, 'status', e.target.value)}
+                    value={user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive'}
+                    onChange={(e) => updateUserStatus(user.id, e.target.value)}
                   >
                     <option value="active">active</option>
-                    <option value="pending">pending</option>
-                    <option value="standby">standby</option>
+                    <option value="inactive">inactive</option>
                     <option value="banned">banned</option>
                   </select>
                 </td>

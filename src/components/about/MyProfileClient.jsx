@@ -9,13 +9,6 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 
-const USER_STATUS_MAP = {
-  active: '활동 중(입금 확인 완료)',
-  pending: '회비 미납부',
-  standby: '회비 입금 확인 중',
-  banned: '제명됨',
-};
-
 const USER_ROLE_MAP = {
   0: '최저권한',
   100: '휴회원',
@@ -200,7 +193,15 @@ export default function MyProfileClient() {
           <div className="user-status-container">
             <div className="user-status-content">
               <p className="user-status-description">User Status</p>
-              <p>{user ? USER_STATUS_MAP[user.status] : ''}</p>
+              <p>
+                {user
+                  ? user.is_active
+                    ? '활동 중(입금 확인 완료)'
+                    : user.is_banned
+                      ? '제명됨'
+                      : '회비 미납부'
+                  : ''}
+              </p>
             </div>
             <button onClick={() => router.push('/about/welcome')} className="enroll-button">
               입금안내
