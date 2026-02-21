@@ -170,6 +170,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   value={filter.status}
                   onChange={(e) => updateFilterCriteria('status', e.target.value)}
                 >
+                  <option value="">상태 전체</option>
                   <option value="active">active</option>
                   <option value="inactive">inactive</option>
                   <option value="banned">banned</option>
