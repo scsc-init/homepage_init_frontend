@@ -21,6 +21,22 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
     );
   };
+  const updateUserStatus = (userId, value) => {
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === userId
+          ? { ...u, is_active: value === 'active', is_banned: value === 'banned' }
+          : u,
+      ),
+    );
+    setFilteredUsers((prev) =>
+      prev.map((u) =>
+        u.id === userId
+          ? { ...u, is_active: value === 'active', is_banned: value === 'banned' }
+          : u,
+      ),
+    );
+  };
 
   const updateFilterCriteria = (field, value) => {
     const newFilter = { ...filter, [field]: value };
@@ -31,7 +47,8 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       (!newFilter.phone || lower(u.phone).includes(lower(newFilter.phone))) &&
       (!newFilter.student_id || lower(u.student_id).includes(lower(newFilter.student_id))) &&
       (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
-      (!newFilter.status || lower(u.status).includes(lower(newFilter.status))) &&
+      (!newFilter.status ||
+        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === newFilter.status) &&
       (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
     setFilteredUsers(users.filter(matches));
   };
@@ -52,12 +69,13 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   const sendUserData = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     const updated = {
-      name: user.name?.trim() || '이름없음',
-      phone: user.phone?.trim() || '01000000000',
-      student_id: user.student_id?.trim() || '202500000',
-      major_id: user.major_id ? Number(user.major_id) : 1,
+      name: user.name?.trim(),
+      phone: user.phone?.trim(),
+      student_id: user.student_id?.trim(),
+      major_id: user.major_id ? Number(user.major_id) : undefined,
       role: roleNumberToString(user.role),
-      status: user.status || 'active',
+      is_active: user.is_active,
+      is_banned: user.is_banned,
     };
     const res = await fetch(`/api/executive/user/${user.id}`, {
       method: 'POST',
@@ -80,10 +98,6 @@ export default function UserList({ users: usersDefault, majors = [] }) {
     else alert(`${user.name} 입금 확인 실패: ${res.status}`);
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
-
-  useEffect(() => {
-    console.debug(filteredUsers);
-  }, [filteredUsers]);
 
   return (
     <div>
@@ -151,11 +165,16 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 />
               </td>
               <td className="adm-td">
-                <input
-                  className="adm-input"
+                <select
+                  className="adm-select"
                   value={filter.status}
                   onChange={(e) => updateFilterCriteria('status', e.target.value)}
-                />
+                >
+                  <option value="">상태 전체</option>
+                  <option value="active">active</option>
+                  <option value="inactive">inactive</option>
+                  <option value="banned">banned</option>
+                </select>
               </td>
               <td className="adm-td"></td>
               <td className="adm-td"></td>
@@ -219,12 +238,11 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 <td className="adm-td">
                   <select
                     className="adm-select"
-                    value={user.status}
-                    onChange={(e) => updateUserField(user.id, 'status', e.target.value)}
+                    value={user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive'}
+                    onChange={(e) => updateUserStatus(user.id, e.target.value)}
                   >
                     <option value="active">active</option>
-                    <option value="pending">pending</option>
-                    <option value="standby">standby</option>
+                    <option value="inactive">inactive</option>
                     <option value="banned">banned</option>
                   </select>
                 </td>

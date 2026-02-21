@@ -4,8 +4,6 @@ import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/cons
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
-const PENDING_STATUSES = new Set(['pending', 'standby']);
-
 const WELCOME_LOGIN_PATH = '/about/welcome';
 export default async function WelcomePage() {
   const res = await handleApiRequest('GET', '/api/user/profile');
@@ -14,8 +12,7 @@ export default async function WelcomePage() {
   }
 
   const profile = await res.json();
-  const status = profile?.status ?? '';
-  const isPending = PENDING_STATUSES.has(status);
+  const isInactive = profile && !profile.is_active;
 
   return (
     <>
@@ -25,7 +22,7 @@ export default async function WelcomePage() {
         <div className={styles.welcomeContent}>
           <div className={styles.contentBlock}>
             <h1>WELCOME!</h1>
-            {isPending ? (
+            {isInactive ? (
               <h3 className={styles.noticeImportant}>
                 회비를 입금해야 동아리 가입이 완료됩니다!
               </h3>
@@ -59,7 +56,7 @@ export default async function WelcomePage() {
               <CopyButton link={KAKAO_INVITE_LINK} />
             </h3>
 
-            {isPending && (
+            {isInactive && (
               <>
                 <h3>
                   {DEPOSIT_ACC} <CopyButton link={DEPOSIT_ACC} />
