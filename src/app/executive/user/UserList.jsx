@@ -47,7 +47,8 @@ export default function UserList({ users: usersDefault, majors = [] }) {
       (!newFilter.phone || lower(u.phone).includes(lower(newFilter.phone))) &&
       (!newFilter.student_id || lower(u.student_id).includes(lower(newFilter.student_id))) &&
       (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
-      (!newFilter.status || lower(u.status).includes(lower(newFilter.status))) &&
+      (!newFilter.status ||
+        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === newFilter.status) &&
       (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
     setFilteredUsers(users.filter(matches));
   };
@@ -97,10 +98,6 @@ export default function UserList({ users: usersDefault, majors = [] }) {
     else alert(`${user.name} 입금 확인 실패: ${res.status}`);
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
-
-  useEffect(() => {
-    console.debug(filteredUsers);
-  }, [filteredUsers]);
 
   return (
     <div>
@@ -168,11 +165,15 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                 />
               </td>
               <td className="adm-td">
-                <input
-                  className="adm-input"
+                <select
+                  className="adm-select"
                   value={filter.status}
                   onChange={(e) => updateFilterCriteria('status', e.target.value)}
-                />
+                >
+                  <option value="active">active</option>
+                  <option value="inactive">inactive</option>
+                  <option value="banned">banned</option>
+                </select>
               </td>
               <td className="adm-td"></td>
               <td className="adm-td"></td>

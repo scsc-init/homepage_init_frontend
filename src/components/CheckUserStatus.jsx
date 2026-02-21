@@ -16,7 +16,6 @@ export default function CheckUserStatusClient() {
         if (!res.ok) return;
 
         const data = await res.json();
-        const status = data?.status;
 
         if (!data?.is_active && !data?.is_banned) {
           router.replace('/about/welcome');
