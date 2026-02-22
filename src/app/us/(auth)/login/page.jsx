@@ -2,7 +2,9 @@ import { redirect } from 'next/navigation';
 import AuthClient from './AuthClient';
 import { fetchMe } from '@/util/fetchAPIData';
 
-export default async function LoginPage({ searchParams = {} }) {
+export default async function LoginPage(props) {
+  const searchParams = await props.searchParams;
+
   const redirectTo =
     typeof searchParams?.redirect === 'string' && searchParams.redirect
       ? searchParams.redirect
