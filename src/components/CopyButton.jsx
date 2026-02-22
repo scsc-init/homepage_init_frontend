@@ -6,7 +6,9 @@ export default function CopyButton(props) {
 
   const handleClick = () => {
     if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(link);
+      navigator.clipboard.writeText(link).catch((err) => {
+        console.error('Clipboard copy failed:', err);
+      });
     }
   };
 
