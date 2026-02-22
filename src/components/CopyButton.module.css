@@ -1,13 +1,43 @@
 .invite-link-copy {
-  text-decoration: none;
-  color: var(--color-button-bg);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-button-border);
   background-color: var(--executive-card-bg);
-}
-.invite-link-copy:hover {
-  text-decoration: underline;
+  color: var(--color-button-bg);
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 2px 8px var(--executive-card-shadow);
+  transition:
+    box-shadow 0.16s ease,
+    transform 0.04s ease,
+    opacity 0.16s ease;
 }
-.invite-link-copy:focus {
+
+.invite-link-copy:hover {
+  opacity: 0.95;
+  box-shadow: 0 4px 12px var(--executive-card-shadow);
+  transform: translateY(-1px);
+}
+
+.invite-link-copy:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--executive-card-shadow);
+}
+
+.invite-link-copy:focus-visible {
   outline: 2px solid var(--color-button-bg);
   outline-offset: 2px;
+}
+
+.icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.text {
+  line-height: 1;
 }

@@ -579,6 +579,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.05rem 2.4rem;
+  margin-top: 1.5rem;
   font-size: 1.125rem;
   font-weight: 800;
   border-radius: 999px;
@@ -654,27 +655,43 @@
 .chatButton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
   gap: 0.5rem;
+  margin: 1rem;
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
-  border: 1px solid var(--color-button-border);
+
+  border: 2px solid var(--color-button-border);
   border-radius: 12px;
-  padding: 0.625rem 1rem;
+
+  padding: 0.8rem 1.15rem;
   line-height: 1;
+  font-weight: 800;
+  font-size: 1.05rem;
+
   transition:
     background-color 160ms ease,
     box-shadow 160ms ease,
-    transform 40ms ease;
-  box-shadow: 0 2px 10px var(--button-shadow, rgba(0, 0, 0, 0.08));
+    transform 120ms ease;
+
+  box-shadow: 0 4px 14px var(--button-shadow, rgba(0, 0, 0, 0.12)); /* ✅ 더 선명 */
 }
 
 .chatButton:hover {
   background-color: var(--color-button-hover-bg);
-  box-shadow: 0 4px 16px var(--button-shadow, rgba(0, 0, 0, 0.12));
+  box-shadow: 0 8px 22px var(--button-shadow, rgba(0, 0, 0, 0.16));
+  transform: translateY(-1px);
 }
 
 .chatButton:active {
   transform: translateY(1px);
+}
+
+.chatButton:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.45);
+  outline-offset: 2px;
 }
 
 @media (max-width: 640px) {
@@ -684,5 +701,137 @@
   .buttonsContainer .actionButton,
   .buttonsContainer .chatButton {
     flex: 1 1 100%;
+    width: 100%;
+  }
+}
+
+.welcomeContainer {
+  min-height: calc(100vh - 6rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4rem 1.5rem 5rem;
+  color: var(--color-text-body);
+}
+
+.welcomeContent {
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.welcomeHeader {
+  margin-bottom: 2.5rem;
+}
+
+.welcomeTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--color-text-strong);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.welcomeIntro {
+  margin: 0 auto;
+  max-width: 40rem;
+  padding: 1.35rem 1.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-button-border);
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 4px 12px var(--executive-card-shadow);
+}
+
+.welcomeSubtitle {
+  margin-top: 0.35rem;
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.stepsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+  margin-top: 2rem;
+}
+
+.stepCard,
+.statusCard {
+  padding: 1.6rem 1.9rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-button-border);
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 6px 14px var(--executive-card-shadow);
+}
+
+.stepHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.stepLabel {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-button-bg);
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text-strong);
+}
+
+.stepBody {
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.definitionList {
+  margin-top: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.definitionRow {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.definitionRow dt {
+  min-width: 4.5rem;
+  font-weight: 700;
+}
+
+.definitionRow dd {
+  margin: 0;
+}
+
+.smallNote {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .welcomeContainer {
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  .welcomeTitle {
+    font-size: 2.25rem;
+  }
+
+  .stepCard,
+  .statusCard {
+    padding: 1.35rem 1.3rem;
+  }
+
+  .definitionRow {
+    flex-direction: column;
+    gap: 0.1rem;
   }
 }
