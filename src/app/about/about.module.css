@@ -579,6 +579,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.05rem 2.4rem;
+  margin-top: 1.5rem;
   font-size: 1.125rem;
   font-weight: 800;
   border-radius: 999px;
@@ -658,7 +659,7 @@
   text-align: center;
   text-decoration: none;
   gap: 0.5rem;
-
+  margin: 1rem;
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
 
@@ -750,7 +751,7 @@
 .stepsList {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 2.25rem;
   margin-top: 2rem;
 }
 

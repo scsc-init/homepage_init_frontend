@@ -80,7 +80,7 @@ export default async function WelcomePage() {
           <section className={styles.stepCard}>
             <div className={styles.stepHeader}>
               <span className={styles.stepLabel}>STEP 2</span>
-              <h2 className={styles.stepTitle}>카카오톡 팀 채팅방 가입 (필수)</h2>
+              <h2 className={styles.stepTitle}>카카오톡 팀 채팅방 가입</h2>
             </div>
 
             <p className={styles.stepBody}>
@@ -109,7 +109,7 @@ export default async function WelcomePage() {
           <section className={styles.stepCard}>
             <div className={styles.stepHeader}>
               <span className={styles.stepLabel}>STEP 3</span>
-              <h2 className={styles.stepTitle}>디스코드 서버 입장</h2>
+              <h2 className={styles.stepTitle}>디스코드 서버 입장(선택)</h2>
             </div>
 
             <p className={styles.stepBody}>
