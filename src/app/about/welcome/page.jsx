@@ -18,8 +18,10 @@ export default async function WelcomePage() {
   const profile = await res.json();
 
   const enrollmentStatus =
-    profile?.enroll_status ?? profile?.status ?? profile?.membership_status ?? '';
-  const isPendingStatus = PENDING_STATUSES.has(enrollmentStatus);
+    profile?.enroll_status ?? profile?.status ?? profile?.membership_status;
+
+  const hasValidStatus = typeof enrollmentStatus === 'string' && enrollmentStatus.length > 0;
+  const isPendingStatus = hasValidStatus ? PENDING_STATUSES.has(enrollmentStatus) : true;
 
   return (
     <main className={styles.welcomeContainer}>
