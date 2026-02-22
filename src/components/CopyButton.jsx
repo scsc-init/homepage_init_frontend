@@ -2,13 +2,25 @@
 import styles from './CopyButton.module.css';
 
 export default function CopyButton(props) {
+  const { link, label = '복사' } = props;
+
+  const handleClick = () => {
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link);
+    }
+  };
+
   return (
     <button
-      onClick={() => navigator.clipboard.writeText(props.link)}
+      type="button"
+      onClick={handleClick}
       className={styles['invite-link-copy']}
-      aria-label="초대 링크 복사"
+      aria-label="내용 복사"
     >
-      🔗COPY
+      <span className={styles.icon} aria-hidden="true">
+        📋
+      </span>
+      <span className={styles.text}>{label}</span>
     </button>
   );
 }

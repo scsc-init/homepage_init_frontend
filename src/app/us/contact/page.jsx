@@ -29,7 +29,7 @@ export default async function Contact() {
                     </tr>
                     <tr>
                       <td className="label">부회장</td>
-                      <td className="info">김지훈 010-8245-0334</td>
+                      <td className="info">박상혁 010-4014-1871 / 박성현 010-3537-2998</td>
                     </tr>
                     <tr>
                       <td className="label">Email</td>
