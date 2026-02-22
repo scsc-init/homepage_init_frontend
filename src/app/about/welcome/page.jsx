@@ -93,7 +93,7 @@ export default async function WelcomePage() {
               <a
                 href={KAKAO_INVITE_LINK}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className={styles.chatButton}
               >
                 카카오톡 팀 채팅방 입장
@@ -109,7 +109,9 @@ export default async function WelcomePage() {
           <section className={styles.stepCard}>
             <div className={styles.stepHeader}>
               <span className={styles.stepLabel}>STEP 3</span>
-              <h2 className={styles.stepTitle}>디스코드 서버 입장(선택)</h2>
+              <h2 className={styles.stepTitle}>
+                디스코드 서버 입장<p className={styles.smallNote}>(선택)</p>
+              </h2>
             </div>
 
             <p className={styles.stepBody}>
@@ -124,7 +126,7 @@ export default async function WelcomePage() {
               <a
                 href={DISCORD_INVITE_LINK}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className={styles.chatButton}
               >
                 디스코드 서버 입장
