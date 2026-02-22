@@ -587,7 +587,7 @@ export default function FundApplyClient({
 
           {step3Ready && (
             <div className="Step fade-in space-y-8">
-              {(applyType === 'fund' || applyType === 'meal' || applyType == 'contest') && (
+              {(applyType === 'fund' || applyType === 'meal' || applyType === 'contest') && (
                 <div className="PayoutSection">
                   <div className="PayoutHeader">
                     <label className="C_Label">신청 금액</label>
