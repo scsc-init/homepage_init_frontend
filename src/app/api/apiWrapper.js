@@ -17,11 +17,12 @@ import { ENABLE_TEST_UTILS } from '@/util/constants';
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
   const session = await getServerSession(authOptions);
   const appJwt = session?.backendJwt || null;
+  const params = await options.params;
 
   let fullPath = pathTemplate;
-  if (options.params) {
-    for (const key of Object.keys(options.params)) {
-      const encoded = encodeURIComponent(String(options.params[key]));
+  if (params) {
+    for (const key of Object.keys(params)) {
+      const encoded = encodeURIComponent(String(params[key]));
       fullPath = fullPath.replaceAll(`{${key}}`, encoded);
     }
   }

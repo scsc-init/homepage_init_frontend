@@ -14,7 +14,7 @@ export default async function WelcomePage() {
   }
 
   const profile = await res.json();
-  const isInactive = profile && !profile.is_active;
+  const isInactive = !profile || !profile.is_active;
 
   return (
     <main className={styles.welcomeContainer}>
@@ -34,8 +34,8 @@ export default async function WelcomePage() {
             </p>
             <p className={styles.welcomeSubtitle}>
               {isInactive
-                ? '가입 신청이 접수되었어요. 아래 STEP 1–3 순서대로 진행해주세요.'
-                : '등록이 완료되었습니다! 아래 STEP 2–3 순서대로 진행해주세요.'}
+                ? '가입 신청이 접수되었어요. 아래 STEP 1-3 순서대로 진행해주세요.'
+                : '등록이 완료되었습니다! 아래 STEP 2-3 순서대로 진행해주세요.'}
             </p>
           </div>
         </header>
