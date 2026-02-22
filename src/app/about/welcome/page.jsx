@@ -110,7 +110,7 @@ export default async function WelcomePage() {
             <div className={styles.stepHeader}>
               <span className={styles.stepLabel}>STEP 3</span>
               <h2 className={styles.stepTitle}>
-                디스코드 서버 입장<p className={styles.smallNote}>(선택)</p>
+                디스코드 서버 입장<span className={styles.smallNote}>(선택)</span>
               </h2>
             </div>
 
