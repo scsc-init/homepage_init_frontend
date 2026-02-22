@@ -47,7 +47,7 @@ function TREnrollment({ year, semester }) {
       setGrantCount(grant);
     };
     getGrantCount();
-  }, []);
+  }, [kvKey]);
 
   const sendData = async () => {
     if (isFetching) return;
@@ -70,7 +70,6 @@ function TREnrollment({ year, semester }) {
         alert('저장에 성공했습니다.');
       } else if (res.status === 401 || res.status === 403) {
         alert('편집 권한이 없습니다.');
-        router.refresh();
       } else {
         alert('저장에 실패했습니다.');
       }
@@ -114,5 +113,8 @@ function TREnrollment({ year, semester }) {
 }
 
 function getNextSemester(year, semester, nextCount) {
-  return [year + ((semester + nextCount - 1) >> 2), ((semester + nextCount - 1) % 4) + 1];
+  return [
+    year + Math.floor((semester + nextCount - 1) / 4),
+    ((semester + nextCount - 1) % 4) + 1,
+  ];
 }
