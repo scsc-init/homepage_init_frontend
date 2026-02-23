@@ -26,8 +26,7 @@ export default function RefreshJWTClient() {
       }
 
       if (me) {
-        const s = me.status;
-        if (s === 'pending' || s === 'standby') {
+        if (!me.is_active) {
           router.replace('/about/welcome');
           return;
         }
@@ -57,7 +56,7 @@ export default function RefreshJWTClient() {
 
         try {
           const me2 = await fetchMeClient();
-          if (me2 && (me2.status === 'pending' || me2.status === 'standby')) {
+          if (me2 && !me2.is_active) {
             router.replace('/about/welcome');
             return;
           }
