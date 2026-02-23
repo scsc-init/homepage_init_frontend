@@ -7,23 +7,20 @@ import LeadershipPanel from './LeadershipPanel';
 import UserList from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
-import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
 import {
   getKVValues,
   fetchExecutiveCandidates,
   fetchUsers,
   fetchMajors,
-  fetchSCSCGlobalStatus,
 } from '@/util/fetchAPIData';
 import '../page.css';
 
 export default async function ExecutiveUserPage() {
-  const [kv, candidates, users, majors, scscGlobalStatus] = await Promise.all([
+  const [kv, candidates, users, majors] = await Promise.all([
     getKVValues(['main-president', 'vice-president']),
     fetchExecutiveCandidates(),
     fetchUsers(),
     fetchMajors(),
-    fetchSCSCGlobalStatus(),
   ]);
 
   const presidentId =
@@ -55,14 +52,6 @@ export default async function ExecutiveUserPage() {
 
         <div className="adm-section">
           <LeadershipPanel initialLeadership={initialLeadership} candidates={candidates} />
-        </div>
-
-        <h2>등록 정책 관리</h2>
-        <p style={{ marginBottom: '1rem', color: '#767676' }}>
-          등록 부여할 학기 수가 로딩되는 동안 0으로 표시됩니다.
-        </p>
-        <div className="adm-section">
-          <EnrollmentPolicyPanel scscGlobalStatus={scscGlobalStatus} />
         </div>
 
         <details open className="adm-section">

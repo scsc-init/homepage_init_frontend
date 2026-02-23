@@ -15,7 +15,6 @@ const TRANSITION_MAP_SEASONAL = {
   recruiting: 'active',
   active: 'inactive',
 };
-const REQUIRED_PHRASE = 'confirm change';
 
 const getNextStatus = (currentStatus, currentSemester, currentYear) => {
   return [
@@ -63,7 +62,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   const [nextStatus, nextSemester, nextYear] = currentStatus
     ? getNextStatus(currentStatus, semester, year)
     : [null, null, null];
-  const totalRequiredPhrase = `${nextYear}-${SEMESTER_MAP[nextSemester]} ${STATUS_MAP[nextStatus]} ${REQUIRED_PHRASE}`;
+  const totalRequiredPhrase = `${nextYear}-${SEMESTER_MAP[nextSemester]} ${STATUS_MAP[nextStatus]}으로 변경`;
 
   return (
     <>
@@ -106,7 +105,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
       )}
 
       <div className="adm-section">
-        <h2>SCSC 전체 상태 관리</h2>
+        <h3>SCSC 전체 상태 관리</h3>
         {!currentStatus ? (
           <div>상태를 불러오지 못했습니다.</div>
         ) : (

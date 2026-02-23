@@ -2,6 +2,7 @@ import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
 import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
+import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
 import { fetchSCSCGlobalStatus, fetchDiscordBotStatus } from '@/util/fetchAPIData';
 import './page.css';
 
@@ -44,7 +45,10 @@ export default async function AdminPanel() {
           <Link href="/executive/pig">PIG 관리 페이지로 이동</Link>
         </p>
 
-        <h2>Scsc status 관리</h2>
+        <h2>SCSC status 관리</h2>
+        <div className="adm-section">
+          <EnrollmentPolicyPanel scscGlobalStatus={scscGlobalStatus.value} />
+        </div>
         <div className="adm-section">
           <ScscStatusPanel
             scscGlobalStatus={
