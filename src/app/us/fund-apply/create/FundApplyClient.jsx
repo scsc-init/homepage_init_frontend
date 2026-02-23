@@ -78,7 +78,14 @@ export default function FundApplyClient({
   const [me, setMe] = useState(null);
 
   const [imageIds, setImageIds] = useState([]);
+  const [imageUrlMap, setImageUrlMap] = useState({});
   const [imageUploading, setImageUploading] = useState(false);
+
+  const resolveImageUrl = (id) => {
+    const url = imageUrlMap?.[id];
+    if (typeof url === 'string' && url.trim()) return url.trim();
+    return `/api/image/download/${encodeURIComponent(id)}`;
+  };
 
   const {
     register,
@@ -215,6 +222,7 @@ export default function FundApplyClient({
 
     setValue('reasonText', '', { shouldValidate: true, shouldDirty: true });
     setImageIds([]);
+    setImageUrlMap({});
     setValue('imageIds', [], { shouldValidate: true, shouldDirty: true });
   }, [applyType, setValue]);
 
@@ -310,7 +318,7 @@ export default function FundApplyClient({
       .map((id) => String(id))
       .filter(Boolean);
 
-    const imgs = ids.map((id) => `![image](/api/image/download/${encodeURIComponent(id)})`);
+    const imgs = ids.map((id) => `![image](${resolveImageUrl(id)})`);
 
     const blocks = [];
     blocks.push(`${headerLines.join('\n')}\n\n---\n`);
@@ -328,6 +336,7 @@ export default function FundApplyClient({
     if (imageUploading) return;
 
     const ids = [];
+    const urlPatch = {};
 
     setImageUploading(true);
     try {
@@ -343,7 +352,7 @@ export default function FundApplyClient({
             credentials: 'include',
           });
         } catch {
-          alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
+          alert('?대?吏 ?낅줈??以??ㅽ듃?뚰겕 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.');
           continue;
         }
 
@@ -356,23 +365,29 @@ export default function FundApplyClient({
 
         if (!res.ok) {
           if (res.status === 401) {
-            alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
+            alert('濡쒓렇?몄씠 ?꾩슂?⑸땲?? ?ㅼ떆 濡쒓렇?명븳 ???대?吏瑜??낅줈?쒗빐 二쇱꽭??');
           } else if (res.status === 413 || res.status === 403) {
-            alert('이미지 용량이 너무 큽니다. (10MB 이하로 줄인 뒤 다시 시도해 주세요.)');
+            alert('?대?吏 ?⑸웾???덈Т ?쎈땲?? (10MB ?댄븯濡?以꾩씤 ???ㅼ떆 ?쒕룄??二쇱꽭??)');
           } else {
             const msg =
-              data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
+              data?.detail || data?.message || `?대?吏 ?낅줈???ㅽ뙣 (status ${res.status})`;
             alert(msg);
           }
           continue;
         }
 
         if (!data?.id) {
-          alert('이미지 업로드 응답에 id가 없습니다.');
+          alert('?대?吏 ?낅줈???묐떟??id媛 ?놁뒿?덈떎.');
           continue;
         }
 
-        ids.push(String(data.id));
+        const id = String(data.id);
+        ids.push(id);
+        const url =
+          typeof data.url === 'string' && data.url.trim()
+            ? data.url.trim()
+            : `/api/image/download/${encodeURIComponent(id)}`;
+        urlPatch[id] = url;
       }
     } finally {
       setImageUploading(false);
@@ -381,10 +396,10 @@ export default function FundApplyClient({
     if (ids.length > 0) {
       const next = Array.from(new Set([...imageIds, ...ids]));
       setImageIds(next);
+      setImageUrlMap((prev) => ({ ...prev, ...urlPatch }));
       setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
     }
   };
-
   const removeImageId = (id) => {
     const next = imageIds.filter((x) => x !== id);
     setImageIds(next);
@@ -723,40 +738,43 @@ export default function FundApplyClient({
 
                       {imageIds.length > 0 && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          {imageIds.map((id) => (
-                            <div
-                              key={id}
-                              style={{
-                                display: 'flex',
-                                gap: '0.5rem',
-                                alignItems: 'center',
-                                marginTop: '0.25rem',
-                              }}
-                            >
-                              <a
-                                className="C_Link"
-                                href={`/api/image/download/${encodeURIComponent(id)}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                {id}
-                              </a>
-                              <button
-                                type="button"
-                                className="C_Link"
-                                onClick={() => removeImageId(id)}
-                                disabled={submitting || imageUploading}
+                          {imageIds.map((id) => {
+                            const href = resolveImageUrl(id);
+                            return (
+                              <div
+                                key={id}
                                 style={{
-                                  background: 'transparent',
-                                  border: 'none',
-                                  padding: 0,
-                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  gap: '0.5rem',
+                                  alignItems: 'center',
+                                  marginTop: '0.25rem',
                                 }}
                               >
-                                삭제
-                              </button>
-                            </div>
-                          ))}
+                                <a
+                                  className="C_Link"
+                                  href={href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {id}
+                                </a>
+                                <button
+                                  type="button"
+                                  className="C_Link"
+                                  onClick={() => removeImageId(id)}
+                                  disabled={submitting || imageUploading}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  삭제
+                                </button>
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
