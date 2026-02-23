@@ -60,6 +60,18 @@ function extractFirstText(v) {
   return '';
 }
 
+function ensureAbsoluteFrontendUrl(raw) {
+  if (typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  if (/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed)) return trimmed;
+  const origin =
+    typeof window !== 'undefined' && window.location?.origin ? window.location.origin : '';
+  if (!origin) return trimmed;
+  if (trimmed.startsWith('/')) return `${origin}${trimmed}`;
+  return `${origin}/${trimmed.replace(/^\/+/, '')}`;
+}
+
 export default function FundApplyClient({
   boardInfo,
   sigs,
@@ -83,8 +95,8 @@ export default function FundApplyClient({
 
   const resolveImageUrl = (id) => {
     const url = imageUrlMap?.[id];
-    if (typeof url === 'string' && url.trim()) return url.trim();
-    return `/api/image/download/${encodeURIComponent(id)}`;
+    if (typeof url === 'string' && url.trim()) return ensureAbsoluteFrontendUrl(url);
+    return ensureAbsoluteFrontendUrl(`/api/image/download/${encodeURIComponent(id)}`);
   };
 
   const {
@@ -383,11 +395,11 @@ export default function FundApplyClient({
 
         const id = String(data.id);
         ids.push(id);
-        const url =
+        const rawUrl =
           typeof data.url === 'string' && data.url.trim()
             ? data.url.trim()
             : `/api/image/download/${encodeURIComponent(id)}`;
-        urlPatch[id] = url;
+        urlPatch[id] = ensureAbsoluteFrontendUrl(rawUrl);
       }
     } finally {
       setImageUploading(false);
