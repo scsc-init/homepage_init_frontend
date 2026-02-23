@@ -2,3 +2,7 @@
 *.css
 *.scss
 *.sass
+node_modules
+build
+dist
+.next

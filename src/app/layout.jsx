@@ -30,8 +30,8 @@ export const metadata = {
   icons: { icon: '/favicon.ico' },
 };
 
-export default function RootLayout({ children }) {
-  const theme = cookies().get('theme')?.value;
+export default async function RootLayout({ children }) {
+  const theme = (await cookies()).get('theme')?.value;
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;
 
   return (

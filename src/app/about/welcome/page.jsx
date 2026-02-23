@@ -4,8 +4,6 @@ import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/cons
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
-const PENDING_STATUSES = new Set(['pending', 'standby']);
-
 const WELCOME_LOGIN_PATH = '/about/welcome';
 
 export default async function WelcomePage() {
@@ -16,12 +14,7 @@ export default async function WelcomePage() {
   }
 
   const profile = await res.json();
-
-  const enrollmentStatus =
-    profile?.enroll_status ?? profile?.status ?? profile?.membership_status;
-
-  const hasValidStatus = typeof enrollmentStatus === 'string' && enrollmentStatus.length > 0;
-  const isPendingStatus = hasValidStatus ? PENDING_STATUSES.has(enrollmentStatus) : true;
+  const isInactive = !profile || !profile.is_active;
 
   return (
     <main className={styles.welcomeContainer}>
@@ -40,9 +33,9 @@ export default async function WelcomePage() {
               )}
             </p>
             <p className={styles.welcomeSubtitle}>
-              {isPendingStatus
-                ? '가입 신청이 접수되었어요. 아래 STEP 1–3 순서대로 진행해주세요.'
-                : '등록이 완료되었습니다! 아래 STEP 2–3 순서대로 진행해주세요.'}
+              {isInactive
+                ? '가입 신청이 접수되었어요. 아래 STEP 1-3 순서대로 진행해주세요.'
+                : '등록이 완료되었습니다! 아래 STEP 2-3 순서대로 진행해주세요.'}
             </p>
           </div>
         </header>
