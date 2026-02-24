@@ -94,35 +94,47 @@ export default function PigForm({
         </div>
       </div>
 
-      <div className="form-toggle-row">
-        <span className="form-toggle-label">가입 기간 자유화</span>
-        <Controller
-          name="is_rolling_admission"
-          control={control}
-          defaultValue="always"
-          render={({ field }) => (
-            <PigAdmissionDropdown
-              pigAdmissionState={field.value}
-              setPigAdmissionState={field.onChange}
-            />
-          )}
-        />
-      </div>
-
-      {isCreate ? null : (
+      <div className="form-toggle-group">
         <div className="form-toggle-row">
-          <span className="form-toggle-label">다음 학기에 연장 신청</span>
+          <span className="form-toggle-label">가입 기간</span>
           <span className="form-toggle-right">
             <Controller
-              name="should_extend"
+              name="is_rolling_admission"
               control={control}
+              defaultValue="always"
               render={({ field }) => (
-                <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
+                <PigAdmissionDropdown
+                  pigAdmissionState={field.value}
+                  setPigAdmissionState={field.onChange}
+                />
               )}
             />
           </span>
         </div>
-      )}
+
+        {isCreate ? null : (
+          <div className="form-toggle-row">
+            <label className="form-toggle-label" htmlFor="should_extend">
+              다음 학기에 연장 신청
+            </label>
+            <span className="form-toggle-right">
+              <Controller
+                name="should_extend"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    id="should_extend"
+                    type="checkbox"
+                    className="extend-checkbox"
+                    checked={!!field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  />
+                )}
+              />
+            </span>
+          </div>
+        )}
+      </div>
 
       <Button.Root type="submit">{isCreate ? 'PIG 생성' : 'PIG 수정'}</Button.Root>
     </form>

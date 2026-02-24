@@ -19,3 +19,5 @@ Common gitmoji examples for quick copy-paste:
 ### Are there any caveats or things to watch out for?
 
 <!-- If none, write "None" -->
+
+I have read the CLA document, and I am signing the CLA.
