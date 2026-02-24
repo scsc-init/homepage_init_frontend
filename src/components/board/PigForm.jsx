@@ -2,10 +2,10 @@
 import Editor from '@/components/board/EditorWrapper.jsx';
 import InputField from './InputField';
 import * as Button from '@/components/Button.jsx';
-import ToggleSwitch from '@/components/ToggleSwitch.jsx';
 import * as Input from '@/components/Input.jsx';
 import { Controller, useFieldArray } from 'react-hook-form';
 import PigAdmissionDropdown from '@/components/board/PigAdmissionDropdown.jsx';
+import styles from './board.module.css';
 
 export default function PigForm({
   register,
@@ -41,8 +41,9 @@ export default function PigForm({
       <div>
         <label className="block mb-2 font-semibold">상세 소개</label>
         <Controller
-          name="editor"
+          name="content"
           control={control}
+          defaultValue=""
           render={({ field }) => (
             <Editor
               key={editorKey}
@@ -94,10 +95,10 @@ export default function PigForm({
         </div>
       </div>
 
-      <div className="form-toggle-group">
-        <div className="form-toggle-row">
-          <span className="form-toggle-label">가입 기간</span>
-          <span className="form-toggle-right">
+      <div className={styles['form-toggle-group']}>
+        <div className={styles['form-toggle-row']}>
+          <span className={styles['form-toggle-label']}>가입 기간</span>
+          <span className={styles['form-toggle-right']}>
             <Controller
               name="is_rolling_admission"
               control={control}
@@ -113,11 +114,11 @@ export default function PigForm({
         </div>
 
         {isCreate ? null : (
-          <div className="form-toggle-row">
-            <label className="form-toggle-label" htmlFor="should_extend">
+          <div className={styles['form-toggle-row']}>
+            <label className={styles['form-toggle-label']} htmlFor="should_extend">
               다음 학기에 연장 신청
             </label>
-            <span className="form-toggle-right">
+            <span className={styles['form-toggle-right']}>
               <Controller
                 name="should_extend"
                 control={control}
