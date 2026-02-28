@@ -60,6 +60,18 @@ function extractFirstText(v) {
   return '';
 }
 
+function ensureAbsoluteFrontendUrl(raw) {
+  if (typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  if (/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed)) return trimmed;
+  const origin =
+    typeof window !== 'undefined' && window.location?.origin ? window.location.origin : '';
+  if (!origin) return trimmed;
+  if (trimmed.startsWith('/')) return `${origin}${trimmed}`;
+  return `${origin}/${trimmed.replace(/^\/+/, '')}`;
+}
+
 export default function FundApplyClient({
   boardInfo,
   sigs,
@@ -78,7 +90,14 @@ export default function FundApplyClient({
   const [me, setMe] = useState(null);
 
   const [imageIds, setImageIds] = useState([]);
+  const [imageUrlMap, setImageUrlMap] = useState({});
   const [imageUploading, setImageUploading] = useState(false);
+
+  const resolveImageUrl = (id) => {
+    const url = imageUrlMap?.[id];
+    if (typeof url === 'string' && url.trim()) return ensureAbsoluteFrontendUrl(url);
+    return ensureAbsoluteFrontendUrl(`/api/image/download/${encodeURIComponent(id)}`);
+  };
 
   const {
     register,
@@ -215,6 +234,7 @@ export default function FundApplyClient({
 
     setValue('reasonText', '', { shouldValidate: true, shouldDirty: true });
     setImageIds([]);
+    setImageUrlMap({});
     setValue('imageIds', [], { shouldValidate: true, shouldDirty: true });
   }, [applyType, setValue]);
 
@@ -310,7 +330,7 @@ export default function FundApplyClient({
       .map((id) => String(id))
       .filter(Boolean);
 
-    const imgs = ids.map((id) => `![image](/api/image/download/${encodeURIComponent(id)})`);
+    const imgs = ids.map((id) => `![image](${resolveImageUrl(id)})`);
 
     const blocks = [];
     blocks.push(`${headerLines.join('\n')}\n\n---\n`);
@@ -328,6 +348,7 @@ export default function FundApplyClient({
     if (imageUploading) return;
 
     const ids = [];
+    const urlPatch = {};
 
     setImageUploading(true);
     try {
@@ -372,7 +393,13 @@ export default function FundApplyClient({
           continue;
         }
 
-        ids.push(String(data.id));
+        const id = String(data.id);
+        ids.push(id);
+        const rawUrl =
+          typeof data.url === 'string' && data.url.trim()
+            ? data.url.trim()
+            : `/api/image/download/${encodeURIComponent(id)}`;
+        urlPatch[id] = ensureAbsoluteFrontendUrl(rawUrl);
       }
     } finally {
       setImageUploading(false);
@@ -381,10 +408,10 @@ export default function FundApplyClient({
     if (ids.length > 0) {
       const next = Array.from(new Set([...imageIds, ...ids]));
       setImageIds(next);
+      setImageUrlMap((prev) => ({ ...prev, ...urlPatch }));
       setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
     }
   };
-
   const removeImageId = (id) => {
     const next = imageIds.filter((x) => x !== id);
     setImageIds(next);
@@ -723,40 +750,43 @@ export default function FundApplyClient({
 
                       {imageIds.length > 0 && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          {imageIds.map((id) => (
-                            <div
-                              key={id}
-                              style={{
-                                display: 'flex',
-                                gap: '0.5rem',
-                                alignItems: 'center',
-                                marginTop: '0.25rem',
-                              }}
-                            >
-                              <a
-                                className="C_Link"
-                                href={`/api/image/download/${encodeURIComponent(id)}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                {id}
-                              </a>
-                              <button
-                                type="button"
-                                className="C_Link"
-                                onClick={() => removeImageId(id)}
-                                disabled={submitting || imageUploading}
+                          {imageIds.map((id) => {
+                            const href = resolveImageUrl(id);
+                            return (
+                              <div
+                                key={id}
                                 style={{
-                                  background: 'transparent',
-                                  border: 'none',
-                                  padding: 0,
-                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  gap: '0.5rem',
+                                  alignItems: 'center',
+                                  marginTop: '0.25rem',
                                 }}
                               >
-                                삭제
-                              </button>
-                            </div>
-                          ))}
+                                <a
+                                  className="C_Link"
+                                  href={href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {id}
+                                </a>
+                                <button
+                                  type="button"
+                                  className="C_Link"
+                                  onClick={() => removeImageId(id)}
+                                  disabled={submitting || imageUploading}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  삭제
+                                </button>
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>

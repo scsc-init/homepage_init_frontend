@@ -197,7 +197,11 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
       return null;
     }
 
-    return `/api/image/download/${encodeURIComponent(data.id)}`;
+    const url =
+      typeof data.url === 'string' && data.url.trim()
+        ? data.url.trim()
+        : `/api/image/download/${encodeURIComponent(data.id)}`;
+    return url;
   }, []);
 
   return (
