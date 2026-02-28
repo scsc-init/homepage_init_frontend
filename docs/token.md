@@ -71,17 +71,15 @@ HS256 (HMAC-SHA256)
 
 ## 4.3 JWT Payload
 
-{ "user_id": "`<sha256_user_id>`{=html}", "exp":
+{ "user_id": "`<user_primary_key>`{=html}", "exp":
 "`<unix_timestamp>`{=html}" }
 
 ## 4.4 필수 Claim
 
-Claim 타입 필수여부 설명
-
----
-
-user_id string 필수 User 테이블의 PK
-exp int 필수 만료 시각
+| Claim   | 타입   | 필수여부 | 설명             |
+| ------- | ------ | -------- | ---------------- |
+| user_id | string | 필수     | User 테이블의 PK |
+| exp     | int    | 필수     | 만료 시각        |
 
 JWT 만료 시간은 다음 설정값에 의해 결정된다:
 
