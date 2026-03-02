@@ -50,34 +50,11 @@ export async function fetchBoards(boardIds) {
  * @returns {Promise<PromiseSettledResult<any>[]>} - Promise that resolves to object that contains information for each sigs.
  */
 export async function fetchSigs() {
-  const softFetch = async (path) => {
-    try {
-      const res = await handleApiRequest('GET', path);
-      if (!res.ok) return null;
-      return await res.json().catch(() => null);
-    } catch {
-      return null;
-    }
-  };
-
   const sigsRaw = await safeFetch('GET', '/api/sigs');
-
-  const sigsWithContentMembers = await Promise.allSettled(
-    (Array.isArray(sigsRaw) ? sigsRaw : []).map(async (sig) => {
-      const [article, members] = await Promise.all([
-        softFetch(`/api/article/${sig.content_id}`),
-        softFetch(`/api/sig/${sig.id}/members`),
-      ]);
-
-      return {
-        ...sig,
-        content: article?.content ?? '',
-        members: Array.isArray(members) ? members : [],
-      };
-    }),
-  );
-
-  return sigsWithContentMembers;
+  return (Array.isArray(sigsRaw) ? sigsRaw : []).map((sig) => ({
+    status: 'fulfilled',
+    value: sig,
+  }));
 }
 
 /**
@@ -86,34 +63,11 @@ export async function fetchSigs() {
  * @returns {Promise<PromiseSettledResult<any>[]>} - Promise that resolves to object that contains information for each pigs.
  */
 export async function fetchPigs() {
-  const softFetch = async (path) => {
-    try {
-      const res = await handleApiRequest('GET', path);
-      if (!res.ok) return null;
-      return await res.json().catch(() => null);
-    } catch {
-      return null;
-    }
-  };
-
   const pigsRaw = await safeFetch('GET', '/api/pigs');
-
-  const pigsWithContentMembers = await Promise.allSettled(
-    (Array.isArray(pigsRaw) ? pigsRaw : []).map(async (pig) => {
-      const [article, members] = await Promise.all([
-        softFetch(`/api/article/${pig.content_id}`),
-        softFetch(`/api/pig/${pig.id}/members`),
-      ]);
-
-      return {
-        ...pig,
-        content: article?.content ?? '',
-        members: Array.isArray(members) ? members : [],
-      };
-    }),
-  );
-
-  return pigsWithContentMembers;
+  return (Array.isArray(pigsRaw) ? pigsRaw : []).map((pig) => ({
+    status: 'fulfilled',
+    value: pig,
+  }));
 }
 
 /**
