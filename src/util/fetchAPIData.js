@@ -51,10 +51,16 @@ export async function fetchBoards(boardIds) {
  */
 export async function fetchSigs() {
   const sigsRaw = await safeFetch('GET', '/api/sigs');
-  return (Array.isArray(sigsRaw) ? sigsRaw : []).map((sig) => ({
-    status: 'fulfilled',
-    value: sig,
-  }));
+  return (Array.isArray(sigsRaw) ? sigsRaw : [])
+    .filter((sig) => sig && typeof sig === 'object')
+    .map((sig) => ({
+      status: 'fulfilled',
+      value: {
+        ...sig,
+        content: typeof sig.content === 'string' ? sig.content : '',
+        members: Array.isArray(sig.members) ? sig.members : [],
+      },
+    }));
 }
 
 /**
@@ -62,12 +68,19 @@ export async function fetchSigs() {
  *
  * @returns {Promise<PromiseSettledResult<any>[]>} - Promise that resolves to object that contains information for each pigs.
  */
+
 export async function fetchPigs() {
   const pigsRaw = await safeFetch('GET', '/api/pigs');
-  return (Array.isArray(pigsRaw) ? pigsRaw : []).map((pig) => ({
-    status: 'fulfilled',
-    value: pig,
-  }));
+  return (Array.isArray(pigsRaw) ? pigsRaw : [])
+    .filter((pig) => pig && typeof pig === 'object')
+    .map((pig) => ({
+      status: 'fulfilled',
+      value: {
+        ...pig,
+        content: typeof pig.content === 'string' ? pig.content : '',
+        members: Array.isArray(pig.members) ? pig.members : [],
+      },
+    }));
 }
 
 /**
