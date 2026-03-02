@@ -12,12 +12,13 @@ export default async function PigListPage() {
   }
 
   const allowed = new Set(['recruiting', 'active']);
-  const visiblePigs = (Array.isArray(pigs.value) ? pigs.value : []).filter((p) =>
-    allowed.has(p.status),
+
+  const visiblePigs = (Array.isArray(pigs.value) ? pigs.value : []).filter(
+    (p) => p && typeof p === 'object' && allowed.has(p.status),
   );
 
   let myId = '';
-  if (me.status === 'fulfilled' && me.value?.id) {
+  if (me.status === 'fulfilled' && me.value?.id != null) {
     myId = String(me.value.id);
   }
 
