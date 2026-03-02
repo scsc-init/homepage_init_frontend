@@ -1,11 +1,11 @@
 import SigListClient from './SigListClient';
 import './page.css';
-import { safeServerFetch, fetchMe } from '@/util/fetchAPIData';
+import { safeFetch, fetchMe } from '@/util/fetchAPIData';
 
 export const metadata = { title: 'SIG' };
 
 export default async function SigListPage() {
-  const [sigs, me] = await Promise.allSettled([safeServerFetch('GET', '/api/sigs'), fetchMe()]);
+  const [sigs, me] = await Promise.allSettled([safeFetch('GET', '/api/sigs'), fetchMe()]);
 
   if (sigs.status === 'rejected') {
     return <div>시그 정보를 불러올 수 없습니다.</div>;
