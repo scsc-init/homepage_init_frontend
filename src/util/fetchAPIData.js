@@ -377,3 +377,29 @@ export async function fetchFundApplyCreateData(boardId = 6) {
 
   return { boardInfo, globalStatus, prevTerm, sigs, pigs, prevSigs, prevPigs };
 }
+/**
+ * 서버 컴포넌트에서 API 요청을 수행하는 안전한 fetch 래퍼 함수입니다.
+ *
+ * handleApiRequest를 호출하여 응답을 받고,
+ * 응답이 실패(res.ok === false)한 경우 에러를 throw합니다.
+ * 성공 시 JSON body를 반환합니다.
+ *
+ * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} method - HTTP 메서드
+ * @param {string} path - 호출할 API 경로 (예: '/api/sigs')
+ * @param {object} [options={}] - 요청 바디 또는 추가 옵션
+ * @param {Request} [request] - Next.js 서버 환경에서 전달되는 Request 객체
+ * @returns {Promise<any>} 성공 시 JSON 파싱 결과
+ *
+ * @throws {Error} 응답이 성공하지 않은 경우 (status + 에러 텍스트 포함)
+ */
+
+export async function safeServerFetch(method, path, options = {}, request) {
+  const res = await handleApiRequest(method, path, options, request);
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error(`${res.status} ${errText}`);
+  }
+
+  return res.json();
+}
