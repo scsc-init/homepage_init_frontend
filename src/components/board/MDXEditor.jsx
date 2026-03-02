@@ -19,6 +19,7 @@ import {
 } from '@mdxeditor/editor';
 import styles from './editor.module.css';
 import { directFetch } from '@/util/directFetch';
+import { ensureAbsoluteFrontendUrl } from '@/util/frontendUrl';
 import {
   IMAGE_UPLOAD_MAX_ORIGINAL_BYTES,
   IMAGE_UPLOAD_VERCEL_BLOCK_BYTES,
@@ -201,7 +202,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
       typeof data.url === 'string' && data.url.trim()
         ? data.url.trim()
         : `/api/image/download/${encodeURIComponent(data.id)}`;
-    return url;
+    return ensureAbsoluteFrontendUrl(url);
   }, []);
 
   return (

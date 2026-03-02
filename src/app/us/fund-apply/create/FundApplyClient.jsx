@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { SEMESTER_MAP } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+import { ensureAbsoluteFrontendUrl } from '@/util/frontendUrl';
 
 import './page.css';
 
@@ -60,18 +61,6 @@ function extractFirstText(v) {
   return '';
 }
 
-function ensureAbsoluteFrontendUrl(raw) {
-  if (typeof raw !== 'string') return '';
-  const trimmed = raw.trim();
-  if (!trimmed) return '';
-  if (/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed)) return trimmed;
-  const origin =
-    typeof window !== 'undefined' && window.location?.origin ? window.location.origin : '';
-  if (!origin) return trimmed;
-  if (trimmed.startsWith('/')) return `${origin}${trimmed}`;
-  return `${origin}/${trimmed.replace(/^\/+/, '')}`;
-}
-
 export default function FundApplyClient({
   boardInfo,
   sigs,
@@ -90,12 +79,9 @@ export default function FundApplyClient({
   const [me, setMe] = useState(null);
 
   const [imageIds, setImageIds] = useState([]);
-  const [imageUrlMap, setImageUrlMap] = useState({});
   const [imageUploading, setImageUploading] = useState(false);
 
   const resolveImageUrl = (id) => {
-    const url = imageUrlMap?.[id];
-    if (typeof url === 'string' && url.trim()) return ensureAbsoluteFrontendUrl(url);
     return ensureAbsoluteFrontendUrl(`/api/image/download/${encodeURIComponent(id)}`);
   };
 
@@ -234,7 +220,6 @@ export default function FundApplyClient({
 
     setValue('reasonText', '', { shouldValidate: true, shouldDirty: true });
     setImageIds([]);
-    setImageUrlMap({});
     setValue('imageIds', [], { shouldValidate: true, shouldDirty: true });
   }, [applyType, setValue]);
 
@@ -348,7 +333,6 @@ export default function FundApplyClient({
     if (imageUploading) return;
 
     const ids = [];
-    const urlPatch = {};
 
     setImageUploading(true);
     try {
@@ -395,11 +379,6 @@ export default function FundApplyClient({
 
         const id = String(data.id);
         ids.push(id);
-        const rawUrl =
-          typeof data.url === 'string' && data.url.trim()
-            ? data.url.trim()
-            : `/api/image/download/${encodeURIComponent(id)}`;
-        urlPatch[id] = ensureAbsoluteFrontendUrl(rawUrl);
       }
     } finally {
       setImageUploading(false);
@@ -408,7 +387,6 @@ export default function FundApplyClient({
     if (ids.length > 0) {
       const next = Array.from(new Set([...imageIds, ...ids]));
       setImageIds(next);
-      setImageUrlMap((prev) => ({ ...prev, ...urlPatch }));
       setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
     }
   };
