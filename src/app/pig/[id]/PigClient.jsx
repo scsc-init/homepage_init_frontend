@@ -15,12 +15,18 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || pig?.owner === me?.id);
   const isOwner = !!me && pig?.owner === me?.id;
   const semesterLabel = SEMESTER_MAP[Number(pig?.semester)] ?? `${pig?.semester}`;
+  const createdSemesterLabel =
+    SEMESTER_MAP[Number(pig?.created_semester)] ?? `${pig?.created_semester}`;
+  const hasCreated = pig?.created_year != null && pig?.created_semester != null;
   const websites = Array.isArray(pig?.websites) ? pig.websites : [];
 
   return (
     <div className="PigDetailContainer">
       <h1 className="PigTitle">{pig.title}</h1>
       <p className="PigInfo">
+        {hasCreated
+          ? `최초 생성: ${pig.created_year}학년도 ${createdSemesterLabel}학기 · `
+          : ''}
         {pig.year}학년도 {semesterLabel}학기 · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>

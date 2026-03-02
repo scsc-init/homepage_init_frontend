@@ -20,6 +20,116 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
       </select>
     );
   };
+
+  return (
+    <tr className={styles['adm-tr-filter']}>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.id}
+          onChange={(e) => updateFilterCriteria('id', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.title}
+          onChange={(e) => updateFilterCriteria('title', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.description}
+          onChange={(e) => updateFilterCriteria('description', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.content}
+          onChange={(e) => updateFilterCriteria('content', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={filter.status}
+          onChange={(e) => updateFilterCriteria('status', e.target.value)}
+        >
+          <option value="">전체</option>
+          {Object.keys(STATUS_MAP).map((key) => (
+            <option key={key} value={key}>
+              {STATUS_MAP[key]}
+            </option>
+          ))}
+        </select>
+      </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.year}
+          onChange={(e) => updateFilterCriteria('year', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={filter.semester}
+          onChange={(e) => updateFilterCriteria('semester', e.target.value)}
+        >
+          <option value="">학기 전체</option>
+          {Object.keys(SEMESTER_MAP).map((key) => (
+            <option key={key} value={key}>
+              {SEMESTER_MAP[key]}학기
+            </option>
+          ))}
+        </select>
+      </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.created_year}
+          onChange={(e) => updateFilterCriteria('created_year', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}>
+        <select
+          className={styles['adm-select']}
+          value={filter.created_semester}
+          onChange={(e) => updateFilterCriteria('created_semester', e.target.value)}
+        >
+          <option value="">학기 전체</option>
+          {Object.keys(SEMESTER_MAP).map((key) => (
+            <option key={key} value={key}>
+              {SEMESTER_MAP[key]}학기
+            </option>
+          ))}
+        </select>
+      </td>
+      <td className={styles['adm-td']}>{renderBoolSelect('should_extend')}</td>
+      <td className={styles['adm-td']}>
+        <select
+          className={`${styles['adm-select']} ${styles['adm-select-bool']} ${styles['adm-select-bool-wide']}`}
+          value={filter.is_rolling_admission}
+          onChange={(e) => updateFilterCriteria('is_rolling_admission', e.target.value)}
+        >
+          <option value="">전체</option>
+          <option value="always">{PIG_ADMISSION_LABEL_MAP.always}</option>
+          <option value="during_recruiting">{PIG_ADMISSION_LABEL_MAP.during_recruiting}</option>
+          <option value="never">{PIG_ADMISSION_LABEL_MAP.never}</option>
+        </select>
+      </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.member}
+          onChange={(e) => updateFilterCriteria('member', e.target.value)}
+        />
+      </td>
+      <td className={styles['adm-td']}></td>
+    </tr>
+  );
 }
 
 const renderTextSelect = (pig, field, ctx, extraClass) => {
@@ -116,6 +226,14 @@ const renderPigRow = (pig, ctx) => {
         </select>
       </td>
 
+      <td className={styles['adm-td']}>{pig.created_year ?? ''}</td>
+
+      <td className={styles['adm-td']}>
+        {pig.created_semester != null
+          ? `${SEMESTER_MAP[Number(pig.created_semester)] ?? pig.created_semester}학기`
+          : ''}
+      </td>
+
       <td className={styles['adm-td']}>
         <select
           className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
@@ -196,6 +314,8 @@ export default function PigList({ pigs: pigsDefault }) {
     status: '',
     year: '',
     semester: '',
+    created_year: '',
+    created_semester: '',
     member: '',
     should_extend: '',
     is_rolling_admission: '',
@@ -231,10 +351,18 @@ export default function PigList({ pigs: pigsDefault }) {
       (!newFilter.status || pig.status?.toString() === newFilter.status.toString()) &&
       (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
+      (!newFilter.created_year ||
+        lower(pig.created_year).includes(lower(newFilter.created_year))) &&
+      (!newFilter.created_semester ||
+        lower(pig.created_semester).toString() === newFilter.created_semester) &&
       (!newFilter.member ||
-        pig.members.some((m) => lower(m.user.name).includes(lower(newFilter.member)))) &&
+        (pig.members ?? []).some((m) =>
+          lower(m?.user?.name).includes(lower(newFilter.member)),
+        )) &&
       boolMatches(pig.should_extend, newFilter.should_extend) &&
-      pig.is_rolling_admission === newFilter.is_rolling_admission;
+      (!newFilter.is_rolling_admission ||
+        pig.is_rolling_admission === newFilter.is_rolling_admission);
+
     setFilteredPigs(pigs.filter(matches));
   };
 
@@ -302,6 +430,8 @@ export default function PigList({ pigs: pigsDefault }) {
           <col />
           <col />
           <col />
+          <col />
+          <col />
           <col className={styles['adm-col-bool']} />
           <col className={styles['adm-col-bool-wide']} />
           <col />
@@ -316,6 +446,8 @@ export default function PigList({ pigs: pigsDefault }) {
             <th className={styles['adm-th']}>상태</th>
             <th className={styles['adm-th']}>연도</th>
             <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>최초생성 연도</th>
+            <th className={styles['adm-th']}>최초생성 학기</th>
             <th className={styles['adm-th']}>연장 신청</th>
             <th className={styles['adm-th']}>가입기간 자유화</th>
             <th className={styles['adm-th']}>구성원</th>

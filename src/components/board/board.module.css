@@ -302,3 +302,47 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.pigAdmissionSelect {
+  width: 100%;
+  min-width: 15rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--background-color);
+  color: var(--color-text-body);
+  font-size: 0.95rem;
+}
+
+/* 가입기간 / 연장신청 공통 레이아웃 */
+.form-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.form-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1 1 260px;
+}
+
+.form-toggle-label {
+  font-weight: 600;
+  margin-right: 0.75rem;
+  white-space: nowrap;
+}
+
+.form-toggle-right {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+/* 연장 신청 체크박스 기본 스타일 */
+.extend-checkbox {
+  width: 1rem;
+  height: 1rem;
+}
