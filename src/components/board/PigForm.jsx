@@ -41,7 +41,7 @@ export default function PigForm({
       <div>
         <label className="block mb-2 font-semibold">상세 소개</label>
         <Controller
-          name="content"
+          name="editor"
           control={control}
           defaultValue=""
           render={({ field }) => (
