@@ -7,6 +7,13 @@
   border-radius: 1rem;
   box-shadow: 0 3px 12px var(--executive-card-shadow);
   background-color: var(--executive-card-bg);
+  user-select: text;
+  -webkit-user-select: text;
+}
+.PigDetailContainer,
+.PigDetailContainer * {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 html,
