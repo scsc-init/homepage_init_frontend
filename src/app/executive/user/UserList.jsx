@@ -227,7 +227,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
     <div>
       <h3>회장단 전용 테이블</h3>
       <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
-      <div className="adm-actions" style={{ marginBottom: '0.5rem' }}>
+      <div className="adm-actions">
         <ExportUsersButton filteredUsers={filteredUsers} />
       </div>
       <div className="adm-table-wrap">
