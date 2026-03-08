@@ -1,10 +1,146 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import { useMemo, useState } from 'react';
 import ExportUsersButton from './ExportUsersButton';
 
-export default function UserList({ users: usersDefault, majors = [] }) {
-  const [users, setUsers] = useState(usersDefault ?? []);
-  const [filteredUsers, setFilteredUsers] = useState(usersDefault ?? []);
+export function ReadUserTable({ users = [], majors = [] }) {
+  const [filter, setFilter] = useState({
+    name: '',
+    role: '',
+    status: '',
+    major: '',
+  });
+
+  const majorsMap = useMemo(
+    () => Object.fromEntries(majors.map((m) => [m.id, `${m.college} - ${m.major_name}`])),
+    [majors],
+  );
+
+  const roleLabel = (role) => {
+    const map = {
+      0: '최저권한',
+      100: '휴회원',
+      200: '준회원',
+      300: '정회원',
+      400: '졸업생',
+      500: '운영진',
+      1000: '회장',
+    };
+    return map[role] || role;
+  };
+
+  const filteredUsers = useMemo(() => {
+    const lower = (v) => v?.toString().toLowerCase() || '';
+    return users.filter((user) => {
+      const roleValue = user.role?.toString() ?? '';
+      const statusValue = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
+      return (
+        (!filter.name || lower(user.name).includes(lower(filter.name))) &&
+        (!filter.role || roleLabel(user.role) === filter.role) &&
+        (!filter.status || statusValue === filter.status) &&
+        (!filter.major || String(user.major_id) === filter.major)
+      );
+    });
+  }, [users, filter, roleLabel]);
+
+  const updateFilter = (field, value) => {
+    setFilter((prev) => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <div>
+      <h3>Read 테이블</h3>
+      <p>전화번호/학번 없이 기본 정보와 입금 여부만 확인할 수 있습니다.</p>
+      <div className="adm-actions" style={{ marginBottom: '0.5rem' }}>
+        <ExportUsersButton filteredUsers={filteredUsers} />
+      </div>
+      <div className="adm-table-wrap">
+        <table className="adm-table">
+          <thead>
+            <tr>
+              <th className="adm-th">이름</th>
+              <th className="adm-th">학과</th>
+              <th className="adm-th">권한</th>
+              <th className="adm-th">상태</th>
+              <th className="adm-th">입금확인</th>
+            </tr>
+            <tr>
+              <td className="adm-td">
+                <input
+                  className="adm-input"
+                  value={filter.name}
+                  onChange={(e) => updateFilter('name', e.target.value)}
+                  placeholder="이름 검색"
+                />
+              </td>
+              <td className="adm-td">
+                <select
+                  className="adm-select"
+                  value={filter.major}
+                  onChange={(e) => updateFilter('major', e.target.value)}
+                >
+                  <option value="">학과 전체</option>
+                  {majors.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.college} - {m.major_name}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="adm-td">
+                <select
+                  className="adm-select"
+                  value={filter.role}
+                  onChange={(e) => updateFilter('role', e.target.value)}
+                >
+                  <option value="">권한 전체</option>
+                  <option value="최저권한">최저권한</option>
+                  <option value="휴회원">휴회원</option>
+                  <option value="준회원">준회원</option>
+                  <option value="정회원">정회원</option>
+                  <option value="졸업생">졸업생</option>
+                  <option value="운영진">운영진</option>
+                  <option value="회장">회장</option>
+                </select>
+              </td>
+              <td className="adm-td">
+                <select
+                  className="adm-select"
+                  value={filter.status}
+                  onChange={(e) => updateFilter('status', e.target.value)}
+                >
+                  <option value="">상태 전체</option>
+                  <option value="active">active</option>
+                  <option value="inactive">inactive</option>
+                  <option value="banned">banned</option>
+                </select>
+              </td>
+              <td className="adm-td"></td>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user) => {
+              const status = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
+              return (
+                <tr key={user.id}>
+                  <td className="adm-td">{user.name}</td>
+                  <td className="adm-td">{majorsMap[user.major_id] || '-'}</td>
+                  <td className="adm-td">{roleLabel(user.role)}</td>
+                  <td className="adm-td">{status}</td>
+                  <td className="adm-td">{user.deposit_confirmed ? '입금 완료' : '대기 중'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
+  const [users, setUsers] = useState(usersDefault);
+  const [filteredUsers, setFilteredUsers] = useState(usersDefault);
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
     name: '',
@@ -15,12 +151,26 @@ export default function UserList({ users: usersDefault, majors = [] }) {
     major: '',
   });
 
+  const roleNumberToString = (val) => {
+    const map = {
+      0: 'lowest',
+      100: 'dormant',
+      200: 'newcomer',
+      300: 'member',
+      400: 'oldboy',
+      500: 'executive',
+      1000: 'president',
+    };
+    return typeof val === 'string' ? val : (map[val] ?? 'member');
+  };
+
   const updateUserField = (userId, field, value) => {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)));
     setFilteredUsers((prev) =>
       prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
     );
   };
+
   const updateUserStatus = (userId, value) => {
     setUsers((prev) =>
       prev.map((u) =>
@@ -39,31 +189,18 @@ export default function UserList({ users: usersDefault, majors = [] }) {
   };
 
   const updateFilterCriteria = (field, value) => {
-    const newFilter = { ...filter, [field]: value };
-    setFilter(newFilter);
+    const nextFilter = { ...filter, [field]: value };
+    setFilter(nextFilter);
     const lower = (v) => v?.toString().toLowerCase() || '';
     const matches = (u) =>
-      (!newFilter.name || lower(u.name).includes(lower(newFilter.name))) &&
-      (!newFilter.phone || lower(u.phone).includes(lower(newFilter.phone))) &&
-      (!newFilter.student_id || lower(u.student_id).includes(lower(newFilter.student_id))) &&
-      (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
-      (!newFilter.status ||
-        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === newFilter.status) &&
-      (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
+      (!nextFilter.name || lower(u.name).includes(lower(nextFilter.name))) &&
+      (!nextFilter.phone || lower(u.phone).includes(lower(nextFilter.phone))) &&
+      (!nextFilter.student_id || lower(u.student_id).includes(lower(nextFilter.student_id))) &&
+      (!nextFilter.role || lower(roleNumberToString(u.role)) === nextFilter.role) &&
+      (!nextFilter.status ||
+        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === nextFilter.status) &&
+      (!nextFilter.major || String(u.major_id) === nextFilter.major);
     setFilteredUsers(users.filter(matches));
-  };
-
-  const roleNumberToString = (val) => {
-    const map = {
-      0: 'lowest',
-      100: 'dormant',
-      200: 'newcomer',
-      300: 'member',
-      400: 'oldboy',
-      500: 'executive',
-      1000: 'president',
-    };
-    return typeof val === 'string' ? val : (map[val] ?? 'member');
   };
 
   const sendUserData = async (user) => {
@@ -87,27 +224,19 @@ export default function UserList({ users: usersDefault, majors = [] }) {
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
 
-  const manualEnroll = async (user) => {
-    setSaving((prev) => ({ ...prev, [user.id]: true }));
-    const res = await fetch(`/api/executive/user/standby/process/manual`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: user.id }),
-    });
-    if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
-    else alert(`${user.name} 입금 확인 실패: ${res.status}`);
-    setSaving((prev) => ({ ...prev, [user.id]: false }));
+  const showDetail = (user) => {
+    try {
+      console.info(`User detail (${user.name}):`, JSON.stringify(user, null, 2));
+      alert('브라우저 콘솔에서 JSON 데이터를 확인하세요.');
+    } catch (err) {
+      alert('상세 정보를 출력하지 못했습니다.');
+    }
   };
 
   return (
     <div>
-      <h3>유저 csv 다운로드</h3>
-      <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
-      <div className="adm-actions">
-        <ExportUsersButton filteredUsers={filteredUsers} />
-      </div>
-
-      <h3>유저 편집</h3>
+      <h3>회장단 전용 테이블</h3>
+      <p>전화번호/학번 포함 전체 정보를 수정할 수 있는 테이블입니다.</p>
       <div className="adm-table-wrap">
         <table className="adm-table">
           <thead>
@@ -119,7 +248,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
               <th className="adm-th">권한</th>
               <th className="adm-th">상태</th>
               <th className="adm-th">저장</th>
-              <th className="adm-th">입금 확인</th>
+              <th className="adm-th">상세 보기</th>
             </tr>
             <tr>
               <td className="adm-td">
@@ -135,7 +264,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   value={filter.major}
                   onChange={(e) => updateFilterCriteria('major', e.target.value)}
                 >
-                  <option value="">전공 전체</option>
+                  <option value="">전공 선택</option>
                   {majors.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.college} - {m.major_name}
@@ -162,6 +291,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   className="adm-input"
                   value={filter.role}
                   onChange={(e) => updateFilterCriteria('role', e.target.value)}
+                  placeholder="president"
                 />
               </td>
               <td className="adm-td">
@@ -176,8 +306,7 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   <option value="banned">banned</option>
                 </select>
               </td>
-              <td className="adm-td"></td>
-              <td className="adm-td"></td>
+              <td className="adm-td" colSpan={2}></td>
             </tr>
           </thead>
           <tbody>
@@ -256,12 +385,8 @@ export default function UserList({ users: usersDefault, majors = [] }) {
                   </button>
                 </td>
                 <td className="adm-td">
-                  <button
-                    className="adm-button outline"
-                    onClick={() => manualEnroll(user)}
-                    disabled={saving[user.id]}
-                  >
-                    입금 확인
+                  <button className="adm-button outline" onClick={() => showDetail(user)}>
+                    상세 보기
                   </button>
                 </td>
               </tr>
