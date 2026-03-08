@@ -45,7 +45,9 @@ export default async function ExecutiveUserPage() {
   const majorsMap = Object.fromEntries(
     majorsSafe.map((m) => [m.id, `${m.college} - ${m.major_name}`]),
   );
-  const readUsersSorted = Array.from(new Map((readUsers ?? []).map((u) => [u.id, u])))
+  const readUsersSorted = Array.from(
+    new Map((Array.isArray(readUsers) ? readUsers : []).map((u) => [u.id, u])),
+  )
     .map(([, v]) => v)
     .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
     .map((u) => ({
