@@ -32,10 +32,13 @@ export function ReadUserTable({ users = [], majors = [] }) {
   const filteredUsers = useMemo(() => {
     const lower = (v) => v?.toString().toLowerCase() || '';
     return users.filter((user) => {
+      const roleValue = user.role?.toString() ?? '';
       const statusValue = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
       return (
         (!filter.name || lower(user.name).includes(lower(filter.name))) &&
-        (!filter.role || lower(roleLabel(user.role)).includes(lower(filter.role))) &&
+        (!filter.role ||
+          lower(roleValue).includes(lower(filter.role)) ||
+          lower(roleLabel(user.role)).includes(lower(filter.role))) &&
         (!filter.status || statusValue === filter.status) &&
         (!filter.major || String(user.major_id) === filter.major)
       );
