@@ -67,18 +67,14 @@ export default async function ExecutiveUserPage() {
   return (
     <WithAuthorization>
       <div className="admin-panel">
-        {canManageLeadership && (
-          <>
-            <h2>임원진 구성 관리</h2>
-            <p style={{ marginBottom: '1rem', color: '#767676' }}>
-              회장과 부회장을 선택한 뒤 저장하면 홈페이지 임원진 목록에 반영됩니다.
-            </p>
+        <h2>임원진 구성 관리</h2>
+        <p style={{ marginBottom: '1rem', color: '#767676' }}>
+          회장과 부회장을 선택한 뒤 저장하면 홈페이지 임원진 목록에 반영됩니다.
+        </p>
 
-            <div className="adm-section">
-              <LeadershipPanel initialLeadership={initialLeadership} candidates={candidates} />
-            </div>
-          </>
-        )}
+        <div className="adm-section">
+          <LeadershipPanel initialLeadership={initialLeadership} candidates={candidates} />
+        </div>
 
         <div className="adm-section">
           <ReadUserTable users={readUsersSorted} majors={majorsSafe} />
