@@ -32,16 +32,15 @@ export function ReadUserTable({ users = [], majors = [] }) {
   const filteredUsers = useMemo(() => {
     const lower = (v) => v?.toString().toLowerCase() || '';
     return users.filter((user) => {
-      const roleValue = user.role?.toString() ?? '';
       const statusValue = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
       return (
         (!filter.name || lower(user.name).includes(lower(filter.name))) &&
-        (!filter.role || roleLabel(user.role) === filter.role) &&
+        (!filter.role || lower(roleLabel(user.role)).includes(lower(filter.role))) &&
         (!filter.status || statusValue === filter.status) &&
         (!filter.major || String(user.major_id) === filter.major)
       );
     });
-  }, [users, filter, roleLabel]);
+  }, [users, filter]);
 
   const updateFilter = (field, value) => {
     setFilter((prev) => ({ ...prev, [field]: value }));
@@ -67,7 +66,6 @@ export function ReadUserTable({ users = [], majors = [] }) {
                   className="adm-input"
                   value={filter.name}
                   onChange={(e) => updateFilter('name', e.target.value)}
-                  placeholder="이름 검색"
                 />
               </td>
               <td className="adm-td">
@@ -76,7 +74,7 @@ export function ReadUserTable({ users = [], majors = [] }) {
                   value={filter.major}
                   onChange={(e) => updateFilter('major', e.target.value)}
                 >
-                  <option value="">학과 전체</option>
+                  <option value="">전공 전체</option>
                   {majors.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.college} - {m.major_name}
@@ -85,20 +83,11 @@ export function ReadUserTable({ users = [], majors = [] }) {
                 </select>
               </td>
               <td className="adm-td">
-                <select
-                  className="adm-select"
+                <input
+                  className="adm-input"
                   value={filter.role}
                   onChange={(e) => updateFilter('role', e.target.value)}
-                >
-                  <option value="">권한 전체</option>
-                  <option value="최저권한">최저권한</option>
-                  <option value="휴회원">휴회원</option>
-                  <option value="준회원">준회원</option>
-                  <option value="정회원">정회원</option>
-                  <option value="졸업생">졸업생</option>
-                  <option value="운영진">운영진</option>
-                  <option value="회장">회장</option>
-                </select>
+                />
               </td>
               <td className="adm-td">
                 <select
@@ -264,7 +253,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
                   value={filter.major}
                   onChange={(e) => updateFilterCriteria('major', e.target.value)}
                 >
-                  <option value="">전공 선택</option>
+                  <option value="">전공 전체</option>
                   {majors.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.college} - {m.major_name}
@@ -291,7 +280,6 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
                   className="adm-input"
                   value={filter.role}
                   onChange={(e) => updateFilterCriteria('role', e.target.value)}
-                  placeholder="president"
                 />
               </td>
               <td className="adm-td">
