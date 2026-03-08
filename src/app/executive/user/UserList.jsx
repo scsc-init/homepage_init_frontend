@@ -10,6 +10,7 @@ export function ReadUserTable({ users = [], majors = [] }) {
     status: '',
     major: '',
   });
+  const [filteredUsers, setFilteredUsers] = useState(users);
 
   const majorsMap = useMemo(
     () => Object.fromEntries(majors.map((m) => [m.id, `${m.college} - ${m.major_name}`])),
@@ -29,24 +30,24 @@ export function ReadUserTable({ users = [], majors = [] }) {
     return map[role] || role;
   };
 
-  const filteredUsers = useMemo(() => {
-    const lower = (v) => v?.toString().toLowerCase() || '';
-    return users.filter((user) => {
-      const roleValue = user.role?.toString() ?? '';
-      const statusValue = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
-      return (
-        (!filter.name || lower(user.name).includes(lower(filter.name))) &&
-        (!filter.role ||
-          lower(roleValue).includes(lower(filter.role)) ||
-          lower(roleLabel(user.role)).includes(lower(filter.role))) &&
-        (!filter.status || statusValue === filter.status) &&
-        (!filter.major || String(user.major_id) === filter.major)
-      );
-    });
-  }, [users, filter]);
-
   const updateFilter = (field, value) => {
-    setFilter((prev) => ({ ...prev, [field]: value }));
+    const nextFilter = { ...filter, [field]: value };
+    setFilter(nextFilter);
+    const lower = (v) => v?.toString().toLowerCase() || '';
+    setFilteredUsers(
+      users.filter((user) => {
+        const roleValue = user.role?.toString() ?? '';
+        const statusValue = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
+        return (
+          (!nextFilter.name || lower(user.name).includes(lower(nextFilter.name))) &&
+          (!nextFilter.role ||
+            roleValue.includes(nextFilter.role) ||
+            lower(roleLabel(user.role)).includes(lower(nextFilter.role))) &&
+          (!nextFilter.status || statusValue === nextFilter.status) &&
+          (!nextFilter.major || String(user.major_id) === nextFilter.major)
+        );
+      }),
+    );
   };
 
   return (
@@ -140,19 +141,6 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
     major: '',
   });
 
-  const roleNumberToString = (val) => {
-    const map = {
-      0: 'lowest',
-      100: 'dormant',
-      200: 'newcomer',
-      300: 'member',
-      400: 'oldboy',
-      500: 'executive',
-      1000: 'president',
-    };
-    return typeof val === 'string' ? val : (map[val] ?? 'member');
-  };
-
   const updateUserField = (userId, field, value) => {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)));
     setFilteredUsers((prev) =>
@@ -190,6 +178,19 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
         (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === newFilter.status) &&
       (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
     setFilteredUsers(users.filter(matches));
+  };
+
+  const roleNumberToString = (val) => {
+    const map = {
+      0: 'lowest',
+      100: 'dormant',
+      200: 'newcomer',
+      300: 'member',
+      400: 'oldboy',
+      500: 'executive',
+      1000: 'president',
+    };
+    return typeof val === 'string' ? val : (map[val] ?? 'member');
   };
 
   const sendUserData = async (user) => {
