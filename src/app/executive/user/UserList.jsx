@@ -51,9 +51,6 @@ export function ReadUserTable({ users = [], majors = [] }) {
     <div>
       <h3>Read 테이블</h3>
       <p>전화번호/학번 없이 기본 정보와 입금 여부만 확인할 수 있습니다.</p>
-      <div className="adm-actions" style={{ marginBottom: '0.5rem' }}>
-        <ExportUsersButton filteredUsers={filteredUsers} />
-      </div>
       <div className="adm-table-wrap">
         <table className="adm-table">
           <thead>
@@ -237,6 +234,9 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
     <div>
       <h3>회장단 전용 테이블</h3>
       <p>전화번호/학번 포함 전체 정보를 수정할 수 있는 테이블입니다.</p>
+      <div className="adm-actions" style={{ marginBottom: '0.5rem' }}>
+        <ExportUsersButton filteredUsers={filteredUsers} />
+      </div>
       <div className="adm-table-wrap">
         <table className="adm-table">
           <thead>
