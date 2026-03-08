@@ -178,17 +178,17 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
   };
 
   const updateFilterCriteria = (field, value) => {
-    const nextFilter = { ...filter, [field]: value };
-    setFilter(nextFilter);
+    const newFilter = { ...filter, [field]: value };
+    setFilter(newFilter);
     const lower = (v) => v?.toString().toLowerCase() || '';
     const matches = (u) =>
-      (!nextFilter.name || lower(u.name).includes(lower(nextFilter.name))) &&
-      (!nextFilter.phone || lower(u.phone).includes(lower(nextFilter.phone))) &&
-      (!nextFilter.student_id || lower(u.student_id).includes(lower(nextFilter.student_id))) &&
-      (!nextFilter.role || lower(roleNumberToString(u.role)) === nextFilter.role) &&
-      (!nextFilter.status ||
-        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === nextFilter.status) &&
-      (!nextFilter.major || String(u.major_id) === nextFilter.major);
+      (!newFilter.name || lower(u.name).includes(lower(newFilter.name))) &&
+      (!newFilter.phone || lower(u.phone).includes(lower(newFilter.phone))) &&
+      (!newFilter.student_id || lower(u.student_id).includes(lower(newFilter.student_id))) &&
+      (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
+      (!newFilter.status ||
+        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === newFilter.status) &&
+      (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
     setFilteredUsers(users.filter(matches));
   };
 
@@ -225,7 +225,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
   return (
     <div>
       <h3>회장단 전용 테이블</h3>
-      <p>전화번호/학번 포함 전체 정보를 수정할 수 있는 테이블입니다.</p>
+      <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
       <div className="adm-actions" style={{ marginBottom: '0.5rem' }}>
         <ExportUsersButton filteredUsers={filteredUsers} />
       </div>
