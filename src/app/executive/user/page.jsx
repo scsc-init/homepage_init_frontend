@@ -28,14 +28,10 @@ export default async function ExecutiveUserPage() {
   const canManageLeadership = viewerRole >= 1000;
   const readUsers = await fetchUserSummaries().catch(() => []);
 
-  let candidates = [];
-  let executiveUsers = [];
-  if (canManageLeadership) {
-    [candidates, executiveUsers] = await Promise.all([
-      fetchExecutiveCandidates(),
-      fetchUsers(),
-    ]);
-  }
+  const [candidates, executiveUsers] = await Promise.all([
+    fetchExecutiveCandidates().catch(() => []),
+    fetchUsers().catch(() => []),
+  ]);
 
   const presidentId =
     kv['main-president']?.status === 'fulfilled' ? kv['main-president'].value || '' : '';
@@ -94,16 +90,12 @@ export default async function ExecutiveUserPage() {
           </div>
         )}
 
-        {canManageLeadership && (
-          <>
-            <div className="adm-section">
-              <EnrollManagementPanel />
-            </div>
-            <div className="adm-section">
-              <OldboyManageMentPanel users={executiveUsersSorted} />
-            </div>
-          </>
-        )}
+        <div className="adm-section">
+          <EnrollManagementPanel />
+        </div>
+        <div className="adm-section">
+          <OldboyManageMentPanel users={executiveUsersSorted} />
+        </div>
       </div>
     </WithAuthorization>
   );
