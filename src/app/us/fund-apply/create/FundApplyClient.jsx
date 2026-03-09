@@ -9,8 +9,8 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './page.css';
 
 const BACKEND_BASE_URL = (() => {
-  const raw = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || '').trim();
-  return raw ? raw.replace(/\/+$/, '') : '';
+  const base = (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim();
+  return base ? base.replace(/\/+$/, '') : '';
 })();
 
 const buildImageUrl = (id) => {
