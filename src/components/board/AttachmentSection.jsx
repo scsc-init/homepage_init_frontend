@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { directFetch } from '@/util/directFetch';
+import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 
 function formatBytes(n) {
   const v = Number(n);
@@ -177,7 +178,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = 'ì²¨ë
             <li key={id} className="AttachmentItem">
               <a
                 className="AttachmentLink"
-                href={`/api/file/docs/download/${encodeURIComponent(id)}`}
+                href={getAttachmentDownloadUrl(id, metadataMap[id])}
                 target="_blank"
                 rel="noreferrer"
               >
