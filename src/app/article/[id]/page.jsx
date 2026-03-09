@@ -12,6 +12,7 @@ import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
 import { directFetch } from '@/util/directFetch';
+import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 export default function ArticleDetail({ params }) {
@@ -204,7 +205,10 @@ export default function ArticleDetail({ params }) {
                     <li key={attachmentId} className="AttachmentItem">
                       <a
                         className="AttachmentLink"
-                        href={`/api/file/docs/download/${encodeURIComponent(attachmentId)}`}
+                        href={getAttachmentDownloadUrl(
+                          attachmentId,
+                          attachmentMetaMap.get(attachmentId),
+                        )}
                         target="_blank"
                         rel="noreferrer"
                       >
