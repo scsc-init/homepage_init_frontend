@@ -6,14 +6,12 @@ import { useState } from 'react';
 import { STATUS_MAP } from '@/util/constants';
 
 const TRANSITION_MAP_REGULAR = {
-  inactive: 'recruiting',
   recruiting: 'active',
   active: 'recruiting',
 };
 const TRANSITION_MAP_SEASONAL = {
-  inactive: 'recruiting',
   recruiting: 'active',
-  active: 'inactive',
+  active: 'recruiting',
 };
 
 const getNextStatus = (currentStatus, currentSemester, currentYear) => {

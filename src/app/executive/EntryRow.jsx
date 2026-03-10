@@ -57,7 +57,6 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
         >
           <option value="recruiting">{STATUS_MAP.recruiting}</option>
           <option value="active">{STATUS_MAP.active}</option>
-          <option value="inactive">{STATUS_MAP.inactive}</option>
         </select>
       </td>
       <td className={styles['adm-td']}>
