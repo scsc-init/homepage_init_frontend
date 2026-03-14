@@ -85,9 +85,6 @@ export default async function ExecutiveUserPage() {
 
         {canManageLeadership && (
           <div className="adm-section">
-            <p style={{ marginBottom: '0.5rem', color: '#767676' }}>
-              회장단 전용 테이블과 CSV 기능은 별도 페이지에서 관리됩니다.
-            </p>
             <Link href="/executive/user/leadership" className="adm-button">
               회장단 전용 페이지로 이동
             </Link>

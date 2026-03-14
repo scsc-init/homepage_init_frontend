@@ -11,6 +11,7 @@ export function ReadUserTable({ users = [], majors = [] }) {
     major: '',
   });
   const [filteredUsers, setFilteredUsers] = useState(users);
+  const [saving, setSaving] = useState({});
 
   const majorsMap = useMemo(
     () => Object.fromEntries(majors.map((m) => [m.id, `${m.college} - ${m.major_name}`])),
@@ -28,6 +29,21 @@ export function ReadUserTable({ users = [], majors = [] }) {
       1000: '회장',
     };
     return map[role] || role;
+  };
+
+  const manualEnroll = async (user) => {
+    setSaving((prev) => ({ ...prev, [user.id]: true }));
+    try {
+      const res = await fetch(`/api/executive/user/standby/process/manual`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: user.id }),
+      });
+      if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
+      else alert(`${user.name} 입금 확인 실패: ${res.status}`);
+    } finally {
+      setSaving((prev) => ({ ...prev, [user.id]: false }));
+    }
   };
 
   const updateFilter = (field, value) => {
@@ -62,7 +78,7 @@ export function ReadUserTable({ users = [], majors = [] }) {
               <th className="adm-th">학과</th>
               <th className="adm-th">권한</th>
               <th className="adm-th">상태</th>
-              <th className="adm-th">입금확인</th>
+              <th className="adm-th">입금 확인</th>
             </tr>
             <tr>
               <td className="adm-td">
@@ -117,7 +133,15 @@ export function ReadUserTable({ users = [], majors = [] }) {
                   <td className="adm-td">{majorsMap[user.major_id] || '-'}</td>
                   <td className="adm-td">{roleLabel(user.role)}</td>
                   <td className="adm-td">{status}</td>
-                  <td className="adm-td">{user.is_active ? '입금 완료' : '대기 중'}</td>
+                  <td className="adm-td">
+                    <button
+                      className="adm-button outline"
+                      onClick={() => manualEnroll(user)}
+                      disabled={saving[user.id]}
+                    >
+                      입금 확인
+                    </button>
+                  </td>
                 </tr>
               );
             })}
@@ -230,7 +254,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
   return (
     <div>
       <h3>회장단 전용 테이블</h3>
-      <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
+      <p>아래 버튼을 눌러 csv파일을 다운 받으세요.</p>
       <ExportUsersButton allUsers={users} filteredUsers={filteredUsers} />
       <div className="adm-table-wrap">
         <table className="adm-table">
