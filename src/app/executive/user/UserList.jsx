@@ -1,16 +1,23 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import ExportUsersButton from './ExportUsersButton';
 
-export function ReadUserTable({ users = [], majors = [] }) {
+export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const [filter, setFilter] = useState({
     name: '',
     role: '',
     status: '',
     major: '',
   });
-  const [filteredUsers, setFilteredUsers] = useState(users);
+  const [users, setUsers] = useState(usersDefault);
+  const [filteredUsers, setFilteredUsers] = useState(usersDefault);
+
+  useEffect(() => {
+    setUsers(usersDefault);
+    setFilteredUsers(usersDefault);
+  }, [usersDefault]);
+
   const [saving, setSaving] = useState({});
 
   const majorsMap = useMemo(
@@ -153,8 +160,13 @@ export function ReadUserTable({ users = [], majors = [] }) {
 }
 
 export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onShowDetail }) {
-  const [users, setUsers] = useState(usersDefault);
-  const [filteredUsers, setFilteredUsers] = useState(usersDefault);
+  const [users, setUsers] = useState(usersDefault ?? []);
+  const [filteredUsers, setFilteredUsers] = useState(usersDefault ?? []);
+
+  useEffect(() => {
+    setUsers(usersDefault ?? []);
+    setFilteredUsers(usersDefault ?? []);
+  }, [usersDefault]);
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
     name: '',
@@ -246,7 +258,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
     try {
       console.info(`User detail (${user.name}):`, JSON.stringify(user, null, 2));
       alert('브라우저 콘솔에서 JSON 데이터를 확인하세요.');
-    } catch (err) {
+    } catch (_err) {
       alert('상세 정보를 출력하지 못했습니다.');
     }
   };

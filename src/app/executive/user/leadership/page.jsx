@@ -4,6 +4,7 @@ export const revalidate = 0;
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
 import { fetchUsers, fetchMajors, fetchMe } from '@/util/fetchAPIData';
+import { notFound } from 'next/navigation';
 import '../../page.css';
 
 export default async function ExecutiveLeadershipPage() {
@@ -14,6 +15,9 @@ export default async function ExecutiveLeadershipPage() {
   ]);
 
   const viewerRole = me?.role ?? 0;
+  if (viewerRole < 1000) {
+    notFound();
+  }
   const canManageLeadership = viewerRole >= 1000;
 
   const majorsSafe = Array.isArray(majors) ? majors : [];

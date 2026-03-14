@@ -9,7 +9,7 @@ export default function LeadershipClient({ users, majors }) {
   const handleShowDetail = (user) => {
     try {
       setDebugMessage(JSON.stringify(user, null, 2));
-    } catch (err) {
+    } catch (_err) {
       setDebugMessage('사용자 정보를 출력하지 못했습니다.');
     }
   };
