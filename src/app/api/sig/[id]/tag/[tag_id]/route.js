@@ -1,5 +1,6 @@
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { handleApiRequest } from '@/util/serverFetch';
 
 export async function DELETE(_request, { params }) {
-  return handleApiRequest('DELETE', `/api/sig/${params.id}/tag/${params.tag_id}`);
+  const { id, tag_id } = await params;
+  return handleApiRequest('DELETE', `/api/sig/${id}/tag/${tag_id}`);
 }

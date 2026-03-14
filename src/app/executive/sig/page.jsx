@@ -1,3 +1,4 @@
+// src/app/executive/sig/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import SigList from './SigList';
 import SigMembersPanel from './SigMembersPanel';

@@ -1,9 +1,11 @@
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { handleApiRequest } from '@/util/serverFetch';
 
 export async function GET(_request, { params }) {
-  return handleApiRequest('GET', `/api/sig/${params.id}/tag`);
+  const { id } = await params;
+  return handleApiRequest('GET', `/api/sig/${id}/tag`);
 }
 
 export async function POST(request, { params }) {
-  return handleApiRequest('POST', `/api/sig/${params.id}/tag`, {}, request);
+  const { id } = await params;
+  return handleApiRequest('POST', `/api/sig/${id}/tag`, {}, request);
 }
