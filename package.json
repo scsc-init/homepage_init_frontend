@@ -16,8 +16,11 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown",
-    "*.{js,jsx,ts,tsx}": "eslint --fix"
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,css}": "prettier --write"
   },
   "dependencies": {
     "@mdxeditor/editor": "^3.6.0",
