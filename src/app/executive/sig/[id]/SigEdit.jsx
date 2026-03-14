@@ -170,9 +170,16 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           year: sig.year,
           semester: sig.semester,
           should_extend: Boolean(sig.should_extend),
-          is_rolling_admission: String(sig.is_rolling_admission),
+          is_rolling_admission: Boolean(sig.is_rolling_admission),
         }),
       });
+      if (!res1.ok) {
+        const msg1 = await res1.json();
+        alert(`저장 실패. SIG 정보 수정: ${msg1?.detail ?? res1.status}`);
+        router.refresh();
+        return;
+      }
+
       const res2 =
         selectedMember !== getLeaderUserId(sig) &&
         (await directFetch(`/api/executive/sig/${sig.id}/handover`, {
@@ -180,14 +187,10 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
         }));
-
-      if (res1.status === 204 && (!res2 || res2.status === 204)) alert('저장 완료');
+      if (!res2 || res2.ok) alert('저장 완료');
       else {
-        const msg1 = await res1.json();
         const msg2 = res2 ? await res2.json() : undefined;
-        alert(
-          `저장 실패. 시그 정보 수정: ${msg1?.detail ?? res1.status}, 시그장 변경: ${!res2 || (msg2.detail ?? res2.status)}`,
-        );
+        alert(`저장 실패. SIG장 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
       }
       router.refresh();
     } catch {

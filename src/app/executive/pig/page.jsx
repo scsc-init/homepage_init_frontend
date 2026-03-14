@@ -13,7 +13,7 @@ export default async function ExecutivePigPage() {
 
   const pigs = pigMetas.value.map((p) => ({
     ...p,
-    ownerName: users.value.find((u) => u.id === p.owner).name,
+    ownerName: users.value.find((u) => u.id === p.owner)?.name,
   }));
 
   return (

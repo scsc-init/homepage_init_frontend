@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import styles from './igpage.module.css';
+import { useRouter } from 'next/navigation';
 
 function IgMemberAdd({
   userFilter,
@@ -135,6 +136,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     email: '',
   });
   const [memberLoading, setMemberLoading] = useState({});
+  const router = useRouter();
 
   if (is_sig === is_pig) return 'set valid is_sig, is_pig for IgMembersPanel';
 
@@ -154,8 +156,8 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     setMemberFilter(newFilter);
     const lower = (v) => v?.toString().toLowerCase() || '';
     const matches = (m) =>
-      (!newFilter.name || lower(m.user.name).includes(lower(newFilter.name))) &&
-      (!newFilter.email || lower(m.user.email).includes(lower(newFilter.email)));
+      (!newFilter.name || lower(m.user?.name).includes(lower(newFilter.name))) &&
+      (!newFilter.email || lower(m.user?.email).includes(lower(newFilter.email)));
     setFilteredMembers(members.filter(matches));
   };
 
@@ -174,10 +176,11 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
         setMembers((prev) => [...prev, newMember]);
         const lower = (v) => v?.toString().toLowerCase() || '';
         const matches = (m) =>
-          (!memberFilter.name || lower(m.user.name).includes(lower(memberFilter.name))) &&
-          (!memberFilter.email || lower(m.user.email).includes(lower(memberFilter.email)));
+          (!memberFilter.name || lower(m.user?.name).includes(lower(memberFilter.name))) &&
+          (!memberFilter.email || lower(m.user?.email).includes(lower(memberFilter.email)));
         setFilteredMembers((prev) => [...prev, newMember].filter(matches));
         alert('저장 완료');
+        router.refresh();
       } else {
         alert('저장 실패: ' + res.status);
       }
@@ -206,6 +209,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
         setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
         setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
         alert('삭제 완료');
+        router.refresh();
       } else {
         const error = await res.json().catch(() => ({ message: 'Unknown error' }));
         alert(`삭제 실패: ${error.message || res.status}`);

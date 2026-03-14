@@ -13,7 +13,7 @@ export default async function ExecutiveSigPage() {
 
   const sigs = sigMetas.value.map((s) => ({
     ...s,
-    ownerName: users.value.find((u) => u.id === s.owner).name,
+    ownerName: users.value.find((u) => u.id === s.owner)?.name,
   }));
 
   return (

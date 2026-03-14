@@ -97,7 +97,7 @@ export default function PigList({ pigs }) {
       (!newFilter.status || pig.status?.toString() === newFilter.status.toString()) &&
       (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
       (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
-      (!newFilter.ownerName || lower(pig.ownerName).includes(newFilter.ownerName));
+      (!newFilter.ownerName || lower(pig.ownerName).includes(lower(newFilter.ownerName)));
 
     setFilteredPigs(pigs.filter(matches));
   };

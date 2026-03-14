@@ -174,6 +174,13 @@ export default function PigExecutiveEdit({ pig: _pig }) {
           is_rolling_admission: String(pig.is_rolling_admission),
         }),
       });
+      if (!res1.ok) {
+        const msg1 = await res1.json();
+        alert(`저장 실패. PIG 정보 수정: ${msg1?.detail ?? res1.status}`);
+        router.refresh();
+        return;
+      }
+
       const res2 =
         selectedMember !== getLeaderUserId(pig) &&
         (await directFetch(`/api/executive/pig/${pig.id}/handover`, {
@@ -181,14 +188,10 @@ export default function PigExecutiveEdit({ pig: _pig }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
         }));
-
-      if (res1.status === 204 && (!res2 || res2.status === 204)) alert('저장 완료');
+      if (!res2 || res2.ok) alert('저장 완료');
       else {
-        const msg1 = await res1.json();
         const msg2 = res2 ? await res2.json() : undefined;
-        alert(
-          `저장 실패. 피그 정보 수정: ${msg1?.detail ?? res1.status}, 피그장 변경: ${!res2 || (msg2.detail ?? res2.status)}`,
-        );
+        alert(`저장 실패. PIG장 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
       }
       router.refresh();
     } catch {
