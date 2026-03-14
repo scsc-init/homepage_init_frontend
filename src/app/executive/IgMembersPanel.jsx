@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import styles from '../../igpage.module.css';
+import styles from './igpage.module.css';
 
-function SigMemberAdd({
+function IgMemberAdd({
   userFilter,
   filteredUsers,
   updateUserFilterCriteria,
@@ -12,7 +12,7 @@ function SigMemberAdd({
 }) {
   return (
     <div>
-      <h4>SIG 구성원 추가</h4>
+      <h4>구성원 추가</h4>
       <table className={styles['adm-table']}>
         <thead>
           <tr>
@@ -23,6 +23,7 @@ function SigMemberAdd({
           <tr>
             <td className={styles['adm-td']}>
               <input
+                name="name"
                 className={styles['adm-input']}
                 value={userFilter.name}
                 onChange={(e) => updateUserFilterCriteria('name', e.target.value)}
@@ -30,6 +31,8 @@ function SigMemberAdd({
             </td>
             <td className={styles['adm-td']}>
               <input
+                name="email"
+                type="email"
                 className={styles['adm-input']}
                 value={userFilter.email}
                 onChange={(e) => updateUserFilterCriteria('email', e.target.value)}
@@ -59,7 +62,7 @@ function SigMemberAdd({
   );
 }
 
-function SigMemberDelete({
+function IgMemberDelete({
   memberFilter,
   filteredMembers,
   updateMemberFilterCriteria,
@@ -68,7 +71,7 @@ function SigMemberDelete({
 }) {
   return (
     <div>
-      <h4>SIG 구성원 삭제</h4>
+      <h4>구성원 삭제</h4>
       <table className={styles['adm-table']}>
         <thead>
           <tr>
@@ -79,6 +82,7 @@ function SigMemberDelete({
           <tr>
             <td className={styles['adm-td']}>
               <input
+                name="name"
                 className={styles['adm-input']}
                 value={memberFilter.name}
                 onChange={(e) => updateMemberFilterCriteria('name', e.target.value)}
@@ -86,6 +90,8 @@ function SigMemberDelete({
             </td>
             <td className={styles['adm-td']}>
               <input
+                name="name"
+                type="email"
                 className={styles['adm-input']}
                 value={memberFilter.email}
                 onChange={(e) => updateMemberFilterCriteria('email', e.target.value)}
@@ -96,8 +102,8 @@ function SigMemberDelete({
         <tbody>
           {filteredMembers.map((m) => (
             <tr key={m.user_id}>
-              <td className={styles['adm-td']}>{m.user.name}</td>
-              <td className={styles['adm-td']}>{m.user.email}</td>
+              <td className={styles['adm-td']}>{m.user?.name ?? ''}</td>
+              <td className={styles['adm-td']}>{m.user?.email ?? ''}</td>
               <td className={styles['adm-td']}>
                 <button
                   className={styles['adm-button']}
@@ -115,20 +121,22 @@ function SigMemberDelete({
   );
 }
 
-export default function SigMembersPanel({ sig, users }) {
+export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [userFilter, setUserFilter] = useState({
     name: '',
     email: '',
   });
   const [userLoading, setUserLoading] = useState({});
-  const [members, setMembers] = useState(sig?.members ?? []);
-  const [filteredMembers, setFilteredMembers] = useState(sig?.members ?? []);
+  const [members, setMembers] = useState(ig?.members ?? []);
+  const [filteredMembers, setFilteredMembers] = useState(ig?.members ?? []);
   const [memberFilter, setMemberFilter] = useState({
     name: '',
     email: '',
   });
   const [memberLoading, setMemberLoading] = useState({});
+
+  if (is_sig === is_pig) return 'set valid is_sig, is_pig for IgMembersPanel';
 
   const updateUserFilterCriteria = (field, value) => {
     const newFilter = { ...userFilter, [field]: value };
@@ -154,7 +162,7 @@ export default function SigMembersPanel({ sig, users }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetch(`/api/executive/sig/${sig.id}/member/join`, {
+      const res = await fetch(`/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -184,13 +192,16 @@ export default function SigMembersPanel({ sig, users }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetch(`/api/executive/sig/${sig.id}/member/leave`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: member.user_id,
-        }),
-      });
+      const res = await fetch(
+        `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/leave`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: member.user_id,
+          }),
+        },
+      );
       if (res.status === 204) {
         setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
         setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
@@ -210,18 +221,18 @@ export default function SigMembersPanel({ sig, users }) {
   return (
     <div>
       <div className={styles['adm-table']}>
-        {sig && (
+        {ig && (
           <div>
             <hr></hr>
-            <h3>{sig.title}</h3>
-            <SigMemberAdd
+            <h3>{ig.title}</h3>
+            <IgMemberAdd
               userFilter={userFilter}
               filteredUsers={filteredUsers}
               updateUserFilterCriteria={updateUserFilterCriteria}
               handleAddMember={handleAddMember}
               userLoading={userLoading}
             />
-            <SigMemberDelete
+            <IgMemberDelete
               memberFilter={memberFilter}
               filteredMembers={filteredMembers}
               updateMemberFilterCriteria={updateMemberFilterCriteria}

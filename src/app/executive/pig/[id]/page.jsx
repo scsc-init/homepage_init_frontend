@@ -1,7 +1,7 @@
 // src/app/executive/pig/[id]/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import PigEdit from './PigEdit';
-import PigMembersPanel from './PigMembersPanel';
+import IgMembersPanel from '../../IgMembersPanel';
 import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
 import styles from '../../igpage.module.css';
 
@@ -34,7 +34,11 @@ export default async function ExecutivePigPage({ params }) {
         </div>
         <h2>PIG 구성원 관리</h2>
         <div className={styles['adm-section']}>
-          <PigMembersPanel pig={pig} users={users.status === 'fulfilled' ? users.value : []} />
+          <IgMembersPanel
+            is_pig
+            ig={pig}
+            users={users.status === 'fulfilled' ? users.value : []}
+          />
         </div>
       </div>
     </WithAuthorization>

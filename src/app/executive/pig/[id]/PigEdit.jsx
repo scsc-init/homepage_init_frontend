@@ -158,8 +158,8 @@ export default function PigExecutiveEdit({ pig: _pig }) {
   const router = useRouter();
 
   const handleSave = async () => {
-    setSaving(true);
     try {
+      setSaving(true);
       const res1 = await directFetch(`/api/executive/pig/${pig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -199,15 +199,15 @@ export default function PigExecutiveEdit({ pig: _pig }) {
   };
 
   const handleDelete = async (id) => {
-    setSaving(true);
+    if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
+      setSaving(true);
       const res = await directFetch(`/api/executive/pig/${id}/delete`, { method: 'POST' });
       if (res.status === 204) {
         router.replace('/executive/pig');
       } else {
         const msg = await res.json();
-        alert('삭제 실패: ' + msg.detail ?? res.status);
+        alert('삭제 실패: ' + (msg.detail ?? res.status));
       }
     } catch {
       alert('삭제 실패: 네트워크 오류');

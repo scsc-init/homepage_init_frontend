@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { STATUS_MAP, SEMESTER_MAP, SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
 import { directFetch } from '@/util/directFetch';
 
@@ -157,8 +157,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const router = useRouter();
 
   const handleSave = async () => {
-    setSaving(true);
     try {
+      setSaving(true);
       const res1 = await directFetch(`/api/executive/sig/${sig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -186,7 +186,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         const msg1 = await res1.json();
         const msg2 = res2 ? await res2.json() : undefined;
         alert(
-          `저장 실패. 피그 정보 수정: ${msg1?.detail ?? res1.status}, 피그장 변경: ${!res2 || (msg2.detail ?? res2.status)}`,
+          `저장 실패. 시그 정보 수정: ${msg1?.detail ?? res1.status}, 시그장 변경: ${!res2 || (msg2.detail ?? res2.status)}`,
         );
       }
       router.refresh();
@@ -198,15 +198,15 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   };
 
   const handleDelete = async (id) => {
-    setSaving(true);
+    if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
+      setSaving(true);
       const res = await directFetch(`/api/executive/sig/${id}/delete`, { method: 'POST' });
       if (res.status === 204) {
         router.replace('/executive/sig');
       } else {
         const msg = await res.json();
-        alert('삭제 실패: ' + msg.detail ?? res.status);
+        alert('삭제 실패: ' + (msg.detail ?? res.status));
       }
     } catch {
       alert('삭제 실패: 네트워크 오류');

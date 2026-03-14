@@ -1,7 +1,7 @@
 // src/app/executive/sig/[id]/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import SigEdit from './SigEdit';
-import SigMembersPanel from './SigMembersPanel';
+import IgMembersPanel from '../../IgMembersPanel';
 import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
 import styles from '../../igpage.module.css';
 
@@ -34,7 +34,11 @@ export default async function ExecutiveSigPage({ params }) {
         </div>
         <h2>SIG 구성원 관리</h2>
         <div className={styles['adm-section']}>
-          <SigMembersPanel sig={sig} users={users.status === 'fulfilled' ? users.value : []} />
+          <IgMembersPanel
+            is_sig
+            ig={sig}
+            users={users.status === 'fulfilled' ? users.value : []}
+          />
         </div>
       </div>
     </WithAuthorization>
