@@ -1,4 +1,4 @@
-import { handleApiRequest } from '@/util/serverFetch';
+import { handleApiRequest } from '@/app/api/apiWrapper';
 
 export async function GET(_request, { params }) {
   const { id } = await params;
