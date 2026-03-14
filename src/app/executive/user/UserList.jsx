@@ -11,12 +11,24 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
     major: '',
   });
   const [users, setUsers] = useState(usersDefault);
-  const [filteredUsers, setFilteredUsers] = useState(usersDefault);
-
   useEffect(() => {
     setUsers(usersDefault);
-    setFilteredUsers(usersDefault);
   }, [usersDefault]);
+  const filteredUsers = useMemo(() => {
+    const lower = (v) => v?.toString().toLowerCase() || '';
+    return users.filter((u) => {
+      const roleValue = u.role?.toString() ?? '';
+      const statusValue = u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive';
+      return (
+        (!filter.name || lower(u.name).includes(lower(filter.name))) &&
+        (!filter.role ||
+          roleValue.includes(filter.role) ||
+          lower(roleLabel(u.role)).includes(lower(filter.role))) &&
+        (!filter.status || statusValue === filter.status) &&
+        (!filter.major || String(u.major_id) === filter.major)
+      );
+    });
+  }, [users, filter]);
 
   const [saving, setSaving] = useState({});
 
@@ -56,21 +68,6 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const updateFilter = (field, value) => {
     const nextFilter = { ...filter, [field]: value };
     setFilter(nextFilter);
-    const lower = (v) => v?.toString().toLowerCase() || '';
-    setFilteredUsers(
-      users.filter((user) => {
-        const roleValue = user.role?.toString() ?? '';
-        const statusValue = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
-        return (
-          (!nextFilter.name || lower(user.name).includes(lower(nextFilter.name))) &&
-          (!nextFilter.role ||
-            roleValue.includes(nextFilter.role) ||
-            lower(roleLabel(user.role)).includes(lower(nextFilter.role))) &&
-          (!nextFilter.status || statusValue === nextFilter.status) &&
-          (!nextFilter.major || String(user.major_id) === nextFilter.major)
-        );
-      }),
-    );
   };
 
   return (
@@ -161,11 +158,9 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
 
 export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onShowDetail }) {
   const [users, setUsers] = useState(usersDefault ?? []);
-  const [filteredUsers, setFilteredUsers] = useState(usersDefault ?? []);
 
   useEffect(() => {
     setUsers(usersDefault ?? []);
-    setFilteredUsers(usersDefault ?? []);
   }, [usersDefault]);
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
@@ -176,23 +171,27 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
     status: '',
     major: '',
   });
+  const filteredUsers = useMemo(() => {
+    const lower = (v) => v?.toString().toLowerCase() || '';
+    return users.filter((u) => {
+      const status = u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive';
+      return (
+        (!filter.name || lower(u.name).includes(lower(filter.name))) &&
+        (!filter.phone || lower(u.phone).includes(lower(filter.phone))) &&
+        (!filter.student_id || lower(u.student_id).includes(lower(filter.student_id))) &&
+        (!filter.role || lower(u.role).includes(lower(filter.role))) &&
+        (!filter.status || status === filter.status) &&
+        (!filter.major || lower(u.major_id).toString() === filter.major)
+      );
+    });
+  }, [users, filter]);
 
   const updateUserField = (userId, field, value) => {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)));
-    setFilteredUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, [field]: value } : u)),
-    );
   };
 
   const updateUserStatus = (userId, value) => {
     setUsers((prev) =>
-      prev.map((u) =>
-        u.id === userId
-          ? { ...u, is_active: value === 'active', is_banned: value === 'banned' }
-          : u,
-      ),
-    );
-    setFilteredUsers((prev) =>
       prev.map((u) =>
         u.id === userId
           ? { ...u, is_active: value === 'active', is_banned: value === 'banned' }
@@ -205,15 +204,6 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
     const newFilter = { ...filter, [field]: value };
     setFilter(newFilter);
     const lower = (v) => v?.toString().toLowerCase() || '';
-    const matches = (u) =>
-      (!newFilter.name || lower(u.name).includes(lower(newFilter.name))) &&
-      (!newFilter.phone || lower(u.phone).includes(lower(newFilter.phone))) &&
-      (!newFilter.student_id || lower(u.student_id).includes(lower(newFilter.student_id))) &&
-      (!newFilter.role || lower(u.role).includes(lower(newFilter.role))) &&
-      (!newFilter.status ||
-        (u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive') === newFilter.status) &&
-      (!newFilter.major || lower(u.major_id).toString() === newFilter.major);
-    setFilteredUsers(users.filter(matches));
   };
 
   const roleNumberToString = (val) => {
