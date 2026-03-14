@@ -1,7 +1,8 @@
 ﻿'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
+import { directFetch } from '@/util/directFetch';
 import styles from '../igpage.module.css';
 
 function SigFilterRow({ filter, updateFilterCriteria }) {
@@ -121,6 +122,13 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           onChange={(e) => updateFilterCriteria('member', e.target.value)}
         />
       </td>
+      <td className={styles['adm-td']}>
+        <input
+          className={styles['adm-input']}
+          value={filter.tag}
+          onChange={(e) => updateFilterCriteria('tag', e.target.value)}
+        />
+      </td>
       <td className={styles['adm-td']}></td>
     </tr>
   );
@@ -139,12 +147,35 @@ const getLeaderUserId = (sig) => {
   return String(sig.owner);
 };
 
+async function tagFetch(path, init = {}) {
+  return fetch(path, {
+    credentials: 'include',
+    ...init,
+  });
+}
+
+async function tagFetchJson(path, init = {}) {
+  const res = await tagFetch(path, init);
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`${res.status} ${text}`);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
 const renderSigRow = (sig, ctx) => {
   const sigIdStr = String(sig.id);
   const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
   const members = Array.isArray(sig?.members) ? sig.members : [];
   const leaderId = getLeaderUserId(sig);
   const selected = ctx.selectedMemberBySigId[sigIdStr] ?? leaderId;
+  const sigTags = Array.isArray(ctx.sigTagsBySigId[sigIdStr])
+    ? ctx.sigTagsBySigId[sigIdStr]
+    : [];
+  const selectedTagId = ctx.selectedTagBySigId[sigIdStr] ?? '';
+  const assignedTagIds = new Set(sigTags.map((tag) => String(tag?.tag_id ?? '')));
+  const selectableTags = ctx.availableTags.filter((tag) => !assignedTagIds.has(String(tag.id)));
 
   return (
     <tr key={sig.id} className={styles['adm-tr']}>
@@ -269,6 +300,54 @@ const renderSigRow = (sig, ctx) => {
       </td>
 
       <td className={styles['adm-td']}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '220px' }}
+        >
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {sigTags.map((sigTag) => {
+              const tag = ctx.tagMap[String(sigTag?.tag_id ?? '')];
+              if (!tag) return null;
+              return (
+                <button
+                  key={`${sig.id}-${sigTag.id}`}
+                  className={styles['adm-button']}
+                  onClick={() => ctx.handleRemoveTag(sig.id, sigTag.tag_id)}
+                >
+                  {tag.text ?? tag.label} ×
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <select
+              className={styles['adm-select']}
+              value={selectedTagId}
+              onChange={(e) =>
+                ctx.setSelectedTagBySigId((prev) => ({
+                  ...prev,
+                  [sigIdStr]: e.target.value,
+                }))
+              }
+            >
+              <option value="">태그 선택</option>
+              {selectableTags.map((tag) => (
+                <option key={tag.id} value={String(tag.id)}>
+                  {tag.text ?? tag.label}
+                </option>
+              ))}
+            </select>
+            <button
+              className={styles['adm-button']}
+              onClick={() => ctx.handleAttachTag(sig.id)}
+            >
+              추가
+            </button>
+          </div>
+        </div>
+      </td>
+
+      <td className={styles['adm-td']}>
         <button
           className={styles['adm-button']}
           onClick={() => ctx.handleSave(sig)}
@@ -288,10 +367,20 @@ const renderSigRow = (sig, ctx) => {
   );
 };
 
-export default function SigList({ sigs: sigsDefault }) {
+export default function SigList({
+  sigs: sigsDefault,
+  initialTags = [],
+  initialSigTagsBySigId = {},
+}) {
   const [sigs, setSigs] = useState(sigsDefault ?? []);
   const [filteredSigs, setFilteredSigs] = useState(sigsDefault ?? []);
   const [saving, setSaving] = useState({});
+  const [availableTags, setAvailableTags] = useState(
+    Array.isArray(initialTags) ? initialTags : [],
+  );
+  const [sigTagsBySigId, setSigTagsBySigId] = useState(initialSigTagsBySigId ?? {});
+  const [selectedTagBySigId, setSelectedTagBySigId] = useState({});
+
   const [filter, setFilter] = useState({
     id: '',
     title: '',
@@ -303,6 +392,7 @@ export default function SigList({ sigs: sigsDefault }) {
     created_year: '',
     created_semester: '',
     member: '',
+    tag: '',
     should_extend: '',
     is_rolling_admission: '',
   });
@@ -316,6 +406,56 @@ export default function SigList({ sigs: sigsDefault }) {
   }, [sigsDefault]);
 
   const [selectedMemberBySigId, setSelectedMemberBySigId] = useState(initialSelectedMembers);
+
+  const tagMap = useMemo(() => {
+    const map = {};
+    (Array.isArray(availableTags) ? availableTags : []).forEach((tag) => {
+      if (tag?.id != null) map[String(tag.id)] = tag;
+    });
+    return map;
+  }, [availableTags]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadTagData = async () => {
+      try {
+        const [tags, sigTagEntries] = await Promise.all([
+          tagFetchJson('/api/tags'),
+          Promise.all(
+            (sigsDefault ?? []).map(async (sig) => {
+              try {
+                const data = await tagFetchJson(`/api/sig/${sig.id}/tag`);
+                return [String(sig.id), Array.isArray(data) ? data : []];
+              } catch {
+                return [String(sig.id), []];
+              }
+            }),
+          ),
+        ]);
+
+        if (cancelled) return;
+
+        setAvailableTags(Array.isArray(tags) ? tags : []);
+        setSigTagsBySigId(Object.fromEntries(sigTagEntries));
+      } catch (e) {
+        if (!cancelled) console.error(e);
+      }
+    };
+
+    loadTagData();
+
+    const handleRefresh = () => {
+      loadTagData();
+    };
+
+    window.addEventListener('sig-tags:changed', handleRefresh);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('sig-tags:changed', handleRefresh);
+    };
+  }, [sigsDefault]);
 
   const updateSigField = (id, field, value) => {
     setSigs((prev) => prev.map((sig) => (sig.id === id ? { ...sig, [field]: value } : sig)));
@@ -345,6 +485,11 @@ export default function SigList({ sigs: sigsDefault }) {
         (sig.members ?? []).some((m) =>
           lower(m?.user?.name).includes(lower(newFilter.member)),
         )) &&
+      (!newFilter.tag ||
+        (sigTagsBySigId[String(sig.id)] ?? []).some((sigTag) => {
+          const tag = tagMap[String(sigTag?.tag_id ?? '')];
+          return lower(tag?.text ?? tag?.label).includes(lower(newFilter.tag));
+        })) &&
       boolMatches(Boolean(sig.should_extend), newFilter.should_extend) &&
       boolMatches(Boolean(sig.is_rolling_admission), newFilter.is_rolling_admission);
 
@@ -354,7 +499,7 @@ export default function SigList({ sigs: sigsDefault }) {
   const handleSave = async (sig) => {
     setSaving((prev) => ({ ...prev, [sig.id]: true }));
     try {
-      const res = await fetch(`/api/executive/sig/${sig.id}/update`, {
+      const res = await directFetch(`/api/executive/sig/${sig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -381,10 +526,15 @@ export default function SigList({ sigs: sigsDefault }) {
     setSaving((prev) => ({ ...prev, [id]: true }));
     try {
       if (!confirm('정말 삭제하시겠습니까?')) return;
-      const res = await fetch(`/api/executive/sig/${id}/delete`, { method: 'POST' });
+      const res = await directFetch(`/api/executive/sig/${id}/delete`, { method: 'POST' });
       if (res.status === 204) {
         setSigs((prev) => prev.filter((p) => p.id !== id));
         setFilteredSigs((prev) => prev.filter((p) => p.id !== id));
+        setSigTagsBySigId((prev) => {
+          const next = { ...prev };
+          delete next[String(id)];
+          return next;
+        });
       } else {
         alert('삭제 실패: ' + res.status);
       }
@@ -395,6 +545,55 @@ export default function SigList({ sigs: sigsDefault }) {
     }
   };
 
+  const handleAttachTag = async (sigId) => {
+    const sigIdStr = String(sigId);
+    const tagId = selectedTagBySigId[sigIdStr];
+    if (!tagId) return;
+
+    try {
+      const created = await tagFetchJson(`/api/sig/${sigId}/tag`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tag_id: Number(tagId) }),
+      });
+
+      setSigTagsBySigId((prev) => {
+        const prevList = Array.isArray(prev[sigIdStr]) ? prev[sigIdStr] : [];
+        if (prevList.some((item) => String(item.id) === String(created.id))) return prev;
+        return { ...prev, [sigIdStr]: [...prevList, created] };
+      });
+      setSelectedTagBySigId((prev) => ({ ...prev, [sigIdStr]: '' }));
+      window.dispatchEvent(new Event('sig-tags:changed'));
+    } catch (e) {
+      alert(`태그 추가 실패: ${e.message}`);
+    }
+  };
+
+  const handleRemoveTag = async (sigId, tagId) => {
+    const sigIdStr = String(sigId);
+    try {
+      const res = await tagFetch(`/api/sig/${sigId}/tag/${tagId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok && res.status !== 204) {
+        const text = await res.text().catch(() => '');
+        alert(`태그 삭제 실패: ${res.status} ${text}`);
+        return;
+      }
+
+      setSigTagsBySigId((prev) => {
+        const prevList = Array.isArray(prev[sigIdStr]) ? prev[sigIdStr] : [];
+        return {
+          ...prev,
+          [sigIdStr]: prevList.filter((item) => String(item.tag_id) !== String(tagId)),
+        };
+      });
+      window.dispatchEvent(new Event('sig-tags:changed'));
+    } catch {
+      alert('태그 삭제 실패: 네트워크 오류');
+    }
+  };
+
   const rowCtx = {
     saving,
     selectedMemberBySigId,
@@ -402,11 +601,18 @@ export default function SigList({ sigs: sigsDefault }) {
     updateSigField,
     handleSave,
     handleDelete,
+    availableTags,
+    sigTagsBySigId,
+    selectedTagBySigId,
+    setSelectedTagBySigId,
+    handleAttachTag,
+    handleRemoveTag,
+    tagMap,
   };
 
   return (
-    <div className={styles['adm-table-wrap']}>
-      <table className={styles['adm-table']}>
+    <div className={styles['adm-table-wrap']} style={{ overflowX: 'auto' }}>
+      <table className={styles['adm-table']} style={{ minWidth: '1450px' }}>
         <colgroup>
           <col className={styles['adm-col-id']} />
           <col />
@@ -420,6 +626,7 @@ export default function SigList({ sigs: sigsDefault }) {
           <col className={styles['adm-col-bool']} />
           <col className={styles['adm-col-bool-wide']} />
           <col />
+          <col style={{ minWidth: '260px' }} />
           <col />
         </colgroup>
         <thead>
@@ -436,6 +643,7 @@ export default function SigList({ sigs: sigsDefault }) {
             <th className={styles['adm-th']}>연장 신청</th>
             <th className={styles['adm-th']}>가입기간 자유화</th>
             <th className={styles['adm-th']}>구성원</th>
+            <th className={styles['adm-th']}>태그</th>
             <th className={styles['adm-th']}>작업</th>
           </tr>
           <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
