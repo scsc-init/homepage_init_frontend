@@ -10,6 +10,18 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
     status: '',
     major: '',
   });
+  const roleLabel = (role) => {
+    const map = {
+      0: '최저권한',
+      100: '휴회원',
+      200: '준회원',
+      300: '정회원',
+      400: '졸업생',
+      500: '운영진',
+      1000: '회장',
+    };
+    return map[role] || role;
+  };
   const [users, setUsers] = useState(usersDefault);
   useEffect(() => {
     setUsers(usersDefault);
@@ -36,19 +48,6 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
     () => Object.fromEntries(majors.map((m) => [m.id, `${m.college} - ${m.major_name}`])),
     [majors],
   );
-
-  const roleLabel = (role) => {
-    const map = {
-      0: '최저권한',
-      100: '휴회원',
-      200: '준회원',
-      300: '정회원',
-      400: '졸업생',
-      500: '운영진',
-      1000: '회장',
-    };
-    return map[role] || role;
-  };
 
   const manualEnroll = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
@@ -203,7 +202,6 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
   const updateFilterCriteria = (field, value) => {
     const newFilter = { ...filter, [field]: value };
     setFilter(newFilter);
-    const lower = (v) => v?.toString().toLowerCase() || '';
   };
 
   const roleNumberToString = (val) => {
