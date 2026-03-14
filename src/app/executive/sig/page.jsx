@@ -4,6 +4,7 @@ import SigList from './SigList';
 import SigMembersPanel from './SigMembersPanel';
 import { fetchSigs, fetchUsers } from '@/util/fetchAPIData';
 import styles from '../igpage.module.css';
+import ExecutiveTagManager from './ExecutiveTagManager';
 
 export default async function ExecutiveSigPage() {
   const [sigs, users] = await Promise.allSettled([fetchSigs(), fetchUsers()]);
@@ -11,6 +12,9 @@ export default async function ExecutiveSigPage() {
   return (
     <WithAuthorization>
       <div className={styles['admin-panel']}>
+        <h2>태그 관리</h2>
+        <ExecutiveTagManager />
+
         <h2>SIG 관리</h2>
         <div className={styles['adm-section']}>
           <SigList
@@ -21,6 +25,7 @@ export default async function ExecutiveSigPage() {
             }
           />
         </div>
+
         <h2>SIG 구성원 관리</h2>
         <div className={styles['adm-section']}>
           <SigMembersPanel
