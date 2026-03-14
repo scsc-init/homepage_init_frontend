@@ -117,7 +117,7 @@ export function ReadUserTable({ users = [], majors = [] }) {
                   <td className="adm-td">{majorsMap[user.major_id] || '-'}</td>
                   <td className="adm-td">{roleLabel(user.role)}</td>
                   <td className="adm-td">{status}</td>
-                  <td className="adm-td">{user.deposit_confirmed ? '입금 완료' : '대기 중'}</td>
+                  <td className="adm-td">{user.is_active ? '입금 완료' : '대기 중'}</td>
                 </tr>
               );
             })}
@@ -128,7 +128,7 @@ export function ReadUserTable({ users = [], majors = [] }) {
   );
 }
 
-export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
+export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onShowDetail }) {
   const [users, setUsers] = useState(usersDefault);
   const [filteredUsers, setFilteredUsers] = useState(usersDefault);
   const [saving, setSaving] = useState({});
@@ -215,6 +215,10 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
   };
 
   const showDetail = (user) => {
+    if (typeof onShowDetail === 'function') {
+      onShowDetail(user);
+      return;
+    }
     try {
       console.info(`User detail (${user.name}):`, JSON.stringify(user, null, 2));
       alert('브라우저 콘솔에서 JSON 데이터를 확인하세요.');
@@ -227,9 +231,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [] }) {
     <div>
       <h3>회장단 전용 테이블</h3>
       <p>아래 table 첫째 줄에서 필터 적용 후 다운 받으세요.</p>
-      <div className="adm-actions">
-        <ExportUsersButton filteredUsers={filteredUsers} />
-      </div>
+      <ExportUsersButton allUsers={users} filteredUsers={filteredUsers} />
       <div className="adm-table-wrap">
         <table className="adm-table">
           <thead>

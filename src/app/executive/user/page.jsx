@@ -1,10 +1,11 @@
-// src/app/executive/user/page.jsx
+﻿// src/app/executive/user/page.jsx
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
+import Link from 'next/link';
 import LeadershipPanel from './LeadershipPanel';
-import { ReadUserTable, ExecutiveUserTable } from './UserList';
+import { ReadUserTable } from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
 import {
@@ -53,7 +54,7 @@ export default async function ExecutiveUserPage() {
     .map((u) => ({
       ...u,
       major: majorsMap[u.major_id],
-      deposit_confirmed: Boolean(u?.deposit_confirmed ?? u?.is_active),
+      is_active: Boolean(u?.is_active),
     }));
 
   const executiveUsersSorted = Array.from(
@@ -84,7 +85,12 @@ export default async function ExecutiveUserPage() {
 
         {canManageLeadership && (
           <div className="adm-section">
-            <ExecutiveUserTable users={executiveUsersSorted} majors={majorsSafe} />
+            <p style={{ marginBottom: '0.5rem', color: '#767676' }}>
+              회장단 전용 테이블과 CSV 기능은 별도 페이지에서 관리됩니다.
+            </p>
+            <Link href="/executive/user/leadership" className="adm-button">
+              회장단 전용 페이지로 이동
+            </Link>
           </div>
         )}
 
