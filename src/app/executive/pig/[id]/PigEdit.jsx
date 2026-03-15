@@ -177,17 +177,18 @@ export default function PigExecutiveEdit({ pig: _pig }) {
       if (!res1.ok) {
         const msg1 = await res1.json();
         alert(`저장 실패. PIG 정보 수정: ${msg1?.detail ?? res1.status}`);
-        router.refresh();
+        setSaving(false);
         return;
       }
 
-      const res2 =
-        selectedMember !== getLeaderUserId(pig) &&
-        (await directFetch(`/api/executive/pig/${pig.id}/handover`, {
+      let res2 = null;
+      if (selectedMember !== getLeaderUserId(pig)) {
+        res2 = await directFetch(`/api/executive/pig/${pig.id}/handover`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
-        }));
+        });
+      }
       if (!res2 || res2.ok) alert('저장 완료');
       else {
         const msg2 = res2 ? await res2.json() : undefined;

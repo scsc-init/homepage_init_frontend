@@ -91,7 +91,7 @@ function IgMemberDelete({
             </td>
             <td className={styles['adm-td']}>
               <input
-                name="name"
+                name="email"
                 type="email"
                 className={styles['adm-input']}
                 value={memberFilter.email}
@@ -138,7 +138,10 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const [memberLoading, setMemberLoading] = useState({});
   const router = useRouter();
 
-  if (is_sig === is_pig) return 'set valid is_sig, is_pig for IgMembersPanel';
+  if (is_sig === is_pig) {
+    console.error('IgMembersPanel: is_sig and is_pig must differ');
+    return null;
+  }
 
   const updateUserFilterCriteria = (field, value) => {
     const newFilter = { ...userFilter, [field]: value };

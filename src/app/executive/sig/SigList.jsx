@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../igpage.module.css';
 
@@ -63,7 +63,7 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
 
 const RenderSigRow = ({ sig }) => {
   return (
-    <tr key={sig.id} className={styles['adm-tr']}>
+    <tr className={styles['adm-tr']}>
       <td className={styles['adm-td']}>{sig.title ?? ''}</td>
       <td className={styles['adm-td']}>{STATUS_MAP[sig.status] ?? ''}</td>
       <td className={styles['adm-td']}>{sig.year ?? ''}</td>
@@ -79,7 +79,6 @@ const RenderSigRow = ({ sig }) => {
 const lower = (v) => v?.toString().toLowerCase() || '';
 
 export default function SigList({ sigs }) {
-  const [filteredSigs, setFilteredSigs] = useState(sigs ?? []);
   const [filter, setFilter] = useState({
     title: '',
     status: '',
@@ -88,19 +87,15 @@ export default function SigList({ sigs }) {
     ownerName: '',
   });
 
-  const updateFilterCriteria = (field, value) => {
-    const newFilter = { ...filter, [field]: value };
-    setFilter(newFilter);
-
+  const filteredSigs = useMemo(() => {
     const matches = (sig) =>
-      (!newFilter.title || lower(sig.title).includes(lower(newFilter.title))) &&
-      (!newFilter.status || sig.status?.toString() === newFilter.status.toString()) &&
-      (!newFilter.year || lower(sig.year).includes(lower(newFilter.year))) &&
-      (!newFilter.semester || lower(sig.semester).toString() === newFilter.semester) &&
-      (!newFilter.ownerName || lower(sig.ownerName).includes(lower(newFilter.ownerName)));
-
-    setFilteredSigs(sigs.filter(matches));
-  };
+      (!filter.title || lower(sig.title).includes(lower(filter.title))) &&
+      (!filter.status || sig.status?.toString() === filter.status.toString()) &&
+      (!filter.year || lower(sig.year).includes(lower(filter.year))) &&
+      (!filter.semester || lower(sig.semester).toString() === filter.semester) &&
+      (!filter.ownerName || lower(sig.ownerName).includes(lower(filter.ownerName)));
+    return sigs.filter(matches);
+  }, [sigs, filter]);
 
   return (
     <table className={styles['adm-table']}>
@@ -121,7 +116,10 @@ export default function SigList({ sigs }) {
           <th className={styles['adm-th']}>SIG장</th>
           <th className={styles['adm-th']}>상세보기</th>
         </tr>
-        <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
+        <SigFilterRow
+          filter={filter}
+          updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
+        />
       </thead>
       <tbody>
         {filteredSigs.map((sig) => (

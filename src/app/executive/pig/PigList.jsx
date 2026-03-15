@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../igpage.module.css';
 
@@ -63,7 +63,7 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
 
 const RenderPigRow = ({ pig }) => {
   return (
-    <tr key={pig.id} className={styles['adm-tr']}>
+    <tr className={styles['adm-tr']}>
       <td className={styles['adm-td']}>{pig.title ?? ''}</td>
       <td className={styles['adm-td']}>{STATUS_MAP[pig.status] ?? ''}</td>
       <td className={styles['adm-td']}>{pig.year ?? ''}</td>
@@ -79,7 +79,6 @@ const RenderPigRow = ({ pig }) => {
 const lower = (v) => v?.toString().toLowerCase() || '';
 
 export default function PigList({ pigs }) {
-  const [filteredPigs, setFilteredPigs] = useState(pigs ?? []);
   const [filter, setFilter] = useState({
     title: '',
     status: '',
@@ -88,19 +87,15 @@ export default function PigList({ pigs }) {
     ownerName: '',
   });
 
-  const updateFilterCriteria = (field, value) => {
-    const newFilter = { ...filter, [field]: value };
-    setFilter(newFilter);
-
+  const filteredPigs = useMemo(() => {
     const matches = (pig) =>
-      (!newFilter.title || lower(pig.title).includes(lower(newFilter.title))) &&
-      (!newFilter.status || pig.status?.toString() === newFilter.status.toString()) &&
-      (!newFilter.year || lower(pig.year).includes(lower(newFilter.year))) &&
-      (!newFilter.semester || lower(pig.semester).toString() === newFilter.semester) &&
-      (!newFilter.ownerName || lower(pig.ownerName).includes(lower(newFilter.ownerName)));
-
-    setFilteredPigs(pigs.filter(matches));
-  };
+      (!filter.title || lower(pig.title).includes(lower(filter.title))) &&
+      (!filter.status || pig.status?.toString() === filter.status.toString()) &&
+      (!filter.year || lower(pig.year).includes(lower(filter.year))) &&
+      (!filter.semester || lower(pig.semester).toString() === filter.semester) &&
+      (!filter.ownerName || lower(pig.ownerName).includes(lower(filter.ownerName)));
+    return pigs.filter(matches);
+  }, [pigs, filter]);
 
   return (
     <table className={styles['adm-table']}>
@@ -121,7 +116,10 @@ export default function PigList({ pigs }) {
           <th className={styles['adm-th']}>PIG장</th>
           <th className={styles['adm-th']}>상세보기</th>
         </tr>
-        <PigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
+        <PigFilterRow
+          filter={filter}
+          updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
+        />
       </thead>
       <tbody>
         {filteredPigs.map((pig) => (
