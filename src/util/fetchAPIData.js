@@ -34,6 +34,10 @@ export async function fetchUsers() {
   return safeFetch('GET', `/api/executive/users`);
 }
 
+export async function fetchUserSummaries() {
+  return safeFetch('GET', `/api/executive/users/summary`);
+}
+
 /**
  * Fetches board data.
  *
