@@ -2,9 +2,17 @@ import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
+import { getBaseUrl } from '@/util/getBaseUrl';
 
 export default async function Contact() {
   const thisYear = new Date().getFullYear();
+  const res = await fetch(`${getBaseUrl()}/api/leadership/contact`, { cache: 'no-store' });
+  const contacts = res.ok ? await res.json().catch(() => null) : null;
+  const presidentName = contacts?.president?.name || '';
+  const presidentPhone = contacts?.president?.phone || '';
+  const vicePresidents = Array.isArray(contacts?.vice_presidents)
+    ? contacts.vice_presidents
+    : [];
 
   return (
     <>
@@ -25,11 +33,15 @@ export default async function Contact() {
                   <tbody>
                     <tr>
                       <td className="label">회장</td>
-                      <td className="info">강명석 010-2058-7356</td>
+                      <td className="info">
+                        {presidentName} {presidentPhone}{' '}
+                      </td>
                     </tr>
                     <tr>
                       <td className="label">부회장</td>
-                      <td className="info">박상혁 010-4014-1871 / 박성현 010-3537-2998</td>
+                      <td className="info">
+                        {vicePresidents.map((v) => `${v.name} ${v.phone}`).join(' / ')}{' '}
+                      </td>
                     </tr>
                     <tr>
                       <td className="label">Email</td>
