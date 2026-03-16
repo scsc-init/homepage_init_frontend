@@ -35,7 +35,7 @@ export async function fetchUsers() {
 }
 
 export async function fetchUserSummaries() {
-  return safeFetch('GET', `/api/executive/users/read`);
+  return safeFetch('GET', `/api/executive/users/summary`);
 }
 
 /**
