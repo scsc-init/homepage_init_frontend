@@ -5,9 +5,15 @@ import { DISCORD_INVITE_LINK } from '@/util/constants';
 import { getBaseUrl } from '@/util/getBaseUrl';
 
 export default async function Contact() {
+  let contacts = null;
+  try {
+    const res = await fetch(`${getBaseUrl()}/api/leadership/contact`, { cache: 'no-store' });
+    if (res.ok) contacts = await res.json().catch(() => null);
+  } catch (err) {
+    console.error('[contact] leadership fetch failed', err);
+    contacts = null;
+  }
   const thisYear = new Date().getFullYear();
-  const res = await fetch(`${getBaseUrl()}/api/leadership/contact`, { cache: 'no-store' });
-  const contacts = res.ok ? await res.json().catch(() => null) : null;
   const presidentName = contacts?.president?.name || '';
   const presidentPhone = contacts?.president?.phone || '';
   const vicePresidents = Array.isArray(contacts?.vice_presidents)
