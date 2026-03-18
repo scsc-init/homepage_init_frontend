@@ -106,7 +106,7 @@
 
 .action-button > .btn-icon {
   position: absolute;
-  left: 25%;
+  left: 20%;
 }
 
 .action-button > .btn-label {
@@ -127,9 +127,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
 }
 .btn-label {
   white-space: normal;

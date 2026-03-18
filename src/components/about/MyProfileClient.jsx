@@ -8,6 +8,9 @@ import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
+import { FaDiscord } from 'react-icons/fa';
+import { AiOutlineMessage } from 'react-icons/ai';
+import { MdArrowOutward, MdOutlineInfo } from 'react-icons/md';
 
 const USER_ROLE_MAP = {
   0: '최저권한',
@@ -26,44 +29,6 @@ async function onAuthFail() {
   try {
     await signOut({ redirect: false });
   } catch {}
-}
-
-function KakaoIcon() {
-  return (
-    <svg width="32" viewBox="0 0 22 22" aria-hidden="true">
-      <path
-        d="M12 3C6.477 3 2 6.555 2 10.94c0 2.87 2.06 5.372 5.133 6.744L6.51 21.5c-.104.331.27.6.556.41l3.86-2.58c.34.03.683.047 1.074.047 5.523 0 10-3.555 10-7.94C22 6.555 17.523 3 12 3z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-function DiscordIcon() {
-  return (
-    <svg width="32" viewBox="0 0 22 22" aria-hidden="true">
-      <path
-        d="M20.317 4.369A18.06 18.06 0 0 0 15.89 3l-.21.41a16.3 16.3 0 0 1 3.23 1.12c-3.05-1.41-6.43-1.41-9.48 0 .53-.25 1.07-.46 1.62-.64L10.842 3a18.06 18.06 0 0 0-4.428 1.37C3.41 8.09 2.71 11.64 3 15.14a18.43 18.43 0 0 0 5.57 2.83l.42-.69c-.77-.29-1.5-.66-2.19-1.09.84.4 1.72.72 2.63.96 1.76.44 3.58.44 5.34 0 .91-.24 1.79-.56 2.63-.96-.69.43-1.42.8-2.19 1.09l.42.69a18.43 18.43 0 0 0 5.57-2.83c.36-4.22-.44-7.74-1.94-10.68zM9.7 13.5c-.66 0-1.2-.74-1.2-1.65 0-.9.53-1.64 1.2-1.64s1.2.74 1.2 1.64c0 .91-.54 1.65-1.2 1.65zm4.6 0c-.66 0-1.2-.74-1.2-1.65 0-.9.54-1.64 1.2-1.64.67 0 1.2.74 1.2 1.64 0 .91-.53 1.65-1.2 1.65z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-function InfoIcon() {
-  return (
-    <svg width="32" viewBox="0 0 22 22" aria-hidden="true">
-      <path
-        d="M20.317 4.369A18.06 18.06 0 0 0 15.89 3l-.21.41a16.3 16.3 0 0 1 3.23 1.12c-3.05-1.41-6.43-1.41-9.48 0 .53-.25 1.07-.46 1.62-.64L10.842 3a18.06 18.06 0 0 0-4.428 1.37C3.41 8.09 2.71 11.64 3 15.14a18.43 18.43 0 0 0 5.57 2.83l.42-.69c-.77-.29-1.5-.66-2.19-1.09.84.4 1.72.72 2.63.96 1.76.44 3.58.44 5.34 0 .91-.24 1.79-.56 2.63-.96-.69.43-1.42.8-2.19 1.09l.42.69a18.43 18.43 0 0 0 5.57-2.83c.36-4.22-.44-7.74-1.94-10.68zM9.7 13.5c-.66 0-1.2-.74-1.2-1.65 0-.9.53-1.64 1.2-1.64s1.2.74 1.2 1.64c0 .91-.54 1.65-1.2 1.65zm4.6 0c-.66 0-1.2-.74-1.2-1.65 0-.9.54-1.64 1.2-1.64.67 0 1.2.74 1.2 1.64 0 .91-.53 1.65-1.2 1.65z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-function ArrowIcon() {
-  return (
-    <svg width="32" viewBox="0 0 22 22" aria-hidden="true">
-      <path d="M12 5v2h4.586L6 17.586 7.414 19 18 8.414V13h2V5z" fill="currentColor" />
-    </svg>
-  );
 }
 
 export default function MyProfileClient() {
@@ -193,7 +158,7 @@ export default function MyProfileClient() {
               className="action-button"
             >
               <span className="btn-icon">
-                <KakaoIcon />
+                <AiOutlineMessage size="24" />
               </span>
               <span className="btn-label">카카오 입장</span>
             </a>
@@ -204,7 +169,7 @@ export default function MyProfileClient() {
               className="action-button"
             >
               <span className="btn-icon">
-                <DiscordIcon />
+                <FaDiscord size="24" />
               </span>
               <span className="btn-label">디스코드 입장</span>
             </a>
@@ -216,7 +181,7 @@ export default function MyProfileClient() {
               className="action-button"
             >
               <span className="btn-icon">
-                <InfoIcon />
+                <MdOutlineInfo size="24" />
               </span>
               <span className="btn-label">입급안내</span>
             </a>
@@ -228,7 +193,7 @@ export default function MyProfileClient() {
               className="action-button"
             >
               <span className="btn-icon">
-                <ArrowIcon />
+                <MdArrowOutward size="24" />
               </span>
               <span className="btn-label">정보수정</span>
             </a>
