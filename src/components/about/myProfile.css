@@ -285,6 +285,9 @@
     grid-row: 3;
     justify-self: end;
   }
+  .btn-label {
+    left: 50% !important;
+  }
 }
 
 .dark .user-info-container,
