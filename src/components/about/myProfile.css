@@ -11,6 +11,7 @@
   gap: 1rem;
   padding: 1rem;
   box-sizing: border-box;
+  width: 600px;
 }
 
 .user-info-container {
@@ -223,7 +224,7 @@
   vertical-align: top;
 }
 .user-info-table th {
-  width: 5rem;
+  width: 10rem;
   font-weight: 600;
   color: var(--color-text-body);
 }
@@ -239,6 +240,7 @@
     flex-direction: column;
     height: auto;
     padding: 0;
+    width: 80vw;
   }
   .right-container {
     width: 100%;

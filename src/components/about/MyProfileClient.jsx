@@ -48,6 +48,16 @@ function DiscordIcon() {
     </svg>
   );
 }
+function InfoIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M20.317 4.369A18.06 18.06 0 0 0 15.89 3l-.21.41a16.3 16.3 0 0 1 3.23 1.12c-3.05-1.41-6.43-1.41-9.48 0 .53-.25 1.07-.46 1.62-.64L10.842 3a18.06 18.06 0 0 0-4.428 1.37C3.41 8.09 2.71 11.64 3 15.14a18.43 18.43 0 0 0 5.57 2.83l.42-.69c-.77-.29-1.5-.66-2.19-1.09.84.4 1.72.72 2.63.96 1.76.44 3.58.44 5.34 0 .91-.24 1.79-.56 2.63-.96-.69.43-1.42.8-2.19 1.09l.42.69a18.43 18.43 0 0 0 5.57-2.83c.36-4.22-.44-7.74-1.94-10.68zM9.7 13.5c-.66 0-1.2-.74-1.2-1.65 0-.9.53-1.64 1.2-1.64s1.2.74 1.2 1.64c0 .91-.54 1.65-1.2 1.65zm4.6 0c-.66 0-1.2-.74-1.2-1.65 0-.9.54-1.64 1.2-1.64.67 0 1.2.74 1.2 1.64 0 .91-.53 1.65-1.2 1.65z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
 function ArrowIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -160,6 +170,18 @@ export default function MyProfileClient() {
                 <th>학번</th>
                 <td>{user ? user.student_id : ''}</td>
               </tr>
+              <tr>
+                <th>활동상태</th>
+                <td>
+                  {user
+                    ? user.is_active
+                      ? '활동 중 (입금 확인 완료)'
+                      : user.is_banned
+                        ? '제명됨'
+                        : '회비 미납부'
+                    : ''}
+                </td>
+              </tr>
             </tbody>
           </table>
 
@@ -186,43 +208,30 @@ export default function MyProfileClient() {
               </span>
               <span className="btn-label">디스코드 입장</span>
             </a>
-          </div>
-        </div>
 
-        <div className="right-container">
-          <div className="user-status-container">
-            <div className="user-status-content">
-              <p className="user-status-description">User Status</p>
-              <p>
-                {user
-                  ? user.is_active
-                    ? '활동 중(입금 확인 완료)'
-                    : user.is_banned
-                      ? '제명됨'
-                      : '회비 미납부'
-                  : ''}
-              </p>
-            </div>
-            <button onClick={() => router.push('/about/welcome')} className="enroll-button">
-              입금안내
-            </button>
-          </div>
+            <a
+              href="/about/welcome"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="action-button"
+            >
+              <span className="btn-icon">
+                <InfoIcon />
+              </span>
+              <span className="btn-label">입급안내</span>
+            </a>
 
-          <div className="buttons-container">
-            <div className="buttons-grid">
-              <button
-                onClick={() => router.push('/us/edit-user-info')}
-                className="action-button"
-              >
-                <span className="btn-icon">
-                  <ArrowIcon />
-                </span>
-                <span className="btn-label">정보수정</span>
-              </button>
-              <button onClick={handleLogout} className="logout-button" aria-label="로그아웃">
-                <span className="material-icons">logout</span>
-              </button>
-            </div>
+            <a
+              href="/us/edit-user-info"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="action-button"
+            >
+              <span className="btn-icon">
+                <ArrowIcon />
+              </span>
+              <span className="btn-label">정보수정</span>
+            </a>
           </div>
         </div>
       </div>
