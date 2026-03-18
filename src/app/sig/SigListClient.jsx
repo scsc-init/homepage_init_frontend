@@ -109,7 +109,7 @@ export default function SigListClient({ sigs, myId, initialTags = [] }) {
             className={`SigTagFilterChip ${selectedTags.length === 0 ? 'active' : ''}`}
             onClick={clearTagFilter}
           >
-            전체
+            #전체
           </button>
           {availableTags.map((tag) => (
             <button
@@ -120,7 +120,7 @@ export default function SigListClient({ sigs, myId, initialTags = [] }) {
               }`}
               onClick={() => toggleTagFilter(tag.text)}
             >
-              {tag.text}
+              #{tag.text}
             </button>
           ))}
         </div>
@@ -129,8 +129,8 @@ export default function SigListClient({ sigs, myId, initialTags = [] }) {
       <div className="SigListSummary">
         {selectedTags.length > 0 ? (
           <>
-            선택된 태그 <strong>{selectedTags.join(', ')}</strong> 를 모두 가진 SIG{' '}
-            <strong>{sortedSigs.length}</strong>개
+            선택된 태그 <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong> 를
+            모두 가진 SIG <strong>{sortedSigs.length}</strong>개
           </>
         ) : (
           <>
@@ -160,9 +160,9 @@ export default function SigListClient({ sigs, myId, initialTags = [] }) {
                     {tags.map((tag) => (
                       <span
                         key={`${sig.id}-${tag.id}`}
-                        className={`sigTagChip ${tag.is_major ? 'major' : ''}`}
+                        className={`sigTagText ${tag.is_major ? 'major' : ''}`}
                       >
-                        {tag.text}
+                        #{tag.text}
                       </span>
                     ))}
                   </div>

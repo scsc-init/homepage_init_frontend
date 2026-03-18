@@ -10,15 +10,21 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const sortTags = (tagList) =>
+    [...tagList].sort((a, b) => {
+      if (a.is_major !== b.is_major) return a.is_major ? -1 : 1;
+      return a.text.localeCompare(b.text);
+    });
+
   const refreshAllTags = async () => {
     const res = await fetch('/api/tags', { cache: 'no-store' });
     if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
     const data = await res.json();
-    setAllTags(Array.isArray(data) ? data : []);
+    setAllTags(sortTags(Array.isArray(data) ? data : []));
   };
 
   useEffect(() => {
-    setTags(Array.isArray(initialTags) ? initialTags : []);
+    setTags(sortTags(Array.isArray(initialTags) ? initialTags : []));
   }, [initialTags]);
 
   useEffect(() => {
@@ -28,11 +34,13 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   const attachedTagIds = useMemo(() => new Set(tags.map((tag) => String(tag.id))), [tags]);
 
   const selectableTags = useMemo(() => {
-    return allTags.filter((tag) => {
-      if (attachedTagIds.has(String(tag.id))) return false;
-      if (!isExecutive && tag.is_major) return false;
-      return true;
-    });
+    return sortTags(
+      allTags.filter((tag) => {
+        if (attachedTagIds.has(String(tag.id))) return false;
+        if (!isExecutive && tag.is_major) return false;
+        return true;
+      }),
+    );
   }, [allTags, attachedTagIds, isExecutive]);
 
   const addExistingTag = async () => {
@@ -53,7 +61,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
 
       const addedTag = allTags.find((tag) => String(tag.id) === String(selectedTagId));
       if (addedTag) {
-        setTags((prev) => [...prev, addedTag]);
+        setTags((prev) => sortTags([...prev, addedTag]));
       }
       setSelectedTagId('');
     } catch {
@@ -96,10 +104,10 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
         return;
       }
 
-      setTags((prev) => [...prev, createdTag]);
+      setTags((prev) => sortTags([...prev, createdTag]));
       setAllTags((prev) => {
         if (prev.some((tag) => String(tag.id) === String(createdTag.id))) return prev;
-        return [...prev, createdTag];
+        return sortTags([...prev, createdTag]);
       });
       setNewTagText('');
       setNewTagIsMajor(false);
@@ -126,7 +134,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
         return;
       }
 
-      setTags((prev) => prev.filter((item) => String(item.id) !== String(tag.id)));
+      setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
       await refreshAllTags().catch(() => {});
     } catch {
       alert('태그 삭제 실패: 네트워크 오류');
@@ -136,42 +144,50 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   };
 
   return (
-    <div>
-      <h3>태그</h3>
+    <div className="SigTagManager">
+      <div className="SigTagManagerHeader">
+        <h3 className="SigTagManagerTitle">태그</h3>
+        <p className="SigTagManagerDescription">
+          붙은 태그의 <strong>삭제</strong> 표시를 누르면 태그가 제거됩니다.
+        </p>
+      </div>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+      <div className="SigAttachedTagSection">
         {tags.length === 0 ? (
-          <span>등록된 태그 없음</span>
+          <span className="SigEmptyTagText">등록된 태그 없음</span>
         ) : (
-          tags.map((tag) => (
-            <button
-              key={tag.id}
-              type="button"
-              onClick={() => removeTag(tag)}
-              disabled={loading || (tag.is_major && !isExecutive)}
-              title={
-                tag.is_major && !isExecutive
-                  ? '메이저 태그는 임원진만 삭제할 수 있습니다'
-                  : '태그 삭제'
-              }
-            >
-              {tag.text}
-              {tag.is_major ? ' (major)' : ''}
-            </button>
-          ))
+          <div className="SigAttachedTagList">
+            {tags.map((tag) => {
+              const locked = tag.is_major && !isExecutive;
+              return (
+                <div
+                  key={tag.id}
+                  className={`SigAttachedTagItem ${tag.is_major ? 'major' : ''} ${
+                    locked ? 'locked' : ''
+                  }`}
+                >
+                  <span className="SigAttachedTagText">#{tag.text}</span>
+                  {!locked ? (
+                    <button
+                      type="button"
+                      className="SigAttachedTagRemove"
+                      onClick={() => removeTag(tag)}
+                      disabled={loading}
+                      aria-label={`${tag.text} 태그 삭제`}
+                    >
+                      삭제
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          marginBottom: '12px',
-        }}
-      >
+      <div className="SigTagControlGroup">
         <select
+          className="SigTagSelect"
           value={selectedTagId}
           onChange={(e) => setSelectedTagId(e.target.value)}
           disabled={loading}
@@ -184,31 +200,38 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
             </option>
           ))}
         </select>
-        <button type="button" onClick={addExistingTag} disabled={loading || !selectedTagId}>
+        <button
+          type="button"
+          className="SigTagActionButton"
+          onClick={addExistingTag}
+          disabled={loading || !selectedTagId}
+        >
           기존 태그 추가
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div className="SigTagControlGroup">
         <input
+          className="SigTagInput"
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
           placeholder="새 태그명"
           disabled={loading}
         />
         {isExecutive ? (
-          <label>
+          <label className="SigTagCheckboxLabel">
             <input
               type="checkbox"
               checked={newTagIsMajor}
               onChange={(e) => setNewTagIsMajor(e.target.checked)}
               disabled={loading}
             />
-            major
+            <span>major</span>
           </label>
         ) : null}
         <button
           type="button"
+          className="SigTagActionButton"
           onClick={createAndAddTag}
           disabled={loading || !newTagText.trim()}
         >

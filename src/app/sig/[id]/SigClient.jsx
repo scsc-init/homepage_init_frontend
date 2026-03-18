@@ -29,6 +29,17 @@ export default function SigClient({ sig, members, articleContent, me, sigId }) {
         {sig.year}학년도 {semesterLabel}학기 · 상태: {sig.status}
       </p>
       <p className="SigDescription">{sig.description}</p>
+      {Array.isArray(sig?.tags) && sig.tags.length > 0 && (
+        <div className="SigTagInline">
+          {[...sig.tags]
+            .sort((a, b) => {
+              if (!!a?.is_major !== !!b?.is_major) return a?.is_major ? -1 : 1;
+              return String(a?.text ?? '').localeCompare(String(b?.text ?? ''), 'ko');
+            })
+            .map((tag) => `#${tag.text}`)
+            .join(' ')}
+        </div>
+      )}
       <div className="SigActionRow">
         {is_sigpig_join_available(sig.status, sig.is_rolling_admission) && (
           <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />
