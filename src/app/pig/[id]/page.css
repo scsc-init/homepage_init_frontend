@@ -552,3 +552,7 @@ body {
     font-size: 1.15rem;
   }
 }
+
+.PigWebsitesList > * {
+  margin: 20px 0;
+}
