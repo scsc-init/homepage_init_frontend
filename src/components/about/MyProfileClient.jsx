@@ -183,7 +183,7 @@ export default function MyProfileClient() {
               <span className="btn-icon">
                 <MdOutlineInfo size="24" />
               </span>
-              <span className="btn-label">입급안내</span>
+              <span className="btn-label">입금 안내</span>
             </a>
 
             <a
@@ -195,7 +195,7 @@ export default function MyProfileClient() {
               <span className="btn-icon">
                 <MdArrowOutward size="24" />
               </span>
-              <span className="btn-label">정보수정</span>
+              <span className="btn-label">정보 수정</span>
             </a>
           </div>
         </div>
