@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
 import { directFetch } from '@/util/directFetch';
+import SigTagManager from '@/components/board/SigTagManager';
 
 const getLeaderUserId = (sig) => {
   if (sig?.owner == null) return '';
@@ -153,7 +154,7 @@ function renderSigRow(sig, ctx, attrName, attrLabel) {
 export default function SigExecutiveEdit({ sig: _sig }) {
   const [saving, setSaving] = useState(false);
   const [sig, setSig] = useState(_sig);
-  const [selectedMember, setSelectedMember] = useState(getLeaderUserId(sig));
+  const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
   const router = useRouter();
 
   const handleSave = async () => {
@@ -247,6 +248,13 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         </thead>
         <tbody>{renderSigEdit(sig, rowCtx)}</tbody>
       </table>
+      <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+        <SigTagManager
+          sigId={sig.id}
+          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          isExecutive
+        />
+      </div>
       <div>
         <button className={styles['adm-button']} onClick={handleSave} disabled={saving}>
           저장

@@ -2,6 +2,7 @@
 
 import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
+import SigTagManager from '@/components/board/SigTagManager';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -140,6 +141,13 @@ export default function EditSigClient({ sigId, me, sig, article }) {
           Editor={Editor}
           editorKey={editorKey}
           isCreate={false}
+        />
+      </div>
+      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <SigTagManager
+          sigId={sigId}
+          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          isExecutive={Boolean(me?.role >= minExecutiveLevel)}
         />
       </div>
     </div>
