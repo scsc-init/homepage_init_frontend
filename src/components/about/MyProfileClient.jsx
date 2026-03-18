@@ -120,7 +120,7 @@ export default function MyProfileClient() {
 
       <div className="main-container">
         <div className="user-info-container">
-          <p className="user-info-description">User Info</p>
+          <h2 className="user-info-description">User Info</h2>
           <table className="user-info-table">
             <tbody>
               <tr>

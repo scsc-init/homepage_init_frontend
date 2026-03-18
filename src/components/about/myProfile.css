@@ -224,9 +224,14 @@
   font-weight: bolder;
 }
 
+.user-info-description {
+  margin-bottom: 20px;
+}
+
 .user-info-table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 30px;
 }
 .user-info-table th,
 .user-info-table td {
