@@ -42,7 +42,7 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
       </div>
       <hr className="PigDivider" />
       <PigContents content={articleContent} />
-      <hr />
+      <hr className="PigDivider" />
       <PigWebsites websites={websites} />
       <PigMembers owner={pig?.owner} members={members} />
     </div>
