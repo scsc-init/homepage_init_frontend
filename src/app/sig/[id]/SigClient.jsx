@@ -41,7 +41,7 @@ export default function SigClient({ sig, members, articleContent, me, sigId }) {
       </div>
       <hr className="SigDivider" />
       <SigContents content={articleContent} />
-      <hr />
+      <hr className="SigDivider" />
       <SigMembers owner={sig?.owner} members={members} />
     </div>
   );
