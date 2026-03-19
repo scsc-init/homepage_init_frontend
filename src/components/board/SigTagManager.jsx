@@ -9,18 +9,21 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   const [newTagText, setNewTagText] = useState('');
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [catalogError, setCatalogError] = useState('');
 
   const sortTags = (tagList) =>
     [...tagList].sort((a, b) => {
       if (a.is_major !== b.is_major) return a.is_major ? -1 : 1;
-      return a.text.localeCompare(b.text);
+      return String(a.text ?? '').localeCompare(String(b.text ?? ''), 'ko');
     });
 
   const refreshAllTags = async () => {
     const res = await fetch('/api/tags', { cache: 'no-store' });
     if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
+
     const data = await res.json();
     setAllTags(sortTags(Array.isArray(data) ? data : []));
+    setCatalogError('');
   };
 
   useEffect(() => {
@@ -28,7 +31,9 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   }, [initialTags]);
 
   useEffect(() => {
-    refreshAllTags().catch(() => {});
+    refreshAllTags().catch(() => {
+      setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
+    });
   }, []);
 
   const attachedTagIds = useMemo(() => new Set(tags.map((tag) => String(tag.id))), [tags]);
@@ -45,6 +50,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
 
   const addExistingTag = async () => {
     if (!selectedTagId || loading) return;
+
     setLoading(true);
     try {
       const res = await fetch(`/api/sig/${sigId}/tag`, {
@@ -100,7 +106,9 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       if (!addRes.ok) {
         const err = await addRes.json().catch(() => ({}));
         alert(err.detail ?? '태그 생성 후 추가 실패');
-        await refreshAllTags().catch(() => {});
+        await refreshAllTags().catch(() => {
+          setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
+        });
         return;
       }
 
@@ -111,6 +119,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       });
       setNewTagText('');
       setNewTagIsMajor(false);
+      setCatalogError('');
     } catch {
       alert('태그 생성 실패: 네트워크 오류');
     } finally {
@@ -135,7 +144,9 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       }
 
       setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
-      await refreshAllTags().catch(() => {});
+      await refreshAllTags().catch(() => {
+        setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
+      });
     } catch {
       alert('태그 삭제 실패: 네트워크 오류');
     } finally {
@@ -150,6 +161,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
         <p className="SigTagManagerDescription">
           붙은 태그의 <strong>삭제</strong> 표시를 누르면 태그가 제거됩니다.
         </p>
+        {catalogError ? <p className="SigTagErrorText">{catalogError}</p> : null}
       </div>
 
       <div className="SigAttachedTagSection">

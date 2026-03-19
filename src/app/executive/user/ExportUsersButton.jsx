@@ -1,28 +1,44 @@
 // src/app/executive/user/ExportUsersButton.jsx (CLIENT)
 'use client';
 
+function escapeCsvValue(value) {
+  if (value === null || value === undefined) return '';
+
+  let normalized = value;
+  if (typeof normalized === 'object') {
+    normalized = JSON.stringify(normalized);
+  } else {
+    normalized = String(normalized);
+  }
+
+  if (/^[=+\-@]/.test(normalized)) {
+    normalized = `'${normalized}`;
+  }
+
+  let safe = normalized.replace(/"/g, '""');
+  if (/[",\n]/.test(safe)) {
+    safe = `"${safe}"`;
+  }
+  return safe;
+}
+
+function collectHeaders(list) {
+  const headerSet = new Set();
+  list.forEach((entry) => {
+    if (!entry || typeof entry !== 'object') return;
+    Object.keys(entry).forEach((key) => headerSet.add(key));
+  });
+  return [...headerSet];
+}
+
 function convertToCsvRows(list) {
   if (!Array.isArray(list) || list.length === 0) return [];
-  const headers = Object.keys(list[0]);
-  const rows = [
+
+  const headers = collectHeaders(list);
+  return [
     headers.join(','),
-    ...list.map((entry) =>
-      headers
-        .map((key) => {
-          let value = entry?.[key];
-          if (value === null || value === undefined) return '';
-          if (typeof value === 'object') value = JSON.stringify(value);
-          if (typeof value === 'string') {
-            let safe = value.replace(/"/g, '""');
-            if (safe.search(/[",\n]/g) >= 0) safe = `"${safe}"`;
-            return safe;
-          }
-          return value;
-        })
-        .join(','),
-    ),
+    ...list.map((entry) => headers.map((key) => escapeCsvValue(entry?.[key])).join(',')),
   ];
-  return rows;
 }
 
 function downloadCsv(rows, fileName) {

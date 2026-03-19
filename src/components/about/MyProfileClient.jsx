@@ -139,11 +139,13 @@ export default function MyProfileClient() {
                 <th>활동상태</th>
                 <td>
                   {user
-                    ? user.is_active
+                    ? user.is_active === true
                       ? '활동 중 (입금 확인 완료)'
-                      : user.is_banned
+                      : user.is_banned === true
                         ? '제명됨'
-                        : '회비 미납부'
+                        : user.is_active === false
+                          ? '회비 미납부'
+                          : '상태 확인 불가'
                     : ''}
                 </td>
               </tr>
