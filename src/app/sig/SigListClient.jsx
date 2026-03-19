@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export default function SigListClient({ sigs, myId, initialTags = [] }) {
+export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
   const [sortOrder, setSortOrder] = useState('latest');
   const [selectedTags, setSelectedTags] = useState(
-    Array.isArray(initialTags) ? initialTags.filter(Boolean) : [],
+    Array.isArray(initialFilterTags) ? initialFilterTags.filter(Boolean) : [],
   );
 
   const router = useRouter();

@@ -32,7 +32,7 @@ export default async function SigListPage({ searchParams }) {
 
   return (
     <div id="SigListContainer">
-      <SigListClient sigs={visibleSigs} myId={myId} initialTags={initialTags} />
+      <SigListClient sigs={visibleSigs} myId={myId} initialFilterTags={initialTags} />
     </div>
   );
 }
