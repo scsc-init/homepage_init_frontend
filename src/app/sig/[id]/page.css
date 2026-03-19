@@ -39,7 +39,6 @@ body {
 .SigDescription {
   color: var(--color-text-subtle);
   font-size: 1rem;
-  margin-bottom: 1.5rem;
 }
 
 /* 구분선 */
@@ -551,4 +550,12 @@ body {
   .SigMembersTitle {
     font-size: 1.15rem;
   }
+}
+
+.SigTagInline {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-subtle);
+  line-height: 1.4;
+  word-break: keep-all;
 }

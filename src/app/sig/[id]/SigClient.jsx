@@ -19,6 +19,16 @@ export default function SigClient({ sig, members, articleContent, me, sigId }) {
     SEMESTER_MAP[Number(sig?.created_semester)] ?? `${sig?.created_semester}`;
   const hasCreated = sig?.created_year != null && sig?.created_semester != null;
 
+  const normalizedTagText = Array.isArray(sig?.tags)
+    ? [...sig.tags]
+        .sort((a, b) => {
+          if (!!a?.is_major !== !!b?.is_major) return a?.is_major ? -1 : 1;
+          return String(a?.text ?? '').localeCompare(String(b?.text ?? ''), 'ko');
+        })
+        .map((tag) => String(tag?.text ?? '').trim())
+        .filter(Boolean)
+    : [];
+
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{sig.title}</h1>
@@ -29,6 +39,11 @@ export default function SigClient({ sig, members, articleContent, me, sigId }) {
         {sig.year}학년도 {semesterLabel}학기 · 상태: {sig.status}
       </p>
       <p className="SigDescription">{sig.description}</p>
+      {normalizedTagText.length > 0 && (
+        <div className="SigTagInline">
+          {normalizedTagText.map((text) => `#${text}`).join(' ')}
+        </div>
+      )}
       <div className="SigActionRow">
         {is_sigpig_join_available(sig.status, sig.is_rolling_admission) && (
           <SigJoinLeaveButton sigId={sigId} initialIsMember={isMember} />

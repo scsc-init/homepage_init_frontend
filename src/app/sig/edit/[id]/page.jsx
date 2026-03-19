@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export const metadata = { title: 'SIG' };
 
 export default async function EditSigPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const [me] = await Promise.allSettled([fetchMe()]);
   if (me.status === 'rejected') redirect('/us/login');
 

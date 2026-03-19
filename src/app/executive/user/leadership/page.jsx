@@ -4,21 +4,25 @@ export const revalidate = 0;
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
 import { fetchUsers, fetchMajors, fetchMe } from '@/util/fetchAPIData';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import '../../page.css';
 
 export default async function ExecutiveLeadershipPage() {
-  const [majors, executiveUsers, me] = await Promise.all([
-    fetchMajors().catch(() => []),
-    fetchUsers().catch(() => []),
-    fetchMe().catch(() => null),
-  ]);
+  const me = await fetchMe().catch(() => null);
+
+  if (!me) {
+    redirect('/login?redirect=/executive/user/leadership');
+  }
 
   const viewerRole = me?.role ?? 0;
   if (viewerRole < 1000) {
-    notFound();
+    redirect('/executive/user');
   }
-  const canManageLeadership = viewerRole >= 1000;
+
+  const [majors, executiveUsers] = await Promise.all([
+    fetchMajors().catch(() => []),
+    fetchUsers().catch(() => []),
+  ]);
 
   const majorsSafe = Array.isArray(majors) ? majors : [];
   const majorsMap = Object.fromEntries(
