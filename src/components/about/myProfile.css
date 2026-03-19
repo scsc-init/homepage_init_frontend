@@ -100,19 +100,7 @@
     box-shadow 160ms ease,
     transform 40ms ease;
   width: 100%;
-  position: relative;
   box-sizing: border-box;
-}
-
-.action-button > .btn-icon {
-  position: absolute;
-  left: 20%;
-}
-
-.action-button > .btn-label {
-  position: absolute;
-  left: 55%;
-  transform: translateX(-50%);
 }
 
 .action-button:hover {
@@ -284,9 +272,6 @@
     grid-column: 1;
     grid-row: 3;
     justify-self: end;
-  }
-  .btn-label {
-    left: 50% !important;
   }
 }
 
