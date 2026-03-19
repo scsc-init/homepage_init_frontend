@@ -46,9 +46,15 @@ export default async function ExecutiveLeadershipPage() {
         <p style={{ marginBottom: '1rem', color: '#767676' }}>
           회장단만 접근할 수 있으며, CSV 다운로드와 사용자 관리 기능을 제공합니다.
         </p>
-        <div className="adm-section">
-          <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
-        </div>
+        {canManageLeadership ? (
+          <div className="adm-section">
+            <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
+          </div>
+        ) : (
+          <div className="adm-section">
+            <p>회장단의 권한이 필요합니다.</p>
+          </div>
+        )}
       </div>
     </WithAuthorization>
   );
