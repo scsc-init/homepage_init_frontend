@@ -16,7 +16,9 @@ export default async function ExecutiveSigPage({ params }) {
 
   const [sigMembers, sigArticle] = await Promise.all([
     safeFetch('GET', `/api/sig/${sigMeta.value.id}/members`),
-    safeFetch('GET', `/api/article/${sigMeta.value.content_id}`),
+    sigMeta.value.content_id
+      ? safeFetch('GET', `/api/article/${sigMeta.value.content_id}`)
+      : Promise.resolve({ success: false, value: null }),
   ]);
 
   const sig = {

@@ -88,13 +88,16 @@ export default function PigList({ pigs }) {
   });
 
   const filteredPigs = useMemo(() => {
+    const safePigs = Array.isArray(pigs) ? pigs : [];
+
     const matches = (pig) =>
       (!filter.title || lower(pig.title).includes(lower(filter.title))) &&
       (!filter.status || pig.status?.toString() === filter.status.toString()) &&
       (!filter.year || lower(pig.year).includes(lower(filter.year))) &&
       (!filter.semester || lower(pig.semester).toString() === filter.semester) &&
       (!filter.ownerName || lower(pig.ownerName).includes(lower(filter.ownerName)));
-    return pigs.filter(matches);
+
+    return safePigs.filter(matches);
   }, [pigs, filter]);
 
   return (

@@ -317,3 +317,10 @@ label {
     width: 100%;
   }
 }
+
+.SigTagFieldLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}

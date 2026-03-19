@@ -198,7 +198,11 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       </div>
 
       <div className="SigTagControlGroup">
+        <label htmlFor="sig-tag-select" className="SigTagFieldLabel">
+          기존 태그 선택
+        </label>
         <select
+          id="sig-tag-select"
           className="SigTagSelect"
           value={selectedTagId}
           onChange={(e) => setSelectedTagId(e.target.value)}
@@ -223,7 +227,11 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       </div>
 
       <div className="SigTagControlGroup">
+        <label htmlFor="sig-tag-new-input" className="SigTagFieldLabel">
+          새 태그명
+        </label>
         <input
+          id="sig-tag-new-input"
           className="SigTagInput"
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
