@@ -11,6 +11,7 @@
   gap: 1rem;
   padding: 1rem;
   box-sizing: border-box;
+  width: 600px;
 }
 
 .user-info-container {
@@ -114,9 +115,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
 }
 .btn-label {
   white-space: normal;
@@ -211,9 +212,14 @@
   font-weight: bolder;
 }
 
+.user-info-description {
+  margin-bottom: 20px;
+}
+
 .user-info-table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 30px;
 }
 .user-info-table th,
 .user-info-table td {
@@ -223,7 +229,7 @@
   vertical-align: top;
 }
 .user-info-table th {
-  width: 5rem;
+  width: 10rem;
   font-weight: 600;
   color: var(--color-text-body);
 }
@@ -239,6 +245,7 @@
     flex-direction: column;
     height: auto;
     padding: 0;
+    width: 80vw;
   }
   .right-container {
     width: 100%;
