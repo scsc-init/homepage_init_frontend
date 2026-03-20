@@ -272,7 +272,7 @@ export async function fetchExecutiveCandidates<
   ]) {
     if (!entry || typeof entry !== 'object') continue;
     const key =
-      entry.id || entry.email || `${String(entry.name || '')}-${String(entry.phone || '')}`;
+      entry.id ?? entry.email ?? `${String(entry.name || '')}-${String(entry.phone || '')}`;
     if (!merged.has(key)) merged.set(key, entry);
   }
 

@@ -161,3 +161,9 @@
   font-size: 0.95rem;
   font-weight: 600;
 }
+
+.SigTagErrorText {
+  color: var(--color-text-body);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}

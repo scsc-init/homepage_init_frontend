@@ -59,7 +59,15 @@ export function phoneNumber(
  * @param studentID - Student ID
  * @param then - Validation callback
  */
-export function studentID(studentID: string, then?: ValidatorCallback): void {
+export function studentID(
+  studentID: string | undefined | null,
+  then?: ValidatorCallback,
+): void {
+  if (studentID == null) {
+    then && then(false);
+    return;
+  }
+
   const match = studentID.match(/^(\d{4})(\d{5})$/);
   if (!match) {
     then && then(false);

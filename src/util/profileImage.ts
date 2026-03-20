@@ -33,8 +33,8 @@ export function toProxyStaticPath(raw: string, fallback = DEFAULT_EXECUTIVE_PFP)
 }
 
 export interface ProfileImageUser {
-  profile_picture?: string;
-  profile_picture_is_url?: boolean;
+  profile_picture?: string | null;
+  profile_picture_is_url?: boolean | null;
 }
 
 /**
