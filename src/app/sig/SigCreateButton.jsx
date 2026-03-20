@@ -16,11 +16,7 @@ export default function SigCreateButton() {
   };
 
   return (
-    <Button.Root
-      id="SigCreateButton"
-      onClick={handleClick}
-      disabled={loading}
-    >
+    <Button.Root id="SigCreateButton" onClick={handleClick} disabled={loading}>
       {loading ? '로딩 중...' : '시그 만들기'}
     </Button.Root>
   );
