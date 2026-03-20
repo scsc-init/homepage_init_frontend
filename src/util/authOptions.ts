@@ -1,18 +1,23 @@
 import Google from 'next-auth/providers/google';
+import type { NextAuthOptions } from 'next-auth';
 import crypto from 'crypto';
 import { getBaseUrl } from '@/util/getBaseUrl';
 import { getApiSecret } from '@/util/getApiSecret';
 import * as validator from '@/util/validator';
 
-export const authOptions = {
+interface BackendLoginResponse {
+  jwt?: string;
+}
+
+export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 10 * 24 * 60 * 60,
   },
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
   ],
   callbacks: {
@@ -25,16 +30,18 @@ export const authOptions = {
         return '/us/login?error=invalid_email';
       }
 
-      let res;
+      let res: Response;
       const apiSecret = getApiSecret();
       if (!apiSecret) {
         console.error('API_SECRET is missing');
         return '/us/login?error=default';
       }
+
       const hash = crypto
         .createHmac('sha256', apiSecret)
         .update(String(user.email).toLowerCase())
         .digest('hex');
+
       try {
         res = await fetch(`${getBaseUrl()}/api/user/login`, {
           method: 'POST',
@@ -51,9 +58,9 @@ export const authOptions = {
       }
 
       if (res.status === 200) {
-        let data;
+        let data: BackendLoginResponse;
         try {
-          data = await res.json();
+          data = (await res.json()) as BackendLoginResponse;
         } catch (error) {
           console.error('Failed to parse login response:', error);
           return '/us/login?error=default';
@@ -78,6 +85,7 @@ export const authOptions = {
 
       return '/us/login?error=default';
     },
+
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.backendJwt = user.backendJwt;

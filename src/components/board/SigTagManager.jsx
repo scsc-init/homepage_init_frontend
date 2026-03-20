@@ -1,8 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import styles from './SigTagManager.module.css';
 
-export default function SigTagManager({ sigId, initialTags = [], isExecutive = false }) {
+export default function SigTagManager({
+  initialTags = [],
+  isExecutive = false,
+  onChange,
+  disabled = false,
+}) {
   const [tags, setTags] = useState(Array.isArray(initialTags) ? initialTags : []);
   const [allTags, setAllTags] = useState([]);
   const [selectedTagId, setSelectedTagId] = useState('');
@@ -10,6 +16,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
   const [loading, setLoading] = useState(false);
   const [catalogError, setCatalogError] = useState('');
+  const tempIdRef = useRef(0);
 
   const sortTags = (tagList) =>
     [...tagList].sort((a, b) => {
@@ -36,6 +43,10 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
     });
   }, []);
 
+  useEffect(() => {
+    onChange?.(sortTags(Array.isArray(tags) ? tags : []));
+  }, [tags, onChange]);
+
   const attachedTagIds = useMemo(() => new Set(tags.map((tag) => String(tag.id))), [tags]);
 
   const selectableTags = useMemo(() => {
@@ -48,143 +59,83 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
     );
   }, [allTags, attachedTagIds, isExecutive]);
 
-  const addExistingTag = async () => {
-    if (!selectedTagId || loading) return;
+  const addExistingTag = () => {
+    if (!selectedTagId || loading || disabled) return;
 
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/sig/${sigId}/tag`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tag_id: Number(selectedTagId) }),
-      });
+    const addedTag = allTags.find((tag) => String(tag.id) === String(selectedTagId));
+    if (!addedTag) return;
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        alert(err.detail ?? '태그 추가 실패');
-        return;
-      }
-
-      const addedTag = allTags.find((tag) => String(tag.id) === String(selectedTagId));
-      if (addedTag) {
-        setTags((prev) => sortTags([...prev, addedTag]));
-      }
-      setSelectedTagId('');
-    } catch {
-      alert('태그 추가 실패: 네트워크 오류');
-    } finally {
-      setLoading(false);
-    }
+    setTags((prev) => {
+      if (prev.some((tag) => String(tag.id) === String(addedTag.id))) return prev;
+      return sortTags([...prev, addedTag]);
+    });
+    setSelectedTagId('');
   };
 
-  const createAndAddTag = async () => {
+  const createAndAddTag = () => {
     const text = newTagText.trim();
-    if (!text || loading) return;
+    if (!text || loading || disabled) return;
 
-    setLoading(true);
-    try {
-      const createRes = await fetch(isExecutive ? '/api/executive/tag' : '/api/tag', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(isExecutive ? { text, is_major: newTagIsMajor } : { text }),
-      });
-
-      if (!createRes.ok) {
-        const err = await createRes.json().catch(() => ({}));
-        alert(err.detail ?? '태그 생성 실패');
-        return;
-      }
-
-      const createdTag = await createRes.json();
-
-      const addRes = await fetch(`/api/sig/${sigId}/tag`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tag_id: createdTag.id }),
-      });
-
-      if (!addRes.ok) {
-        const err = await addRes.json().catch(() => ({}));
-        alert(err.detail ?? '태그 생성 후 추가 실패');
-        await refreshAllTags().catch(() => {
-          setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
-        });
-        return;
-      }
-
-      setTags((prev) => sortTags([...prev, createdTag]));
-      setAllTags((prev) => {
-        if (prev.some((tag) => String(tag.id) === String(createdTag.id))) return prev;
-        return sortTags([...prev, createdTag]);
-      });
-      setNewTagText('');
-      setNewTagIsMajor(false);
-      setCatalogError('');
-    } catch {
-      alert('태그 생성 실패: 네트워크 오류');
-    } finally {
-      setLoading(false);
+    const normalizedText = text.toLowerCase();
+    const existsInAttached = tags.some(
+      (tag) =>
+        String(tag.text ?? '')
+          .trim()
+          .toLowerCase() === normalizedText,
+    );
+    if (existsInAttached) {
+      alert('이미 추가된 태그입니다.');
+      return;
     }
+
+    const tempTag = {
+      id: `temp-${Date.now()}-${tempIdRef.current++}`,
+      text,
+      is_major: isExecutive ? newTagIsMajor : false,
+      __isNew: true,
+    };
+
+    setTags((prev) => sortTags([...prev, tempTag]));
+    setNewTagText('');
+    setNewTagIsMajor(false);
   };
 
-  const removeTag = async (tag) => {
-    if (loading) return;
+  const removeTag = (tag) => {
+    if (loading || disabled) return;
     if (tag.is_major && !isExecutive) return;
 
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/sig/${sigId}/tag/${tag.id}`, {
-        method: 'DELETE',
-      });
-
-      if (!res.ok && res.status !== 204) {
-        const err = await res.json().catch(() => ({}));
-        alert(err.detail ?? '태그 삭제 실패');
-        return;
-      }
-
-      setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
-      await refreshAllTags().catch(() => {
-        setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
-      });
-    } catch {
-      alert('태그 삭제 실패: 네트워크 오류');
-    } finally {
-      setLoading(false);
-    }
+    setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
   };
 
   return (
-    <div className="SigTagManager">
-      <div className="SigTagManagerHeader">
-        <h3 className="SigTagManagerTitle">태그</h3>
-        <p className="SigTagManagerDescription">
-          붙은 태그의 <strong>삭제</strong> 표시를 누르면 태그가 제거됩니다.
+    <div className={styles.SigTagManager}>
+      <div className={styles.SigTagManagerHeader}>
+        <h3 className={styles.SigTagManagerTitle}>태그</h3>
+        <p className={styles.SigTagManagerDescription}>
+          저장 전까지 태그 변경 사항이 임시로 쌓이며, 수정 버튼을 눌렀을 때 한 번에 반영됩니다.
         </p>
-        {catalogError ? <p className="SigTagErrorText">{catalogError}</p> : null}
+        {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
 
-      <div className="SigAttachedTagSection">
+      <div className={styles.SigAttachedTagSection}>
         {tags.length === 0 ? (
-          <span className="SigEmptyTagText">등록된 태그 없음</span>
+          <span className={styles.SigEmptyTagText}>등록된 태그 없음</span>
         ) : (
-          <div className="SigAttachedTagList">
+          <div className={styles.SigAttachedTagList}>
             {tags.map((tag) => {
               const locked = tag.is_major && !isExecutive;
               return (
                 <div
                   key={tag.id}
-                  className={`SigAttachedTagItem ${tag.is_major ? 'major' : ''} ${
-                    locked ? 'locked' : ''
-                  }`}
+                  className={`${styles.SigAttachedTagItem} ${tag.is_major ? styles.major : ''} ${locked ? styles.locked : ''}`}
                 >
-                  <span className="SigAttachedTagText">#{tag.text}</span>
+                  <span className={styles.SigAttachedTagText}>#{tag.text}</span>
                   {!locked ? (
                     <button
                       type="button"
-                      className="SigAttachedTagRemove"
+                      className={styles.SigAttachedTagRemove}
                       onClick={() => removeTag(tag)}
-                      disabled={loading}
+                      disabled={loading || disabled}
                       aria-label={`${tag.text} 태그 삭제`}
                     >
                       삭제
@@ -197,16 +148,16 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
         )}
       </div>
 
-      <div className="SigTagControlGroup">
-        <label htmlFor="sig-tag-select" className="SigTagFieldLabel">
+      <div className={styles.SigTagControlGroup}>
+        <label htmlFor="sig-tag-select" className={styles.SigTagFieldLabel}>
           기존 태그 선택
         </label>
         <select
           id="sig-tag-select"
-          className="SigTagSelect"
+          className={styles.SigTagSelect}
           value={selectedTagId}
           onChange={(e) => setSelectedTagId(e.target.value)}
-          disabled={loading}
+          disabled={loading || disabled}
         >
           <option value="">기존 태그 선택</option>
           {selectableTags.map((tag) => (
@@ -218,42 +169,42 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
         </select>
         <button
           type="button"
-          className="SigTagActionButton"
+          className={styles.SigTagActionButton}
           onClick={addExistingTag}
-          disabled={loading || !selectedTagId}
+          disabled={loading || disabled || !selectedTagId}
         >
           기존 태그 추가
         </button>
       </div>
 
-      <div className="SigTagControlGroup">
-        <label htmlFor="sig-tag-new-input" className="SigTagFieldLabel">
+      <div className={styles.SigTagControlGroup}>
+        <label htmlFor="sig-tag-new-input" className={styles.SigTagFieldLabel}>
           새 태그명
         </label>
         <input
           id="sig-tag-new-input"
-          className="SigTagInput"
+          className={styles.SigTagInput}
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
           placeholder="새 태그명"
-          disabled={loading}
+          disabled={loading || disabled}
         />
         {isExecutive ? (
-          <label className="SigTagCheckboxLabel">
+          <label className={styles.SigTagCheckboxLabel}>
             <input
               type="checkbox"
               checked={newTagIsMajor}
               onChange={(e) => setNewTagIsMajor(e.target.checked)}
-              disabled={loading}
+              disabled={loading || disabled}
             />
             <span>major</span>
           </label>
         ) : null}
         <button
           type="button"
-          className="SigTagActionButton"
+          className={styles.SigTagActionButton}
           onClick={createAndAddTag}
-          disabled={loading || !newTagText.trim()}
+          disabled={loading || disabled || !newTagText.trim()}
         >
           새 태그 생성 후 추가
         </button>

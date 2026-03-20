@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
@@ -155,7 +155,82 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const [saving, setSaving] = useState(false);
   const [sig, setSig] = useState(_sig);
   const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
+  const initialTags = useMemo(() => (Array.isArray(_sig?.tags) ? _sig.tags : []), [_sig?.tags]);
+  const [pendingTags, setPendingTags] = useState(initialTags);
   const router = useRouter();
+
+  const syncTags = async () => {
+    const originalTags = Array.isArray(_sig?.tags) ? _sig.tags : [];
+    const currentTags = Array.isArray(pendingTags) ? pendingTags : [];
+
+    const originalIdSet = new Set(
+      originalTags
+        .filter((tag) => !String(tag.id).startsWith('temp-'))
+        .map((tag) => String(tag.id)),
+    );
+
+    const currentExistingTags = currentTags.filter(
+      (tag) => !String(tag.id).startsWith('temp-'),
+    );
+    const currentExistingIdSet = new Set(currentExistingTags.map((tag) => String(tag.id)));
+    const removedTags = originalTags.filter((tag) => !currentExistingIdSet.has(String(tag.id)));
+    const addedExistingTags = currentExistingTags.filter(
+      (tag) => !originalIdSet.has(String(tag.id)),
+    );
+    const newTags = currentTags.filter(
+      (tag) => Boolean(tag?.__isNew) || String(tag.id).startsWith('temp-'),
+    );
+
+    for (const tag of removedTags) {
+      const res = await fetch(`/api/sig/${sig.id}/tag/${tag.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok && res.status !== 204) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail ?? '태그 삭제 실패');
+      }
+    }
+
+    for (const tag of addedExistingTags) {
+      const res = await fetch(`/api/sig/${sig.id}/tag`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tag_id: Number(tag.id) }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail ?? '기존 태그 추가 실패');
+      }
+    }
+
+    for (const tag of newTags) {
+      const createRes = await fetch('/api/executive/tag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: tag.text, is_major: Boolean(tag.is_major) }),
+      });
+
+      if (!createRes.ok) {
+        const err = await createRes.json().catch(() => ({}));
+        throw new Error(err.detail ?? '새 태그 생성 실패');
+      }
+
+      const createdTag = await createRes.json();
+
+      const addRes = await fetch(`/api/sig/${sig.id}/tag`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tag_id: createdTag.id }),
+      });
+
+      if (!addRes.ok) {
+        const err = await addRes.json().catch(() => ({}));
+        throw new Error(err.detail ?? '새 태그 연결 실패');
+      }
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -181,6 +256,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         return;
       }
 
+      await syncTags();
+
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
         res2 = await directFetch(`/api/executive/sig/${sig.id}/handover`, {
@@ -195,8 +272,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         alert(`저장 실패. SIG장 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
       }
       router.refresh();
-    } catch {
-      alert('저장 실패: 네트워크 오류');
+    } catch (err) {
+      alert(err.message || '저장 실패: 네트워크 오류');
     } finally {
       setSaving(false);
     }
@@ -250,9 +327,10 @@ export default function SigExecutiveEdit({ sig: _sig }) {
       </table>
       <div style={{ marginTop: '16px', marginBottom: '16px' }}>
         <SigTagManager
-          sigId={sig.id}
-          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          initialTags={initialTags}
           isExecutive
+          onChange={setPendingTags}
+          disabled={saving}
         />
       </div>
       <div>
