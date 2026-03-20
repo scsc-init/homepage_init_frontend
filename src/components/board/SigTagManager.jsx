@@ -1,22 +1,28 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './SigTagManager.module.css';
 
 export default function SigTagManager({
   initialTags = [],
+  initialTagIds = [],
   isExecutive = false,
   onChange,
   disabled = false,
 }) {
-  const [tags, setTags] = useState(Array.isArray(initialTags) ? initialTags : []);
   const [allTags, setAllTags] = useState([]);
+  const [attachedTagIds, setAttachedTagIds] = useState(
+    Array.isArray(initialTagIds)
+      ? initialTagIds.map((id) => String(id))
+      : Array.isArray(initialTags)
+        ? initialTags.map((tag) => String(tag.id))
+        : [],
+  );
   const [selectedTagId, setSelectedTagId] = useState('');
   const [newTagText, setNewTagText] = useState('');
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
   const [loading, setLoading] = useState(false);
   const [catalogError, setCatalogError] = useState('');
-  const tempIdRef = useRef(0);
 
   const sortTags = (tagList) =>
     [...tagList].sort((a, b) => {
@@ -31,11 +37,18 @@ export default function SigTagManager({
     const data = await res.json();
     setAllTags(sortTags(Array.isArray(data) ? data : []));
     setCatalogError('');
+    return Array.isArray(data) ? data : [];
   };
 
   useEffect(() => {
-    setTags(sortTags(Array.isArray(initialTags) ? initialTags : []));
-  }, [initialTags]);
+    setAttachedTagIds(
+      Array.isArray(initialTagIds)
+        ? initialTagIds.map((id) => String(id))
+        : Array.isArray(initialTags)
+          ? initialTags.map((tag) => String(tag.id))
+          : [],
+    );
+  }, [initialTagIds, initialTags]);
 
   useEffect(() => {
     refreshAllTags().catch(() => {
@@ -44,67 +57,89 @@ export default function SigTagManager({
   }, []);
 
   useEffect(() => {
-    onChange?.(sortTags(Array.isArray(tags) ? tags : []));
-  }, [tags, onChange]);
+    onChange?.(attachedTagIds.map((id) => Number(id)));
+  }, [attachedTagIds, onChange]);
 
-  const attachedTagIds = useMemo(() => new Set(tags.map((tag) => String(tag.id))), [tags]);
+  const attachedTagIdSet = useMemo(() => new Set(attachedTagIds), [attachedTagIds]);
+
+  const attachedTags = useMemo(() => {
+    return sortTags(allTags.filter((tag) => attachedTagIdSet.has(String(tag.id))));
+  }, [allTags, attachedTagIdSet]);
 
   const selectableTags = useMemo(() => {
     return sortTags(
       allTags.filter((tag) => {
-        if (attachedTagIds.has(String(tag.id))) return false;
+        if (attachedTagIdSet.has(String(tag.id))) return false;
         if (!isExecutive && tag.is_major) return false;
         return true;
       }),
     );
-  }, [allTags, attachedTagIds, isExecutive]);
+  }, [allTags, attachedTagIdSet, isExecutive]);
 
   const addExistingTag = () => {
     if (!selectedTagId || loading || disabled) return;
 
-    const addedTag = allTags.find((tag) => String(tag.id) === String(selectedTagId));
-    if (!addedTag) return;
-
-    setTags((prev) => {
-      if (prev.some((tag) => String(tag.id) === String(addedTag.id))) return prev;
-      return sortTags([...prev, addedTag]);
+    setAttachedTagIds((prev) => {
+      if (prev.includes(String(selectedTagId))) return prev;
+      return [...prev, String(selectedTagId)];
     });
     setSelectedTagId('');
   };
 
-  const createAndAddTag = () => {
+  const createAndAddTag = async () => {
     const text = newTagText.trim();
     if (!text || loading || disabled) return;
 
     const normalizedText = text.toLowerCase();
-    const existsInAttached = tags.some(
+    const existsInCatalog = allTags.some(
       (tag) =>
         String(tag.text ?? '')
           .trim()
           .toLowerCase() === normalizedText,
     );
-    if (existsInAttached) {
-      alert('이미 추가된 태그입니다.');
+    if (existsInCatalog) {
+      alert('이미 존재하는 태그입니다. 기존 태그 선택에서 추가해주세요.');
       return;
     }
 
-    const tempTag = {
-      id: `temp-${Date.now()}-${tempIdRef.current++}`,
-      text,
-      is_major: isExecutive ? newTagIsMajor : false,
-      __isNew: true,
-    };
+    setLoading(true);
 
-    setTags((prev) => sortTags([...prev, tempTag]));
-    setNewTagText('');
-    setNewTagIsMajor(false);
+    try {
+      const res = await fetch(isExecutive ? '/api/executive/tag' : '/api/tag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
+        ),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail ?? '새 태그 생성 실패');
+      }
+
+      const createdTag = await res.json();
+
+      setAllTags((prev) => sortTags([...prev, createdTag]));
+      setAttachedTagIds((prev) => {
+        const nextId = String(createdTag.id);
+        if (prev.includes(nextId)) return prev;
+        return [...prev, nextId];
+      });
+      setNewTagText('');
+      setNewTagIsMajor(false);
+    } catch (err) {
+      alert(err.message || '새 태그 생성 실패');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const removeTag = (tag) => {
     if (loading || disabled) return;
     if (tag.is_major && !isExecutive) return;
 
-    setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
+    setAttachedTagIds((prev) => prev.filter((id) => id !== String(tag.id)));
   };
 
   return (
@@ -112,17 +147,18 @@ export default function SigTagManager({
       <div className={styles.SigTagManagerHeader}>
         <h3 className={styles.SigTagManagerTitle}>태그</h3>
         <p className={styles.SigTagManagerDescription}>
-          저장 전까지 태그 변경 사항이 임시로 쌓이며, 수정 버튼을 눌렀을 때 한 번에 반영됩니다.
+          저장 전까지 시그에 반영할 태그 변경 사항이 임시로 쌓이며, 수정 버튼을 눌렀을 때 한
+          번에 반영됩니다.
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
 
       <div className={styles.SigAttachedTagSection}>
-        {tags.length === 0 ? (
+        {attachedTags.length === 0 ? (
           <span className={styles.SigEmptyTagText}>등록된 태그 없음</span>
         ) : (
           <div className={styles.SigAttachedTagList}>
-            {tags.map((tag) => {
+            {attachedTags.map((tag) => {
               const locked = tag.is_major && !isExecutive;
               return (
                 <div

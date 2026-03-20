@@ -1,4 +1,5 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
+import type { UserProfile, ExecutiveCandidate } from '@/types/user';
 
 type JsonPrimitive = string | number | boolean | null;
 type JsonValue = JsonPrimitive | JsonObject | JsonValue[];
@@ -15,7 +16,7 @@ interface ApiResponseLike {
   ok: boolean;
   status: number;
   text(): Promise<string>;
-  json(): Promise<any>;
+  json(): Promise<unknown>;
 }
 
 type HandleApiRequest = (
@@ -101,7 +102,7 @@ export interface FundApplyCreateData {
  * @param request - If included, fetch with body from it. The incoming Next.js Request object.
  * @returns Promise that resolves with response body or rejects on non-OK response.
  */
-export async function safeFetch<T = any>(
+export async function safeFetch<T = unknown>(
   method: string,
   path: string,
   options: HandleApiRequestOptions = {},
@@ -120,8 +121,8 @@ export async function safeFetch<T = any>(
  *
  * @returns Current user data.
  */
-export async function fetchMe<T = any>(): Promise<T> {
-  return safeFetch<T>('GET', `/api/user/profile`);
+export async function fetchMe(): Promise<UserProfile> {
+  return safeFetch<UserProfile>('GET', `/api/user/profile`);
 }
 
 /**
@@ -131,6 +132,15 @@ export async function fetchMe<T = any>(): Promise<T> {
  */
 export async function fetchUsers<T = any>(): Promise<T> {
   return safeFetch<T>('GET', `/api/executive/users`);
+}
+
+/**
+ * Fetches executive user summaries.
+ *
+ * @returns User summaries.
+ */
+export async function fetchUserSummaries<T = any>(): Promise<T> {
+  return safeFetch<T>('GET', '/api/executive/users/summary');
 }
 
 /**
@@ -153,7 +163,7 @@ export async function fetchBoards<T = any>(
 export async function fetchSigs<T extends BaseTarget = BaseTarget>(): Promise<
   PromiseSettledResult<TargetWithContentMembers & T>[]
 > {
-  const softFetch = async <R = any>(path: string): Promise<R | null> => {
+  const softFetch = async <R = unknown>(path: string): Promise<R | null> => {
     try {
       const res = await typedHandleApiRequest('GET', path);
       if (!res.ok) return null;
@@ -167,10 +177,17 @@ export async function fetchSigs<T extends BaseTarget = BaseTarget>(): Promise<
 
   const sigsWithContentMembers = await Promise.allSettled(
     (Array.isArray(sigsRaw) ? sigsRaw : []).map(async (sig) => {
-      const [article, members] = await Promise.all([
-        softFetch<{ content?: string }>(`/api/article/${sig.content_id}`),
-        softFetch<unknown[]>(`/api/sig/${sig.id}/members`),
-      ]);
+      const articlePromise =
+        sig.content_id != null
+          ? softFetch<{ content?: string }>(`/api/article/${sig.content_id}`)
+          : Promise.resolve(null);
+
+      const membersPromise =
+        sig.id != null
+          ? softFetch<unknown[]>(`/api/sig/${sig.id}/members`)
+          : Promise.resolve(null);
+
+      const [article, members] = await Promise.all([articlePromise, membersPromise]);
 
       return {
         ...sig,
@@ -205,10 +222,17 @@ export async function fetchPigs<T extends BaseTarget = BaseTarget>(): Promise<
 
   const pigsWithContentMembers = await Promise.allSettled(
     (Array.isArray(pigsRaw) ? pigsRaw : []).map(async (pig) => {
-      const [article, members] = await Promise.all([
-        softFetch<{ content?: string }>(`/api/article/${pig.content_id}`),
-        softFetch<unknown[]>(`/api/pig/${pig.id}/members`),
-      ]);
+      const articlePromise =
+        pig.content_id != null
+          ? softFetch<{ content?: string }>(`/api/article/${pig.content_id}`)
+          : Promise.resolve(null);
+
+      const membersPromise =
+        pig.id != null
+          ? softFetch<unknown[]>(`/api/pig/${pig.id}/members`)
+          : Promise.resolve(null);
+
+      const [article, members] = await Promise.all([articlePromise, membersPromise]);
 
       return {
         ...pig,
@@ -255,7 +279,7 @@ export async function fetchSCSCGlobalStatus(): Promise<GlobalStatus> {
  * @returns Merged executive candidate list.
  */
 export async function fetchExecutiveCandidates<
-  T extends Record<string, any> = Record<string, any>,
+  T extends ExecutiveCandidate = ExecutiveCandidate,
 >(): Promise<T[]> {
   const [execRes, prezRes] = await Promise.all([
     typedHandleApiRequest('GET', '/api/executive/users', { query: { user_role: 'executive' } }),
@@ -270,7 +294,6 @@ export async function fetchExecutiveCandidates<
     ...(Array.isArray(execList) ? execList : []),
     ...(Array.isArray(prezList) ? prezList : []),
   ]) {
-    if (!entry || typeof entry !== 'object') continue;
     const key =
       entry.id ?? entry.email ?? `${String(entry.name || '')}-${String(entry.phone || '')}`;
     if (!merged.has(key)) merged.set(key, entry);
@@ -381,8 +404,8 @@ export async function setKVValues(
  *
  * - Current-term list (sigs/pigs): filters by status only (recruiting/active) to preserve existing behavior.
  * - Previous-term list (prevSigs/prevPigs): filters only by (year, semester) and does NOT filter by status.
- * - Term resolution: prefers /api/scsc/global/status; if missing, falls back to inferring the latest (year, semester)
- *   from returned sig/pig records.
+ * - Term resolution: uses /api/scsc/global/status as the source of truth.
+ *   If global status is unavailable, this function returns empty lists.
  *
  * @param boardId - Board id for the fund-apply board (default: 6).
  * @returns Data required by FundApplyClient.

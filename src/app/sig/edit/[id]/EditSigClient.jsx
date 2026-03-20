@@ -21,8 +21,11 @@ export default function EditSigClient({ sigId, me, sig, article }) {
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
-  const initialTags = useMemo(() => (Array.isArray(sig?.tags) ? sig.tags : []), [sig?.tags]);
-  const [pendingTags, setPendingTags] = useState(initialTags);
+  const initialTagIds = useMemo(
+    () => (Array.isArray(sig?.tags) ? sig.tags.map((tag) => Number(tag.id)) : []),
+    [sig?.tags],
+  );
+  const [pendingTags, setPendingTags] = useState(initialTagIds);
 
   const {
     register,
@@ -76,35 +79,25 @@ export default function EditSigClient({ sigId, me, sig, article }) {
         should_extend: sig.should_extend ?? false,
         is_rolling_admission: sig.is_rolling_admission ?? false,
       });
-      setPendingTags(Array.isArray(sig?.tags) ? sig.tags : []);
+      setPendingTags(Array.isArray(sig?.tags) ? sig.tags.map((tag) => Number(tag.id)) : []);
       setEditorKey((k) => k + 1);
     }
   }, [sig, article, mounted, isDirty, reset]);
 
   const syncTags = async () => {
-    const originalTags = Array.isArray(sig?.tags) ? sig.tags : [];
-    const currentTags = Array.isArray(pendingTags) ? pendingTags : [];
+    const originalTagIds = Array.isArray(sig?.tags)
+      ? sig.tags.map((tag) => Number(tag.id))
+      : [];
+    const currentTagIds = Array.isArray(pendingTags) ? pendingTags.map((id) => Number(id)) : [];
 
-    const originalIdSet = new Set(
-      originalTags
-        .filter((tag) => !String(tag.id).startsWith('temp-'))
-        .map((tag) => String(tag.id)),
-    );
+    const originalIdSet = new Set(originalTagIds);
+    const currentIdSet = new Set(currentTagIds);
 
-    const currentExistingTags = currentTags.filter(
-      (tag) => !String(tag.id).startsWith('temp-'),
-    );
-    const currentExistingIdSet = new Set(currentExistingTags.map((tag) => String(tag.id)));
-    const removedTags = originalTags.filter((tag) => !currentExistingIdSet.has(String(tag.id)));
-    const addedExistingTags = currentExistingTags.filter(
-      (tag) => !originalIdSet.has(String(tag.id)),
-    );
-    const newTags = currentTags.filter(
-      (tag) => Boolean(tag?.__isNew) || String(tag.id).startsWith('temp-'),
-    );
+    const removedTagIds = originalTagIds.filter((id) => !currentIdSet.has(id));
+    const addedTagIds = currentTagIds.filter((id) => !originalIdSet.has(id));
 
-    for (const tag of removedTags) {
-      const res = await fetch(`/api/sig/${sigId}/tag/${tag.id}`, {
+    for (const tagId of removedTagIds) {
+      const res = await fetch(`/api/sig/${sigId}/tag/${tagId}`, {
         method: 'DELETE',
       });
 
@@ -114,49 +107,16 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       }
     }
 
-    for (const tag of addedExistingTags) {
+    for (const tagId of addedTagIds) {
       const res = await fetch(`/api/sig/${sigId}/tag`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tag_id: Number(tag.id) }),
+        body: JSON.stringify({ tag_id: Number(tagId) }),
       });
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.detail ?? '기존 태그 추가 실패');
-      }
-    }
-
-    for (const tag of newTags) {
-      const createRes = await fetch(
-        me.role >= minExecutiveLevel ? '/api/executive/tag' : '/api/tag',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(
-            me.role >= minExecutiveLevel
-              ? { text: tag.text, is_major: Boolean(tag.is_major) }
-              : { text: tag.text },
-          ),
-        },
-      );
-
-      if (!createRes.ok) {
-        const err = await createRes.json().catch(() => ({}));
-        throw new Error(err.detail ?? '새 태그 생성 실패');
-      }
-
-      const createdTag = await createRes.json();
-
-      const addRes = await fetch(`/api/sig/${sigId}/tag`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tag_id: createdTag.id }),
-      });
-
-      if (!addRes.ok) {
-        const err = await addRes.json().catch(() => ({}));
-        throw new Error(err.detail ?? '새 태그 연결 실패');
       }
     }
   };
@@ -229,7 +189,8 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <SigTagManager
-          initialTags={initialTags}
+          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          initialTagIds={initialTagIds}
           isExecutive={Boolean(me?.role >= minExecutiveLevel)}
           onChange={setPendingTags}
           disabled={submitting}
