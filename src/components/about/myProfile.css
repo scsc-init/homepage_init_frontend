@@ -282,3 +282,25 @@
   color: var(--color-text-body);
   box-shadow: 0 4px 20px var(--executive-card-shadow);
 }
+
+.my-page-logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+  height: 36px;
+  font-size: 16px;
+  padding: 0 1rem;
+  font-weight: 800;
+  margin: 20px auto 0 auto;
+  background-color: var(--color-button-alert-bg);
+}
+
+.my-page-logout-button:hover {
+  background: var(--color-button-alert-hover-bg);
+  box-shadow: 0 4px 16px var(--executive-card-shadow);
+}
+
+.my-page-logout-button:active {
+  transform: translateY(1px);
+}

@@ -323,3 +323,37 @@
 :global(.dark) .agree {
   color: var(--color-surface-light);
 }
+
+.definitionRow {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.definitionRow dt {
+  min-width: 4.5rem;
+  font-weight: 700;
+}
+
+.definitionRow dd {
+  margin: 0;
+}
+
+.warning-wrapper {
+  align-items: center;
+  text-align: center;
+  position: relative;
+  max-width: 180;
+}
+
+.copy-button-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.copy-button-wrapper button {
+  width: auto;
+  min-width: 180px;
+}

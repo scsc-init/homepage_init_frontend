@@ -200,6 +200,11 @@ export default function MyProfileClient() {
               <span className="btn-label">정보 수정</span>
             </a>
           </div>
+          <div>
+            <button className="my-page-logout-button" onClick={handleLogout}>
+              로그아웃
+            </button>
+          </div>
         </div>
       </div>
     </div>
