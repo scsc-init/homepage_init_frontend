@@ -4,7 +4,7 @@ import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
 import SigTagManager from '@/components/board/SigTagManager';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
@@ -21,6 +21,11 @@ export default function EditSigClient({ sigId, me, sig, article }) {
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
+  const initialTagIds = useMemo(
+    () => (Array.isArray(sig?.tags) ? sig.tags.map((tag) => Number(tag.id)) : []),
+    [sig?.tags],
+  );
+  const [pendingTags, setPendingTags] = useState(initialTagIds);
 
   const {
     register,
@@ -74,9 +79,47 @@ export default function EditSigClient({ sigId, me, sig, article }) {
         should_extend: sig.should_extend ?? false,
         is_rolling_admission: sig.is_rolling_admission ?? false,
       });
+      setPendingTags(Array.isArray(sig?.tags) ? sig.tags.map((tag) => Number(tag.id)) : []);
       setEditorKey((k) => k + 1);
     }
   }, [sig, article, mounted, isDirty, reset]);
+
+  const syncTags = async () => {
+    const originalTagIds = Array.isArray(sig?.tags)
+      ? sig.tags.map((tag) => Number(tag.id))
+      : [];
+    const currentTagIds = Array.isArray(pendingTags) ? pendingTags.map((id) => Number(id)) : [];
+
+    const originalIdSet = new Set(originalTagIds);
+    const currentIdSet = new Set(currentTagIds);
+
+    const removedTagIds = originalTagIds.filter((id) => !currentIdSet.has(id));
+    const addedTagIds = currentTagIds.filter((id) => !originalIdSet.has(id));
+
+    for (const tagId of removedTagIds) {
+      const res = await fetch(`/api/sig/${sigId}/tag/${tagId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok && res.status !== 204) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail ?? '태그 삭제 실패');
+      }
+    }
+
+    for (const tagId of addedTagIds) {
+      const res = await fetch(`/api/sig/${sigId}/tag`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tag_id: Number(tagId) }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail ?? '기존 태그 추가 실패');
+      }
+    }
+  };
 
   const onSubmit = async (data) => {
     if (submitting) return;
@@ -109,6 +152,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       );
 
       if (res.status === 204) {
+        await syncTags();
         isFormSubmitted.current = true;
         alert('SIG 수정 성공!');
         router.push(`/sig/${sigId}`);
@@ -145,9 +189,11 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <SigTagManager
-          sigId={sigId}
           initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          initialTagIds={initialTagIds}
           isExecutive={Boolean(me?.role >= minExecutiveLevel)}
+          onChange={setPendingTags}
+          disabled={submitting}
         />
       </div>
     </div>
