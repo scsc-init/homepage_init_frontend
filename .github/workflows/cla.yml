@@ -29,10 +29,9 @@ jobs:
             We appreciate your pull request.
             Prior to acceptance, you must agree to the Contributor License Agreement (CLA).
 
-            CLA document: $pathToCLADocument
+            CLA document: https://github.com/scsc-init/homepage_init_frontend/blob/develop/.github/CLA.md
 
             To sign, post a PR comment that exactly matches the following line:
-            I have read the CLA document, and I am signing the CLA.
           custom-pr-sign-comment: 'I have read the CLA document, and I am signing the CLA.'
           custom-allsigned-prcomment: '**CLA Assistant Lite** All Contributors have signed the CLA document.'
           path-to-signatures: '.github/signatures/cla.json'
