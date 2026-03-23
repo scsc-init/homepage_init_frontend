@@ -2,9 +2,49 @@ import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
+import { getBaseUrl } from '@/util/getBaseUrl';
+
+async function fetchKvValue(key) {
+  try {
+    const res = await fetch(`${getBaseUrl()}/api/kv/${encodeURIComponent(key)}`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return '';
+    const body = await res.json().catch(() => null);
+    return typeof body?.value === 'string' ? body.value : '';
+  } catch (err) {
+    console.error(`[contact] kv fetch failed (${key})`, err);
+    return '';
+  }
+}
 
 export default async function Contact() {
+  const [presidentNameRaw, presidentPhone, viceNamesRaw, vicePhonesRaw] = await Promise.all([
+    fetchKvValue('president-name'),
+    fetchKvValue('president-phone'),
+    fetchKvValue('vice-president-name'),
+    fetchKvValue('vice-president-phone'),
+  ]);
+
   const thisYear = new Date().getFullYear();
+  const presidentName = presidentNameRaw || '';
+
+  const viceNames = viceNamesRaw
+    .split(';')
+    .map((v) => v.trim())
+    .filter(Boolean);
+  const vicePhones = vicePhonesRaw
+    .split(';')
+    .map((v) => v.trim())
+    .filter(Boolean);
+  const maxVice = Math.max(viceNames.length, vicePhones.length);
+  const vicePresidents = [];
+  for (let i = 0; i < maxVice; i++) {
+    const name = viceNames[i] || '';
+    const phone = vicePhones[i] || '';
+    const combined = `${name} ${phone}`.trim();
+    if (combined) vicePresidents.push(combined);
+  }
 
   return (
     <>
@@ -25,11 +65,13 @@ export default async function Contact() {
                   <tbody>
                     <tr>
                       <td className="label">회장</td>
-                      <td className="info">강명석 010-2058-7356</td>
+                      <td className="info">
+                        {presidentName} {presidentPhone}
+                      </td>
                     </tr>
                     <tr>
                       <td className="label">부회장</td>
-                      <td className="info">박상혁 010-4014-1871 / 박성현 010-3537-2998</td>
+                      <td className="info">{vicePresidents.join(' / ')}</td>
                     </tr>
                     <tr>
                       <td className="label">Email</td>
