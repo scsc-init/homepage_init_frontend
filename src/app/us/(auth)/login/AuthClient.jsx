@@ -39,13 +39,15 @@ function log(event, data = {}) {
 
 function InAppBrowserOutButton() {
   const [isRedirectPossible, setIsRedirectPossible] = useState(false);
-  const useragt = navigator.userAgent.toLowerCase();
+  const [useragt, setUseragt] = useState('');
 
   useEffect(() => {
-    if (useragt.match(/kakaotalk|line/i)) {
+    const ua = navigator.userAgent.toLowerCase();
+    setUseragt(ua);
+    if (ua.match(/kakaotalk|line/i)) {
       setIsRedirectPossible(true);
     }
-  }, [useragt]);
+  }, []);
 
   const onClick = () => {
     const target_url = window.location.href;
@@ -63,7 +65,7 @@ function InAppBrowserOutButton() {
 
   if (!isRedirectPossible) {
     if (!useragt.match('everytimeapp')) return;
-    if (useragt.match(/ios|ipad|ipod/i)) {
+    if (useragt.match(/iphone|ipad|ipod/i)) {
       return (
         <p>
           상단의 화살표 아이콘({' '}

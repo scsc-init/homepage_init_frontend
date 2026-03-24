@@ -1,0 +1,43 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.InAppWarning {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--red-10);
+}
+
+.warning-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.copy-button-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.copy-button-wrapper button {
+  width: auto;
+  min-width: 180px;
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.625rem;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: 1px solid var(--color-button-border);
+}
