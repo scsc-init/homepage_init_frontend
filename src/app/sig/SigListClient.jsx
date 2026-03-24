@@ -5,6 +5,7 @@ import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import styles from './sig.module.css';
 
 export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
   const [sortOrder, setSortOrder] = useState('latest');
@@ -83,30 +84,34 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
 
   return (
     <>
-      <div className="SigHeader">
+      <div className={styles.SigHeader}>
         <h1 className="text-3xl font-bold">SIG 게시판</h1>
-        <div className="SigHeaderActions">
+        <div className={styles.SigHeaderActions}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
-          <Link href="/sig/create" id="SigCreateButton">
-            <button className="SigCreateBtn">SIG 만들기</button>
+          <Link href="/sig/create" className={styles.SigCreateButton}>
+            <button className={styles.SigCreateBtn}>SIG 만들기</button>
           </Link>
         </div>
       </div>
 
-      <div className="SigFilterSection">
-        <div className="SigFilterHeader">
-          <span className="SigFilterTitle">태그 필터</span>
+      <div className={styles.SigFilterSection}>
+        <div className={styles.SigFilterHeader}>
+          <span className={styles.SigFilterTitle}>태그 필터</span>
           {selectedTags.length > 0 ? (
-            <button type="button" className="SigFilterClearButton" onClick={clearTagFilter}>
+            <button
+              type="button"
+              className={styles.SigFilterClearButton}
+              onClick={clearTagFilter}
+            >
               초기화
             </button>
           ) : null}
         </div>
 
-        <div className="SigTagFilterList">
+        <div className={styles.SigTagFilterList}>
           <button
             type="button"
-            className={`SigTagFilterChip ${selectedTags.length === 0 ? 'active' : ''}`}
+            className={`${styles.SigTagFilterChip} ${selectedTags.length === 0 ? styles.active : ''}`}
             onClick={clearTagFilter}
           >
             #전체
@@ -115,8 +120,8 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
             <button
               key={tag.id}
               type="button"
-              className={`SigTagFilterChip ${selectedTags.includes(tag.text) ? 'active' : ''} ${
-                tag.is_major ? 'major' : ''
+              className={`${styles.SigTagFilterChip} ${selectedTags.includes(tag.text) ? styles.active : ''} ${
+                tag.is_major ? styles.major : ''
               }`}
               onClick={() => toggleTagFilter(tag.text)}
             >
@@ -126,7 +131,7 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
         </div>
       </div>
 
-      <div className="SigListSummary">
+      <div className={styles.SigListSummary}>
         {selectedTags.length > 0 ? (
           <>
             선택된 태그 <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong> 를
@@ -139,28 +144,28 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
         )}
       </div>
 
-      <div id="SigList">
+      <div className={styles.SigList}>
         {sortedSigs.map((sig) => {
           const sid = String(sig.id);
           const isMine = myOwnedSigIds.has(sid);
           const tags = Array.isArray(sig?.tags) ? sig.tags : [];
 
           return (
-            <Link key={sig.id} href={`/sig/${sig.id}`} className="sigLink">
-              <div className={`sigCard ${isMine ? 'isMine' : ''}`}>
-                <div className="sigTopbar">
-                  <span className="sigTitle">{sig.title}</span>
-                  <span className="sigUserCount">
+            <Link key={sig.id} href={`/sig/${sig.id}`} className={styles.sigLink}>
+              <div className={`${styles.sigCard} ${isMine ? styles.isMine : ''}`}>
+                <div className={styles.sigTopbar}>
+                  <span className={styles.sigTitle}>{sig.title}</span>
+                  <span className={styles.sigUserCount}>
                     {sig.year}년 {SEMESTER_MAP[sig.semester]}학기
                   </span>
                 </div>
-                <div className="sigDescription">{sig.description}</div>
+                <div className={styles.sigDescription}>{sig.description}</div>
                 {tags.length > 0 ? (
-                  <div className="sigTagList">
+                  <div className={styles.sigTagList}>
                     {tags.map((tag) => (
                       <span
                         key={`${sig.id}-${tag.id}`}
-                        className={`sigTagText ${tag.is_major ? 'major' : ''}`}
+                        className={`${styles.sigTagText} ${tag.is_major ? styles.major : ''}`}
                       >
                         #{tag.text}
                       </span>
