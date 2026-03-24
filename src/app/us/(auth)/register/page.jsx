@@ -2,7 +2,6 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import AuthClient from './AuthClient';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 import { fetchMe } from '@/util/fetchAPIData';
 
 export const revalidate = 0;
@@ -14,7 +13,7 @@ export default async function RegisterPage() {
   if (!session?.user?.email || !session?.user?.name || !session?.hashToken) {
     redirect('/us/login');
   }
-  const res = await fetch(`${getBaseUrl()}/api/user/login`, {
+  const res = await fetch(`${process.env.BACKEND_URL || ''}/api/user/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +33,7 @@ export default async function RegisterPage() {
   }
 
   const discordLogin = async () => {
-    const res = await fetch(`${getBaseUrl()}/api/bot/discord/login`, {
+    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/bot/discord/login`, {
       method: 'POST',
       headers: {
         'x-api-secret': apiSecret,

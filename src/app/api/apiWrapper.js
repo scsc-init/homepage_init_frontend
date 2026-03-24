@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 
 /**
@@ -30,7 +29,7 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
     const qs = new URLSearchParams(options.query).toString();
     if (qs) fullPath += `?${qs}`;
   }
-  const fullUrl = `${getBaseUrl()}${fullPath}`;
+  const fullUrl = `${process.env.BACKEND_URL || ''}${fullPath}`;
 
   const hasIncoming = Boolean(request);
   const bodyJson = hasIncoming ? await request.json() : undefined;
