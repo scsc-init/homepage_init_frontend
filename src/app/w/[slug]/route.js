@@ -1,4 +1,3 @@
-import { getBaseUrl } from '@/util/getBaseUrl';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -7,9 +6,12 @@ export async function GET(_, { params }) {
     if (!params?.slug) {
       return await notFoundPage();
     }
-    const res = await fetch(`${getBaseUrl()}/api/w/${encodeURIComponent(params.slug)}`, {
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `${process.env.BACKEND_URL || ''}/api/w/${encodeURIComponent(params.slug)}`,
+      {
+        cache: 'no-store',
+      },
+    );
     if (!res.ok) {
       return await notFoundPage();
     }

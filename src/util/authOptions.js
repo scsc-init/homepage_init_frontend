@@ -1,6 +1,5 @@
 import Google from 'next-auth/providers/google';
 import crypto from 'crypto';
-import { getBaseUrl } from '@/util/getBaseUrl';
 import * as validator from '@/util/validator';
 
 export const authOptions = {
@@ -36,7 +35,7 @@ export const authOptions = {
         .update(String(user.email).toLowerCase())
         .digest('hex');
       try {
-        res = await fetch(`${getBaseUrl()}/api/user/login`, {
+        res = await fetch(`${process.env.BACKEND_URL || ''}/api/user/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-secret': apiSecret },
           body: JSON.stringify({
