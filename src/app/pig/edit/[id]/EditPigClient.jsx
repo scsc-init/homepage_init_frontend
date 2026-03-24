@@ -34,21 +34,6 @@ export default function EditPigClient({ pigId, me, pig, article }) {
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
 
-  const defaultFormValues = {
-    title: pig?.title ?? '',
-    description: pig?.description ?? '',
-    editor: article?.content ?? '',
-    should_extend: pig?.should_extend ?? false,
-    is_rolling_admission:
-      typeof pig?.is_rolling_admission === 'string'
-        ? pig.is_rolling_admission
-        : 'during_recruiting',
-    websites:
-      pig && Array.isArray(pig.websites) && pig.websites.length > 0
-        ? mapWebsitesForForm(pig.websites)
-        : [{ url: '' }],
-  };
-
   const {
     register,
     control,
@@ -56,7 +41,14 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: defaultFormValues,
+    defaultValues: {
+      title: '',
+      description: '',
+      editor: '',
+      should_extend: false,
+      is_rolling_admission: false,
+      websites: [{ url: '' }],
+    },
   });
 
   useEffect(() => {
@@ -88,7 +80,20 @@ export default function EditPigClient({ pigId, me, pig, article }) {
 
   useEffect(() => {
     if (pig && article && mounted && !isDirty) {
-      reset({ ...defaultFormValues });
+      reset({
+        title: pig?.title ?? '',
+        description: pig?.description ?? '',
+        editor: article?.content ?? '',
+        should_extend: pig?.should_extend ?? false,
+        is_rolling_admission:
+          typeof pig?.is_rolling_admission === 'string'
+            ? pig.is_rolling_admission
+            : 'during_recruiting',
+        websites:
+          pig && Array.isArray(pig.websites) && pig.websites.length > 0
+            ? mapWebsitesForForm(pig.websites)
+            : [{ url: '' }],
+      });
       setEditorKey((key) => key + 1);
     }
   }, [pig, article, mounted, isDirty, reset]);
