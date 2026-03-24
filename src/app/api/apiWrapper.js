@@ -1,7 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
 import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 
 /**
@@ -15,6 +14,7 @@ import { ENABLE_TEST_UTILS } from '@/util/constants';
  * @returns {Promise<Response>} - A Next.js Response object.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
+  const apiSecret = process.env.API_SECRET || '';
   const session = await getServerSession(authOptions);
   const appJwt = session?.backendJwt || null;
   const params = await options.params;
@@ -41,7 +41,7 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
     fullPath.startsWith('/api/user/create') ||
     (ENABLE_TEST_UTILS && fullPath.startsWith('/api/test'))
   ) {
-    hdrs['x-api-secret'] = getApiSecret();
+    hdrs['x-api-secret'] = apiSecret;
   }
   if (appJwt) hdrs['x-jwt'] = appJwt;
   if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
