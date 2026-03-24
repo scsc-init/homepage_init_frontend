@@ -11,6 +11,7 @@ import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo } from 'react-icons/md';
+import Image from 'next/image';
 
 const USER_ROLE_MAP = {
   0: '최저권한',
@@ -103,13 +104,13 @@ export default function MyProfileClient() {
 
       <div className="user-profile-wrapper">
         {user ? (
-          <img
+          <Image
             src={user.profile_picture || '/asset/default-pfp.png'}
             alt="Profile"
             className="user-profile-picture"
           />
         ) : (
-          <img alt="" height="50" src="//:0" />
+          <Image alt="" height="50" src="//:0" />
         )}
         <div className="user-name-container">
           <div className="user-name">

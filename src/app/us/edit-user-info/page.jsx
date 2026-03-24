@@ -7,6 +7,7 @@ import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import Image from 'next/image';
 
 function EditUserInfoClient() {
   const router = useRouter();
@@ -177,7 +178,7 @@ function EditUserInfoClient() {
   return (
     <div className={styles.editUserInfo}>
       <h2>내 정보 수정</h2>
-      <img
+      <Image
         src={form.profile_picture ? form.profile_picture : '/asset/default-pfp.png'}
         alt="Profile"
         className={styles['user-profile-picture']}

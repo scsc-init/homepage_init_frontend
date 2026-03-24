@@ -8,6 +8,7 @@ import {
 } from '@/util/constants';
 import { resolveProfileImage } from '@/util/profileImage';
 import styles from '../about.module.css';
+import Image from 'next/image';
 
 function roleDisplay(user, leadershipIds) {
   if (!user) return '임원';
@@ -149,7 +150,7 @@ export default function ExecutivesClient() {
               style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
             >
               <div className={styles.imageWrapper}>
-                <img
+                <Image
                   src={person.image || DEFAULT_EXECUTIVE_PFP}
                   alt={person.name}
                   loading="lazy"
@@ -178,7 +179,7 @@ export default function ExecutivesClient() {
         {people.map((person, i) => (
           <div className={styles.masonryCard} key={person.id || i}>
             <div className={styles.imageWrapper}>
-              <img
+              <Image
                 src={person.image || DEFAULT_EXECUTIVE_PFP}
                 alt={person.name}
                 loading="lazy"
