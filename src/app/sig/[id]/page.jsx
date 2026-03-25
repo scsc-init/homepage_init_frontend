@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: sig.title,
         description: sig.description || 'SIG 상세 페이지',
-        url: `${process.env.BACKEND_URL || ''}/sig/${id}`,
+        url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
         type: 'article',
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
       title: 'SIG | SCSC',
       openGraph: {
         title: 'SIG | SCSC',
-        url: `${process.env.BACKEND_URL || ''}/sig/${id}`,
+        url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
         type: 'article',
