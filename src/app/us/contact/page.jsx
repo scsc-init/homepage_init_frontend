@@ -2,13 +2,15 @@ import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 async function fetchKvValue(key) {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/kv/${encodeURIComponent(key)}`, {
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `${process.env.BACKEND_URL || ''}/api/kv/${encodeURIComponent(key)}`,
+      {
+        cache: 'no-store',
+      },
+    );
     if (!res.ok) return '';
     const body = await res.json().catch(() => null);
     return typeof body?.value === 'string' ? body.value : '';

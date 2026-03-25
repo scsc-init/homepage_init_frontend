@@ -2,14 +2,13 @@ import 'highlight.js/styles/github.css';
 import './page.css';
 import PigClient from './PigClient';
 import { handleApiRequest } from '@/app/api/apiWrapper';
-import { getBaseUrl } from '@/util/getBaseUrl';
 import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { id } = params;
   try {
-    const res = await fetch(`${getBaseUrl()}/api/pig/${id}`, {
+    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/pig/${id}`, {
       method: 'GET',
       cache: 'no-store',
     });
@@ -21,7 +20,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: pig.title,
         description: pig.description || 'PIG 상세 페이지',
-        url: `${getBaseUrl()}/pig/${id}`,
+        url: `https://scsc.dev/pig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
         type: 'article',
@@ -38,7 +37,7 @@ export async function generateMetadata({ params }) {
       title: 'PIG | SCSC',
       openGraph: {
         title: 'PIG | SCSC',
-        url: `${getBaseUrl()}/pig/${id}`,
+        url: `https://scsc.dev/pig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
         type: 'article',
