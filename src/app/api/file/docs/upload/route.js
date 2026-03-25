@@ -1,9 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function POST(req) {
-  const base = getBaseUrl();
+  const base = process.env.BACKEND_URL || '';
   const url = `${base}/api/file/docs/upload`;
 
   const session = await getServerSession(authOptions);
