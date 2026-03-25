@@ -34,7 +34,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       description: '',
       editor: '',
       should_extend: false,
-      is_rolling_admission: false,
+      is_rolling_admission: 'during_recruiting',
     },
   });
 
