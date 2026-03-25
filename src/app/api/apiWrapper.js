@@ -29,7 +29,7 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
     const qs = new URLSearchParams(options.query).toString();
     if (qs) fullPath += `?${qs}`;
   }
-  const fullUrl = `${process.env.BACKEND_URL || ''}${fullPath}`;
+  const FULL_URL_PATH = `${process.env.BACKEND_URL || ''}${fullPath}`;
 
   const hasIncoming = Boolean(request);
   const bodyJson = hasIncoming ? await request.json() : undefined;
@@ -45,7 +45,7 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   if (appJwt) hdrs['x-jwt'] = appJwt;
   if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
 
-  return fetch(fullUrl, {
+  return fetch(FULL_URL_PATH, {
     method,
     headers: hdrs,
     body: bodyJson !== undefined ? JSON.stringify(bodyJson) : undefined,
