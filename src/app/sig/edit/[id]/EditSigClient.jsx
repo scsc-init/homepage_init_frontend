@@ -15,6 +15,16 @@ function useMounted() {
   return mounted;
 }
 
+function generateDefaultSigForms(sig, article) {
+  return {
+    title: sig.title ?? '',
+    description: sig.description ?? '',
+    editor: article.content ?? '',
+    should_extend: sig.should_extend ?? false,
+    is_rolling_admission: sig.is_rolling_admission ?? false,
+  };
+}
+
 export default function EditSigClient({ sigId, me, sig, article }) {
   const router = useRouter();
   const isFormSubmitted = useRef(false);
@@ -29,13 +39,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: {
-      title: '',
-      description: '',
-      editor: '',
-      should_extend: false,
-      is_rolling_admission: false,
-    },
+    defaultValues: generateDefaultSigForms(sig, article),
   });
 
   useEffect(() => {
@@ -67,13 +71,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
 
   useEffect(() => {
     if (sig && article && mounted && !isDirty) {
-      reset({
-        title: sig.title ?? '',
-        description: sig.description ?? '',
-        editor: article.content ?? '',
-        should_extend: sig.should_extend ?? false,
-        is_rolling_admission: sig.is_rolling_admission ?? false,
-      });
+      reset(generateDefaultSigForms(sig, article));
       setEditorKey((k) => k + 1);
     }
   }, [sig, article, mounted, isDirty, reset]);
