@@ -112,7 +112,6 @@ export default function ExecutivesClient() {
                 />
               </div>
               <h3>{person.name}</h3>
-              {person.phone && <p className={styles.roleText}>{person.phone}</p>}
             </div>
           ))}
         </div>
@@ -142,7 +141,6 @@ export default function ExecutivesClient() {
               </div>
             </div>
             <h3>{person.name}</h3>
-            {person.phone && <p className={styles.roleText}>{person.phone}</p>}
           </div>
         ))}
       </div>
