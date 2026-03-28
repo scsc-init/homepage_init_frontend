@@ -8,50 +8,42 @@ import styles from '../about.module.css';
 const executives = [
   {
     name: '강명석',
-    role: '대장',
     image: '/devs/kms.jpg',
     description: 'init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아',
   },
   {
     name: '이한경',
-    role: '',
     image: '/devs/lhk.jpg',
     description: '한경님의 백엔드 너무 좋아앗',
   },
   {
     name: '박성현',
-    role: '',
     image: '/devs/psh.jpg',
     description: '아주아주 귀여운 여고생',
   },
   {
     name: '황민기',
-    role: '',
     image: '/devs/hmk.jpg',
     description: '커밋주작은뭐야',
   },
   {
     name: '윤영우',
-    role: '',
     image: '/devs/yyw.jpg',
     description: '고능',
   },
   {
     name: '박상혁(Ethan)',
-    role: '',
     image: '/devs/psh.jpg',
     description: 'SCSC 막스 베르슈타펜',
   },
   {
     name: '최정원',
-    role: '',
-    image: '/asset/default-pfp.png',
+    image: '',
     description: '',
   },
   {
     name: '이태윤',
-    role: '',
-    image: '/asset/default-pfp.png',
+    image: '',
     description: '',
   },
 ];
@@ -112,10 +104,14 @@ export default function ExecutivesClient() {
               }}
             >
               <div className={styles.imageWrapper}>
-                <Image src={person.image} alt={person.name} fill className={styles.image} />
+                <Image
+                  src={person.image || '/asset/default-pfp.png'}
+                  alt={person.name}
+                  fill
+                  className={styles.image}
+                />
               </div>
               <h3>{person.name}</h3>
-              <p className={styles.roleText}>{person.role}</p>
               {person.phone && <p className={styles.roleText}>{person.phone}</p>}
             </div>
           ))}
@@ -135,7 +131,12 @@ export default function ExecutivesClient() {
         {executives.map((person, i) => (
           <div className={styles.masonryCard} key={i}>
             <div className={styles.imageWrapper}>
-              <Image src={person.image} alt={person.name} fill className={styles.image} />
+              <Image
+                src={person.image || '/asset/default-pfp.png'}
+                alt={person.name}
+                fill
+                className={styles.image}
+              />
               <div className={styles.overlay}>
                 <p className={styles.description}>{person.description}</p>
               </div>
