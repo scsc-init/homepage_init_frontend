@@ -48,7 +48,7 @@
   border-left: 4px solid var(--selection-bg);
   transition:
     border-color 0.2s ease,
-    background 0.2s ease;
+    background-color 0.2s ease;
 }
 
 .sigTopbar {
@@ -225,4 +225,10 @@ body {
     align-items: flex-start;
     gap: 0.25rem;
   }
+}
+
+.SigCreateBtn:disabled {
+  background-color: var(--color-text-subtle) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
 }

@@ -11,6 +11,7 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
   const [selectedTags, setSelectedTags] = useState(
     Array.isArray(initialFilterTags) ? initialFilterTags.filter(Boolean) : [],
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -87,9 +88,16 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
         <h1 className="text-3xl font-bold">SIG 게시판</h1>
         <div className="SigHeaderActions">
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
-          <Link href="/sig/create" id="SigCreateButton">
-            <button className="SigCreateBtn">SIG 만들기</button>
-          </Link>
+          <button
+            className="SigCreateBtn"
+            onClick={() => {
+              setIsLoading(true);
+              router.push('/sig/create');
+            }}
+            disabled={isLoading}
+          >
+            {isLoading ? '로딩 중...' : 'SIG 만들기'}
+          </button>
         </div>
       </div>
 
