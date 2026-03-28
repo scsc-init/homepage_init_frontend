@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-const refreshAllTags = async (setAllTags, setCatalogError) => {
+const refreshAllTags = async (setAllTags, setCatalogError, sortTags) => {
   const res = await fetch('/api/tags', { cache: 'no-store' });
   if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
 
@@ -31,7 +31,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
   }, [initialTags]);
 
   useEffect(() => {
-    refreshAllTags(setAllTags, setCatalogError).catch(() => {
+    refreshAllTags(setAllTags, setCatalogError, sortTags).catch(() => {
       setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
     });
   }, []);
@@ -106,7 +106,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       if (!addRes.ok) {
         const err = await addRes.json().catch(() => ({}));
         alert(err.detail ?? '태그 생성 후 추가 실패');
-        await refreshAllTags(setAllTags, setCatalogError).catch(() => {
+        await refreshAllTags(setAllTags, setCatalogError, sortTags).catch(() => {
           setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
         });
         return;
@@ -144,7 +144,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       }
 
       setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
-      await refreshAllTags(setAllTags, setCatalogError).catch(() => {
+      await refreshAllTags(setAllTags, setCatalogError, sortTags).catch(() => {
         setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
       });
     } catch {
