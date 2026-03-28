@@ -142,7 +142,6 @@ export default function ExecutivesClient() {
               </div>
             </div>
             <h3>{person.name}</h3>
-            <p className={styles.roleText}>{person.role}</p>
             {person.phone && <p className={styles.roleText}>{person.phone}</p>}
           </div>
         ))}
