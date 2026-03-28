@@ -18,6 +18,9 @@ export default function SigContents({ content }) {
           li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
           code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
           pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
+          img: ({ _node, ...props }) => (
+            <img className="mdx-img" {...props} alt="article image" />
+          ),
         }}
       >
         {content || ''}
