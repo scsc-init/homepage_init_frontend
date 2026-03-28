@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
+import ImageWrapper from '@/components/ImageWrapper.tsx';
 
 const UUID_REGEX =
   /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
@@ -85,13 +85,6 @@ function toThumbSrc(rawUrl) {
 
   if (u.startsWith('//')) u = `https:${u}`;
   return u;
-}
-
-function isLocalThumbSrc(src) {
-  const s = String(src || '');
-  if (!s) return false;
-  if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('//')) return false;
-  return s.startsWith('/');
 }
 
 async function pLimitMap(items, limit, fn) {
@@ -249,21 +242,12 @@ export default function GalleryView({ board, sortOrder }) {
           <a key={it.articleId} className={styles.galleryLink} href={href}>
             <div className={styles.galleryCard}>
               {it.thumbSrc ? (
-                isLocalThumbSrc(it.thumbSrc) ? (
-                  <Image
-                    className={styles.galleryImg}
-                    src={it.thumbSrc}
-                    alt={it.title || 'image'}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  />
-                ) : (
-                  <Image
-                    className={styles.galleryImg}
-                    src={it.thumbSrc}
-                    alt={it.title || 'image'}
-                  />
-                )
+                <ImageWrapper
+                  className={styles.galleryImg}
+                  src={it.thumbSrc}
+                  alt={it.title || 'image'}
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                />
               ) : (
                 <div className={styles.galleryNoImg} />
               )}

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './page.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
-import Image from 'next/image';
+import ImageWrapper from '@/components/ImageWrapper.tsx';
 
 export default function PfpUpdate() {
   const [mode, setMode] = useState('url');
@@ -111,7 +111,7 @@ export default function PfpUpdate() {
 
       {preview && (
         <div className={styles.imagePreview}>
-          <Image src={preview} alt="Preview" />
+          <ImageWrapper src={preview} alt="Preview" />
         </div>
       )}
 
