@@ -107,6 +107,8 @@ export default function MyProfileClient() {
           <Image
             src={user.profile_picture || '/asset/default-pfp.png'}
             alt="Profile"
+            width={50}
+            height={50}
             className="user-profile-picture"
           />
         ) : (

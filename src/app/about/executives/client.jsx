@@ -154,6 +154,7 @@ export default function ExecutivesClient() {
                   src={person.image || DEFAULT_EXECUTIVE_PFP}
                   alt={person.name}
                   className={styles.image}
+                  fill
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -180,6 +181,7 @@ export default function ExecutivesClient() {
               <Image
                 src={person.image || DEFAULT_EXECUTIVE_PFP}
                 alt={person.name}
+                fill
                 className={styles.image}
                 referrerPolicy="no-referrer"
               />

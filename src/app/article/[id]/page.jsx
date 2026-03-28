@@ -180,7 +180,7 @@ export default function ArticleDetail({ params }) {
             code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
             pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
             img: ({ _node, ...props }) => (
-              <Image className="mdx-img" {...props} alt="article image" />
+              <img className="mdx-img" {...props} alt="article image" />
             ),
             table: ({ _node, ...props }) => (
               <div className="mdx-table-wrap">
