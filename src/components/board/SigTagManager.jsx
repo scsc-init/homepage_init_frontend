@@ -2,6 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+const refreshAllTags = async (setAllTags, setCatalogError) => {
+  const res = await fetch('/api/tags', { cache: 'no-store' });
+  if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
+
+  const data = await res.json();
+  setAllTags(sortTags(Array.isArray(data) ? data : []));
+  setCatalogError('');
+};
+
 export default function SigTagManager({ sigId, initialTags = [], isExecutive = false }) {
   const [tags, setTags] = useState(Array.isArray(initialTags) ? initialTags : []);
   const [allTags, setAllTags] = useState([]);
@@ -17,21 +26,12 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       return String(a.text ?? '').localeCompare(String(b.text ?? ''), 'ko');
     });
 
-  const refreshAllTags = async () => {
-    const res = await fetch('/api/tags', { cache: 'no-store' });
-    if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
-
-    const data = await res.json();
-    setAllTags(sortTags(Array.isArray(data) ? data : []));
-    setCatalogError('');
-  };
-
   useEffect(() => {
     setTags(sortTags(Array.isArray(initialTags) ? initialTags : []));
   }, [initialTags]);
 
   useEffect(() => {
-    refreshAllTags().catch(() => {
+    refreshAllTags(setAllTags, setCatalogError).catch(() => {
       setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
     });
   }, []);
@@ -106,7 +106,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       if (!addRes.ok) {
         const err = await addRes.json().catch(() => ({}));
         alert(err.detail ?? '태그 생성 후 추가 실패');
-        await refreshAllTags().catch(() => {
+        await refreshAllTags(setAllTags, setCatalogError).catch(() => {
           setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
         });
         return;
@@ -144,7 +144,7 @@ export default function SigTagManager({ sigId, initialTags = [], isExecutive = f
       }
 
       setTags((prev) => sortTags(prev.filter((item) => String(item.id) !== String(tag.id))));
-      await refreshAllTags().catch(() => {
+      await refreshAllTags(setAllTags, setCatalogError).catch(() => {
         setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
       });
     } catch {
