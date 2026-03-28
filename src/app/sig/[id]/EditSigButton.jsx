@@ -24,7 +24,7 @@ export default function EditSigButton({ sigId, canEdit }) {
         opacity: isLoading ? 0.6 : 1,
       }}
     >
-      {isLoading ? '로딩 중...' : '수정하기'}
+      수정하기
     </button>
   );
 }

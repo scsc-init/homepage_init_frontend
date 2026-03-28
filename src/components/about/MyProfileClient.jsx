@@ -107,8 +107,8 @@ export default function MyProfileClient() {
           <Image
             src={user.profile_picture || '/asset/default-pfp.png'}
             alt="Profile"
-            width={50} // 고정 크기 지정
-            height={50} // 고정 크기 지정
+            width={50}
+            height={50}
             className="user-profile-picture"
           />
         ) : (

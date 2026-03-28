@@ -96,7 +96,7 @@ export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
             }}
             disabled={isLoading}
           >
-            {isLoading ? '로딩 중...' : 'SIG 만들기'}
+            SIG 만들기
           </button>
         </div>
       </div>
