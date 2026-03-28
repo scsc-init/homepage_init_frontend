@@ -12,20 +12,23 @@ function ImageWrapper({ src, alt, ...props }: ImageWrapperType) {
   const [imageDimension, setImageDimension] = useState<[number, number]>([0, 0]);
 
   useEffect(() => {
-    let mimeType: string;
+    if (src.startsWith('data')) {
+      const bytes = Uint8Array.fromBase64(src.split(',')[1]);
+      const dimension = sizeOf(bytes);
+      setImageDimension([dimension.width, dimension.height]);
+      setImageSourceURI(src);
+    } else {
+      fetch(src)
+        .then((res) => res.blob())
+        .then((blob) => {
+          setImageSourceURI(URL.createObjectURL(blob));
 
-    fetch(src)
-      .then((res) => {
-        mimeType = res.headers.get('Content-Type') || 'image/png';
-        return res.bytes();
-      })
-      .then((bytes) => {
-        const encodedImageData = Buffer.from(bytes).toString('base64');
-        setImageSourceURI(`data:${mimeType};base64,${encodedImageData}`);
-
-        const dimension = sizeOf(bytes);
-        setImageDimension([dimension.width, dimension.height]);
-      });
+          blob.bytes().then((bytes) => {
+            const dimension = sizeOf(bytes);
+            setImageDimension([dimension.width, dimension.height]);
+          });
+        });
+    }
   }, [src]);
 
   return (
