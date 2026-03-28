@@ -13,8 +13,8 @@ function ImageWrapper({ src, alt, ...props }: ImageWrapperType) {
 
   useEffect(() => {
     if (src.startsWith('data')) {
-      const bytes = Uint8Array.fromBase64(src.split(',')[1]);
-      const dimension = sizeOf(bytes);
+      const buffer = Buffer.from(src.split(',')[1], 'base64');
+      const dimension = sizeOf(buffer);
       setImageDimension([dimension.width, dimension.height]);
       setImageSourceURI(src);
     } else {
@@ -32,15 +32,13 @@ function ImageWrapper({ src, alt, ...props }: ImageWrapperType) {
   }, [src]);
 
   return (
-    <>
-      <Image
-        width={imageDimension[0]}
-        height={imageDimension[1]}
-        src={imageSourceURI}
-        alt={alt || ''}
-        {...props}
-      />
-    </>
+    <Image
+      width={imageDimension[0]}
+      height={imageDimension[1]}
+      src={imageSourceURI}
+      alt={alt || ''}
+      {...props}
+    />
   );
 }
 
