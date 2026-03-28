@@ -228,8 +228,8 @@ body {
 }
 
 .SigCreateBtn:disabled {
-  background-color: var(--color-button-disabled-bg) !important;
-  color: var(--color-button-disabled-text) !important;
+  background-color: var(--color-button-disabled-bg);
+  color: var(--color-button-disabled-text);
   cursor: not-allowed;
   opacity: 0.7;
   border-color: transparent;
