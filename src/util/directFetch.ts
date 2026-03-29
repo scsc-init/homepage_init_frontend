@@ -11,10 +11,10 @@
  * @returns BE 또는 FE API에서의 fetch Response
  */
 export async function directFetch(path: string, init: RequestInit = {}): Promise<Response> {
-  const p = String(path || '');
-  const backendBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+  const p = path;
+  const backendBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
   const isBrowser = typeof window !== 'undefined';
-  const useBackend = isBrowser && !!backendBase;
+  const useBackend = isBrowser && backendBase !== '';
 
   if (!useBackend) {
     return fetch(p, {
@@ -54,7 +54,7 @@ export async function directFetch(path: string, init: RequestInit = {}): Promise
  * @param init - fetch 옵션
  * @returns JSON 파싱된 응답 데이터
  */
-export async function directFetchJson<T = any>(
+export async function directFetchJson<T = unknown>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {

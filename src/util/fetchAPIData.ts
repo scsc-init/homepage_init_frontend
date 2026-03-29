@@ -1,15 +1,9 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
-import type { UserProfile, ExecutiveCandidate } from '@/types/user';
-
-type JsonPrimitive = string | number | boolean | null;
-type JsonValue = JsonPrimitive | JsonObject | JsonValue[];
-interface JsonObject {
-  [key: string]: JsonValue;
-}
+import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user';
 
 interface HandleApiRequestOptions {
   params?: Record<string, string | string[]>;
-  query?: Record<string, string | number | boolean | null | undefined>;
+  query?: Record<string, string | number | boolean | undefined>;
 }
 
 interface ApiResponseLike {
@@ -29,9 +23,13 @@ type HandleApiRequest = (
 const typedHandleApiRequest = handleApiRequest as HandleApiRequest;
 
 export interface BoardInfo {
-  id: string | number;
-  code: string;
+  id: number;
+  name: string;
   description: string;
+  writing_permission_level: number;
+  reading_permission_level: number;
+  created_at: string;
+  updated_at: string;
   [key: string]: unknown;
 }
 
@@ -44,35 +42,50 @@ export interface GlobalStatus {
 }
 
 export interface KvFetchResponse {
-  value?: unknown;
-}
-
-export interface SettledRejected {
-  status: 'rejected';
-  reason: unknown;
+  key: string;
+  value?: string;
 }
 
 export type KvValueResult =
   | { status: 'fulfilled'; value: string }
   | { status: 'rejected'; reason: string };
 
+export interface ArticleContentResponse {
+  id?: number;
+  content?: string;
+  [key: string]: unknown;
+}
+
+export interface DiscordBotStatusResponse {
+  logged_in?: boolean;
+}
+
+export interface MajorInfo {
+  id: number;
+  name: string;
+  short_name?: string;
+  [key: string]: unknown;
+}
+
+export interface FundApplyTerm {
+  year: number;
+  semester: number;
+}
+
 export interface BaseTarget {
-  id?: number | string | null;
-  content_id?: number | string | null;
+  id?: number;
+  content_id?: number;
   title?: string;
   name?: string;
   label?: string;
-  year?: number | string | null;
-  semester?: number | string | null;
+  year?: number;
+  semester?: number;
   status?: string;
   [key: string]: unknown;
 }
 
 export interface NormalizedTarget extends BaseTarget {
-  id: number | string | null;
   title: string;
-  year: number | null;
-  semester: number | null;
   status: string;
 }
 
@@ -83,12 +96,92 @@ export interface TargetWithContentMembers extends BaseTarget {
 
 export interface FundApplyCreateData {
   boardInfo: BoardInfo;
-  globalStatus: GlobalStatus | null;
-  prevTerm: { year: number; semester: number } | null;
+  globalStatus?: GlobalStatus;
+  prevTerm?: FundApplyTerm;
   sigs: NormalizedTarget[];
   pigs: NormalizedTarget[];
   prevSigs: NormalizedTarget[];
   prevPigs: NormalizedTarget[];
+}
+
+interface ApiListContainer {
+  items?: Record<string, unknown>[];
+  data?: Record<string, unknown>[];
+  results?: Record<string, unknown>[];
+  sigs?: Record<string, unknown>[];
+  pigs?: Record<string, unknown>[];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object';
+}
+
+function toNumber(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+}
+
+function toStringValue(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return undefined;
+}
+
+function asArray(value: unknown): Record<string, unknown>[] {
+  if (Array.isArray(value)) {
+    return value.filter(isRecord);
+  }
+
+  if (!isRecord(value)) {
+    return [];
+  }
+
+  const container = value as ApiListContainer;
+
+  if (Array.isArray(container.items)) return container.items.filter(isRecord);
+  if (Array.isArray(container.data)) return container.data.filter(isRecord);
+  if (Array.isArray(container.results)) return container.results.filter(isRecord);
+  if (Array.isArray(container.sigs)) return container.sigs.filter(isRecord);
+  if (Array.isArray(container.pigs)) return container.pigs.filter(isRecord);
+
+  return [];
+}
+
+function normalizeTarget(raw: Record<string, unknown>): NormalizedTarget {
+  return {
+    ...raw,
+    id: toNumber(raw.id),
+    content_id: toNumber(raw.content_id),
+    title:
+      toStringValue(raw.title) ?? toStringValue(raw.name) ?? toStringValue(raw.label) ?? '',
+    year: toNumber(raw.year),
+    semester: toNumber(raw.semester),
+    status: toStringValue(raw.status) ?? '',
+  };
+}
+
+async function softFetch<R>(path: string): Promise<R | undefined> {
+  try {
+    const res = await typedHandleApiRequest('GET', path);
+    if (!res.ok) {
+      return undefined;
+    }
+    return (await res.json().catch(() => undefined)) as R | undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -122,7 +215,7 @@ export async function safeFetch<T = unknown>(
  * @returns Current user data.
  */
 export async function fetchMe(): Promise<UserProfile> {
-  return safeFetch<UserProfile>('GET', `/api/user/profile`);
+  return safeFetch<UserProfile>('GET', '/api/user/profile');
 }
 
 /**
@@ -130,8 +223,8 @@ export async function fetchMe(): Promise<UserProfile> {
  *
  * @returns All users.
  */
-export async function fetchUsers<T = any>(): Promise<T> {
-  return safeFetch<T>('GET', `/api/executive/users`);
+export async function fetchUsers<T extends UserProfile[] = UserProfile[]>(): Promise<T> {
+  return safeFetch<T>('GET', '/api/executive/users');
 }
 
 /**
@@ -139,7 +232,9 @@ export async function fetchUsers<T = any>(): Promise<T> {
  *
  * @returns User summaries.
  */
-export async function fetchUserSummaries<T = any>(): Promise<T> {
+export async function fetchUserSummaries<
+  T extends UserSummary[] = UserSummary[],
+>(): Promise<T> {
   return safeFetch<T>('GET', '/api/executive/users/summary');
 }
 
@@ -149,7 +244,7 @@ export async function fetchUserSummaries<T = any>(): Promise<T> {
  * @param boardIds - Ids of the target boards to fetch.
  * @returns Promise that always resolves to object that contains information for each boards.
  */
-export async function fetchBoards<T = any>(
+export async function fetchBoards<T extends BoardInfo = BoardInfo>(
   boardIds: number[],
 ): Promise<PromiseSettledResult<T>[]> {
   return Promise.allSettled(boardIds.map((id) => safeFetch<T>('GET', `/api/board/${id}`)));
@@ -163,31 +258,19 @@ export async function fetchBoards<T = any>(
 export async function fetchSigs<T extends BaseTarget = BaseTarget>(): Promise<
   PromiseSettledResult<TargetWithContentMembers & T>[]
 > {
-  const softFetch = async <R = unknown>(path: string): Promise<R | null> => {
-    try {
-      const res = await typedHandleApiRequest('GET', path);
-      if (!res.ok) return null;
-      return (await res.json().catch(() => null)) as R | null;
-    } catch {
-      return null;
-    }
-  };
-
   const sigsRaw = await safeFetch<T[]>('GET', '/api/sigs');
 
   const sigsWithContentMembers = await Promise.allSettled(
     (Array.isArray(sigsRaw) ? sigsRaw : []).map(async (sig) => {
-      const articlePromise =
-        sig.content_id != null
-          ? softFetch<{ content?: string }>(`/api/article/${sig.content_id}`)
-          : Promise.resolve(null);
+      const article =
+        sig.content_id !== undefined
+          ? await softFetch<ArticleContentResponse>(`/api/article/${sig.content_id}`)
+          : undefined;
 
-      const membersPromise =
-        sig.id != null
-          ? softFetch<unknown[]>(`/api/sig/${sig.id}/members`)
-          : Promise.resolve(null);
-
-      const [article, members] = await Promise.all([articlePromise, membersPromise]);
+      const members =
+        sig.id !== undefined
+          ? await softFetch<unknown[]>(`/api/sig/${sig.id}/members`)
+          : undefined;
 
       return {
         ...sig,
@@ -208,31 +291,19 @@ export async function fetchSigs<T extends BaseTarget = BaseTarget>(): Promise<
 export async function fetchPigs<T extends BaseTarget = BaseTarget>(): Promise<
   PromiseSettledResult<TargetWithContentMembers & T>[]
 > {
-  const softFetch = async <R = any>(path: string): Promise<R | null> => {
-    try {
-      const res = await typedHandleApiRequest('GET', path);
-      if (!res.ok) return null;
-      return (await res.json().catch(() => null)) as R | null;
-    } catch {
-      return null;
-    }
-  };
-
   const pigsRaw = await safeFetch<T[]>('GET', '/api/pigs');
 
   const pigsWithContentMembers = await Promise.allSettled(
     (Array.isArray(pigsRaw) ? pigsRaw : []).map(async (pig) => {
-      const articlePromise =
-        pig.content_id != null
-          ? softFetch<{ content?: string }>(`/api/article/${pig.content_id}`)
-          : Promise.resolve(null);
+      const article =
+        pig.content_id !== undefined
+          ? await softFetch<ArticleContentResponse>(`/api/article/${pig.content_id}`)
+          : undefined;
 
-      const membersPromise =
-        pig.id != null
-          ? softFetch<unknown[]>(`/api/pig/${pig.id}/members`)
-          : Promise.resolve(null);
-
-      const [article, members] = await Promise.all([articlePromise, membersPromise]);
+      const members =
+        pig.id !== undefined
+          ? await softFetch<unknown[]>(`/api/pig/${pig.id}/members`)
+          : undefined;
 
       return {
         ...pig,
@@ -250,7 +321,7 @@ export async function fetchPigs<T extends BaseTarget = BaseTarget>(): Promise<
  *
  * @returns All majors.
  */
-export async function fetchMajors<T = any>(): Promise<T> {
+export async function fetchMajors<T extends MajorInfo[] = MajorInfo[]>(): Promise<T> {
   return safeFetch<T>('GET', '/api/majors');
 }
 
@@ -260,8 +331,8 @@ export async function fetchMajors<T = any>(): Promise<T> {
  * @returns Whether Discord bot is logged in or not.
  */
 export async function fetchDiscordBotStatus(): Promise<boolean> {
-  const body = await safeFetch<{ logged_in?: boolean }>('GET', '/api/bot/discord/status');
-  return Boolean(body.logged_in);
+  const body = await safeFetch<DiscordBotStatusResponse>('GET', '/api/bot/discord/status');
+  return body.logged_in === true;
 }
 
 /**
@@ -289,21 +360,19 @@ export async function fetchExecutiveCandidates<
   const execList = (execRes.ok ? await execRes.json().catch(() => []) : []) as T[];
   const prezList = (prezRes.ok ? await prezRes.json().catch(() => []) : []) as T[];
 
-  const merged = new Map<string | number, T>();
+  const merged = new Map<string, T>();
   for (const entry of [
     ...(Array.isArray(execList) ? execList : []),
     ...(Array.isArray(prezList) ? prezList : []),
   ]) {
-    const key =
-      entry.id ?? entry.email ?? `${String(entry.name || '')}-${String(entry.phone || '')}`;
-    if (!merged.has(key)) merged.set(key, entry);
+    const key = entry.id || entry.email || entry.name;
+
+    if (!merged.has(key)) {
+      merged.set(key, entry);
+    }
   }
 
-  return Array.from(merged.values()).sort((a, b) => {
-    const nameA = String(a?.name || '');
-    const nameB = String(b?.name || '');
-    return nameA.localeCompare(nameB, 'ko');
-  });
+  return Array.from(merged.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }
 
 /**
@@ -316,7 +385,7 @@ export async function fetchExecutiveCandidates<
 export async function getKVValue(key: string): Promise<string> {
   try {
     const j = await safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(key)}`);
-    const v = j?.value;
+    const v = j.value;
     return typeof v === 'string' && v.trim() ? v.trim() : '';
   } catch {
     return '';
@@ -332,47 +401,39 @@ export async function getKVValue(key: string): Promise<string> {
 export async function getKVValues(keys: string[]): Promise<Record<string, KvValueResult>> {
   const list = Array.isArray(keys) ? keys : [];
   const results = await Promise.allSettled(
-    list.map((k) =>
-      safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(String(k))}`),
-    ),
+    list.map((k) => safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(k)}`)),
   );
 
   const out: Record<string, KvValueResult> = {};
-  for (let i = 0; i < list.length; i++) {
-    const key = String(list[i]);
-    const r = results[i];
-    if (r.status === 'fulfilled') {
-      const raw = r.value?.value;
-      out[key] = { status: 'fulfilled', value: typeof raw === 'string' ? raw : '' };
-    } else {
-      out[key] = { status: 'rejected', reason: String(r.reason ?? '') };
+  for (let i = 0; i < list.length; i += 1) {
+    const key = list[i] ?? '';
+    const result = results[i];
+
+    if (result.status === 'fulfilled') {
+      out[key] = { status: 'fulfilled', value: result.value.value ?? '' };
+      continue;
     }
+
+    out[key] = { status: 'rejected', reason: String(result.reason ?? '') };
   }
   return out;
 }
 
 /**
- * Set a single KV value (string or null).
+ * Set a single KV value (string).
  *
  * @param key - KV key
  * @param value - KV value
  * @returns API response
  */
-export async function setKVValue<T = any>(
-  key: string,
-  value: string | null | undefined,
-): Promise<T> {
-  const body = { value: typeof value === 'string' ? value : null };
+export async function setKVValue<T = unknown>(key: string, value: string): Promise<T> {
   const req = new Request('http://dummy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ value }),
   });
-  return safeFetch<T>('POST', `/api/kv/${encodeURIComponent(key)}/update`, {}, req).catch(
-    async (e) => {
-      throw e;
-    },
-  );
+
+  return safeFetch<T>('POST', `/api/kv/${encodeURIComponent(key)}/update`, {}, req);
 }
 
 /**
@@ -382,19 +443,24 @@ export async function setKVValue<T = any>(
  * @returns { key: true/false } success map
  */
 export async function setKVValues(
-  entries: Record<string, string | null | undefined>,
+  entries: Record<string, string | undefined>,
 ): Promise<Record<string, boolean>> {
-  const pairs = Object.entries(entries || {});
+  const pairs = Object.entries(entries);
   const results = await Promise.allSettled(
     pairs.map(async ([k, v]) => {
-      await setKVValue(k, (v ?? '') === '' ? null : String(v));
+      await setKVValue(k, v ?? '');
       return [k, true] as const;
     }),
   );
+
   const out: Record<string, boolean> = {};
-  for (let i = 0; i < results.length; i++) {
-    const [k] = pairs[i];
-    out[k] = results[i].status === 'fulfilled';
+  for (let i = 0; i < results.length; i += 1) {
+    const pair = pairs[i];
+    if (!pair) {
+      continue;
+    }
+    const [key] = pair;
+    out[key] = results[i]?.status === 'fulfilled';
   }
   return out;
 }
@@ -411,68 +477,42 @@ export async function setKVValues(
  * @returns Data required by FundApplyClient.
  */
 export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCreateData> {
-  const asArray = (v: unknown): Record<string, any>[] => {
-    if (Array.isArray(v)) return v as Record<string, any>[];
-    if (v && typeof v === 'object') {
-      const obj = v as Record<string, unknown>;
-      if (Array.isArray(obj.items)) return obj.items as Record<string, any>[];
-      if (Array.isArray(obj.data)) return obj.data as Record<string, any>[];
-      if (Array.isArray(obj.results)) return obj.results as Record<string, any>[];
-      if (Array.isArray(obj.sigs)) return obj.sigs as Record<string, any>[];
-      if (Array.isArray(obj.pigs)) return obj.pigs as Record<string, any>[];
+  const calcPrevTerm = (term?: FundApplyTerm): FundApplyTerm | undefined => {
+    if (!term) {
+      return undefined;
     }
-    return [];
-  };
 
-  const normalizeTargets = (list: unknown): NormalizedTarget[] =>
-    asArray(list)
-      .filter((x) => x && typeof x === 'object')
-      .map((x) => ({
-        ...x,
-        id: x.id ?? null,
-        title: x.title ?? x.name ?? x.label ?? '',
-        year:
-          typeof x.year === 'number'
-            ? x.year
-            : Number.isFinite(Number(x.year))
-              ? Number(x.year)
-              : null,
-        semester:
-          typeof x.semester === 'number'
-            ? x.semester
-            : Number.isFinite(Number(x.semester))
-              ? Number(x.semester)
-              : null,
-        status: typeof x.status === 'string' ? x.status : '',
-      }));
-
-  const calcPrevTerm = (
-    term: { year: number; semester: number } | null,
-  ): { year: number; semester: number } | null => {
-    if (!term || typeof term.year !== 'number' || typeof term.semester !== 'number') {
-      return null;
+    if (term.semester === 1) {
+      return { year: term.year - 1, semester: 4 };
     }
-    if (term.semester === 1) return { year: term.year - 1, semester: 4 };
+
     return { year: term.year, semester: term.semester - 1 };
   };
 
   const [boardsSettled, globalStatus] = await Promise.all([
     fetchBoards<BoardInfo>([boardId]),
-    fetchSCSCGlobalStatus().catch(() => null),
+    fetchSCSCGlobalStatus().catch(() => undefined),
   ]);
 
   const boardInfo: BoardInfo =
     Array.isArray(boardsSettled) && boardsSettled[0]?.status === 'fulfilled'
       ? boardsSettled[0].value
-      : { id: String(boardId), code: String(boardId), description: '' };
+      : {
+          id: boardId,
+          name: '',
+          description: '',
+          writing_permission_level: 0,
+          reading_permission_level: 0,
+          created_at: '',
+          updated_at: '',
+        };
 
   const currentTerm = globalStatus
     ? {
         year: globalStatus.year,
         semester: globalStatus.semester,
-        status: globalStatus.status,
       }
-    : null;
+    : undefined;
 
   const prevTerm = calcPrevTerm(currentTerm);
 
@@ -493,7 +533,7 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
       query: {
         year: currentTerm.year,
         semester: currentTerm.semester,
-        status: currentTerm.status,
+        status: globalStatus?.status,
       },
     }).catch(() => []),
     safeFetch('GET', '/api/sigs', {
@@ -503,7 +543,7 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
       query: {
         year: currentTerm.year,
         semester: currentTerm.semester,
-        status: currentTerm.status,
+        status: globalStatus?.status,
       },
     }).catch(() => []),
     safeFetch('GET', '/api/pigs', {
@@ -511,10 +551,10 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
     }).catch(() => []),
   ]);
 
-  const sigs = normalizeTargets(currentSigsRaw);
-  const pigs = normalizeTargets(currentPigsRaw);
-  const prevSigs = normalizeTargets(prevSigsRaw);
-  const prevPigs = normalizeTargets(prevPigsRaw);
+  const sigs = asArray(currentSigsRaw).map(normalizeTarget);
+  const pigs = asArray(currentPigsRaw).map(normalizeTarget);
+  const prevSigs = asArray(prevSigsRaw).map(normalizeTarget);
+  const prevPigs = asArray(prevPigsRaw).map(normalizeTarget);
 
   return { boardInfo, globalStatus, prevTerm, sigs, pigs, prevSigs, prevPigs };
 }

@@ -6,8 +6,8 @@ type ValidatorCallback = (isValid: boolean) => void;
  * @param email - Email
  * @returns 유효 여부
  */
-export function email(email: string | undefined | null): boolean {
-  return email != undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email);
+export function email(email?: string): boolean {
+  return email !== undefined && /^[a-zA-Z0-9._%+-]+@snu.ac.kr$/.test(email);
 }
 
 /**
@@ -16,8 +16,8 @@ export function email(email: string | undefined | null): boolean {
  * @param code - Verification code
  * @param then - Validation callback
  */
-export function emailCode(code: string | undefined | null, then?: ValidatorCallback): void {
-  then && then(code != undefined && /^\d{6}$/.test(code));
+export function emailCode(code?: string, then?: ValidatorCallback): void {
+  then?.(/^\d{6}$/.test(code ?? ''));
 }
 
 /**
@@ -26,8 +26,8 @@ export function emailCode(code: string | undefined | null, then?: ValidatorCallb
  * @param password - Password
  * @param then - Validation callback
  */
-export function password(password: string | undefined | null, then?: ValidatorCallback): void {
-  then && then(password != undefined && password.length >= 8 && password.length <= 128);
+export function password(password?: string, then?: ValidatorCallback): void {
+  then?.((password ?? '').length >= 8 && (password ?? '').length <= 128);
 }
 
 /**
@@ -36,8 +36,8 @@ export function password(password: string | undefined | null, then?: ValidatorCa
  * @param name - Name
  * @param then - Validation callback
  */
-export function name(name: string | undefined | null, then?: ValidatorCallback): void {
-  then && then(name != undefined && name.length <= 64);
+export function name(name?: string, then?: ValidatorCallback): void {
+  then?.((name ?? '').length <= 64 && (name ?? '') !== '');
 }
 
 /**
@@ -46,11 +46,8 @@ export function name(name: string | undefined | null, then?: ValidatorCallback):
  * @param phoneNumber - Phone number
  * @param then - Validation callback
  */
-export function phoneNumber(
-  phoneNumber: string | undefined | null,
-  then?: ValidatorCallback,
-): void {
-  then && then(phoneNumber != undefined && /^010\d{8}$/.test(phoneNumber));
+export function phoneNumber(phoneNumber?: string, then?: ValidatorCallback): void {
+  then?.(/^010\d{8}$/.test(phoneNumber ?? ''));
 }
 
 /**
@@ -59,18 +56,15 @@ export function phoneNumber(
  * @param studentID - Student ID
  * @param then - Validation callback
  */
-export function studentID(
-  studentID: string | undefined | null,
-  then?: ValidatorCallback,
-): void {
-  if (studentID == null) {
-    then && then(false);
+export function studentID(studentID?: string, then?: ValidatorCallback): void {
+  if (studentID === undefined) {
+    then?.(false);
     return;
   }
 
   const match = studentID.match(/^(\d{4})(\d{5})$/);
   if (!match) {
-    then && then(false);
+    then?.(false);
     return;
   }
 
@@ -78,5 +72,5 @@ export function studentID(
   const currentYear = new Date().getFullYear();
   const isValid = year >= 1946 && year <= currentYear;
 
-  then && then(isValid);
+  then?.(isValid);
 }

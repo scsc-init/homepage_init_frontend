@@ -26,15 +26,15 @@ export function upgradeGoogleAvatar(url: string): string {
  * @returns Proxied image path or fallback
  */
 export function toProxyStaticPath(raw: string, fallback = DEFAULT_EXECUTIVE_PFP): string {
-  const s = String(raw || '').replace(/^\/+/, '');
+  const s = raw.replace(/^\/+/, '');
   if (!s) return fallback;
   if (!s.startsWith('static/image/')) return fallback;
   return `/api/${s}`.replace(/^\/api\/static\/image\//, '/api/static/image/');
 }
 
 export interface ProfileImageUser {
-  profile_picture?: string | null;
-  profile_picture_is_url?: boolean | null;
+  profile_picture?: string;
+  profile_picture_is_url?: boolean;
 }
 
 /**
@@ -43,11 +43,11 @@ export interface ProfileImageUser {
  * @returns Final profile image URL
  */
 export function resolveProfileImage(
-  user?: ProfileImageUser | null,
+  user?: ProfileImageUser,
   fallback = DEFAULT_EXECUTIVE_PFP,
 ): string {
   const raw = user?.profile_picture;
   if (!raw) return fallback;
-  if (user?.profile_picture_is_url) return upgradeGoogleAvatar(String(raw));
+  if (user?.profile_picture_is_url) return upgradeGoogleAvatar(raw);
   return toProxyStaticPath(raw, fallback);
 }

@@ -1,15 +1,15 @@
 const IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp', 'avif']);
 
 export interface AttachmentMeta {
-  mime_type?: string | null;
-  original_filename?: string | null;
+  mime_type?: string;
+  original_filename?: string;
 }
 
-const isImageMeta = (meta?: AttachmentMeta | null): boolean => {
+const isImageMeta = (meta?: AttachmentMeta): boolean => {
   if (!meta || typeof meta !== 'object') return false;
-  const mime = (meta.mime_type || '').toLowerCase();
+  const mime = (meta.mime_type ?? '').toLowerCase();
   if (mime.startsWith('image/')) return true;
-  const name = (meta.original_filename || '').toLowerCase();
+  const name = (meta.original_filename ?? '').toLowerCase();
   const ext = name.includes('.') ? (name.split('.').pop() ?? '') : '';
   return IMAGE_EXTENSIONS.has(ext);
 };
@@ -21,12 +21,9 @@ const isImageMeta = (meta?: AttachmentMeta | null): boolean => {
  * @param meta - Attachment metadata
  * @returns 다운로드 URL
  */
-export function getAttachmentDownloadUrl(
-  id: string | number,
-  meta?: AttachmentMeta | null,
-): string {
-  const encoded = encodeURIComponent(String(id));
-  if (isImageMeta(meta)) return `/api/image/download/${encoded}`;
+export function getAttachmentDownloadUrl(id: string, meta?: AttachmentMeta): string {
+  const encoded = encodeURIComponent(id);
+  if (isImageMeta(meta)) return `/api/file/image/download/${encoded}`;
   return `/api/file/docs/download/${encoded}`;
 }
 
@@ -36,6 +33,6 @@ export function getAttachmentDownloadUrl(
  * @param meta - Attachment metadata
  * @returns 이미지 여부
  */
-export function isImageAttachment(meta?: AttachmentMeta | null): boolean {
+export function isImageAttachment(meta?: AttachmentMeta): boolean {
   return isImageMeta(meta);
 }

@@ -1,23 +1,43 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
 import styles from './SigTagManager.module.css';
 
-export default function SigTagManager({
-  initialTags = [],
-  initialTagIds = [],
-  isExecutive = false,
-  onChange,
-  disabled = false,
-}) {
-  const [allTags, setAllTags] = useState([]);
-  const [attachedTagIds, setAttachedTagIds] = useState(
-    Array.isArray(initialTagIds)
-      ? initialTagIds.map((id) => String(id))
-      : Array.isArray(initialTags)
-        ? initialTags.map((tag) => String(tag.id))
-        : [],
+const SigTagManager = forwardRef(function SigTagManager(props, ref) {
+  const {
+    sigId,
+    initialTags,
+    initialTagIds,
+    isExecutive = false,
+    onChange,
+    disabled = false,
+  } = props;
+
+  const resolvedInitialIds = useMemo(() => {
+    if (Array.isArray(initialTagIds)) {
+      return initialTagIds.map((id) => String(id));
+    }
+    if (Array.isArray(initialTags)) {
+      return initialTags.map((tag) => String(tag.id));
+    }
+    return [];
+  }, [initialTagIds, initialTags]);
+
+  const resolvedInitialIdsKey = useMemo(
+    () => resolvedInitialIds.join(','),
+    [resolvedInitialIds],
   );
+
+  const [allTags, setAllTags] = useState([]);
+  const [attachedTagIds, setAttachedTagIds] = useState(resolvedInitialIds);
+  const [originalAttachedTagIds, setOriginalAttachedTagIds] = useState(resolvedInitialIds);
   const [selectedTagId, setSelectedTagId] = useState('');
   const [newTagText, setNewTagText] = useState('');
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
@@ -30,31 +50,33 @@ export default function SigTagManager({
       return String(a.text ?? '').localeCompare(String(b.text ?? ''), 'ko');
     });
 
-  const refreshAllTags = async () => {
+  const refreshAllTags = useCallback(async () => {
     const res = await fetch('/api/tags', { cache: 'no-store' });
     if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
 
     const data = await res.json();
     setAllTags(sortTags(Array.isArray(data) ? data : []));
     setCatalogError('');
-    return Array.isArray(data) ? data : [];
-  };
-
-  useEffect(() => {
-    setAttachedTagIds(
-      Array.isArray(initialTagIds)
-        ? initialTagIds.map((id) => String(id))
-        : Array.isArray(initialTags)
-          ? initialTags.map((tag) => String(tag.id))
-          : [],
-    );
-  }, [initialTagIds, initialTags]);
+  }, []);
 
   useEffect(() => {
     refreshAllTags().catch(() => {
       setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
     });
-  }, []);
+  }, [refreshAllTags]);
+
+  useEffect(() => {
+    setAttachedTagIds((prev) => {
+      const prevKey = prev.join(',');
+      if (prevKey === resolvedInitialIdsKey) return prev;
+      return resolvedInitialIds;
+    });
+    setOriginalAttachedTagIds((prev) => {
+      const prevKey = prev.join(',');
+      if (prevKey === resolvedInitialIdsKey) return prev;
+      return resolvedInitialIds;
+    });
+  }, [resolvedInitialIds, resolvedInitialIdsKey]);
 
   useEffect(() => {
     onChange?.(attachedTagIds.map((id) => Number(id)));
@@ -80,8 +102,9 @@ export default function SigTagManager({
     if (!selectedTagId || loading || disabled) return;
 
     setAttachedTagIds((prev) => {
-      if (prev.includes(String(selectedTagId))) return prev;
-      return [...prev, String(selectedTagId)];
+      const nextId = String(selectedTagId);
+      if (prev.includes(nextId)) return prev;
+      return [...prev, nextId];
     });
     setSelectedTagId('');
   };
@@ -142,13 +165,65 @@ export default function SigTagManager({
     setAttachedTagIds((prev) => prev.filter((id) => id !== String(tag.id)));
   };
 
+  const syncTags = useCallback(async () => {
+    if (!sigId) return;
+
+    const originalIdSet = new Set(originalAttachedTagIds);
+    const currentIdSet = new Set(attachedTagIds);
+
+    const removedTagIds = originalAttachedTagIds.filter((id) => !currentIdSet.has(id));
+    const addedTagIds = attachedTagIds.filter((id) => !originalIdSet.has(id));
+
+    if (removedTagIds.length === 0 && addedTagIds.length === 0) return;
+
+    setLoading(true);
+
+    try {
+      const deleteRequests = removedTagIds.map(async (tagId) => {
+        const res = await fetch(`/api/sig/${sigId}/tag/${tagId}`, {
+          method: 'DELETE',
+        });
+
+        if (!res.ok && res.status !== 204) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail ?? '태그 삭제 실패');
+        }
+      });
+
+      const addRequests = addedTagIds.map(async (tagId) => {
+        const res = await fetch(`/api/sig/${sigId}/tag`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag_id: Number(tagId) }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail ?? '태그 추가 실패');
+        }
+      });
+
+      await Promise.all([...deleteRequests, ...addRequests]);
+      setOriginalAttachedTagIds(attachedTagIds);
+    } finally {
+      setLoading(false);
+    }
+  }, [sigId, originalAttachedTagIds, attachedTagIds]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      syncTags,
+    }),
+    [syncTags],
+  );
+
   return (
     <div className={styles.SigTagManager}>
       <div className={styles.SigTagManagerHeader}>
         <h3 className={styles.SigTagManagerTitle}>태그</h3>
         <p className={styles.SigTagManagerDescription}>
-          저장 전까지 시그에 반영할 태그 변경 사항이 임시로 쌓이며, 수정 버튼을 눌렀을 때 한
-          번에 반영됩니다.
+          수정 후 반드시 SIG 수정 버튼을 눌러주세요.
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
@@ -247,4 +322,6 @@ export default function SigTagManager({
       </div>
     </div>
   );
-}
+});
+
+export default SigTagManager;

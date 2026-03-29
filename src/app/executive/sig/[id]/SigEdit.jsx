@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
@@ -155,49 +155,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const [saving, setSaving] = useState(false);
   const [sig, setSig] = useState(_sig);
   const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
-  const initialTagIds = useMemo(
-    () => (Array.isArray(_sig?.tags) ? _sig.tags.map((tag) => Number(tag.id)) : []),
-    [_sig?.tags],
-  );
-  const [pendingTags, setPendingTags] = useState(initialTagIds);
+  const tagManagerRef = useRef(null);
   const router = useRouter();
-
-  const syncTags = async () => {
-    const originalTagIds = Array.isArray(_sig?.tags)
-      ? _sig.tags.map((tag) => Number(tag.id))
-      : [];
-    const currentTagIds = Array.isArray(pendingTags) ? pendingTags.map((id) => Number(id)) : [];
-
-    const originalIdSet = new Set(originalTagIds);
-    const currentIdSet = new Set(currentTagIds);
-
-    const removedTagIds = originalTagIds.filter((id) => !currentIdSet.has(id));
-    const addedTagIds = currentTagIds.filter((id) => !originalIdSet.has(id));
-
-    for (const tagId of removedTagIds) {
-      const res = await fetch(`/api/sig/${sig.id}/tag/${tagId}`, {
-        method: 'DELETE',
-      });
-
-      if (!res.ok && res.status !== 204) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail ?? '태그 삭제 실패');
-      }
-    }
-
-    for (const tagId of addedTagIds) {
-      const res = await fetch(`/api/sig/${sig.id}/tag`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tag_id: Number(tagId) }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail ?? '기존 태그 추가 실패');
-      }
-    }
-  };
 
   const handleSave = async () => {
     try {
@@ -223,7 +182,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         return;
       }
 
-      await syncTags();
+      await tagManagerRef.current?.syncTags();
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
@@ -294,10 +253,10 @@ export default function SigExecutiveEdit({ sig: _sig }) {
       </table>
       <div style={{ marginTop: '16px', marginBottom: '16px' }}>
         <SigTagManager
-          initialTags={Array.isArray(_sig?.tags) ? _sig.tags : []}
-          initialTagIds={initialTagIds}
+          ref={tagManagerRef}
+          sigId={sig.id}
+          initialTags={_sig?.tags}
           isExecutive
-          onChange={setPendingTags}
           disabled={saving}
         />
       </div>
