@@ -22,8 +22,8 @@ const renderSigEdit = (sig, ctx) => {
   return (
     <>
       <tr>
-        <td className={styles['adm-td']}>ID</td>
-        <td className={styles['adm-td']}>{sig.id}</td>
+        <td>ID</td>
+        <td>{sig.id}</td>
       </tr>
 
       {renderSigRow(sig, ctx, 'title', '이름')}
@@ -31,8 +31,8 @@ const renderSigEdit = (sig, ctx) => {
       {renderSigRow(sig, ctx, 'content', '내용')}
 
       <tr>
-        <td className={styles['adm-td']}>상태</td>
-        <td className={styles['adm-td']}>
+        <td>상태</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={sig.status ?? ''}
@@ -50,8 +50,8 @@ const renderSigEdit = (sig, ctx) => {
       {renderSigRow(sig, ctx, 'year', '연도')}
 
       <tr>
-        <td className={styles['adm-td']}>학기</td>
-        <td className={styles['adm-td']}>
+        <td>학기</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={sig.semester ?? ''}
@@ -67,13 +67,13 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>최초 생성 연도</td>
-        <td className={styles['adm-td']}>{sig.created_year ?? ''}</td>
+        <td>최초 생성 연도</td>
+        <td>{sig.created_year ?? ''}</td>
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>최초 생성 학기</td>
-        <td className={styles['adm-td']}>
+        <td>최초 생성 학기</td>
+        <td>
           {sig.created_semester != null
             ? `${SEMESTER_MAP[Number(sig.created_semester)] ?? sig.created_semester}학기`
             : ''}
@@ -81,8 +81,8 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>연장 신청</td>
-        <td className={styles['adm-td']}>
+        <td>연장 신청</td>
+        <td>
           <select
             className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
             value={String(Boolean(sig.should_extend))}
@@ -95,8 +95,8 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>가입기간</td>
-        <td className={styles['adm-td']}>
+        <td>가입기간</td>
+        <td>
           <select
             className={`${styles['adm-select']} ${styles['adm-select-bool-wide']}`}
             value={String(Boolean(sig.is_rolling_admission))}
@@ -111,8 +111,8 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>SIG장</td>
-        <td className={styles['adm-td']}>
+        <td>SIG장</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={selected || ''}
@@ -139,8 +139,8 @@ const renderSigEdit = (sig, ctx) => {
 function renderSigRow(sig, ctx, attrName, attrLabel) {
   return (
     <tr>
-      <td className={styles['adm-td']}>{attrLabel}</td>
-      <td className={styles['adm-td']}>
+      <td>{attrLabel}</td>
+      <td>
         <input
           className={styles['adm-input']}
           value={sig[attrName] ?? ''}
@@ -242,8 +242,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         </colgroup>
         <thead>
           <tr className={styles['adm-tr']}>
-            <th className={styles['adm-th']}>속성</th>
-            <th className={styles['adm-th']}>값</th>
+            <th>속성</th>
+            <th>값</th>
           </tr>
         </thead>
         <tbody>{renderSigEdit(sig, rowCtx)}</tbody>

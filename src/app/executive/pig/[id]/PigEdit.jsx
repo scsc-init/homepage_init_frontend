@@ -21,8 +21,8 @@ const renderPigEdit = (pig, ctx) => {
   return (
     <>
       <tr>
-        <td className={styles['adm-td']}>ID</td>
-        <td className={styles['adm-td']}>{pig.id}</td>
+        <td>ID</td>
+        <td>{pig.id}</td>
       </tr>
 
       {renderPigRow(pig, ctx, 'title', '이름')}
@@ -30,8 +30,8 @@ const renderPigEdit = (pig, ctx) => {
       {renderPigRow(pig, ctx, 'content', '내용')}
 
       <tr>
-        <td className={styles['adm-td']}>상태</td>
-        <td className={styles['adm-td']}>
+        <td>상태</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={pig.status ?? ''}
@@ -49,8 +49,8 @@ const renderPigEdit = (pig, ctx) => {
       {renderPigRow(pig, ctx, 'year', '연도')}
 
       <tr>
-        <td className={styles['adm-td']}>학기</td>
-        <td className={styles['adm-td']}>
+        <td>학기</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={pig.semester ?? ''}
@@ -66,13 +66,13 @@ const renderPigEdit = (pig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>최초 생성 연도</td>
-        <td className={styles['adm-td']}>{pig.created_year ?? ''}</td>
+        <td>최초 생성 연도</td>
+        <td>{pig.created_year ?? ''}</td>
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>최초 생성 학기</td>
-        <td className={styles['adm-td']}>
+        <td>최초 생성 학기</td>
+        <td>
           {pig.created_semester != null
             ? `${SEMESTER_MAP[Number(pig.created_semester)] ?? pig.created_semester}학기`
             : ''}
@@ -80,8 +80,8 @@ const renderPigEdit = (pig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>연장 신청</td>
-        <td className={styles['adm-td']}>
+        <td>연장 신청</td>
+        <td>
           <select
             className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
             value={String(Boolean(pig.should_extend))}
@@ -94,8 +94,8 @@ const renderPigEdit = (pig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>가입기간</td>
-        <td className={styles['adm-td']}>
+        <td>가입기간</td>
+        <td>
           <select
             className={`${styles['adm-select']} ${styles['adm-select-bool-wide']}`}
             value={pig['is_rolling_admission'] ?? ''}
@@ -111,8 +111,8 @@ const renderPigEdit = (pig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>PIG장</td>
-        <td className={styles['adm-td']}>
+        <td>PIG장</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={selected || ''}
@@ -139,8 +139,8 @@ const renderPigEdit = (pig, ctx) => {
 function renderPigRow(pig, ctx, attrName, attrLabel) {
   return (
     <tr>
-      <td className={styles['adm-td']}>{attrLabel}</td>
-      <td className={styles['adm-td']}>
+      <td>{attrLabel}</td>
+      <td>
         <input
           className={styles['adm-input']}
           value={pig[attrName] ?? ''}
@@ -242,8 +242,8 @@ export default function PigExecutiveEdit({ pig: _pig }) {
         </colgroup>
         <thead>
           <tr className={styles['adm-tr']}>
-            <th className={styles['adm-th']}>속성</th>
-            <th className={styles['adm-th']}>값</th>
+            <th>속성</th>
+            <th>값</th>
           </tr>
         </thead>
         <tbody>{renderPigEdit(pig, rowCtx)}</tbody>

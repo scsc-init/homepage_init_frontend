@@ -41,14 +41,14 @@
   border-collapse: collapse;
   table-layout: fixed;
 }
-.adm-th {
+.adm-table th {
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid var(--color-button-border);
   background: var(--box-color);
   color: var(--color-text-body);
 }
-.adm-td {
+.adm-table td {
   padding: 8px;
   border-top: 1px solid var(--color-button-border);
   vertical-align: middle;
@@ -125,11 +125,11 @@
   gap: 0.5rem;
   align-items: center;
 }
-.dark .adm-th {
+.dark .adm-table th {
   background: var(--color-surface-light);
 }
-.adm-td .adm-input,
-.adm-td .adm-select {
+.adm-table td .adm-input,
+.adm-table td .adm-select {
   min-width: 8rem;
 }
 
