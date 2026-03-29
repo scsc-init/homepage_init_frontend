@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
@@ -155,6 +155,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const [saving, setSaving] = useState(false);
   const [sig, setSig] = useState(_sig);
   const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
+  const tagManagerRef = useRef(null);
   const router = useRouter();
 
   const handleSave = async () => {
@@ -181,6 +182,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         return;
       }
 
+      await tagManagerRef.current?.syncTags();
+
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
         res2 = await directFetch(`/api/executive/sig/${sig.id}/handover`, {
@@ -195,8 +198,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         alert(`저장 실패. SIG장 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
       }
       router.refresh();
-    } catch {
-      alert('저장 실패: 네트워크 오류');
+    } catch (err) {
+      alert(err.message || '저장 실패: 네트워크 오류');
     } finally {
       setSaving(false);
     }
@@ -250,9 +253,11 @@ export default function SigExecutiveEdit({ sig: _sig }) {
       </table>
       <div style={{ marginTop: '16px', marginBottom: '16px' }}>
         <SigTagManager
+          ref={tagManagerRef}
           sigId={sig.id}
-          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          initialTags={_sig?.tags}
           isExecutive
+          disabled={saving}
         />
       </div>
       <div>
