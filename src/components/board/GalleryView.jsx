@@ -258,12 +258,10 @@ export default function GalleryView({ board, sortOrder }) {
                     sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
                 ) : (
-                  <img
+                  <Image
                     className={styles.galleryImg}
                     src={it.thumbSrc}
                     alt={it.title || 'image'}
-                    loading="lazy"
-                    decoding="async"
                   />
                 )
               ) : (

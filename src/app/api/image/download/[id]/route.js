@@ -1,10 +1,9 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function GET(_req, { params }) {
   const id = encodeURIComponent(params.id);
-  const base = getBaseUrl();
+  const base = process.env.BACKEND_URL || '';
   const url = `${base}/api/file/image/download/${id}`;
 
   const session = await getServerSession(authOptions);

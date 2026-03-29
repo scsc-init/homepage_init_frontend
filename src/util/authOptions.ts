@@ -1,23 +1,16 @@
 import Google from 'next-auth/providers/google';
-import type { NextAuthOptions } from 'next-auth';
 import crypto from 'crypto';
-import { getBaseUrl } from '@/util/getBaseUrl';
-import { getApiSecret } from '@/util/getApiSecret';
 import * as validator from '@/util/validator';
 
-interface BackendLoginResponse {
-  jwt?: string;
-}
-
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 10 * 24 * 60 * 60,
   },
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
   callbacks: {
@@ -30,22 +23,21 @@ export const authOptions: NextAuthOptions = {
         return '/us/login?error=invalid_email';
       }
 
-      let res: Response;
-      const apiSecret = getApiSecret();
+      let res;
+      const apiSecret = process.env.API_SECRET || '';
+
       if (!apiSecret) {
         console.error('API_SECRET is missing');
         return '/us/login?error=default';
       }
-
       const hash = crypto
         .createHmac('sha256', apiSecret)
         .update(String(user.email).toLowerCase())
         .digest('hex');
-
       try {
-        res = await fetch(`${getBaseUrl()}/api/user/login`, {
+        res = await fetch(`${process.env.BACKEND_URL || ''}/api/user/login`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-secret': getApiSecret() },
+          headers: { 'Content-Type': 'application/json', 'x-api-secret': apiSecret },
           body: JSON.stringify({
             hashToken: hash,
             email: user.email,
@@ -58,9 +50,9 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (res.status === 200) {
-        let data: BackendLoginResponse;
+        let data;
         try {
-          data = (await res.json()) as BackendLoginResponse;
+          data = await res.json();
         } catch (error) {
           console.error('Failed to parse login response:', error);
           return '/us/login?error=default';
@@ -85,7 +77,6 @@ export const authOptions: NextAuthOptions = {
 
       return '/us/login?error=default';
     },
-
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.backendJwt = user.backendJwt;

@@ -2,14 +2,13 @@ import 'highlight.js/styles/github.css';
 import './page.css';
 import SigClient from './SigClient';
 import { handleApiRequest } from '@/app/api/apiWrapper';
-import { getBaseUrl } from '@/util/getBaseUrl';
 import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { id } = params;
   try {
-    const res = await fetch(`${getBaseUrl()}/api/sig/${id}`, {
+    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/sig/${id}`, {
       method: 'GET',
       cache: 'no-store',
     });
@@ -21,7 +20,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: sig.title,
         description: sig.description || 'SIG 상세 페이지',
-        url: `${getBaseUrl()}/sig/${id}`,
+        url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
         type: 'article',
@@ -38,7 +37,7 @@ export async function generateMetadata({ params }) {
       title: 'SIG | SCSC',
       openGraph: {
         title: 'SIG | SCSC',
-        url: `${getBaseUrl()}/sig/${id}`,
+        url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
         type: 'article',
@@ -62,7 +61,9 @@ export default async function SigDetailPage({ params }) {
 
   const membersRes = await handleApiRequest('GET', `/api/sig/${id}/members`);
   const rawMembers = membersRes.ok ? await membersRes.json() : [];
-  const members = Array.isArray(rawMembers) ? rawMembers.map((m) => m.user ?? m) : [];
+  const members = Array.isArray(rawMembers)
+    ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
+    : [];
 
   const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
   const article = articleRes.ok ? await articleRes.json() : { content: '' };
