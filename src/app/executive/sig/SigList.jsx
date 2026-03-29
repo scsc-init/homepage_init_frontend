@@ -97,37 +97,37 @@ export default function SigList({ sigs }) {
     return sigs.filter(matches);
   }, [sigs, filter]);
 
-  	return (
-	  <div className={styles['adm-table-wrap']}>
-	    <table className={styles['adm-table']}>
-	      <colgroup>
-	        <col />
-	        <col />
-	        <col />
-	        <col />
-	        <col />
-	        <col />
-	      </colgroup>
-	      <thead>
-	        <tr className={styles['adm-tr']}>
-	          <th className={styles['adm-th']}>이름</th>
-	          <th className={styles['adm-th']}>상태</th>
-	          <th className={styles['adm-th']}>연도</th>
-	          <th className={styles['adm-th']}>학기</th>
-	          <th className={styles['adm-th']}>SIG장</th>
-	          <th className={styles['adm-th']}>상세보기</th>
-	        </tr>
-	        <SigFilterRow
-	          filter={filter}
-	          updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
-	        />
-	      </thead>
-	      <tbody>
-	        {filteredSigs.map((sig) => (
-	          <RenderSigRow sig={sig} key={sig.id} />
-	        ))}
-	      </tbody>
-	    </table>
-	  </div>
-	);
+  return (
+    <div className={styles['adm-table-wrap']}>
+      <table className={styles['adm-table']}>
+        <colgroup>
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr className={styles['adm-tr']}>
+            <th className={styles['adm-th']}>이름</th>
+            <th className={styles['adm-th']}>상태</th>
+            <th className={styles['adm-th']}>연도</th>
+            <th className={styles['adm-th']}>학기</th>
+            <th className={styles['adm-th']}>SIG장</th>
+            <th className={styles['adm-th']}>상세보기</th>
+          </tr>
+          <SigFilterRow
+            filter={filter}
+            updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
+          />
+        </thead>
+        <tbody>
+          {filteredSigs.map((sig) => (
+            <RenderSigRow sig={sig} key={sig.id} />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
