@@ -23,7 +23,7 @@ const isImageMeta = (meta?: AttachmentMeta): boolean => {
  */
 export function getAttachmentDownloadUrl(id: string, meta?: AttachmentMeta): string {
   const encoded = encodeURIComponent(id);
-  if (isImageMeta(meta)) return `/api/file/image/download/${encoded}`;
+  if (isImageMeta(meta)) return `/api/image/download/${encoded}`;
   return `/api/file/docs/download/${encoded}`;
 }
 
