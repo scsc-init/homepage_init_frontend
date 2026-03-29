@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function POST(request, { params }) {
   const session = await getServerSession(authOptions);
@@ -10,7 +9,7 @@ export async function POST(request, { params }) {
 
   const formData = await request.formData();
   const res = await fetch(
-    `${getBaseUrl()}/api/executive/w/${encodeURIComponent(params['name'])}/update`,
+    `${process.env.BACKEND_URL || ''}/api/executive/w/${encodeURIComponent(params['name'])}/update`,
     {
       method: 'POST',
       headers: hdrs,

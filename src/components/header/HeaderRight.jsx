@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { fetchMeClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
 import styles from '@/app/Header.module.css';
+import Image from 'next/image';
 
 export default function HeaderRight() {
   const [user, setUser] = useState(undefined);
@@ -37,7 +38,7 @@ export default function HeaderRight() {
             </Link>
           )}
           <Link href="/about/my-page" className={`${styles.userLink} unset`}>
-            <img
+            <Image
               src={user.profile_picture || '/asset/default-pfp.png'}
               alt="Profile"
               className={styles.userPic}

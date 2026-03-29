@@ -1,5 +1,7 @@
 :root {
   --theme-anim-duration: 0s;
+  --color-button-disabled-bg: #d1d5db;
+  --color-button-disabled-text: #9ca3af;
 }
 html.theme-animating {
   --theme-anim-duration: 400ms;
@@ -132,6 +134,8 @@ html.theme-animating {
     rgba(255, 255, 255, 0.05),
     transparent 70%
   );
+  --color-button-disabled-bg: #333333;
+  --color-button-disabled-text: #666666;
 }
 
 .dark .ico,

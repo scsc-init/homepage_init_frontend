@@ -1,12 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function GET(_req, { params }) {
   const segments = Array.isArray(params?.path) ? params.path : [];
   const targetPath = segments.map(encodeURIComponent).join('/');
 
-  const base = getBaseUrl();
+  const base = process.env.BACKEND_URL || '';
   const url = `${base}/static/image/${targetPath}`;
 
   const session = await getServerSession(authOptions);
