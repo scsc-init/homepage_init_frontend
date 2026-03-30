@@ -9,6 +9,8 @@
   background-color: var(--executive-card-bg);
   user-select: text;
   -webkit-user-select: text;
+  position: relative;
+  z-index: 600;
 }
 .SigDetailContainer,
 .SigDetailContainer * {
@@ -372,7 +374,7 @@ body {
   border-radius: 0.625rem;
   overflow: hidden;
   padding: 0.4rem 0.5rem;
-  z-index: 10;
+  z-index: 100;
 }
 
 .SigMemberMenu.open {
