@@ -16,6 +16,12 @@ Common gitmoji examples for quick copy-paste:
 
 ---
 
+### Screenshots
+
+<!-- Please attach screenshots of your changes -->
+
+---
+
 ### Are there any caveats or things to watch out for?
 
 <!-- If none, write "None" -->
