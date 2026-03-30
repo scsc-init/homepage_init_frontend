@@ -1,6 +1,7 @@
 import './page.css';
 import { MainLogo } from './checkInAppBrowser';
 import RefreshJWTClient from './RefreshJWTClient';
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
@@ -9,7 +10,7 @@ export default function HomePage() {
       <div className="overlay-container">
         <picture>
           <source srcSet="/main/logo-overlay-left.avif" type="image/avif" />
-          <img
+          <Image
             src="/main/logo-overlay-left.png"
             alt="Overlay Left"
             className="overlay-image left logo"
@@ -20,7 +21,7 @@ export default function HomePage() {
         </picture>
         <picture>
           <source srcSet="/main/logo-overlay-right.avif" type="image/avif" />
-          <img
+          <Image
             src="/main/logo-overlay-right.png"
             alt="Overlay Right"
             className="overlay-image right logo"
@@ -31,18 +32,6 @@ export default function HomePage() {
         </picture>
       </div>
       <RefreshJWTClient />
-
-      {/* 메인 로고 */}
-      {/* <div className="main-logo-wrapper">
-        <img
-          src="/main/main-logo.png"
-          alt="Main Logo"
-          className="main-logo logo"
-        />
-        <div className="main-subtitle">
-          Seoul National University Computer Study Club
-        </div>
-      </div> */}
       <MainLogo />
     </main>
   );

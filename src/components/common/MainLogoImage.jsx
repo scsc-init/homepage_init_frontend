@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export function MainLogoImage({
   className = '',
   wrapperClassName = '',
@@ -7,7 +9,7 @@ export function MainLogoImage({
   return (
     <picture className={wrapperClassName}>
       <source srcSet="/main/main-logo.avif" type="image/avif" />
-      <img src="/main/main-logo.png" alt={alt} className={className} {...imgProps} />
+      <Image src="/main/main-logo.png" alt={alt} className={className} {...imgProps} />
     </picture>
   );
 }
