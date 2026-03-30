@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { fetchMeClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
 import styles from '@/app/Header.module.css';
-import Image from 'next/image';
 
 export default function HeaderRight() {
   const [user, setUser] = useState(undefined);

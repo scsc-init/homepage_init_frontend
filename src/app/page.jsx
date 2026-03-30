@@ -1,7 +1,6 @@
 import './page.css';
 import { MainLogo } from './checkInAppBrowser';
 import RefreshJWTClient from './RefreshJWTClient';
-import Image from 'next/image';
 
 export default function HomePage() {
   return (
@@ -10,7 +9,7 @@ export default function HomePage() {
       <div className="overlay-container">
         <picture>
           <source srcSet="/main/logo-overlay-left.avif" type="image/avif" />
-          <Image
+          <img
             src="/main/logo-overlay-left.png"
             alt="Overlay Left"
             className="overlay-image left logo"
@@ -21,7 +20,7 @@ export default function HomePage() {
         </picture>
         <picture>
           <source srcSet="/main/logo-overlay-right.avif" type="image/avif" />
-          <Image
+          <img
             src="/main/logo-overlay-right.png"
             alt="Overlay Right"
             className="overlay-image right logo"
