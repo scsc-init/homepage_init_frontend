@@ -63,7 +63,7 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
 
 const RenderSigRow = ({ sig }) => {
   return (
-    <tr className={styles['adm-tr']}>
+    <tr>
       <td>{sig.title ?? ''}</td>
       <td>{STATUS_MAP[sig.status] ?? ''}</td>
       <td>{sig.year ?? ''}</td>
@@ -108,7 +108,7 @@ export default function SigList({ sigs }) {
         <col />
       </colgroup>
       <thead>
-        <tr className={styles['adm-tr']}>
+        <tr>
           <th>이름</th>
           <th>상태</th>
           <th>연도</th>

@@ -6,7 +6,7 @@ import styles from '../igpage.module.css';
 
 function PigFilterRow({ filter, updateFilterCriteria }) {
   return (
-    <tr className={styles['adm-tr-filter']}>
+    <tr>
       <td>
         <input
           className={styles['adm-input']}
@@ -63,7 +63,7 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
 
 const RenderPigRow = ({ pig }) => {
   return (
-    <tr className={styles['adm-tr']}>
+    <tr>
       <td>{pig.title ?? ''}</td>
       <td>{STATUS_MAP[pig.status] ?? ''}</td>
       <td>{pig.year ?? ''}</td>
@@ -111,7 +111,7 @@ export default function PigList({ pigs }) {
         <col />
       </colgroup>
       <thead>
-        <tr className={styles['adm-tr']}>
+        <tr>
           <th>이름</th>
           <th>상태</th>
           <th>연도</th>

@@ -241,7 +241,7 @@ export default function PigExecutiveEdit({ pig: _pig }) {
           <col />
         </colgroup>
         <thead>
-          <tr className={styles['adm-tr']}>
+          <tr>
             <th>속성</th>
             <th>값</th>
           </tr>
