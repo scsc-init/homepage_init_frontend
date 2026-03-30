@@ -94,6 +94,12 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.mdx-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* ----- Actions (Join/Leave/Edit) ----- */
 .SigActions {
   display: flex;
