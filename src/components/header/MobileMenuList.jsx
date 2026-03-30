@@ -52,7 +52,9 @@ export default function MobileMenuList() {
         className={styles.hamburgerButton}
         onClick={() => setMobileMenuOpen((prev) => !prev)}
       >
-        ☰
+        <span className="material-icons" style={{ fontSize: 'inherit' }}>
+          menu
+        </span>
       </button>
 
       <div id="mobileMenuPanel" className={wrapperClass}>

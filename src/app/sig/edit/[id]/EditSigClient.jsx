@@ -4,7 +4,7 @@ import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
 import SigTagManager from '@/components/board/SigTagManager';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
@@ -15,9 +15,20 @@ function useMounted() {
   return mounted;
 }
 
+function generateDefaultSigForms(sig, article) {
+  return {
+    title: sig.title ?? '',
+    description: sig.description ?? '',
+    editor: article.content ?? '',
+    should_extend: sig.should_extend ?? false,
+    is_rolling_admission: sig.is_rolling_admission ?? false,
+  };
+}
+
 export default function EditSigClient({ sigId, me, sig, article }) {
   const router = useRouter();
   const isFormSubmitted = useRef(false);
+  const tagManagerRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
@@ -29,13 +40,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: {
-      title: '',
-      description: '',
-      editor: '',
-      should_extend: false,
-      is_rolling_admission: false,
-    },
+    defaultValues: generateDefaultSigForms(sig, article),
   });
 
   useEffect(() => {
@@ -67,13 +72,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
 
   useEffect(() => {
     if (sig && article && mounted && !isDirty) {
-      reset({
-        title: sig.title ?? '',
-        description: sig.description ?? '',
-        editor: article.content ?? '',
-        should_extend: sig.should_extend ?? false,
-        is_rolling_admission: sig.is_rolling_admission ?? false,
-      });
+      reset(generateDefaultSigForms(sig, article));
       setEditorKey((k) => k + 1);
     }
   }, [sig, article, mounted, isDirty, reset]);
@@ -109,6 +108,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       );
 
       if (res.status === 204) {
+        await tagManagerRef.current?.syncTags();
         isFormSubmitted.current = true;
         alert('SIG 수정 성공!');
         router.push(`/sig/${sigId}`);
@@ -145,9 +145,11 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <SigTagManager
+          ref={tagManagerRef}
           sigId={sigId}
-          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          initialTags={sig?.tags}
           isExecutive={Boolean(me?.role >= minExecutiveLevel)}
+          disabled={submitting}
         />
       </div>
     </div>

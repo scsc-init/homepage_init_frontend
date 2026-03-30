@@ -27,14 +27,8 @@ const sanitizeWebsites = (websites = []) =>
     })
     .filter((site) => site.url);
 
-export default function EditPigClient({ pigId, me, pig, article }) {
-  const router = useRouter();
-  const isFormSubmitted = useRef(false);
-  const [submitting, setSubmitting] = useState(false);
-  const mounted = useMounted();
-  const [editorKey, setEditorKey] = useState(0);
-
-  const defaultFormValues = {
+function generateDefaultForms(pig, article) {
+  return {
     title: pig?.title ?? '',
     description: pig?.description ?? '',
     editor: article?.content ?? '',
@@ -48,6 +42,14 @@ export default function EditPigClient({ pigId, me, pig, article }) {
         ? mapWebsitesForForm(pig.websites)
         : [{ url: '' }],
   };
+}
+
+export default function EditPigClient({ pigId, me, pig, article }) {
+  const router = useRouter();
+  const isFormSubmitted = useRef(false);
+  const [submitting, setSubmitting] = useState(false);
+  const mounted = useMounted();
+  const [editorKey, setEditorKey] = useState(0);
 
   const {
     register,
@@ -56,7 +58,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: defaultFormValues,
+    defaultValues: generateDefaultForms(pig, article),
   });
 
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function EditPigClient({ pigId, me, pig, article }) {
 
   useEffect(() => {
     if (pig && article && mounted && !isDirty) {
-      reset({ ...defaultFormValues });
+      reset(generateDefaultForms(pig, article));
       setEditorKey((key) => key + 1);
     }
   }, [pig, article, mounted, isDirty, reset]);

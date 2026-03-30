@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
