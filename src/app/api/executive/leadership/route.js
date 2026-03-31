@@ -18,7 +18,7 @@ export async function POST(request) {
 
   const presidentId = sanitizeId(body?.president_id);
   const vicePresidentId = sanitizeId(body?.vice_president_id);
-    const vicePresidentIds = vicePresidentId
+  const vicePresidentIds = vicePresidentId
     .split(';')
     .map((id) => sanitizeId(id))
     .filter((id) => id !== '');
@@ -41,7 +41,7 @@ export async function POST(request) {
       { detail: '회장과 부회장은 서로 다른 인물이어야 합니다.' },
       { status: 400 },
     );
-  }  
+  }
   const session = await getServerSession(authOptions);
   const appJwt = session?.backendJwt || null;
 
@@ -55,13 +55,13 @@ export async function POST(request) {
       fetch(`${process.env.BACKEND_URL || ''}/api/kv/main-president/update`, {
         method: 'POST',
         headers: hdrs,
-        body: JSON.stringify({ value: presidentId}),
+        body: JSON.stringify({ value: presidentId }),
         cache: 'no-store',
       }),
       fetch(`${process.env.BACKEND_URL || ''}/api/kv/vice-president/update`, {
         method: 'POST',
         headers: hdrs,
-        body: JSON.stringify({ value: vicePresidentId}),
+        body: JSON.stringify({ value: vicePresidentId }),
         cache: 'no-store',
       }),
     ]);

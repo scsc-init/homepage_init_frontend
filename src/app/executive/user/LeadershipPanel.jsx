@@ -62,9 +62,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
       alert('회장과 부회장은 서로 다른 인물이어야 합니다.');
       return;
     }
-    if (
-      selectedPresidentId == ''
-    ) {
+    if (selectedPresidentId == '') {
       alert('회장 직책은 반드시 지정해야 합니다.');
       return;
     }
