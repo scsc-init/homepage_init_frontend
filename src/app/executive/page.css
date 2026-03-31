@@ -13,7 +13,42 @@
 
 .admin-panel a {
   color: var(--color-text-body);
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.admin-page-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.admin-page-card {
+  background: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  overflow: hidden;
+}
+
+.admin-page-card:hover {
+  box-shadow: 0 6px 24px var(--executive-card-shadow);
+  background: var(--color-surface-light);
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.admin-page-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-page-card h3 {
+  font-size: 1.25rem;
+  color: var(--color-text-strong);
 }
 
 .adm-section {
@@ -25,6 +60,18 @@
   align-items: center;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+}
+
+.dangerous-area {
+  border: 1px solid var(--color-button-alert-bg);
+  background: transparent;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.warning-text {
+  color: var(--color-button-alert-bg);
+  font-weight: 600;
 }
 
 /* Card wrapper */
