@@ -98,34 +98,36 @@ export default function SigList({ sigs }) {
   }, [sigs, filter]);
 
   return (
-    <table className={styles['adm-table']}>
-      <colgroup>
-        <col />
-        <col />
-        <col />
-        <col />
-        <col />
-        <col />
-      </colgroup>
-      <thead>
-        <tr>
-          <th>이름</th>
-          <th>상태</th>
-          <th>연도</th>
-          <th>학기</th>
-          <th>SIG장</th>
-          <th>상세보기</th>
-        </tr>
-        <SigFilterRow
-          filter={filter}
-          updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
-        />
-      </thead>
-      <tbody>
-        {filteredSigs.map((sig) => (
-          <RenderSigRow sig={sig} key={sig.id} />
-        ))}
-      </tbody>
-    </table>
+    <div className={styles['adm-table-wrap']}>
+      <table className={styles['adm-table']}>
+        <colgroup>
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>상태</th>
+            <th>연도</th>
+            <th>학기</th>
+            <th>SIG장</th>
+            <th>상세보기</th>
+          </tr>
+          <SigFilterRow
+            filter={filter}
+            updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
+          />
+        </thead>
+        <tbody>
+          {filteredSigs.map((sig) => (
+            <RenderSigRow sig={sig} key={sig.id} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
