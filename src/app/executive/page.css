@@ -30,14 +30,15 @@
   padding: 1.5rem;
   box-shadow: 0 3px 12px var(--executive-card-shadow);
   overflow: hidden;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .admin-page-card:hover {
   box-shadow: 0 6px 24px var(--executive-card-shadow);
   background: var(--color-surface-light);
-  transition:
-    background-color 0.3s ease,
-    box-shadow 0.3s ease;
 }
 
 .admin-page-card-content {
