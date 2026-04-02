@@ -1,5 +1,5 @@
 import SigListClient from './SigListClient';
-import './page.css';
+import styles from './sig.module.css';
 import { safeFetch, fetchMe } from '@/util/fetchAPIData';
 
 export const metadata = { title: 'SIG' };
@@ -31,7 +31,7 @@ export default async function SigListPage({ searchParams }) {
   }
 
   return (
-    <div id="SigListContainer">
+    <div className={styles.SigListContainer}>
       <SigListClient sigs={visibleSigs} myId={myId} initialFilterTags={initialTags} />
     </div>
   );
