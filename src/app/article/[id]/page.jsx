@@ -7,7 +7,7 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import './page.css';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { use, useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
@@ -24,7 +24,7 @@ export default function ArticleDetail({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [attachmentMeta, setAttachmentMeta] = useState([]);
-  const { id } = params;
+  const { id } = use(params);
 
   useEffect(() => {
     const loadAll = async () => {
@@ -178,8 +178,8 @@ export default function ArticleDetail({ params }) {
             li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
             code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
             pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
-            img: ({ _node, ...props }) => (
-              <img className="mdx-img" {...props} alt="article image" />
+            img: ({ _node, alt, ...props }) => (
+              <img className="mdx-img" {...props} alt={typeof alt === 'string' ? alt : ''} />
             ),
             table: ({ _node, ...props }) => (
               <div className="mdx-table-wrap">

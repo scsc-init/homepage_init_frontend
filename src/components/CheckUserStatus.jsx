@@ -20,7 +20,7 @@ export default function CheckUserStatusClient() {
         if (!data?.is_active && !data?.is_banned) {
           router.replace('/about/welcome');
         }
-      } catch (e) {}
+      } catch (_e) {}
     };
 
     check();

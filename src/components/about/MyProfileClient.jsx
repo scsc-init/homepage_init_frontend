@@ -10,7 +10,7 @@ import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
-import { MdArrowOutward, MdOutlineInfo } from 'react-icons/md';
+import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
 
 const USER_ROLE_MAP = {
   0: '최저권한',
@@ -102,15 +102,13 @@ export default function MyProfileClient() {
       </div>
 
       <div className="user-profile-wrapper">
-        {user ? (
-          <img
-            src={user.profile_picture || '/asset/default-pfp.png'}
-            alt="Profile"
-            className="user-profile-picture"
-          />
-        ) : (
-          <img alt="" height="50" src="//:0" />
-        )}
+        <img
+          src={user?.profile_picture || '/asset/default-pfp.png'}
+          alt="Profile"
+          width={50}
+          height={50}
+          className="user-profile-picture"
+        />
         <div className="user-name-container">
           <div className="user-name">
             {user ? `${user.name} [${USER_ROLE_MAP[user.role]}]` : ''}
@@ -199,6 +197,16 @@ export default function MyProfileClient() {
               </span>
               <span className="btn-label">정보 수정</span>
             </a>
+            <button
+              onClick={handleLogout}
+              className="action-button"
+              style={{ cursor: 'pointer', border: 'none' }}
+            >
+              <span className="btn-icon">
+                <MdLogout size="24" />
+              </span>
+              <span className="btn-label">로그아웃</span>
+            </button>
           </div>
         </div>
       </div>

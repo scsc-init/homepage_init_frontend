@@ -110,7 +110,7 @@ export default function PfpUpdate() {
 
       {preview && (
         <div className={styles.imagePreview}>
-          <img src={preview} alt="Preview" />
+          <img src={preview} width={50} height={50} alt="Preview" />
         </div>
       )}
 

@@ -157,6 +157,22 @@ body {
   text-align: left;
 }
 
+.ViceList {
+  white-space: nowrap;
+}
+
+.ViceItem {
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 768px) {
+  .ViceList {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+}
+
 /* SNS */
 .ContactIconLink {
   display: flex;

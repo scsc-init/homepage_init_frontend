@@ -1,12 +1,16 @@
+// @/app/us/contact/page.jsx
+
 import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
-import { getBaseUrl } from '@/util/getBaseUrl';
+
+const BACKEND_URL = process.env.BACKEND_URL || '';
 
 async function fetchKvValue(key) {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/kv/${encodeURIComponent(key)}`, {
+    const encoded_key = encodeURIComponent(key);
+    const res = await fetch(`${BACKEND_URL}/api/kv/${encoded_key}`, {
       cache: 'no-store',
     });
     if (!res.ok) return '';
@@ -71,7 +75,16 @@ export default async function Contact() {
                     </tr>
                     <tr>
                       <td className="label">부회장</td>
-                      <td className="info">{vicePresidents.join(' / ')}</td>
+                      <td className="info">
+                        <span className="ViceList">
+                          {vicePresidents.map((vp, idx) => (
+                            <span key={idx} className="ViceItem">
+                              {vp}
+                              {idx < vicePresidents.length - 1 && ' / '}
+                            </span>
+                          ))}
+                        </span>
+                      </td>
                     </tr>
                     <tr>
                       <td className="label">Email</td>
