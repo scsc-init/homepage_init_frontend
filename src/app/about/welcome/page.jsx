@@ -89,7 +89,7 @@ export default async function WelcomePage() {
                 href={KAKAO_INVITE_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.chatButton}
+                className={styles.button}
               >
                 카카오톡 팀 채팅방 입장
               </a>
@@ -122,7 +122,7 @@ export default async function WelcomePage() {
                 href={DISCORD_INVITE_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.chatButton}
+                className={styles.button}
               >
                 디스코드 서버 입장
               </a>
@@ -137,7 +137,7 @@ export default async function WelcomePage() {
               입금 확인과 가입 승인 상태는 <strong>마이페이지</strong>에서 확인할 수 있어요.
             </p>
             <div className={styles.buttonsContainer}>
-              <a href="/about/my-page" className={styles.actionButton}>
+              <a href="/about/my-page" className={styles.button}>
                 마이페이지 열기
               </a>
             </div>
