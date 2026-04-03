@@ -574,41 +574,6 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.actionButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.05rem 2.4rem;
-  margin-top: 1.5rem;
-  font-size: 1.125rem;
-  font-weight: 800;
-  border-radius: 999px;
-  border: 2px solid var(--color-button-border);
-  background: var(--color-button-bg);
-  color: var(--color-button-text);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
-  cursor: pointer;
-}
-
-.actionButton:hover {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-  transform: translateY(-1px);
-}
-
-.actionButton:active {
-  transform: translateY(0);
-}
-
-@media screen and (max-width: 768px) {
-  .actionButton {
-    width: 100%;
-  }
-}
-
 .noticeImportant {
   color: var(--color-button-bg);
 }
@@ -652,7 +617,7 @@
   flex-wrap: wrap;
 }
 
-.chatButton {
+.linkButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -679,17 +644,17 @@
   box-shadow: 0 4px 14px var(--button-shadow, rgba(0, 0, 0, 0.12)); /* ✅ 더 선명 */
 }
 
-.chatButton:hover {
+.linkButton:hover {
   background-color: var(--color-button-hover-bg);
   box-shadow: 0 8px 22px var(--button-shadow, rgba(0, 0, 0, 0.16));
   transform: translateY(-1px);
 }
 
-.chatButton:active {
+.linkButton:active {
   transform: translateY(1px);
 }
 
-.chatButton:focus-visible {
+.linkButton:focus-visible {
   outline: 3px solid rgba(59, 130, 246, 0.45);
   outline-offset: 2px;
 }
@@ -698,8 +663,7 @@
   .buttonsContainer {
     gap: 0.5rem;
   }
-  .buttonsContainer .actionButton,
-  .buttonsContainer .chatButton {
+  .buttonsContainer .linkButton {
     flex: 1 1 100%;
     width: 100%;
   }
