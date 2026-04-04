@@ -1,0 +1,141 @@
+.formerDevelopersSection {
+  width: min(1100px, 92vw);
+  margin: 72px auto 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--header-border-color);
+}
+
+.formerDevelopersHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.formerDevelopersTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-strong);
+}
+
+.formerSemesterList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formerSemesterBlock {
+  padding: 16px 18px;
+  border: 1px solid var(--header-border-color);
+  border-radius: 18px;
+  background: var(--executive-card-bg);
+  box-shadow: 0 8px 24px var(--executive-card-shadow);
+}
+
+.formerSemesterTitle {
+  margin-bottom: 14px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--executive-name-color);
+}
+
+.formerMembersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 16px 18px;
+}
+
+.formerMemberItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.formerMemberImageWrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.formerMemberName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--executive-name-color);
+  word-break: keep-all;
+}
+
+@media (max-width: 900px) {
+  .formerDevelopersSection {
+    width: min(720px, 92vw);
+    margin-top: 56px;
+    padding-top: 24px;
+  }
+
+  .formerDevelopersTitle {
+    font-size: 1.3rem;
+  }
+
+  .formerSemesterBlock {
+    padding: 14px 16px;
+    border-radius: 16px;
+  }
+
+  .formerMembersGrid {
+    grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+    gap: 14px 16px;
+  }
+
+  .formerMemberImageWrap {
+    width: 58px;
+    height: 58px;
+  }
+
+  .formerMemberName {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .formerDevelopersHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .formerDevelopersSection {
+    margin-top: 44px;
+    padding-top: 20px;
+  }
+
+  .formerSemesterBlock {
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  .formerSemesterTitle {
+    margin-bottom: 12px;
+    font-size: 0.93rem;
+  }
+
+  .formerMembersGrid {
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 14px;
+  }
+
+  .formerMemberImageWrap {
+    width: 52px;
+    height: 52px;
+  }
+
+  .formerMemberName {
+    font-size: 0.78rem;
+  }
+}
