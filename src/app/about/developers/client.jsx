@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from '../about.module.css';
+import developerStyles from './developers.module.css';
 
 const executives = [
   {
@@ -22,21 +23,6 @@ const executives = [
     description: '아주아주 귀여운 여고생',
   },
   {
-    name: '황민기',
-    image: '/devs/hmk.jpg',
-    description: '커밋주작은뭐야',
-  },
-  {
-    name: '윤영우',
-    image: '/devs/yyw.jpg',
-    description: '고능',
-  },
-  {
-    name: '박상혁(Ethan)',
-    image: '/devs/psh.jpg',
-    description: 'SCSC 막스 베르슈타펜',
-  },
-  {
     name: '최정원',
     image: '',
     description: '',
@@ -47,6 +33,123 @@ const executives = [
     description: '',
   },
 ];
+
+const formerDevelopersBySemester = [
+  {
+    semester: '2025-2',
+    members: [
+      {
+        name: '강명석',
+        image: '/devs/kms.jpg',
+        description: 'init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아',
+      },
+      {
+        name: '이한경',
+        image: '/devs/lhk.jpg',
+        description: '한경님의 백엔드 너무 좋아앗',
+      },
+      {
+        name: '박성현',
+        image: '/devs/psh.jpg',
+        description: '아주아주 귀여운 여고생',
+      },
+      {
+        name: '최정원',
+        image: '',
+        description: '',
+      },
+      {
+        name: '이태윤',
+        image: '',
+        description: '',
+      },
+      {
+        name: '윤영우',
+        image: '/devs/yyw.jpg',
+        description: '고능',
+      },
+      {
+        name: '박상혁(Ethan)',
+        image: '/devs/psh.jpg',
+        description: 'SCSC 막스 베르슈타펜',
+      },
+    ],
+  },
+  {
+    semester: '2025-1',
+    members: [
+      {
+        name: '강명석',
+        image: '/devs/kms.jpg',
+        description: 'init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아',
+      },
+      {
+        name: '이한경',
+        image: '/devs/lhk.jpg',
+        description: '한경님의 백엔드 너무 좋아앗',
+      },
+      {
+        name: '박성현',
+        image: '/devs/psh.jpg',
+        description: '아주아주 귀여운 여고생',
+      },
+      {
+        name: '황민기',
+        image: '/devs/hmk.jpg',
+        description: '커밋주작은뭐야',
+      },
+      {
+        name: '윤영우',
+        image: '/devs/yyw.jpg',
+        description: '고능',
+      },
+    ],
+  },
+];
+
+function FormerDevelopersSection({ semesterGroups }) {
+  return (
+    <section className={developerStyles.formerDevelopersSection}>
+      <div className={developerStyles.formerDevelopersHeader}>
+        <h3 className={developerStyles.formerDevelopersTitle}>과거 개발자</h3>
+      </div>
+
+      <div className={developerStyles.formerSemesterList}>
+        {semesterGroups.map((semesterGroup) => (
+          <div key={semesterGroup.semester} className={developerStyles.formerSemesterBlock}>
+            <div className={developerStyles.formerSemesterTitle}>{semesterGroup.semester}</div>
+
+            <div className={developerStyles.formerMembersGrid}>
+              {semesterGroup.members.map((member, index) => (
+                <article
+                  key={`${semesterGroup.semester}-${member.name}-${index}`}
+                  className={developerStyles.formerMemberCard}
+                >
+                  <div className={developerStyles.formerMemberImageWrap}>
+                    <Image
+                      src={member.image || '/asset/default-pfp.png'}
+                      alt={member.name}
+                      fill
+                      className={styles.image}
+                    />
+                  </div>
+
+                  <div className={developerStyles.formerMemberText}>
+                    <div className={developerStyles.formerMemberName}>{member.name}</div>
+                    <div className={developerStyles.formerMemberDescription}>
+                      {member.description}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function ExecutivesClient() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
@@ -144,6 +247,8 @@ export default function ExecutivesClient() {
           </div>
         ))}
       </div>
+
+      <FormerDevelopersSection semesterGroups={formerDevelopersBySemester} />
     </>
   );
 }
