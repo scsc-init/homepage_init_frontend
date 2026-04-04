@@ -77,21 +77,21 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
         <table className="adm-table">
           <thead>
             <tr>
-              <th className="adm-th">이름</th>
-              <th className="adm-th">학과</th>
-              <th className="adm-th">권한</th>
-              <th className="adm-th">상태</th>
-              <th className="adm-th">입금 확인</th>
+              <th>이름</th>
+              <th>학과</th>
+              <th>권한</th>
+              <th>상태</th>
+              <th>입금 확인</th>
             </tr>
             <tr>
-              <td className="adm-td">
+              <td>
                 <input
                   className="adm-input"
                   value={filter.name}
                   onChange={(e) => updateFilter('name', e.target.value)}
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <select
                   className="adm-select"
                   value={filter.major}
@@ -105,14 +105,14 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   ))}
                 </select>
               </td>
-              <td className="adm-td">
+              <td>
                 <input
                   className="adm-input"
                   value={filter.role}
                   onChange={(e) => updateFilter('role', e.target.value)}
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <select
                   className="adm-select"
                   value={filter.status}
@@ -124,7 +124,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   <option value="banned">banned</option>
                 </select>
               </td>
-              <td className="adm-td"></td>
+              <td></td>
             </tr>
           </thead>
           <tbody>
@@ -132,11 +132,11 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
               const status = user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive';
               return (
                 <tr key={user.id}>
-                  <td className="adm-td">{user.name}</td>
-                  <td className="adm-td">{majorsMap[user.major_id] || '-'}</td>
-                  <td className="adm-td">{roleLabel(user.role)}</td>
-                  <td className="adm-td">{status}</td>
-                  <td className="adm-td">
+                  <td>{user.name}</td>
+                  <td>{majorsMap[user.major_id] || '-'}</td>
+                  <td>{roleLabel(user.role)}</td>
+                  <td>{status}</td>
+                  <td>
                     <button
                       className="adm-button outline"
                       onClick={() => manualEnroll(user)}
@@ -260,24 +260,24 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
         <table className="adm-table">
           <thead>
             <tr>
-              <th className="adm-th">이름</th>
-              <th className="adm-th">학과</th>
-              <th className="adm-th">전화번호</th>
-              <th className="adm-th">학번</th>
-              <th className="adm-th">권한</th>
-              <th className="adm-th">상태</th>
-              <th className="adm-th">저장</th>
-              <th className="adm-th">상세 보기</th>
+              <th>이름</th>
+              <th>학과</th>
+              <th>전화번호</th>
+              <th>학번</th>
+              <th>권한</th>
+              <th>상태</th>
+              <th>저장</th>
+              <th>상세 보기</th>
             </tr>
             <tr>
-              <td className="adm-td">
+              <td>
                 <input
                   className="adm-input"
                   value={filter.name}
                   onChange={(e) => updateFilterCriteria('name', e.target.value)}
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <select
                   className="adm-select"
                   value={filter.major}
@@ -291,28 +291,28 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   ))}
                 </select>
               </td>
-              <td className="adm-td">
+              <td>
                 <input
                   className="adm-input"
                   value={filter.phone}
                   onChange={(e) => updateFilterCriteria('phone', e.target.value)}
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <input
                   className="adm-input"
                   value={filter.student_id}
                   onChange={(e) => updateFilterCriteria('student_id', e.target.value)}
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <input
                   className="adm-input"
                   value={filter.role}
                   onChange={(e) => updateFilterCriteria('role', e.target.value)}
                 />
               </td>
-              <td className="adm-td">
+              <td>
                 <select
                   className="adm-select"
                   value={filter.status}
@@ -324,20 +324,20 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   <option value="banned">banned</option>
                 </select>
               </td>
-              <td className="adm-td" colSpan={2}></td>
+              <td colSpan={2}></td>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user.id}>
-                <td className="adm-td">
+                <td>
                   <input
                     className="adm-input"
                     value={user.name}
                     onChange={(e) => updateUserField(user.id, 'name', e.target.value)}
                   />
                 </td>
-                <td className="adm-td">
+                <td>
                   <select
                     className="adm-select"
                     value={user.major_id}
@@ -353,21 +353,21 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     ))}
                   </select>
                 </td>
-                <td className="adm-td">
+                <td>
                   <input
                     className="adm-input"
                     value={user.phone || ''}
                     onChange={(e) => updateUserField(user.id, 'phone', e.target.value)}
                   />
                 </td>
-                <td className="adm-td">
+                <td>
                   <input
                     className="adm-input"
                     value={user.student_id || ''}
                     onChange={(e) => updateUserField(user.id, 'student_id', e.target.value)}
                   />
                 </td>
-                <td className="adm-td">
+                <td>
                   <select
                     className="adm-select"
                     value={roleNumberToString(user.role)}
@@ -382,7 +382,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     <option value="lowest">최저권한</option>
                   </select>
                 </td>
-                <td className="adm-td">
+                <td>
                   <select
                     className="adm-select"
                     value={user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive'}
@@ -393,7 +393,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     <option value="banned">banned</option>
                   </select>
                 </td>
-                <td className="adm-td">
+                <td>
                   <button
                     className="adm-button"
                     onClick={() => sendUserData(user)}
@@ -402,7 +402,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     저장
                   </button>
                 </td>
-                <td className="adm-td">
+                <td>
                   <button className="adm-button outline" onClick={() => showDetail(user)}>
                     상세 보기
                   </button>

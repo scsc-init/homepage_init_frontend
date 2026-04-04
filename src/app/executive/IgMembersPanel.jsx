@@ -17,12 +17,12 @@ function IgMemberAdd({
       <table className={styles['adm-table']}>
         <thead>
           <tr>
-            <th className={styles['adm-th']}>이름</th>
-            <th className={styles['adm-th']}>이메일</th>
-            <th className={styles['adm-th']}>작업</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>작업</th>
           </tr>
           <tr>
-            <td className={styles['adm-td']}>
+            <td>
               <input
                 name="name"
                 className={styles['adm-input']}
@@ -30,7 +30,7 @@ function IgMemberAdd({
                 onChange={(e) => updateUserFilterCriteria('name', e.target.value)}
               />
             </td>
-            <td className={styles['adm-td']}>
+            <td>
               <input
                 name="email"
                 type="email"
@@ -44,9 +44,9 @@ function IgMemberAdd({
         <tbody>
           {filteredUsers.map((u) => (
             <tr key={u.id}>
-              <td className={styles['adm-td']}>{u.name}</td>
-              <td className={styles['adm-td']}>{u.email}</td>
-              <td className={styles['adm-td']}>
+              <td>{u.name}</td>
+              <td>{u.email}</td>
+              <td>
                 <button
                   className={styles['adm-button']}
                   onClick={() => handleAddMember(u)}
@@ -76,12 +76,12 @@ function IgMemberDelete({
       <table className={styles['adm-table']}>
         <thead>
           <tr>
-            <th className={styles['adm-th']}>이름</th>
-            <th className={styles['adm-th']}>이메일</th>
-            <th className={styles['adm-th']}>작업</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>작업</th>
           </tr>
           <tr>
-            <td className={styles['adm-td']}>
+            <td>
               <input
                 name="name"
                 className={styles['adm-input']}
@@ -89,7 +89,7 @@ function IgMemberDelete({
                 onChange={(e) => updateMemberFilterCriteria('name', e.target.value)}
               />
             </td>
-            <td className={styles['adm-td']}>
+            <td>
               <input
                 name="email"
                 type="email"
@@ -103,9 +103,9 @@ function IgMemberDelete({
         <tbody>
           {filteredMembers.map((m) => (
             <tr key={m.user_id}>
-              <td className={styles['adm-td']}>{m.user?.name ?? ''}</td>
-              <td className={styles['adm-td']}>{m.user?.email ?? ''}</td>
-              <td className={styles['adm-td']}>
+              <td>{m.user?.name ?? ''}</td>
+              <td>{m.user?.email ?? ''}</td>
+              <td>
                 <button
                   className={styles['adm-button']}
                   onClick={() => handleDeleteMember(m)}

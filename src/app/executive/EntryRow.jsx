@@ -9,7 +9,7 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
   const renderBooleanCell = (field, label, value) => {
     const checked = Boolean(value);
     return (
-      <td className={styles['adm-td']} style={boolCellStyle}>
+      <td style={boolCellStyle}>
         <label className={styles['adm-flex']}>
           <input
             type="checkbox"
@@ -25,31 +25,29 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
 
   return (
     <tr key={entry.id}>
-      <td className={styles['adm-td']} style={idCellStyle}>
-        {entry.id}
-      </td>
-      <td className={styles['adm-td']}>
+      <td style={idCellStyle}>{entry.id}</td>
+      <td>
         <input
           className={styles['adm-input']}
           value={entry.title}
           onChange={(e) => onChange(entry.id, 'title', e.target.value)}
         />
       </td>
-      <td className={styles['adm-td']}>
+      <td>
         <input
           className={styles['adm-input']}
           value={entry.description}
           onChange={(e) => onChange(entry.id, 'description', e.target.value)}
         />
       </td>
-      <td className={styles['adm-td']}>
+      <td>
         <textarea
           className={styles['adm-textarea']}
           value={entry.content ?? ''}
           onChange={(e) => onChange(entry.id, 'content', e.target.value)}
         />
       </td>
-      <td className={styles['adm-td']}>
+      <td>
         <select
           className={styles['adm-select']}
           value={entry.status}
@@ -60,7 +58,7 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           <option value="inactive">{STATUS_MAP.inactive}</option>
         </select>
       </td>
-      <td className={styles['adm-td']}>
+      <td>
         <input
           className={styles['adm-input']}
           type="number"
@@ -69,7 +67,7 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
           disabled
         />
       </td>
-      <td className={styles['adm-td']}>
+      <td>
         <select
           className={styles['adm-select']}
           value={entry.semester}
@@ -84,14 +82,14 @@ export default function EntryRow({ entry, onChange, onSave, onDelete, saving }) 
       </td>
       {renderBooleanCell('should_extend', '다음 학기 연장 신청', entry.should_extend)}
       {renderBooleanCell('is_rolling_admission', '가입기간 자유화', entry.is_rolling_admission)}
-      <td className={styles['adm-td']}>
+      <td>
         <select className={styles['adm-select']}>
           {entry.members.map((m) => (
             <option key={m.id}>{m.user.name}</option>
           ))}
         </select>
       </td>
-      <td className={styles['adm-td']}>
+      <td>
         <div className={styles['adm-flex']}>
           <button
             className={styles['adm-button']}

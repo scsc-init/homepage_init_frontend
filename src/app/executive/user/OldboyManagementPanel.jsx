@@ -34,11 +34,11 @@ export default function OldboyManagementPanel({ users }) {
         <table className="adm-table">
           <thead>
             <tr>
-              <th className="adm-th">이름</th>
-              <th className="adm-th">신청시각</th>
-              <th className="adm-th">처리시각</th>
-              <th className="adm-th">처리여부</th>
-              <th className="adm-th">승인버튼</th>
+              <th>이름</th>
+              <th>신청시각</th>
+              <th>처리시각</th>
+              <th>처리여부</th>
+              <th>승인버튼</th>
             </tr>
           </thead>
           <tbody>
@@ -47,11 +47,11 @@ export default function OldboyManagementPanel({ users }) {
               const displayName = user?.name ?? '(알 수 없음)';
               return (
                 <tr key={u.id}>
-                  <td className="adm-td">{displayName}</td>
-                  <td className="adm-td">{utc2kst(u.created_at)}</td>
-                  <td className="adm-td">{utc2kst(u.updated_at)}</td>
-                  <td className="adm-td">{u.processed ? '✅' : '❌'}</td>
-                  <td className="adm-td">
+                  <td>{displayName}</td>
+                  <td>{utc2kst(u.created_at)}</td>
+                  <td>{utc2kst(u.updated_at)}</td>
+                  <td>{u.processed ? '✅' : '❌'}</td>
+                  <td>
                     <button
                       className="adm-button"
                       onClick={() => user && processOldboy(user)}

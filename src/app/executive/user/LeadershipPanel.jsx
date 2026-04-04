@@ -104,22 +104,16 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
           <table className="adm-table">
             <thead>
               <tr>
-                <th className="adm-th" style={{ width: '20%' }}>
-                  직책
-                </th>
-                <th className="adm-th" style={{ width: '40%' }}>
-                  현재 등록된 임원
-                </th>
-                <th className="adm-th" style={{ width: '40%' }}>
-                  변경할 임원 선택
-                </th>
+                <th style={{ width: '20%' }}>직책</th>
+                <th style={{ width: '40%' }}>현재 등록된 임원</th>
+                <th style={{ width: '40%' }}>변경할 임원 선택</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="adm-td">회장</td>
-                <td className="adm-td">{renderUserSummary(registeredPresident)}</td>
-                <td className="adm-td">
+                <td>회장</td>
+                <td>{renderUserSummary(registeredPresident)}</td>
+                <td>
                   <select
                     className="adm-select"
                     value={selectedPresidentId}
@@ -142,15 +136,15 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
               </tr>
               {selectedVicePresidentIds.map((id, idx) => (
                 <tr key={`${id}-${idx}`}>
-                  <td className="adm-td">부회장</td>
-                  <td className="adm-td">
+                  <td>부회장</td>
+                  <td>
                     {renderUserSummary(
                       idx < registeredVicePresidents.length
                         ? registeredVicePresidents[idx]
                         : null,
                     )}
                   </td>
-                  <td className="adm-td">
+                  <td>
                     <select
                       className="adm-select"
                       value={id}
