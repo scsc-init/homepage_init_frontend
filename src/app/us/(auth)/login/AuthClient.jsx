@@ -9,6 +9,8 @@ import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { replaceLoginWithRedirect, setRedirectAfterLogin } from '@/util/loginRedirect';
 import styles from '../auth.module.css';
+import CopyButton from '@/components/CopyButton';
+import Image from 'next/image';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -35,9 +37,61 @@ function log(event, data = {}) {
   } catch {}
 }
 
+function InAppBrowserOutButton() {
+  const [isRedirectPossible, setIsRedirectPossible] = useState(false);
+  const [useragt, setUseragt] = useState('');
+
+  useEffect(() => {
+    const ua = navigator.userAgent.toLowerCase();
+    setUseragt(ua);
+    if (ua.match(/kakaotalk|line/i)) {
+      setIsRedirectPossible(true);
+    }
+  }, []);
+
+  const onClick = () => {
+    const target_url = window.location.href;
+    if (useragt.match('kakaotalk')) {
+      window.location.href =
+        'kakaotalk://web/openExternal?url=' + encodeURIComponent(target_url);
+    } else if (useragt.match('line')) {
+      if (target_url.indexOf('?') !== -1) {
+        window.location.href = target_url + '&openExternalBrowser=1';
+      } else {
+        window.location.href = target_url + '?openExternalBrowser=1';
+      }
+    }
+  };
+
+  if (!isRedirectPossible) {
+    if (!useragt.match('everytimeapp')) return;
+    if (useragt.match(/iphone|ipad|ipod/i)) {
+      return (
+        <p>
+          상단의 화살표 아이콘({' '}
+          <Image
+            src="/vectors/open-external-link-icon.svg"
+            width={12}
+            height={12}
+            className="ico"
+            alt="arrow button"
+          />{' '}
+          ) 클릭 &rarr; 외부 브라우저로 열기
+        </p>
+      );
+    } else {
+      return <p>상단의 점 세 개( ⋮ ) 클릭 &rarr; 외부 브라우저로 열기</p>;
+    }
+  }
+
+  return <button onClick={onClick}>외부 브라우저로 이동</button>;
+}
+
 export default function AuthClient({ initialRedirect = null }) {
   const [inAppWarning, setInAppWarning] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
+  const [inAppBrowserName, setInAppBrowserName] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
   const params = useSearchParams();
@@ -70,23 +124,17 @@ export default function AuthClient({ initialRedirect = null }) {
   }, [error, router]);
 
   useEffect(() => {
-    let isInAppBrowser = false;
-    let inAppBrowserName = '';
+    setMounted(true);
+
     const ua = navigator.userAgent.toLowerCase();
+
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
       const re = new RegExp(`\\b${key}\\b`);
       if (re.test(ua)) {
-        isInAppBrowser = true;
-        inAppBrowserName = name;
+        setInAppWarning(true);
+        setInAppBrowserName(name);
         break;
       }
-    }
-    if (isInAppBrowser) {
-      log('inapp_warning_shown', { name: inAppBrowserName });
-      alert(
-        `${inAppBrowserName} 인앱 브라우저에서는 로그인이 실패할 수 있습니다. 외부 브라우저를 이용해주세요.`,
-      );
-      setInAppWarning(true);
     }
   }, []);
 
@@ -104,6 +152,28 @@ export default function AuthClient({ initialRedirect = null }) {
             Seoul National University Computer Study Club
           </div>
         </div>
+        {mounted && inAppWarning && (
+          <>
+            <div className={styles['warning-wrapper']}>
+              <h3 style={{ marginBottom: '0px' }}>
+                <strong>{inAppBrowserName}</strong> 브라우저에서는
+              </h3>
+              <h3 style={{ marginTop: '0px' }}>
+                <strong>로그인</strong>이 실패할 수 있습니다
+              </h3>
+              <p style={{ marginBottom: '20px' }}>
+                인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부
+                브라우저를 이용하면 더 안전합니다.
+              </p>
+            </div>
+            <div className={styles['copy-button-wrapper']}>
+              <CopyButton link="scsc.dev" label="외부 브라우저 링크 복사" />
+            </div>
+            <div className={styles['copy-button-wrapper']}>
+              <InAppBrowserOutButton />
+            </div>
+          </>
+        )}
         <p className={styles['login-description']}>SNU 구글 계정으로 로그인/회원가입</p>
         <div className={styles['google-signin-button-wrapper']}>
           <button
@@ -128,11 +198,6 @@ export default function AuthClient({ initialRedirect = null }) {
             </span>
             <span className={styles['GoogleLoginText']}>Google 계정으로 로그인</span>
           </button>
-          {inAppWarning && (
-            <p className={styles['InAppWarning']}>
-              인앱 브라우저에서는 인증이 차단될 수 있어요. 외부 브라우저로 다시 열어주세요.
-            </p>
-          )}
         </div>
       </div>
     </div>
