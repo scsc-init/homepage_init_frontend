@@ -54,6 +54,8 @@ export default async function AdminPanel() {
     fetchSCSCGlobalStatus(),
     fetchDiscordBotStatus(),
   ]);
+  const resolvedScscGlobalStatus =
+    scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value : null;
 
   return (
     <WithAuthorization>
@@ -78,19 +80,13 @@ export default async function AdminPanel() {
           </span>
           <h2>SCSC status 관리</h2>
           <div className="adm-section">
-            <EnrollmentPolicyPanel scscGlobalStatus={scscGlobalStatus.value} />
+            <EnrollmentPolicyPanel scscGlobalStatus={resolvedScscGlobalStatus} />
           </div>
           <div className="adm-section">
             <ScscStatusPanel
-              scscGlobalStatus={
-                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.status : null
-              }
-              semester={
-                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.semester : null
-              }
-              year={
-                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null
-              }
+              scscGlobalStatus={resolvedScscGlobalStatus?.status}
+              semester={resolvedScscGlobalStatus?.semester}
+              year={resolvedScscGlobalStatus?.year}
             />
           </div>
         </div>
