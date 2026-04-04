@@ -22,16 +22,6 @@ const executives = [
     description: '아주아주 귀여운 여고생',
   },
   {
-    name: '황민기',
-    image: '/devs/hmk.jpg',
-    description: '커밋주작은뭐야',
-  },
-  {
-    name: '윤영우',
-    image: '/devs/yyw.jpg',
-    description: '고능',
-  },
-  {
     name: '박상혁(Ethan)',
     image: '/devs/psh.jpg',
     description: 'SCSC 막스 베르슈타펜',
@@ -47,6 +37,25 @@ const executives = [
     description: '',
   },
 ];
+
+const formerDevelopersBySemester = [
+  {
+    semester: '2025-2',
+    members: [
+      {
+        name: '황민기',
+        image: '/devs/hmk.jpg',
+        description: '커밋주작은뭐야',
+      },
+      {
+        name: '윤영우',
+        image: '/devs/yyw.jpg',
+        description: '고능',
+      },
+    ],
+  },
+];
+
 export default function ExecutivesClient() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
@@ -144,6 +153,43 @@ export default function ExecutivesClient() {
           </div>
         ))}
       </div>
+
+      <section className={styles.formerDevelopersSection}>
+        <div className={styles.formerDevelopersHeader}>
+          <h3 className={styles.formerDevelopersTitle}>과거 개발자</h3>
+        </div>
+
+        <div className={styles.formerSemesterList}>
+          {formerDevelopersBySemester.map((semesterGroup) => (
+            <div key={semesterGroup.semester} className={styles.formerSemesterBlock}>
+              <div className={styles.formerSemesterTitle}>{semesterGroup.semester}</div>
+
+              <div className={styles.formerMembersGrid}>
+                {semesterGroup.members.map((member, index) => (
+                  <article
+                    key={`${semesterGroup.semester}-${member.name}-${index}`}
+                    className={styles.formerMemberCard}
+                  >
+                    <div className={styles.formerMemberImageWrap}>
+                      <Image
+                        src={member.image || '/asset/default-pfp.png'}
+                        alt={member.name}
+                        fill
+                        className={styles.image}
+                      />
+                    </div>
+
+                    <div className={styles.formerMemberText}>
+                      <div className={styles.formerMemberName}>{member.name}</div>
+                      <div className={styles.formerMemberDescription}>{member.description}</div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
