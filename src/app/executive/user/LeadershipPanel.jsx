@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 function renderUserSummary(user) {
   if (!user) return <span>미지정</span>;
@@ -17,8 +16,6 @@ function renderUserSummary(user) {
 }
 
 export default function LeadershipPanel({ initialLeadership, candidates }) {
-  const router = useRouter();
-
   const [selectedPresidentId, setSelectedPresidentId] = useState(
     initialLeadership?.presidentId ?? '',
   );

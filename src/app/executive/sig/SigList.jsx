@@ -5,50 +5,13 @@ import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../igpage.module.css';
 
 function SigFilterRow({ filter, updateFilterCriteria }) {
-  const renderBoolSelect = (field, extraClass) => {
-    const selectClasses = [styles['adm-select'], styles['adm-select-bool']];
-    if (extraClass) selectClasses.push(styles[extraClass]);
-    return (
-      <select
-        className={selectClasses.join(' ')}
-        value={filter[field]}
-        onChange={(e) => updateFilterCriteria(field, e.target.value)}
-      >
-        <option value="">전체</option>
-        <option value="true">예</option>
-        <option value="false">아니오</option>
-      </select>
-    );
-  };
-
   return (
     <tr>
-      <td className={styles['adm-td']}>
-        <input
-          className={`${styles['adm-input']} ${styles['adm-input-id']}`}
-          value={filter.id}
-          onChange={(e) => updateFilterCriteria('id', e.target.value)}
-        />
-      </td>
       <td className={styles['adm-td']}>
         <input
           className={styles['adm-input']}
           value={filter.title}
           onChange={(e) => updateFilterCriteria('title', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.description}
-          onChange={(e) => updateFilterCriteria('description', e.target.value)}
-        />
-      </td>
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={filter.content}
-          onChange={(e) => updateFilterCriteria('content', e.target.value)}
         />
       </td>
       <td className={styles['adm-td']}>
@@ -127,46 +90,14 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
   );
 }
 
-const boolMatches = (value, filterValue) => {
-  if (!filterValue) return true;
-  const normalized = value ? 'true' : 'false';
-  return normalized === filterValue;
-};
-
-const lower = (v) => v?.toString().toLowerCase() || '';
-
-const getLeaderUserId = (sig) => {
-  if (sig?.owner == null) return '';
-  return String(sig.owner);
-};
-
-const renderSigRow = (sig, ctx) => {
-  const sigIdStr = String(sig.id);
-  const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
-  const members = Array.isArray(sig?.members) ? sig.members : [];
-  const leaderId = getLeaderUserId(sig);
-  const selected = ctx.selectedMemberBySigId[sigIdStr] ?? leaderId;
-
+const RenderSigRow = ({ sig }) => {
   return (
-    <tr key={sig.id} className={styles['adm-tr']}>
-      <td className={styles['adm-td']}>{sig.id}</td>
-
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={sig.title ?? ''}
-          onChange={(e) => ctx.updateSigField(sig.id, 'title', e.target.value)}
-        />
-      </td>
-
-      <td className={styles['adm-td']}>
-        <input
-          className={styles['adm-input']}
-          value={sig.description ?? ''}
-          onChange={(e) => ctx.updateSigField(sig.id, 'description', e.target.value)}
-        />
-      </td>
-
+    <tr className={styles['adm-tr']}>
+      <td className={styles['adm-td']}>{sig.title ?? ''}</td>
+      <td className={styles['adm-td']}>{STATUS_MAP[sig.status] ?? ''}</td>
+      <td className={styles['adm-td']}>{sig.year ?? ''}</td>
+      <td className={styles['adm-td']}>{SEMESTER_MAP[Number(sig.semester)] ?? ''}학기</td>
+      <td className={styles['adm-td']}>{sig.ownerName ?? ''}</td>
       <td className={styles['adm-td']}>
         <input
           className={styles['adm-input']}
@@ -341,46 +272,18 @@ const renderSigRow = (sig, ctx) => {
   );
 };
 
-export default function SigList({ sigs: sigsDefault }) {
-  const [sigs, setSigs] = useState(sigsDefault ?? []);
-  const [filteredSigs, setFilteredSigs] = useState(sigsDefault ?? []);
-  const [saving, setSaving] = useState({});
+const lower = (v) => v?.toString().toLowerCase() || '';
+
+export default function SigList({ sigs }) {
   const [filter, setFilter] = useState({
-    id: '',
     title: '',
-    description: '',
-    content: '',
     status: '',
     year: '',
     semester: '',
-    created_year: '',
-    created_semester: '',
-    member: '',
-    should_extend: '',
-    is_rolling_admission: '',
+    ownerName: '',
   });
 
-  const initialSelectedMembers = useMemo(() => {
-    const m = {};
-    (sigsDefault ?? []).forEach((sig) => {
-      m[String(sig.id)] = getLeaderUserId(sig);
-    });
-    return m;
-  }, [sigsDefault]);
-
-  const [selectedMemberBySigId, setSelectedMemberBySigId] = useState(initialSelectedMembers);
-
-  const updateSigField = (id, field, value) => {
-    setSigs((prev) => prev.map((sig) => (sig.id === id ? { ...sig, [field]: value } : sig)));
-    setFilteredSigs((prev) =>
-      prev.map((sig) => (sig.id === id ? { ...sig, [field]: value } : sig)),
-    );
-  };
-
-  const updateFilterCriteria = (field, value) => {
-    const newFilter = { ...filter, [field]: value };
-    setFilter(newFilter);
-
+  const filteredSigs = useMemo(() => {
     const matches = (sig) =>
       (!newFilter.id || lower(sig.id).includes(lower(newFilter.id))) &&
       (!newFilter.title || lower(sig.title).includes(lower(newFilter.title))) &&
@@ -476,8 +379,6 @@ export default function SigList({ sigs: sigsDefault }) {
     <div className={styles['adm-table-wrap']}>
       <table className={styles['adm-table']}>
         <colgroup>
-          <col className={styles['adm-col-id']} />
-          <col />
           <col />
           <col />
           <col />
@@ -494,10 +395,7 @@ export default function SigList({ sigs: sigsDefault }) {
         </colgroup>
         <thead>
           <tr className={styles['adm-tr']}>
-            <th className={styles['adm-th']}>ID</th>
             <th className={styles['adm-th']}>이름</th>
-            <th className={styles['adm-th']}>설명</th>
-            <th className={styles['adm-th']}>내용</th>
             <th className={styles['adm-th']}>상태</th>
             <th className={styles['adm-th']}>연도</th>
             <th className={styles['adm-th']}>학기</th>
@@ -509,9 +407,16 @@ export default function SigList({ sigs: sigsDefault }) {
             <th className={styles['adm-th']}>구성원</th>
             <th className={styles['adm-th']}>작업</th>
           </tr>
-          <SigFilterRow filter={filter} updateFilterCriteria={updateFilterCriteria} />
+          <SigFilterRow
+            filter={filter}
+            updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
+          />
         </thead>
-        <tbody>{filteredSigs.map((sig) => renderSigRow(sig, rowCtx))}</tbody>
+        <tbody>
+          {filteredSigs.map((sig) => (
+            <RenderSigRow sig={sig} key={sig.id} />
+          ))}
+        </tbody>
       </table>
     </div>
   );

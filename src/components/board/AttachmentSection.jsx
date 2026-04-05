@@ -2,20 +2,7 @@
 
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { directFetch } from '@/util/directFetch';
-
-function formatBytes(n) {
-  const v = Number(n);
-  if (!Number.isFinite(v) || v <= 0) return '';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  let x = v;
-  let i = 0;
-  while (x >= 1024 && i < units.length - 1) {
-    x /= 1024;
-    i += 1;
-  }
-  const s = i === 0 ? String(Math.round(x)) : x.toFixed(1);
-  return `${s} ${units[i]}`;
-}
+import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 
 export default function AttachmentSection({ valueIds, onChangeIds, label = '첨부파일' }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -177,7 +164,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
             <li key={id} className="AttachmentItem">
               <a
                 className="AttachmentLink"
-                href={`/api/file/docs/download/${encodeURIComponent(id)}`}
+                href={getAttachmentDownloadUrl(id, metadataMap[id])}
                 target="_blank"
                 rel="noreferrer"
               >

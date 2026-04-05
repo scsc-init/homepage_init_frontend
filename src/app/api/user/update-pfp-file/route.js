@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function POST(request) {
   const session = await getServerSession(authOptions);
@@ -11,7 +10,7 @@ export async function POST(request) {
 
   const formData = await request.formData();
 
-  const res = await fetch(`${getBaseUrl()}/api/user/update-pfp-file`, {
+  const res = await fetch(`${process.env.BACKEND_URL || ''}/api/user/update-pfp-file`, {
     method: 'POST',
     headers: {
       ...(appJwt ? { 'x-jwt': appJwt } : {}),

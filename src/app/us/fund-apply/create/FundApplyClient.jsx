@@ -8,8 +8,19 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 
 import './page.css';
 
+const BACKEND_BASE_URL = (() => {
+  const base = (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim();
+  return base ? base.replace(/\/+$/, '') : '';
+})();
+
+const buildImageUrl = (id) => {
+  const relative = `/api/image/download/${encodeURIComponent(id)}`;
+  if (!BACKEND_BASE_URL) return relative;
+  return `${BACKEND_BASE_URL}${relative}`;
+};
+
 const GUIDE_URL =
-  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
+  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/B_SCSC_%EC%A7%80%EC%9B%90%EA%B8%88_%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8_%EB%B0%8F_%EC%8B%A0%EC%B2%AD%EC%A0%88%EC%B0%A8_%EC%84%B8%EC%B9%99.md';
 
 const PLACEHOLDER = {
   contest: `아래 항목을 참고해 상세 내용을 작성해주세요.
@@ -309,8 +320,7 @@ export default function FundApplyClient({
     const ids = (Array.isArray(form.imageIds) ? form.imageIds : [])
       .map((id) => String(id))
       .filter(Boolean);
-
-    const imgs = ids.map((id) => `![image](/api/image/download/${encodeURIComponent(id)})`);
+    const imgs = ids.map((id) => `![image](${buildImageUrl(id)})`);
 
     const blocks = [];
     blocks.push(`${headerLines.join('\n')}\n\n---\n`);
@@ -735,7 +745,7 @@ export default function FundApplyClient({
                             >
                               <a
                                 className="C_Link"
-                                href={`/api/image/download/${encodeURIComponent(id)}`}
+                                href={buildImageUrl(id)}
                                 target="_blank"
                                 rel="noreferrer"
                               >

@@ -6,24 +6,6 @@ import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { consumeRedirectAfterLogin, replaceLoginWithRedirect } from '@/util/loginRedirect';
 
-function log(event, data = {}) {
-  try {
-    const body = JSON.stringify({ event, data, ts: new Date().toISOString() });
-    const url = '/api/log';
-    if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-      const blob = new Blob([body], { type: 'application/json' });
-      navigator.sendBeacon(url, blob);
-      return;
-    }
-    fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body,
-      keepalive: true,
-    });
-  } catch {}
-}
-
 export default function OAuthLanding() {
   const router = useRouter();
   const { data: session, status } = useSession();

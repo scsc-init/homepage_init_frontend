@@ -1,4 +1,4 @@
-// @/util/constants.js
+// @/util/constants.ts
 
 /**
  * @file 변경 가능성이 있는 변수들과 설명을 모아둔 파일입니다.
@@ -17,11 +17,10 @@ export const oldboyLevel = 400;
 
 /**
  * 학기 숫자에 대응되는 학기 표시값입니다.
- * @type {Record<number, string>}
  */
-export const SEMESTER_MAP = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
+export const SEMESTER_MAP: Record<number, string> = { 1: '1', 2: '여름', 3: '2', 4: '겨울' };
 
-export const STATUS_MAP = {
+export const STATUS_MAP: Record<string, string> = {
   inactive: '비활성',
   recruiting: '모집중',
   active: '활동중',
@@ -30,10 +29,10 @@ export const STATUS_MAP = {
 /**
  * Returns the first valid string among the provided values.
  *
- * @param {...(string|undefined|null)} vals - Candidate values.
- * @returns {string} The first non-empty string found, or an empty string if none exist.
+ * @param vals - Candidate values.
+ * @returns The first non-empty string found, or an empty string if none exist.
  */
-function pickEnv(...vals) {
+function pickEnv(...vals: Array<string | undefined | null>): string {
   for (const v of vals) {
     if (typeof v === 'string' && v.trim()) return v.trim();
   }
@@ -61,11 +60,20 @@ export const KAKAO_INVITE_LINK = pickEnv(
   'https://invite.kakao.com/tc/II2yiLsQhY',
 );
 
+export interface HeaderMenuItem {
+  label: string;
+  url: string;
+}
+
+export interface HeaderMenuSection {
+  title: string;
+  items: HeaderMenuItem[];
+}
+
 /**
  * 헤더에 들어가는 네비게이션 정보입니다.
- * @type {{title: string, items: {label: string, url: string}[]}[]}
  */
-export const headerMenuData = [
+export const headerMenuData: HeaderMenuSection[] = [
   {
     title: 'About us',
     items: [
@@ -100,11 +108,16 @@ export const headerMenuData = [
   },
 ];
 
+export interface FooterLogoItem {
+  href: string;
+  src: string;
+  alt: string;
+}
+
 /**
  * 푸터에 표시되는 로고 정보입니다. 순서대로 푸터에 표시됩니다. 현재 사용되지 않는 로고는 코멘트 처리되어있습니다.
- * @type {{href: string, src: string, alt: string}[]}
  */
-export const footerLogoData = [
+export const footerLogoData: FooterLogoItem[] = [
   {
     href: 'mailto:scsc.snu@gmail.com',
     src: '/vectors/mail.svg',
@@ -134,26 +147,29 @@ export const footerLogoData = [
 
 /**
  * 푸터가 표시되지 않는 라우트의 리스트입니다.
- * @type {string[]}
  */
-export const hideFooterRoutes = ['/', '/us/login', '/signup', '/about/my-page'];
+export const hideFooterRoutes: string[] = ['/', '/us/login', '/signup', '/about/my-page'];
 
 /**
  * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
  * BE의 src/controller/scsc.py에서 정의합니다.
  */
-const CTRL_STATUS_AVAILABLE = {
+const CTRL_STATUS_AVAILABLE: Record<string, readonly string[]> = {
   JOIN_SIGPIG: ['recruiting'],
   JOIN_SIGPIG_ROLLING_ADMISSION: ['recruiting', 'active'],
 };
 
 /**
+ * 시그/피그 가입 가능 여부를 반환합니다.
  *
- * @param {String} status sig/pig status
- * @param {Boolean} is_rolling_admission sig/pig is_rolling_admission
- * @returns {Boolean}
+ * @param status - sig/pig status
+ * @param is_rolling_admission - sig/pig is_rolling_admission
+ * @returns 가입 가능 여부
  */
-export function is_sigpig_join_available(status, is_rolling_admission) {
+export function is_sigpig_join_available(
+  status: string,
+  is_rolling_admission: boolean | string,
+): boolean {
   const rolling =
     typeof is_rolling_admission === 'boolean'
       ? is_rolling_admission
@@ -163,12 +179,13 @@ export function is_sigpig_join_available(status, is_rolling_admission) {
 }
 
 /**
+ * PIG 가입 가능 여부를 반환합니다.
  *
- * @param {String} status sig/pig status
- * @param {String} is_rolling_admission pig is_rolling_admission
- * @returns {Boolean}
+ * @param status - pig status
+ * @param is_rolling_admission - pig is_rolling_admission
+ * @returns 가입 가능 여부
  */
-export function is_pig_join_available(status, is_rolling_admission) {
+export function is_pig_join_available(status: string, is_rolling_admission: string): boolean {
   const s = String(status).toLowerCase();
   const r = String(is_rolling_admission).toLowerCase();
 
@@ -188,8 +205,7 @@ export function is_pig_join_available(status, is_rolling_admission) {
 /**
  * PIG 가입 조건의 세 가지 경우를 정의한 설정입니다.
  */
-
-export const PIG_ADMISSION_LABEL_MAP = {
+export const PIG_ADMISSION_LABEL_MAP: Record<string, string> = {
   always: '항상 가입 받기',
   during_recruiting: 'PIG 가입 기간에만 가입 받기',
   never: '항상 가입 받지 않기',
@@ -206,14 +222,15 @@ export const COLORS = {
   textBody: 'var(--color-text-body)',
   surfaceDark: 'var(--color-surface-dark)',
   surfaceLight: 'var(--color-surface-light)',
-};
+} as const;
 
 /**
+ * UTC datetime을 KST 문자열로 변환합니다.
  *
- * @param {string | number | Date} date utc datetime
- * @returns {string} kst datetime
+ * @param date - utc datetime
+ * @returns kst datetime
  */
-export function utc2kst(date) {
+export function utc2kst(date: string | number | Date): string {
   const utc = new Date(date).getTime();
   const kst = new Date(utc + 9 * 60 * 60 * 1000);
 
@@ -228,7 +245,7 @@ export function utc2kst(date) {
 }
 
 /** 임원진 페이지에서 제외할 이메일 목록 */
-export const excludedExecutiveEmails = [
+export const excludedExecutiveEmails: string[] = [
   'bot@discord.com',
   'deposit.app@scsc.dev',
   'tteokgook1@snu.ac.kr',
@@ -240,7 +257,7 @@ export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.png';
 /**
  * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
  */
-export const HIDDEN_KV_KEYS = ['main-president', 'vice-president'];
+export const HIDDEN_KV_KEYS: string[] = ['main-president', 'vice-president'];
 
 /**
  * 앨범 게시판의 id입니다.
@@ -258,9 +275,8 @@ export const IMAGE_UPLOAD_TARGET_BYTES = 4_800_000; // ~4.8MB
  * 로그인 이후 돌아갈 수 있는 리다이렉트 경로의 화이트리스트(prefix)입니다.
  * 이 목록에 포함되지 않은 경로로는 리다이렉트하지 않습니다.
  * 특히 /us/login을 넣으면 무한로딩에 걸리니 주의하십시오.
- * @type {string[]}
  */
-export const ALLOWED_REDIRECT_PREFIXES = [
+export const ALLOWED_REDIRECT_PREFIXES: string[] = [
   '/us/fund-apply',
   '/board',
   '/article',
@@ -274,4 +290,4 @@ export const ALLOWED_REDIRECT_PREFIXES = [
 /**
  * 테스트 유틸리티 페이지 활성화 여부입니다.
  */
-export const ENABLE_TEST_UTILS = process.env.NEXT_PUBLIC_ENABLE_TEST_UTILS === 'TRUE' ?? false;
+export const ENABLE_TEST_UTILS = process.env.NEXT_PUBLIC_ENABLE_TEST_UTILS === 'TRUE';

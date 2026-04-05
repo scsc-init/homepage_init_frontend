@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export const metadata = { title: 'PIG' };
 
 export default async function EditPigPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const [me] = await Promise.allSettled([fetchMe()]);
   if (me.status === 'rejected') redirect('/us/login');
 
