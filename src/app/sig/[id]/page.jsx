@@ -6,7 +6,7 @@ import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const res = await fetch(`${process.env.BACKEND_URL || ''}/api/sig/${id}`, {
       method: 'GET',
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function SigDetailPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
 
   const [me] = await Promise.allSettled([fetchMe()]);
 
