@@ -114,6 +114,7 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           styles['adm-select-bool-wide'] ? 'adm-select-bool-wide' : undefined,
         )}
       </td>
+      <td className={styles['adm-td']}></td>
       <td className={styles['adm-td']}>
         <input
           className={styles['adm-input']}
@@ -404,6 +405,17 @@ export default function SigList({ sigs: sigsDefault }) {
   };
 
   const handleSave = async (sig) => {
+    const normalizedWebsites = (sig.websites ?? [])
+      .map((web) => ({
+        ...web,
+        label: web.label?.trim() ?? '',
+        url: web.url?.trim() ?? '',
+      }))
+      .filter((web) => web.label || web.url);
+    if (normalizedWebsites.some((web) => !web.label || !web.url)) {
+      alert('웹사이트 이름과 URL을 모두 입력해주세요.');
+      return;
+    }
     setSaving((prev) => ({ ...prev, [sig.id]: true }));
     try {
       const res = await fetch(`/api/executive/sig/${sig.id}/update`, {
@@ -418,7 +430,10 @@ export default function SigList({ sigs: sigsDefault }) {
           semester: sig.semester,
           should_extend: Boolean(sig.should_extend),
           is_rolling_admission: Boolean(sig.is_rolling_admission),
-          websites: sig.websites || [],
+          websites: normalizedWebsites.map((web, index) => ({
+            ...web,
+            sort_order: index,
+          })),
         }),
       });
       if (res.status === 204) alert('저장 완료');
@@ -472,10 +487,8 @@ export default function SigList({ sigs: sigsDefault }) {
           <col />
           <col className={styles['adm-col-bool']} />
           <col className={styles['adm-col-bool-wide']} />
-          <col />
-          <col />
           <col className={styles['adm-col-bool-wide']} />
-          <col style={{ width: '200px' }} />
+          <col style={{ width: '250px' }} />
           <col />
           <col />
         </colgroup>
