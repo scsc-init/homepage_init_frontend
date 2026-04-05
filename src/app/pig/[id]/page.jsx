@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function PigDetailPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
 
   const [me] = await Promise.allSettled([fetchMe()]);
 
