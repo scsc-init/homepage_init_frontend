@@ -244,6 +244,58 @@ const renderSigRow = (sig, ctx) => {
       </td>
 
       <td className={styles['adm-td']}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+          {(sig.websites || []).map((web, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
+              <input
+                className={styles['adm-input']}
+                style={{ width: '60px', fontSize: '11px' }}
+                placeholder="이름"
+                value={web.label}
+                onChange={(e) => {
+                  const newWebs = [...sig.websites];
+                  newWebs[idx].label = e.target.value;
+                  ctx.updateSigField(sig.id, 'websites', newWebs);
+                }}
+              />
+              <input
+                className={styles['adm-input']}
+                style={{ flex: 1, fontSize: '11px' }}
+                placeholder="URL"
+                value={web.url}
+                onChange={(e) => {
+                  const newWebs = [...sig.websites];
+                  newWebs[idx].url = e.target.value;
+                  ctx.updateSigField(sig.id, 'websites', newWebs);
+                }}
+              />
+              <button
+                style={{ padding: '0 4px', cursor: 'pointer' }}
+                onClick={() => {
+                  const newWebs = sig.websites.filter((_, i) => i !== idx);
+                  ctx.updateSigField(sig.id, 'websites', newWebs);
+                }}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <button
+            style={{ fontSize: '10px', cursor: 'pointer', alignSelf: 'flex-start' }}
+            onClick={() => {
+              const newWebs = [
+                ...(sig.websites || []),
+                { label: '', url: '', sort_order: sig.websites?.length || 0 },
+              ];
+              ctx.updateSigField(sig.id, 'websites', newWebs);
+            }}
+          >
+            + 항목 추가
+          </button>
+        </div>
+      </td>
+
+      <td className={styles['adm-td']}>
         <select
           className={styles['adm-select']}
           value={selected || ''}
@@ -366,6 +418,7 @@ export default function SigList({ sigs: sigsDefault }) {
           semester: sig.semester,
           should_extend: Boolean(sig.should_extend),
           is_rolling_admission: Boolean(sig.is_rolling_admission),
+          websites: sig.websites || [],
         }),
       });
       if (res.status === 204) alert('저장 완료');
@@ -421,6 +474,10 @@ export default function SigList({ sigs: sigsDefault }) {
           <col className={styles['adm-col-bool-wide']} />
           <col />
           <col />
+          <col className={styles['adm-col-bool-wide']} />
+          <col style={{ width: '200px' }} />
+          <col />
+          <col />
         </colgroup>
         <thead>
           <tr className={styles['adm-tr']}>
@@ -435,6 +492,7 @@ export default function SigList({ sigs: sigsDefault }) {
             <th className={styles['adm-th']}>최초생성 학기</th>
             <th className={styles['adm-th']}>연장 신청</th>
             <th className={styles['adm-th']}>가입기간 자유화</th>
+            <th className={styles['adm-th']}>웹사이트</th>
             <th className={styles['adm-th']}>구성원</th>
             <th className={styles['adm-th']}>작업</th>
           </tr>
