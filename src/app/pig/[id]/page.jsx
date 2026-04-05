@@ -6,7 +6,7 @@ import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const res = await fetch(`${process.env.BACKEND_URL || ''}/api/pig/${id}`, {
       method: 'GET',
