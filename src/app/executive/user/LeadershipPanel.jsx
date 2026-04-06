@@ -66,12 +66,11 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
       alert('회장 직책은 반드시 지정해야 합니다.');
       return;
     }
-    const normalizedVicePresidentIds = selectedVicePresidentIds
-      .map((id) => String(id ?? '').trim())
-      .filter((id) => id !== '');
-
-    if (new Set(normalizedVicePresidentIds).size !== normalizedVicePresidentIds.length) {
-      alert('부회장끼리는 서로 다른 인물이어야 합니다.');
+    if (
+      new Set(selectedVicePresidentIds.filter((id) => id !== '')).size !==
+      selectedVicePresidentIds.filter((id) => id !== '').length
+    ) {
+     alert('부회장끼리는 서로 다른 인물이어야 합니다.');
       return;
     }
     setPending(true);
