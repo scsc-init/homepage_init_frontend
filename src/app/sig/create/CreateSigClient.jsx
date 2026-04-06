@@ -4,8 +4,15 @@ import SigForm from '@/components/board/SigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { directFetch } from '@/util/directFetch';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site, index) => {
+      const url = site?.url?.trim() ?? '';
+      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
+    })
+    .filter((site) => site.url);
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
@@ -28,6 +35,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
       description: '',
       editor: '',
       is_rolling_admission: scscGlobalStatus === 'active',
+      websites: [{ url: '' }],
     },
   });
 
@@ -95,7 +103,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await directFetch('/api/sig/create', {
+      const res = await fetch('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,6 +111,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
         }),
       });
 
