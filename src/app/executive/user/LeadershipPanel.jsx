@@ -62,6 +62,17 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
       alert('회장과 부회장은 서로 다른 인물이어야 합니다.');
       return;
     }
+    if (selectedPresidentId == '') {
+      alert('회장 직책은 반드시 지정해야 합니다.');
+      return;
+    }
+    if (
+      new Set(selectedVicePresidentIds.filter((id) => id !== '')).size !==
+      selectedVicePresidentIds.filter((id) => id !== '').length
+    ) {
+      alert('부회장끼리는 서로 다른 인물이어야 합니다.');
+      return;
+    }
     setPending(true);
     try {
       const res = await fetch('/api/executive/leadership', {
