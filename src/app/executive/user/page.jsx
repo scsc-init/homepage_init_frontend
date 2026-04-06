@@ -1,26 +1,37 @@
-// src/app/executive/user/page.jsx
+﻿// src/app/executive/user/page.jsx
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
+import Link from 'next/link';
 import LeadershipPanel from './LeadershipPanel';
-import UserList from './UserList';
+import { ReadUserTable } from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
 import {
   getKVValues,
   fetchExecutiveCandidates,
   fetchUsers,
+  fetchUserSummaries,
   fetchMajors,
+  fetchMe,
 } from '@/util/fetchAPIData';
 import '../page.css';
 
 export default async function ExecutiveUserPage() {
-  const [kv, candidates, users, majors] = await Promise.all([
+  const [kv, majors, me] = await Promise.all([
     getKVValues(['main-president', 'vice-president']),
-    fetchExecutiveCandidates(),
-    fetchUsers(),
     fetchMajors(),
+    fetchMe().catch(() => null),
+  ]);
+
+  const viewerRole = me?.role ?? 0;
+  const canManageLeadership = viewerRole >= 1000;
+  const readUsers = await fetchUserSummaries().catch(() => []);
+
+  const [candidates, executiveUsers] = await Promise.all([
+    fetchExecutiveCandidates().catch(() => []),
+    fetchUsers().catch(() => []),
   ]);
 
   const presidentId =
@@ -35,12 +46,26 @@ export default async function ExecutiveUserPage() {
   const majorsMap = Object.fromEntries(
     majorsSafe.map((m) => [m.id, `${m.college} - ${m.major_name}`]),
   );
-  const usersSorted = Array.from(
-    new Map((Array.isArray(users) ? users : []).map((u) => [u.id, u])),
+  const readUsersSorted = Array.from(
+    new Map((Array.isArray(readUsers) ? readUsers : []).map((u) => [u.id, u])),
   )
     .map(([, v]) => v)
     .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
-    .map((u) => ({ ...u, major: majorsMap[u.major_id] }));
+    .map((u) => ({
+      ...u,
+      major: majorsMap[u.major_id],
+      is_active: Boolean(u?.is_active),
+    }));
+
+  const executiveUsersSorted = Array.from(
+    new Map((Array.isArray(executiveUsers) ? executiveUsers : []).map((u) => [u.id, u])),
+  )
+    .map(([, v]) => v)
+    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
+    .map((u) => ({
+      ...u,
+      major: majorsMap[u.major_id],
+    }));
 
   return (
     <WithAuthorization>
@@ -54,20 +79,23 @@ export default async function ExecutiveUserPage() {
           <LeadershipPanel initialLeadership={initialLeadership} candidates={candidates} />
         </div>
 
-        <details open className="adm-section">
-          <summary className="adm-flex" style={{ cursor: 'pointer', fontWeight: 700 }}>
-            <h2>유저 목록 접기/펼치기</h2>
-          </summary>
-          <div className="adm-section" style={{ marginTop: '0.75rem' }}>
-            <UserList users={usersSorted} majors={majorsSafe} />
+        <div className="adm-section">
+          <ReadUserTable users={readUsersSorted} majors={majorsSafe} />
+        </div>
+
+        {canManageLeadership && (
+          <div className="adm-section">
+            <Link href="/executive/user/leadership" className="adm-button">
+              회장단 전용 페이지로 이동
+            </Link>
           </div>
-        </details>
+        )}
 
         <div className="adm-section">
           <EnrollManagementPanel />
         </div>
         <div className="adm-section">
-          <OldboyManageMentPanel users={usersSorted} />
+          <OldboyManageMentPanel users={executiveUsersSorted} />
         </div>
       </div>
     </WithAuthorization>

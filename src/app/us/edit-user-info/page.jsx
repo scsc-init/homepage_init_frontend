@@ -178,9 +178,11 @@ function EditUserInfoClient() {
     <div className={styles.editUserInfo}>
       <h2>내 정보 수정</h2>
       <img
-        src={form.profile_picture ? form.profile_picture : '/asset/default-pfp.png'}
+        src={form.profile_picture || '/asset/default-pfp.png'}
         alt="Profile"
         className={styles['user-profile-picture']}
+        width={50}
+        height={50}
       />
       <PfpUpdate />
       <div className={styles.userData}>

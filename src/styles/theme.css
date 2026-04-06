@@ -1,5 +1,7 @@
 :root {
   --theme-anim-duration: 0s;
+  --color-button-disabled-bg: #d1d5db;
+  --color-button-disabled-text: #9ca3af;
 }
 html.theme-animating {
   --theme-anim-duration: 400ms;
@@ -81,6 +83,7 @@ html.theme-animating {
   --color-button-bg: #4bb0c9;
   --color-button-border: #2f4f67;
   --color-button-hover-bg: #368aa0;
+  --color-button-alert-bg: #ff3333;
   --color-button-text: white;
   --color-text-body: #f5f5f5;
   --color-text-subtle: #aaaaaa;
@@ -132,6 +135,8 @@ html.theme-animating {
     rgba(255, 255, 255, 0.05),
     transparent 70%
   );
+  --color-button-disabled-bg: #333333;
+  --color-button-disabled-text: #666666;
 }
 
 .dark .ico,

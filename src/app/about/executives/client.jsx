@@ -152,8 +152,6 @@ export default function ExecutivesClient() {
                 <img
                   src={person.image || DEFAULT_EXECUTIVE_PFP}
                   alt={person.name}
-                  loading="lazy"
-                  decoding="async"
                   className={styles.image}
                   referrerPolicy="no-referrer"
                 />
@@ -181,8 +179,6 @@ export default function ExecutivesClient() {
               <img
                 src={person.image || DEFAULT_EXECUTIVE_PFP}
                 alt={person.name}
-                loading="lazy"
-                decoding="async"
                 className={styles.image}
                 referrerPolicy="no-referrer"
               />

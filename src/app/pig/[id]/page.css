@@ -16,6 +16,11 @@
   -webkit-user-select: text;
 }
 
+.PigDetailContainer button {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 html,
 body {
   background-color: var(--background-color);
@@ -93,6 +98,12 @@ body {
   overflow-x: auto;
   border-radius: 0.5rem;
   margin-bottom: 1.5rem;
+}
+
+.mdx-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* ----- Actions (Join/Leave/Edit) ----- */
@@ -551,4 +562,8 @@ body {
   .PigMembersTitle {
     font-size: 1.15rem;
   }
+}
+
+.PigWebsitesList > * {
+  margin: 20px 0;
 }

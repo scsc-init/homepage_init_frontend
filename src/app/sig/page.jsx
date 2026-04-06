@@ -1,10 +1,19 @@
 import SigListClient from './SigListClient';
-import './page.css';
+import styles from './sig.module.css';
 import { safeFetch, fetchMe } from '@/util/fetchAPIData';
 
 export const metadata = { title: 'SIG' };
 
-export default async function SigListPage() {
+export default async function SigListPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+
+  let initialTags = [];
+  if (Array.isArray(resolvedSearchParams?.tag)) {
+    initialTags = resolvedSearchParams.tag.filter((tag) => typeof tag === 'string');
+  } else if (typeof resolvedSearchParams?.tag === 'string' && resolvedSearchParams.tag) {
+    initialTags = [resolvedSearchParams.tag];
+  }
+
   const [sigs, me] = await Promise.allSettled([safeFetch('GET', '/api/sigs'), fetchMe()]);
 
   if (sigs.status === 'rejected') {
@@ -22,8 +31,8 @@ export default async function SigListPage() {
   }
 
   return (
-    <div id="SigListContainer">
-      <SigListClient sigs={visibleSigs} myId={myId} />
+    <div className={styles.SigListContainer}>
+      <SigListClient sigs={visibleSigs} myId={myId} initialFilterTags={initialTags} />
     </div>
   );
 }

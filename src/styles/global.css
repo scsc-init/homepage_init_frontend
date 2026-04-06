@@ -47,6 +47,13 @@ body {
   background-color: var(--background-color);
   scroll-behavior: smooth;
   overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 .wallLogo,

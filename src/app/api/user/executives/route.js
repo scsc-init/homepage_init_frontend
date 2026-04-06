@@ -26,7 +26,7 @@ export async function GET(request) {
       },
       cache: 'no-store',
     });
-  } catch (e) {
+  } catch (_e) {
     return NextResponse.json({ detail: 'Failed to reach backend' }, { status: 502 });
   }
 
