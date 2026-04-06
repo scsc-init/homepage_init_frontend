@@ -70,7 +70,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
       new Set(selectedVicePresidentIds.filter((id) => id !== '')).size !==
       selectedVicePresidentIds.filter((id) => id !== '').length
     ) {
-     alert('부회장끼리는 서로 다른 인물이어야 합니다.');
+      alert('부회장끼리는 서로 다른 인물이어야 합니다.');
       return;
     }
     setPending(true);
