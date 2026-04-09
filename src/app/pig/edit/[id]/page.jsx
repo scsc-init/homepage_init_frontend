@@ -24,7 +24,7 @@ export default async function EditPigPage({ params }) {
   }
   const pig = await pigRes.json();
 
-  const article = pig.article ?? { content: '' };
+  const article = pig.content ?? { content: '' };
 
   return <EditPigClient pigId={id} me={me.value} pig={pig} article={article} />;
 }
