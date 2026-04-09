@@ -65,8 +65,7 @@ export default async function SigDetailPage({ params }) {
     ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
     : [];
 
-  const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
-  const article = articleRes.ok ? await articleRes.json() : { content: '' };
+  const article = sig.content ?? { content: '' };
 
   return (
     <SigClient
