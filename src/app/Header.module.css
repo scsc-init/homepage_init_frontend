@@ -25,7 +25,11 @@
 }
 
 .left {
-  min-width: 12rem;
+  min-width: 13rem;
+}
+
+.logo {
+  margin: 0 0.6rem;
 }
 
 .center {
@@ -38,8 +42,8 @@
 .right {
   justify-content: flex-end;
   gap: 0.75rem;
-  flex: 0 0 12rem;
-  min-width: 12rem;
+  flex: 0 0 13rem;
+  min-width: 13rem;
   white-space: nowrap;
   height: 2rem;
 }
@@ -63,7 +67,7 @@
 .executiveLink {
   font-size: 0.875rem;
   text-decoration: none;
-  color: var(--header-foreground-color);
+  color: var(--color-button-alert-bg);
 }
 
 .userLink {
@@ -235,8 +239,11 @@
 
 .mobileExecutiveLink {
   padding: 12px;
+  font-size: 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
+  color: var(--color-button-alert-bg);
+  text-decoration: none;
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -251,19 +258,20 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  justify-content: left;
   color: var(--header-foreground-color);
   padding: 12px;
 }
 
 .mobileProfileLink:hover .mobileUserPic {
-  padding: 1px;
-  border: 1px solid var(--color-button-bg);
+  border: 2px solid var(--color-button-bg);
 }
 
 .mobileUserPic {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  padding: 2px;
   object-fit: cover;
   margin-right: 10px;
 }
@@ -297,9 +305,10 @@
   }
 
   .hamburgerButton {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(--header-background-color);
-    border: 1px solid var(--header-border-color);
     border-radius: 0.5rem;
     font-size: 1.5rem;
     color: var(--header-foreground-color);
@@ -334,7 +343,7 @@
 
   .mobileMenu {
     gap: 1rem;
-    padding: 1rem 1rem 1.25rem;
+    padding: 1rem 1.5rem 1.25rem 1.5rem;
     border-top: 1px solid var(--header-border-color);
     box-shadow: 0 4px 12px var(--header-shadow-color);
   }
@@ -351,12 +360,14 @@
 
   .mobileTrigger,
   .mobileSubLink {
+    display: flex;
+    align-items: center;
     padding: 0.75rem 0.75rem;
     font-size: 1rem;
     font-weight: 600;
-    text-align: left;
     color: var(--header-foreground-color);
     border-radius: 0.5rem;
+    justify-content: space-between;
   }
 
   .mobileSubMenu {
@@ -380,5 +391,11 @@
 
   .rightMain .executiveLink {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobileWrapper {
+    top: calc(5rem * 1.25); /* Font is 0.8 for viewport with width under 480px */
   }
 }

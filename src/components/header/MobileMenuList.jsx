@@ -51,11 +51,7 @@ function MobileExecutiveButton() {
 
   if (!user || !isExecutive) return null;
   return (
-    <Link
-      href="/executive"
-      className={`${styles.executiveLink} ${styles.mobileExecutiveLink} unset`}
-      style={{ fontSize: '0.875rem' }}
-    >
+    <Link href="/executive" className={`${styles.mobileExecutiveLink} unset`}>
       운영진 페이지
     </Link>
   );
@@ -83,7 +79,7 @@ export default function MobileMenuList() {
         className={styles.hamburgerButton}
         onClick={() => setMobileMenuOpen((prev) => !prev)}
       >
-        <span className="material-icons" style={{ fontSize: 'inherit' }}>
+        <span className="material-icons" style={{ fontSize: '2rem' }}>
           menu
         </span>
       </button>
@@ -106,11 +102,18 @@ export default function MobileMenuList() {
                     type="button"
                     className={styles.mobileTrigger}
                     aria-expanded={openedMenuIndex === index ? 'true' : 'false'}
-                    onClick={() =>
-                      setOpenedMenuIndex((prev) => (prev === index ? null : index))
-                    }
+                    onClick={() => {
+                      setOpenedMenuIndex((prev) => (prev === index ? null : index));
+                    }}
                   >
-                    {menu.title}
+                    <span className={styles.menuTitle}>{menu.title}</span>
+                    <span className={styles.menuDropdownIcon}>
+                      <span className="material-icons" style={{ fontSize: '2rem' }}>
+                        {openedMenuIndex === index
+                          ? 'keyboard_arrow_up'
+                          : 'keyboard_arrow_down'}
+                      </span>
+                    </span>
                   </button>
                   <div className={subClass}>
                     <ul>
