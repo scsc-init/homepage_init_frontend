@@ -15,7 +15,7 @@
   height: 5rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 0 20px;
 }
 
 .left,
@@ -401,11 +401,5 @@
 
   .rightMain .executiveLink {
     display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .mobileWrapper {
-    top: calc(5rem * 1.25); /* Font is 0.8 for viewport with width under 480px */
   }
 }
