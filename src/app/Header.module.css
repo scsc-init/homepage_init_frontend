@@ -12,9 +12,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 3.5rem;
+  height: 5rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 40px 20px;
 }
 
 .left,
@@ -247,7 +248,7 @@
 }
 
 .spacer {
-  height: 3.5rem;
+  height: 5rem;
 }
 
 /* 모바일 전용 */
@@ -282,7 +283,7 @@
   .mobileWrapper {
     display: block;
     position: fixed;
-    top: 3.5rem;
+    top: 5rem;
     left: 0;
     width: 100%;
     z-index: 2000;

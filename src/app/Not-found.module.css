@@ -114,7 +114,7 @@
 
 .NF_Art {
   position: absolute;
-  inset: auto 0 -3.5rem auto;
+  inset: auto 0 -5rem auto;
   width: min(40%, 240px);
   height: auto;
   opacity: 0.32;
