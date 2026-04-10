@@ -17,7 +17,7 @@ function MobileProfileButton() {
   return (
     <>
       {user === null && (
-        <Link href="/us/login" className="unset decorateNone">
+        <Link href="/us/login" className={`${styles.mobileLoginLink} unset decorateNone`}>
           가입 / 로그인
         </Link>
       )}

@@ -238,6 +238,11 @@
 }
 
 .mobileExecutiveLink {
+  color: var(--color-button-alert-bg);
+}
+
+.mobileExecutiveLink,
+.mobileLoginLink {
   padding: 12px;
   height: calc(2rem + 24px);
   display: flex;
@@ -245,14 +250,14 @@
   font-size: 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
-  color: var(--color-button-alert-bg);
   text-decoration: none;
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
 }
 
-.mobileExecutiveLink:hover {
+.mobileExecutiveLink:hover,
+.mobileLoginLink:hover {
   background-color: var(--foreground-color);
   color: var(--background-color);
 }

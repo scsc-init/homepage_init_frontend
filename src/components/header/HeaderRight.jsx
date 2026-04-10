@@ -25,7 +25,7 @@ export default function HeaderRight() {
     <div>
       {user === undefined && <div className={styles.rightLoading} />}
 
-      {user === null && (
+      {user === null && !isMobileViewport() && (
         <div className={styles.rightLogin}>
           <Link href="/us/login" className="unset decorateNone">
             가입 / 로그인
