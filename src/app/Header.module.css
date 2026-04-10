@@ -338,6 +338,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
+    border-radius: 0 0 15px 15px;
   }
 
   .mobileWrapperOpen {
@@ -366,7 +367,7 @@
   .mobileSubLink {
     display: flex;
     align-items: center;
-    padding: 0.75rem 0.75rem;
+    padding: 0.75rem 0.75rem 0.75rem 1rem;
     font-size: 1rem;
     font-weight: 600;
     color: var(--header-foreground-color);
