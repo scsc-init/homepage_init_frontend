@@ -7,6 +7,37 @@ import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 import { fetchMeClient } from '@/util/fetchClientData';
 import styles from '@/app/Header.module.css';
 
+function MobileProfileButton() {
+  const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    fetchMeClient().then(setUser);
+  }, []);
+
+  return (
+    <>
+      {user === null && (
+        <Link href="/us/login" className="unset decorateNone">
+          가입 / 로그인
+        </Link>
+      )}
+
+      {user && (
+        <Link href="/about/my-page" className={`${styles.mobileProfileLink} unset`}>
+          <img
+            src={user?.profile_picture || '/asset/default-pfp.png'}
+            alt="Profile"
+            className={styles.mobileUserPic}
+            width={40}
+            height={40}
+          />
+          <span className={styles.userName}>{user.name}</span>
+        </Link>
+      )}
+    </>
+  );
+}
+
 function MobileExecutiveButton() {
   const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
@@ -22,7 +53,7 @@ function MobileExecutiveButton() {
   return (
     <Link
       href="/executive"
-      className={`${styles.executiveLink} unset`}
+      className={`${styles.executiveLink} ${styles.mobileExecutiveLink} unset`}
       style={{ fontSize: '0.875rem' }}
     >
       운영진 페이지
@@ -99,9 +130,13 @@ export default function MobileMenuList() {
                 </li>
               );
             })}
+            <li className={styles.mobileMenuItem}>
+              <MobileExecutiveButton />
+            </li>
+            <li className={styles.mobileMenuItem}>
+              <MobileProfileButton />
+            </li>
           </ul>
-
-          <MobileExecutiveButton />
         </div>
       </div>
     </div>

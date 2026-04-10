@@ -6,6 +6,10 @@ import { fetchMeClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
 import styles from '@/app/Header.module.css';
 
+function isMobileViewport() {
+  return (window.innerWidth || 1000) <= 768;
+}
+
 export default function HeaderRight() {
   const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
@@ -29,7 +33,7 @@ export default function HeaderRight() {
         </div>
       )}
 
-      {user && (
+      {user && !isMobileViewport() && (
         <div className={styles.rightMain}>
           {isExecutive && (
             <Link href="/executive" className={`${styles.executiveLink} unset`}>

@@ -233,6 +233,41 @@
   transition: max-height 0.3s ease;
 }
 
+.mobileExecutiveLink {
+  padding: 12px;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.mobileExecutiveLink:hover {
+  background-color: var(--foreground-color);
+  color: var(--background-color);
+}
+
+.mobileProfileLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--header-foreground-color);
+  padding: 12px;
+}
+
+.mobileProfileLink:hover .mobileUserPic {
+  padding: 1px;
+  border: 1px solid var(--color-button-bg);
+}
+
+.mobileUserPic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
 .mobileSubMenuOpen {
   max-height: 400px;
 }
