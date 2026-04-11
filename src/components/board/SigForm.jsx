@@ -1,8 +1,13 @@
 import Editor from '@/components/board/EditorWrapper.jsx';
 import InputField from './InputField';
 import * as Button from '@/components/Button.jsx';
+import TextInput from '@/components/form-control/TextInput';
+import EditorInput from '@/components/form-control/EditorInput';
+import ToggleInput from '@/components/form-control/ToggleInput';
+import InputPage from '@/components/form-control/InputPage';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
 import { Controller } from 'react-hook-form';
+import { useState } from 'react';
 
 export default function SigForm({
   register,
@@ -12,6 +17,8 @@ export default function SigForm({
   editorKey,
   isCreate,
 }) {
+  const [activePageIndex, setActivePageIndex] = useState(0);
+
   return (
     <form
       className="space-y-4"
@@ -21,58 +28,47 @@ export default function SigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputField label="시그 이름" placeholder="AI SIG" register={register} name="title" />
-      <InputField
-        label="시그 설명"
-        placeholder="AI를 공부하는 SIG입니다"
-        register={register}
-        name="description"
-      />
-
-      <div className="editorSection">
-        <label className="block mb-2 font-semibold">상세 소개</label>
-        <Controller
-          name="editor"
-          control={control}
-          render={({ field }) => (
-            <Editor
-              key={editorKey}
-              markdown={typeof field.value === 'string' ? field.value : ''}
-              onChange={field.onChange}
-            />
-          )}
+      <InputPage
+        activePageIndex={activePageIndex}
+        setActivePageIndex={setActivePageIndex}
+        currentPageIndex={0}
+        numPages={4}
+      >
+        <TextInput label="시그 이름" placeholder="AI SIG" register={register} name="title" />
+      </InputPage>
+      <InputPage
+        activePageIndex={activePageIndex}
+        setActivePageIndex={setActivePageIndex}
+        currentPageIndex={1}
+        numPages={4}
+      >
+        <TextInput
+          label="시그 설명"
+          placeholder="AI를 공부하는 SIG입니다"
+          register={register}
+          name="description"
         />
-      </div>
-
-      <div className="form-toggle-row">
-        <span className="form-toggle-label">가입 기간 자유화</span>
-        <span className="form-toggle-right">
-          <Controller
-            name="is_rolling_admission"
-            control={control}
-            render={({ field }) => (
-              <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
-            )}
-          />
-        </span>
-      </div>
-
-      {isCreate ? null : (
-        <div className="form-toggle-row">
-          <span className="form-toggle-label">다음 학기에 연장 신청</span>
-          <span className="form-toggle-right">
-            <Controller
-              name="should_extend"
-              control={control}
-              render={({ field }) => (
-                <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
-              )}
-            />
-          </span>
-        </div>
-      )}
-
-      <Button.Root type="submit">{isCreate ? 'SIG 생성' : 'SIG 수정'}</Button.Root>
+      </InputPage>
+      <InputPage
+        activePageIndex={activePageIndex}
+        setActivePageIndex={setActivePageIndex}
+        currentPageIndex={2}
+        numPages={4}
+      >
+        <EditorInput label="상세 소개" control={control} name="editor" />
+      </InputPage>
+      <InputPage
+        activePageIndex={activePageIndex}
+        setActivePageIndex={setActivePageIndex}
+        currentPageIndex={3}
+        numPages={4}
+        submitButtonText={isCreate ? 'SIG 생성' : 'SIG 수정'}
+      >
+        <ToggleInput label="가입 기간 자유화" name="is_rolling_admission" control={control} />
+        {!isCreate && (
+          <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
+        )}
+      </InputPage>
     </form>
   );
 }
