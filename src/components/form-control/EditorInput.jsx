@@ -24,9 +24,7 @@ export default function EditorInput({ label, control, name, editorKey }) {
 
   return (
     <div className={styles.editorInputGroup}>
-      <label htmlFor={`editorinput-${name}`} className={styles.editorInputLabel}>
-        {label}
-      </label>
+      <span className={styles.editorInputLabel}>{label}</span>
       <Controller
         name="editor"
         control={control}
