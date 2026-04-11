@@ -10,7 +10,9 @@ const isImageMeta = (meta) => {
 };
 
 export function getAttachmentDownloadUrl(id, meta) {
-  const encoded = encodeURIComponent(String(id));
+  const actualId = typeof id === 'object' ? id.file_id : id;
+  const encoded = encodeURIComponent(String(actualId));
+
   if (isImageMeta(meta)) return `/api/image/download/${encoded}`;
   return `/api/file/docs/download/${encoded}`;
 }

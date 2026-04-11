@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
 
 export async function GET(_req, { params }) {
+  const resolvedParams = await params;
   const rawId = params?.id;
   if (!rawId) {
     return new Response('Missing file id', { status: 400 });

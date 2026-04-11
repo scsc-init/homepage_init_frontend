@@ -1,5 +1,7 @@
 import EditClient from './EditClient';
+import { use } from 'react';
 
 export default function EditArticlePage({ params }) {
-  return <EditClient articleId={params.id} />;
+  const { id } = use(params);
+  return <EditClient articleId={id} />;
 }
