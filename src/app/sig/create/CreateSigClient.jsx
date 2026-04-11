@@ -117,7 +117,6 @@ export default function CreateSigClient({ scscGlobalStatus }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json().catch(() => ({}));
-        console.log(JSON.stringify(err));
         alert('SIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
