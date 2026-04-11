@@ -1,5 +1,8 @@
 .buttonInput {
   padding: 0.5rem 1rem;
+}
+
+.buttonInput[type='button'] {
   background-color: var(--header-foreground-color);
   color: var(--header-background-color);
 }

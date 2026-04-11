@@ -26,3 +26,7 @@
     padding: 2rem 0rem;
   }
 }
+
+.submitBtn {
+  background-color: var(--color-button-bg);
+}
