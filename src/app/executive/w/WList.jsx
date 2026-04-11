@@ -89,6 +89,11 @@ export default function WList({ wMetas }) {
     }
   };
 
+  const onClickDownload = (name) => {
+    if (isBusy) return;
+    window.location.href = `/api/executive/w/${encodeURIComponent(name)}/download`;
+  };
+
   return (
     <div className={isBusy ? 'is-busy' : undefined}>
       <div className="adm-section">
@@ -103,6 +108,7 @@ export default function WList({ wMetas }) {
                 <th className="adm-th">생성시각</th>
                 <th className="adm-th">수정시각</th>
                 <th className="adm-th">수정버튼</th>
+                <th className="adm-th">다운로드버튼</th>
                 <th className="adm-th">삭제버튼</th>
               </tr>
             </thead>
@@ -127,7 +133,19 @@ export default function WList({ wMetas }) {
                   </td>
                   <td className="adm-td">
                     <button
+                      type="button"
                       className="adm-button"
+                      onClick={() => onClickDownload(w[0].name)}
+                      disabled={isBusy}
+                    >
+                      다운로드
+                    </button>
+                  </td>
+
+                  <td className="adm-td">
+                    <button
+                      type="button"
+                      className="adm-button-danger"
                       onClick={() => onClickDelete(w[0].name)}
                       disabled={isBusy}
                     >
