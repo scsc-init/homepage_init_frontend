@@ -10,7 +10,7 @@ export default function TextInput({ label, placeholder, register, name }) {
       </label>
       <input
         type="text"
-        id={name}
+        id={`textinput-${name}`}
         placeholder={placeholder}
         className={styles.textInput}
         {...register(name, { required: true })}
