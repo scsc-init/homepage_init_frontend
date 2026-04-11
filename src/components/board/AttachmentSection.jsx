@@ -11,7 +11,9 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = 'ì²¨ë
   const ids = useMemo(() => {
     if (!Array.isArray(valueIds)) return [];
     return valueIds.map((item) => {
-      return typeof item === 'object' ? String(item.file_id) : String(item);
+      return typeof item === 'object' && item !== null
+        ? String(item.file_id || item.id || '')
+        : String(item);
     });
   }, [valueIds]);
 

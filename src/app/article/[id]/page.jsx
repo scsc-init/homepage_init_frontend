@@ -151,7 +151,7 @@ export default function ArticleDetail({ params }) {
           >
             수정
           </button>
-          <button className="SigButton is-delete" onClick={handleDelete}>
+          <button className="SigButton is-delete" onClick={handleDelete} disabled={isDeleting}>
             {isDeleting ? '삭제 중...' : '삭제'}
           </button>
         </div>
