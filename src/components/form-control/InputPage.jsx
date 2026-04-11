@@ -27,7 +27,7 @@ export default function InputPage({
         </ButtonInput>
         <ButtonInput
           className={isLastIndex ? styles.submitBtn : ''}
-          data-submit={isLastIndex}
+          isSubmit={isLastIndex}
           onClick={() => setActivePageIndex(activePageIndex + 1)}
         >
           {isLastIndex ? submitButtonText : '다음'}

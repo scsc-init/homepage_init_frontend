@@ -97,8 +97,9 @@ body {
 .CreateSigCard {
   background-color: var(--executive-card-bg);
   padding: 2rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 0 5px 2px color-mix(in srgb, var(--header-foreground-color) 20%, transparent);
   border-radius: 1rem;
+  margin-bottom: 2rem;
 }
 .CreateSigContainer {
   max-width: 60rem;
@@ -151,7 +152,6 @@ input::placeholder {
 }
 
 .mdxeditor {
-  background-color: rgb(202, 202, 202);
   border-radius: 0.5rem;
   min-height: 10rem;
 }

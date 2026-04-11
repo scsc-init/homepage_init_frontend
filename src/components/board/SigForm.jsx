@@ -1,12 +1,8 @@
-import Editor from '@/components/board/EditorWrapper.jsx';
-import InputField from './InputField';
-import * as Button from '@/components/Button.jsx';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import ToggleInput from '@/components/form-control/ToggleInput';
 import InputPage from '@/components/form-control/InputPage';
-import ToggleSwitch from '@/components/ToggleSwitch.jsx';
-import { Controller } from 'react-hook-form';
+import SimpleGrid from '@/components/SimpleGrid';
 import { useState } from 'react';
 
 export default function SigForm({
@@ -55,7 +51,7 @@ export default function SigForm({
         currentPageIndex={2}
         numPages={4}
       >
-        <EditorInput label="상세 소개" control={control} name="editor" />
+        <EditorInput label="상세 소개" control={control} name="editor" editorKey={editorKey} />
       </InputPage>
       <InputPage
         activePageIndex={activePageIndex}
@@ -64,10 +60,12 @@ export default function SigForm({
         numPages={4}
         submitButtonText={isCreate ? 'SIG 생성' : 'SIG 수정'}
       >
-        <ToggleInput label="가입 기간 자유화" name="is_rolling_admission" control={control} />
-        {!isCreate && (
-          <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
-        )}
+        <SimpleGrid cols={2}>
+          <ToggleInput label="가입 기간 자유화" name="is_rolling_admission" control={control} />
+          {!isCreate && (
+            <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
+          )}
+        </SimpleGrid>
       </InputPage>
     </form>
   );

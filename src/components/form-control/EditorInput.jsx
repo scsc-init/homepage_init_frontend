@@ -6,7 +6,7 @@ import { Controller } from 'react-hook-form';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import { useEffect, useState } from 'react';
 
-export default function EditorInput({ label, control, name }) {
+export default function EditorInput({ label, control, name, editorKey }) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function EditorInput({ label, control, name }) {
         control={control}
         render={({ field }) => (
           <Editor
-            key={0}
+            key={editorKey}
             id={name}
             markdown={typeof field.value === 'string' ? field.value : ''}
             onChange={field.onChange}

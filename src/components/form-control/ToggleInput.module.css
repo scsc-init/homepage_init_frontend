@@ -1,6 +1,7 @@
 .toggleInputGroup {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-self: center;
 }
 
 .toggleInputLabel {
