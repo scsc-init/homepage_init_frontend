@@ -30,7 +30,7 @@ export default function SigForm({
         currentPageIndex={0}
         numPages={4}
       >
-        <TextInput label="시그 이름" placeholder="AI SIG" register={register} name="title" />
+        <TextInput label="SIG 이름" placeholder="AI SIG" register={register} name="title" />
       </InputPage>
       <InputPage
         activePageIndex={activePageIndex}
@@ -39,7 +39,7 @@ export default function SigForm({
         numPages={4}
       >
         <TextInput
-          label="시그 설명"
+          label="SIG 한 줄 설명"
           placeholder="AI를 공부하는 SIG입니다"
           register={register}
           name="description"
@@ -51,7 +51,7 @@ export default function SigForm({
         currentPageIndex={2}
         numPages={4}
       >
-        <EditorInput label="상세 소개" control={control} name="editor" editorKey={editorKey} />
+        <EditorInput label="SIG 소개" control={control} name="editor" editorKey={editorKey} />
       </InputPage>
       <InputPage
         activePageIndex={activePageIndex}
@@ -61,7 +61,7 @@ export default function SigForm({
         submitButtonText={isCreate ? 'SIG 생성' : 'SIG 수정'}
       >
         <SimpleGrid cols={2}>
-          <ToggleInput label="가입 기간 자유화" name="is_rolling_admission" control={control} />
+          <ToggleInput label="상시 모집" name="is_rolling_admission" control={control} />
           {!isCreate && (
             <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
           )}
