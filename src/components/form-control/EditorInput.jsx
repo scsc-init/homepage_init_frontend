@@ -10,15 +10,16 @@ export default function EditorInput({ label, control, name, editorKey }) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    let target = document.documentElement;
-
+    const target = document.documentElement;
     setIsDark(target.classList.contains('dark'));
 
-    let observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver((mutations) => {
       setIsDark(target.classList.contains('dark'));
     });
 
-    observer.observe(target, { attributes: true });
+    observer.observe(target, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
   }, []);
 
   return (
