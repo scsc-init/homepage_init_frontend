@@ -7,34 +7,22 @@ import ButtonInput from './ButtonInput';
 export default function InputPage({
   children,
   activePageIndex,
-  setActivePageIndex,
   currentPageIndex,
   numPages,
   submitButtonText,
 }) {
-  const isFirstIndex = currentPageIndex === 0;
   const isLastIndex = currentPageIndex === numPages - 1;
 
   return (
-    <div className={styles.inputPage} data-active={activePageIndex === currentPageIndex}>
+    <div className={styles.inputPage} data-active={activePageIndex >= currentPageIndex}>
       {children}
-      <div className={styles.pageTransitionGroup}>
-        <ButtonInput
-          className={isFirstIndex ? styles.invisible : ''}
-          onClick={() => setActivePageIndex(activePageIndex - 1)}
-        >
-          이전
-        </ButtonInput>
-        <ButtonInput
-          className={isLastIndex ? styles.submitBtn : ''}
-          isSubmit={isLastIndex}
-          onClick={() => {
-            if (!isLastIndex) setActivePageIndex(activePageIndex + 1);
-          }}
-        >
-          {isLastIndex ? submitButtonText : '다음'}
-        </ButtonInput>
-      </div>
+      {isLastIndex && (
+        <div className={styles.pageTransitionGroup}>
+          <ButtonInput className={styles.submitBtn} isSubmit={true}>
+            {submitButtonText}
+          </ButtonInput>
+        </div>
+      )}
     </div>
   );
 }

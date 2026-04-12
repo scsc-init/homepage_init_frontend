@@ -2,7 +2,13 @@
 import styles from './ToggleSwitch.module.css';
 import { useId, useState } from 'react';
 
-export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
+export default function ToggleSwitch({
+  checked,
+  value: valueProp,
+  focusDisabled,
+  onChange,
+  ...props
+}) {
   const isControlled = typeof checked !== 'undefined' || typeof valueProp !== 'undefined';
   const isOn = isControlled ? !!(typeof checked !== 'undefined' ? checked : valueProp) : false;
   const [focus, setFocus] = useState(false);
@@ -21,9 +27,10 @@ export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
         onChange={(e) => onChange?.(e.target.checked)}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
+        {...props}
       />
       <span
-        className={`${styles.slider} ${isOn ? styles.checked : ''} ${focus ? styles.focused : ''}`}
+        className={`${styles.slider} ${isOn ? styles.checked : ''} ${focusDisabled || !focus ? '' : styles.focused}`}
         aria-hidden="true"
       />
       <span

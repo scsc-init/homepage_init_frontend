@@ -1,7 +1,4 @@
 .inputPage {
-  height: 100%;
-  min-height: 10rem;
-  padding: 2rem 4rem;
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -14,17 +11,11 @@
 .pageTransitionGroup {
   display: flex;
   margin-top: 2rem;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .invisible {
   visibility: hidden;
-}
-
-@media (max-width: 768px) {
-  .inputPage {
-    padding: 2rem 0rem;
-  }
 }
 
 .submitBtn {

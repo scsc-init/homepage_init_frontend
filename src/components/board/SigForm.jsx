@@ -1,9 +1,4 @@
-import TextInput from '@/components/form-control/TextInput';
-import EditorInput from '@/components/form-control/EditorInput';
-import ToggleInput from '@/components/form-control/ToggleInput';
-import InputPage from '@/components/form-control/InputPage';
-import SimpleGrid from '@/components/SimpleGrid';
-import { useState } from 'react';
+import InputBook from '@/components/form-control/InputBook';
 
 export default function SigForm({
   register,
@@ -13,7 +8,64 @@ export default function SigForm({
   editorKey,
   isCreate,
 }) {
-  const [activePageIndex, setActivePageIndex] = useState(0);
+  const inputPages = [
+    {
+      page: 0,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'text',
+          label: 'SIG 이름',
+          placeholder: 'AI SIG',
+          name: 'title',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 1,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'text',
+          label: 'SIG 한 줄 설명',
+          placeholder: 'AI를 공부하는 SIG입니다',
+          name: 'description',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 2,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'editor',
+          label: 'SIG 소개',
+          name: 'editor',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 2,
+      gridCols: 2,
+      formControl: [
+        {
+          inputType: 'toggle',
+          label: '상시 모집',
+          name: 'is_rolling_admission',
+          activated: true,
+        },
+        {
+          inputType: 'toggle',
+          label: '다음 학기에 연장 신청',
+          name: 'should_extend',
+          activated: !isCreate,
+        },
+      ],
+    },
+  ];
 
   return (
     <form
@@ -24,49 +76,13 @@ export default function SigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputPage
-        activePageIndex={activePageIndex}
-        setActivePageIndex={setActivePageIndex}
-        currentPageIndex={0}
-        numPages={4}
-      >
-        <TextInput label="SIG 이름" placeholder="AI SIG" register={register} name="title" />
-      </InputPage>
-      <InputPage
-        activePageIndex={activePageIndex}
-        setActivePageIndex={setActivePageIndex}
-        currentPageIndex={1}
-        numPages={4}
-      >
-        <TextInput
-          label="SIG 한 줄 설명"
-          placeholder="AI를 공부하는 SIG입니다"
-          register={register}
-          name="description"
-        />
-      </InputPage>
-      <InputPage
-        activePageIndex={activePageIndex}
-        setActivePageIndex={setActivePageIndex}
-        currentPageIndex={2}
-        numPages={4}
-      >
-        <EditorInput label="SIG 소개" control={control} name="editor" editorKey={editorKey} />
-      </InputPage>
-      <InputPage
-        activePageIndex={activePageIndex}
-        setActivePageIndex={setActivePageIndex}
-        currentPageIndex={3}
-        numPages={4}
+      <InputBook
+        inputPages={inputPages}
+        register={register}
+        control={control}
+        editorKey={editorKey}
         submitButtonText={isCreate ? 'SIG 생성' : 'SIG 수정'}
-      >
-        <SimpleGrid cols={2}>
-          <ToggleInput label="상시 모집" name="is_rolling_admission" control={control} />
-          {!isCreate && (
-            <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
-          )}
-        </SimpleGrid>
-      </InputPage>
+      />
     </form>
   );
 }

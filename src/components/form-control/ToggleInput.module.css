@@ -1,7 +1,7 @@
 .toggleInputGroup {
   display: inline-flex;
   align-items: center;
-  justify-self: center;
+  padding: 1rem 2rem;
 }
 
 .toggleInputLabel {
@@ -9,4 +9,8 @@
   user-select: none;
   margin-left: 0.25rem;
   margin-right: 1rem;
+}
+
+.toggleInput:focus {
+  outline: 0;
 }

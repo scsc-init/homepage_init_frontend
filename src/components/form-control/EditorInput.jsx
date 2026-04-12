@@ -23,7 +23,7 @@ export default function EditorInput({ label, control, name, editorKey }) {
   }, []);
 
   return (
-    <div className={styles.editorInputGroup}>
+    <div className={styles.editorInputGroup} key={name}>
       <span className={styles.editorInputLabel}>{label}</span>
       <Controller
         name="editor"

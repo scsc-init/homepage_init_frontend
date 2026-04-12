@@ -128,11 +128,11 @@ export default function CreateSigClient({ scscGlobalStatus }) {
 
   return (
     <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 생성</h1>
-        <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요.</p>
-      </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreateSigHeader">
+          <h1 className="CreateSigTitle">신규 SIG 신청</h1>
+          <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요</p>
+        </div>
         <SigForm
           register={register}
           control={control}
