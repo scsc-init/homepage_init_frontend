@@ -8,6 +8,7 @@ function gcd(m, n) {
 }
 
 function lcm(m, n) {
+  if (n === 0) return m;
   return (m * n) / gcd(m, n);
 }
 
@@ -40,6 +41,7 @@ export default function SimpleGrid({ rows, cols, children, ...props }) {
     >
       {React.Children.map(children, (child, index) => {
         if (index < childrenCount - leftOversCount) {
+          console.log(`${((index % cols) * LCM) / cols + 1} / span ${LCM / cols}`);
           return (
             <span
               key={child.key || `paired-${index}`}
