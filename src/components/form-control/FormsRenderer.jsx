@@ -18,7 +18,7 @@ function renderInputElement(
   activeSectionIndex,
   setActiveSectionIndex,
 ) {
-  if (!formControl.activated) return <></>;
+  if (formControl.activated === false) return <></>;
 
   switch (formControl.inputType) {
     case 'text':
