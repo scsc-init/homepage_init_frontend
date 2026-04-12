@@ -37,7 +37,7 @@ export default function TextInput({
         {...register(name, { required: true })}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            onEnter();
+            onEnter && onEnter();
             e.preventDefault();
           }
         }}
