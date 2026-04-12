@@ -130,7 +130,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     <div className="CreateSigContainer">
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
         <div className="CreateSigHeader">
-          <h1 className="CreateSigTitle">신규 SIG 신청</h1>
+          <h1 className="CreateSigTitle">신규 SIG 개설</h1>
           <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요</p>
         </div>
         <SigForm
