@@ -140,6 +140,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
+        console.log(err);
         alert('PIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {

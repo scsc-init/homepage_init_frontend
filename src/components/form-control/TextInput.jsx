@@ -11,31 +11,43 @@ export default function TextInput({
   activePageIndex,
   activateNext,
   deactivateNext,
+  onEnter,
 }) {
+  const ID = `textinput-${name.replaceAll('.', '-')}`;
+
   useEffect(() => {
-    if (document.querySelector(`#textinput-${name}`).value) {
-      activateNext();
+    const value = document.querySelector(`#${ID}`).value;
+    if (value) {
+      activateNext(value);
     } else {
-      deactivateNext();
+      deactivateNext(value);
     }
   }, [activePageIndex]);
 
   return (
     <div className={styles.textInputGroup} key={name}>
-      <label htmlFor={`textinput-${name}`} className={styles.textInputLabel}>
+      <label htmlFor={ID} className={styles.textInputLabel}>
         {label}
       </label>
       <input
         type="text"
-        id={`textinput-${name}`}
+        id={ID}
         placeholder={placeholder}
         className={styles.textInput}
         {...register(name, { required: true })}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onEnter();
+            e.preventDefault();
+          }
+        }}
         onChange={(e) => {
-          if (e.target.value) {
-            activateNext();
+          const value = e.target.value;
+
+          if (value) {
+            activateNext(value);
           } else {
-            deactivateNext();
+            deactivateNext(value);
           }
         }}
       />

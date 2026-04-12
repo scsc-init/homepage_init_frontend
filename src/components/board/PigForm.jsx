@@ -1,11 +1,5 @@
-﻿import { useCallback } from 'react';
-import Editor from '@/components/board/EditorWrapper.jsx';
-import InputField from './InputField';
-import * as Button from '@/components/Button.jsx';
-import * as Input from '@/components/Input.jsx';
-import { Controller, useFieldArray } from 'react-hook-form';
-import PigAdmissionDropdown from '@/components/board/PigAdmissionDropdown.jsx';
-import styles from './board.module.css';
+﻿import InputBook from '@/components/form-control/InputBook';
+import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 
 export default function PigForm({
   register,
@@ -15,11 +9,88 @@ export default function PigForm({
   editorKey,
   isCreate,
 }) {
-  const { fields, append, remove } = useFieldArray({ control, name: 'websites' });
-
-  const handleAddWebsite = useCallback(() => {
-    append({ url: '' });
-  }, [append]);
+  const inputPages = [
+    {
+      page: 0,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'text',
+          label: 'PIG 이름',
+          placeholder: 'INIT',
+          name: 'title',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 1,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'text',
+          label: 'PIG 한 줄 설명',
+          placeholder: '홈페이지 관리 PIG입니다',
+          name: 'description',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 2,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'editor',
+          label: 'PIG 소개',
+          name: 'editor',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 2,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'textlist',
+          label: '웹사이트',
+          name: 'websites',
+          inputKey: 'url',
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 2,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'dropdown',
+          label: '가입 기간',
+          name: 'is_rolling_admission',
+          options: {
+            always: PIG_ADMISSION_LABEL_MAP.always,
+            during_recruiting: PIG_ADMISSION_LABEL_MAP.during_recruiting,
+            never: PIG_ADMISSION_LABEL_MAP.never,
+          },
+          activated: true,
+        },
+      ],
+    },
+    {
+      page: 2,
+      gridCols: 1,
+      formControl: [
+        {
+          inputType: 'toggle',
+          label: '다음 학기에 연장 신청',
+          name: 'should_extend',
+          activated: !isCreate,
+        },
+      ],
+    },
+  ];
 
   return (
     <form
@@ -30,114 +101,13 @@ export default function PigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputField label="피그 이름" placeholder="INIT PIG" register={register} name="title" />
-      <InputField
-        label="피그 설명"
-        placeholder="홈페이지를 관리하는 PIG입니다"
+      <InputBook
+        inputPages={inputPages}
         register={register}
-        name="description"
+        control={control}
+        editorKey={editorKey}
+        submitButtonText={isCreate ? 'PIG 생성' : 'PIG 수정'}
       />
-
-      <div>
-        <label className="block mb-2 font-semibold">상세 소개</label>
-        <Controller
-          name="editor"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <Editor
-              key={editorKey}
-              markdown={typeof field.value === 'string' ? field.value : ''}
-              onChange={field.onChange}
-            />
-          )}
-        />
-      </div>
-
-      <div className="space-y-2" style={{ marginTop: '1.5rem' }}>
-        <span className="font-semibold">웹사이트</span>
-
-        <div className="space-y-3">
-          {fields.map((field, index) => {
-            const fieldId = `website-url-${index}`;
-            return (
-              <div key={field.id} className="PigUrlRow">
-                <Input.Root className="PigUrlField">
-                  <Input.Label htmlFor={fieldId}>URL</Input.Label>
-                  <Input.Input
-                    id={fieldId}
-                    className="PigUrlInput"
-                    type="text"
-                    inputMode="url"
-                    placeholder="https://example.com"
-                    {...register(`websites.${index}.url`)}
-                  />
-                </Input.Root>
-                {fields.length > 1 && (
-                  <button
-                    type="button"
-                    className="PigUrlRemove text-sm text-red-500 hover:underline"
-                    onClick={() => remove(index)}
-                  >
-                    삭제
-                  </button>
-                )}
-              </div>
-            );
-          })}
-          <button
-            type="button"
-            className="text-sm text-blue-500 hover:underline"
-            onClick={handleAddWebsite}
-          >
-            웹사이트 추가
-          </button>
-        </div>
-      </div>
-
-      <div className={styles['form-toggle-group']}>
-        <div className={styles['form-toggle-row']}>
-          <span className={styles['form-toggle-label']}>가입 기간</span>
-          <span className={styles['form-toggle-right']}>
-            <Controller
-              name="is_rolling_admission"
-              control={control}
-              defaultValue="always"
-              render={({ field }) => (
-                <PigAdmissionDropdown
-                  pigAdmissionState={field.value}
-                  setPigAdmissionState={field.onChange}
-                />
-              )}
-            />
-          </span>
-        </div>
-
-        {isCreate ? null : (
-          <div className={styles['form-toggle-row']}>
-            <label className={styles['form-toggle-label']} htmlFor="should_extend">
-              다음 학기에 연장 신청
-            </label>
-            <span className={styles['form-toggle-right']}>
-              <Controller
-                name="should_extend"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    id="should_extend"
-                    type="checkbox"
-                    className="extend-checkbox"
-                    checked={!!field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                  />
-                )}
-              />
-            </span>
-          </div>
-        )}
-      </div>
-
-      <Button.Root type="submit">{isCreate ? 'PIG 생성' : 'PIG 수정'}</Button.Root>
     </form>
   );
 }

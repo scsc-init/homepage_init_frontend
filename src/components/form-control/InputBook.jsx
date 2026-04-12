@@ -6,6 +6,8 @@ import ToggleInput from './ToggleInput';
 import EditorInput from './EditorInput';
 import InputPage from './InputPage';
 import SimpleGrid from '@/components/SimpleGrid';
+import DropdownInput from './DropdownInput';
+import TextListInput from './TextListInput';
 
 function renderInputElement(
   pageIndex,
@@ -55,6 +57,26 @@ function renderInputElement(
           label={formControl.label}
           name={formControl.name}
           control={control}
+        />
+      );
+    case 'dropdown':
+      return (
+        <DropdownInput
+          key={formControl.name}
+          label={formControl.label}
+          name={formControl.name}
+          options={formControl.options}
+          control={control}
+        />
+      );
+    case 'textlist':
+      return (
+        <TextListInput
+          label={formControl.label}
+          name={formControl.name}
+          register={register}
+          control={control}
+          inputKey={formControl.inputKey}
         />
       );
   }
