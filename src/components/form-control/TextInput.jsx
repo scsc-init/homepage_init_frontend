@@ -14,6 +14,7 @@ export default function TextInput({
   onEnter,
 }) {
   const ID = `textinput-${name.replaceAll('.', '-')}`;
+  const registration = register(name, { required: true });
 
   useEffect(() => {
     const value = document.querySelector(`#${ID}`).value;
@@ -34,15 +35,17 @@ export default function TextInput({
         id={ID}
         placeholder={placeholder}
         className={styles.textInput}
-        {...register(name, { required: true })}
+        {...registration}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            onEnter && onEnter();
+            onEnter?.();
             e.preventDefault();
           }
         }}
         onChange={(e) => {
           const value = e.target.value;
+
+          registration.onChange?.(e);
 
           if (value) {
             activateNext(value);
