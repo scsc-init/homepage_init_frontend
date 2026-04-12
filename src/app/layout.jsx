@@ -39,7 +39,6 @@ export default async function RootLayout({ children }) {
     <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
       <head>
         <meta name="color-scheme" content="dark light" />
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
