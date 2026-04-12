@@ -18,6 +18,7 @@ export default function TextListInput({ label, name, register, control, inputKey
     fieldValue[inputKey] = currentInput;
     append(fieldValue);
     ref.current.value = '';
+    setCurrentInput('');
   }, [append, currentInput]);
 
   const removeValue = (e, index) => {
