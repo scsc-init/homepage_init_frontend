@@ -38,7 +38,7 @@
 }
 
 .logo {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 0.75rem;
   border-radius: 50%;
   display: flex;

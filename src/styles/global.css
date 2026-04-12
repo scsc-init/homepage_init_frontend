@@ -170,7 +170,7 @@ img {
 }
 
 .LoadingCodeWrapper {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   color: var(--color-text-strong);
   padding: 2rem;
   border-radius: 1rem;
@@ -354,7 +354,7 @@ button {
   all: unset;
   width: 100%;
   padding: 0.4em 0;
-  border-bottom: 3px solid var(--executive-card-bg);
+  border-bottom: 3px solid var(--color-card-bg);
 }
 .C_Input:focus {
   border-bottom: 3px solid var(--executive-overlay-bg);
@@ -375,7 +375,7 @@ button {
 }
 
 .PigUrlInput {
-  border-bottom: 2px solid var(--executive-card-bg);
+  border-bottom: 2px solid var(--color-card-bg);
   padding-bottom: 0.2em;
 }
 
