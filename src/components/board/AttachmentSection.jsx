@@ -4,7 +4,12 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import { directFetch } from '@/util/directFetch';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 
-export default function AttachmentSection({ valueIds, onChangeIds, label = '첨부파일' }) {
+export default function AttachmentSection({
+  valueIds,
+  onChangeIds,
+  label = '첨부파일',
+  uploadType = 'docs',
+}) {
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState({});
 
@@ -80,7 +85,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
 
           let res;
           try {
-            res = await directFetch('/api/file/docs/upload', {
+            res = await directFetch(`/api/file/${uploadType}/upload`, {
               method: 'POST',
               body: formData,
             });
@@ -157,7 +162,12 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
       </div>
 
       {ids.length === 0 ? (
-        <div className="AttachmentEmpty">첨부파일이 없습니다.</div>
+        <div
+          className="AttachmentEmpty"
+          style={{ marginTop: '0', fontSize: '0.9rem', color: '#888' }}
+        >
+          첨부파일이 없습니다.
+        </div>
       ) : (
         <ul className="AttachmentList">
           {ids.map((id) => (

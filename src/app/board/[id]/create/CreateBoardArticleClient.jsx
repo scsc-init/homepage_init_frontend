@@ -7,10 +7,12 @@ import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
 import AttachmentSection from '@/components/board/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import WriteEditorStandard from '@/components/board/WriteEditorStandard';
+import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
-export default function CreateBoardArticleClient({ boardInfo }) {
+export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const {
     register,
     handleSubmit,
@@ -113,22 +115,15 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         </p>
       </div>
 
-      <div className={`CreateSigCard space-y-4 ${submitting ? 'is-busy' : ''}`}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <input
-            type="text"
-            {...register('title', { required: true })}
-            placeholder="제목을 입력하세요"
-            className="w-full border p-2 rounded"
-          />
-
-          <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
-          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
-          <button type="submit" className="SigCreateBtn" disabled={submitting}>
-            {submitting ? '작성 중...' : '작성 완료'}
-          </button>
-        </form>
-      </div>
+      {boardType === 'image' ? (
+        <WriteEditorAlbum boardInfo={boardInfo} onSubmit={onSubmit} submitting={submitting} />
+      ) : (
+        <WriteEditorStandard
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+        />
+      )}
     </div>
   );
 }

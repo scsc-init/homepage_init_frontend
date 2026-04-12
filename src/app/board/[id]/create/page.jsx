@@ -1,9 +1,10 @@
 // app/board/[id]/create/page.jsx
 import CreateBoardArticleClient from './CreateBoardArticleClient';
 
-export default async function CreateBoardPage({ params }) {
+export default async function CreateBoardPage({ params, searchParams }) {
   const boardInfo = await fetchBoardInfo(params.id);
-  return <CreateBoardArticleClient boardInfo={boardInfo} />;
+  const boardType = searchParams?.t || 'text';
+  return <CreateBoardArticleClient boardInfo={boardInfo} boardType={boardType} />;
 }
 
 async function fetchBoardInfo(boardId) {
