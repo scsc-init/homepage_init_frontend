@@ -102,7 +102,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
           title: data.title,
           description: data.description,
           content: data.editor,
-          is_rolling_admission: data.is_rolling_admission ? 'always' : 'during_recruiting',
+          is_rolling_admission: data.is_rolling_admission,
         }),
       });
 

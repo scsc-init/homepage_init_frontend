@@ -1,4 +1,5 @@
 import FormsRenderer from '@/components/form-control/FormsRenderer';
+import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 
 export default function SigForm({
   register,
@@ -49,14 +50,25 @@ export default function SigForm({
     },
     {
       index: 2,
-      gridCols: 2,
+      gridCols: 1,
       formControls: [
         {
-          inputType: 'toggle',
-          label: '상시 모집',
+          inputType: 'dropdown',
+          label: '가입 기간',
           name: 'is_rolling_admission',
+          options: {
+            always: PIG_ADMISSION_LABEL_MAP.always,
+            during_recruiting: PIG_ADMISSION_LABEL_MAP.during_recruiting,
+            never: PIG_ADMISSION_LABEL_MAP.never,
+          },
           activated: true,
         },
+      ],
+    },
+    {
+      index: 2,
+      gridCols: 1,
+      formControls: [
         {
           inputType: 'toggle',
           label: '다음 학기에 연장 신청',

@@ -118,6 +118,8 @@ export default function EditSigClient({ sigId, me, sig, article }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
+        console.log(err);
+
         alert('SIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
