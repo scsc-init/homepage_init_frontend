@@ -8,7 +8,7 @@ import { fetchMeClient } from '@/util/fetchClientData';
 import styles from '@/app/Header.module.css';
 
 function MobileProfileButton() {
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchMeClient().then(setUser);
@@ -39,7 +39,7 @@ function MobileProfileButton() {
 }
 
 function MobileExecutiveButton() {
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState(null);
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
