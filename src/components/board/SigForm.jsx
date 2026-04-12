@@ -1,5 +1,5 @@
 import FormsRenderer from '@/components/form-control/FormsRenderer';
-import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+import { SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 
 export default function SigForm({
   register,
@@ -57,9 +57,9 @@ export default function SigForm({
           label: '가입 기간',
           name: 'is_rolling_admission',
           options: {
-            always: PIG_ADMISSION_LABEL_MAP.always,
-            during_recruiting: PIG_ADMISSION_LABEL_MAP.during_recruiting,
-            never: PIG_ADMISSION_LABEL_MAP.never,
+            always: SIG_ADMISSION_LABEL_MAP.always,
+            during_recruiting: SIG_ADMISSION_LABEL_MAP.during_recruiting,
+            never: SIG_ADMISSION_LABEL_MAP.never,
           },
           activated: true,
         },
