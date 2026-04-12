@@ -3,7 +3,7 @@
 import styles from './TextListInput.module.css';
 
 import TextInput from './TextInput';
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoIosLink } from 'react-icons/io';
@@ -29,15 +29,11 @@ export default function TextListInput({ label, name, register, control, inputKey
     <div className={styles.textListInputGroup} key={name}>
       <div className={styles.currentTextList}>
         {fields.map((field, index) => {
-          if (field[inputKey] === '') return <></>;
+          if (field[inputKey] === '') return <Fragment key={'emptyFragment'}></Fragment>;
 
           return (
-            <>
-              <span
-                key={`textlistdata-${field.id}`}
-                className={styles.textListData}
-                onClick={(e) => removeValue(e, index)}
-              >
+            <Fragment key={field.id}>
+              <span className={styles.textListData} onClick={(e) => removeValue(e, index)}>
                 <span className={styles.textListDataLink}>
                   <IoIosLink />
                 </span>
@@ -46,13 +42,8 @@ export default function TextListInput({ label, name, register, control, inputKey
                   <FaRegTrashAlt color="white" />
                 </span>
               </span>
-              <input
-                key={field.id}
-                type="hidden"
-                name={name}
-                {...register(`${name}.${index}.${inputKey}`)}
-              />
-            </>
+              <input type="hidden" name={name} {...register(`${name}.${index}.${inputKey}`)} />
+            </Fragment>
           );
         })}
       </div>
