@@ -15,6 +15,7 @@ export default function DropdownInput({ name, label, options, control }) {
       <Controller
         name={name}
         control={control}
+        defaultValue={Object.keys(options)[0]}
         render={({ field }) => {
           const defaultValue = Object.keys(options).includes(field.value)
             ? field.value
