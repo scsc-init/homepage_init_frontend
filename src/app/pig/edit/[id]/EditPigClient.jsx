@@ -147,10 +147,10 @@ export default function EditPigClient({ pigId, me, pig, article }) {
 
   return (
     <div className="CreatePigContainer">
-      <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">PIG 수정</h1>
-      </div>
       <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreatePigHeader">
+          <h1 className="CreatePigTitle">PIG 수정</h1>
+        </div>
         <PigForm
           register={register}
           control={control}

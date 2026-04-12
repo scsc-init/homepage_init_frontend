@@ -152,11 +152,11 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
   return (
     <div className="CreatePigContainer">
-      <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">PIG 생성</h1>
-        <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
-      </div>
       <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreatePigHeader">
+          <h1 className="CreatePigTitle">신규 PIG 개설</h1>
+          <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요</p>
+        </div>
         <PigForm
           register={register}
           control={control}

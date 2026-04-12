@@ -129,10 +129,10 @@ export default function EditSigClient({ sigId, me, sig, article }) {
 
   return (
     <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 수정</h1>
-      </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreateSigHeader">
+          <h1 className="CreateSigTitle">SIG 수정</h1>
+        </div>
         <SigForm
           register={register}
           control={control}
