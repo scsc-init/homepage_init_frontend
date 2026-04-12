@@ -3,7 +3,7 @@
 import styles from './TextListInput.module.css';
 
 import TextInput from './TextInput';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useRef, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoIosLink } from 'react-icons/io';
@@ -11,11 +11,13 @@ import { IoIosLink } from 'react-icons/io';
 export default function TextListInput({ label, name, register, control, inputKey }) {
   const [currentInput, setCurrentInput] = useState('');
   const { fields, append, remove } = useFieldArray({ control, name });
+  const ref = useRef();
 
   const handleAdd = useCallback(() => {
     let fieldValue = {};
     fieldValue[inputKey] = currentInput;
     append(fieldValue);
+    ref.current.value = '';
   }, [append, currentInput]);
 
   const removeValue = (e, index) => {
@@ -53,7 +55,7 @@ export default function TextListInput({ label, name, register, control, inputKey
         label={label}
         name={`fakeinput-${name}`}
         placeholder={'엔터를 눌러 추가하세요'}
-        register={() => {}}
+        register={() => ({ ref })}
         onEnter={handleAdd}
       />
     </div>
