@@ -45,10 +45,10 @@
 
 .sidebar {
   position: fixed;
-  top: 3.5rem;
+  top: 5rem;
   left: 0;
   width: 180px;
-  height: calc(100vh - 3.5rem);
+  height: calc(100vh - 5rem);
   background-color: var(--color-surface-light);
   padding: 2rem 1rem;
   border-right: 1px solid var(--header-border-color);
@@ -94,7 +94,7 @@
 }
 
 .anchorOffset {
-  scroll-margin-top: 3.5rem;
+  scroll-margin-top: 5rem;
   margin-top: 2rem;
 }
 
@@ -590,12 +590,13 @@
 /* --- Added from my-page/page.css --- */
 
 .myPageContainer {
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--main-bg-gradient);
   box-sizing: border-box;
+  margin: 40px 0 40px 0;
 }
 
 .myPageCard {

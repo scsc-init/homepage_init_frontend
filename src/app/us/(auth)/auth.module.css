@@ -76,7 +76,7 @@
 }
 
 #GoogleSignupContainer {
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
