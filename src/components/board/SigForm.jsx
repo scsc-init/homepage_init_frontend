@@ -1,4 +1,4 @@
-import InputBook from '@/components/form-control/InputBook';
+import FormsRenderer from '@/components/form-control/FormsRenderer';
 
 export default function SigForm({
   register,
@@ -8,11 +8,11 @@ export default function SigForm({
   editorKey,
   isCreate,
 }) {
-  const inputPages = [
+  const inputSections = [
     {
-      page: 0,
+      index: 0,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'text',
           label: 'SIG 이름',
@@ -23,9 +23,9 @@ export default function SigForm({
       ],
     },
     {
-      page: 1,
+      index: 1,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'text',
           label: 'SIG 한 줄 설명',
@@ -36,9 +36,9 @@ export default function SigForm({
       ],
     },
     {
-      page: 2,
+      index: 2,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'editor',
           label: 'SIG 소개',
@@ -48,9 +48,9 @@ export default function SigForm({
       ],
     },
     {
-      page: 2,
+      index: 2,
       gridCols: 2,
-      formControl: [
+      formControls: [
         {
           inputType: 'toggle',
           label: '상시 모집',
@@ -76,8 +76,8 @@ export default function SigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputBook
-        inputPages={inputPages}
+      <FormsRenderer
+        inputSections={inputSections}
         register={register}
         control={control}
         editorKey={editorKey}

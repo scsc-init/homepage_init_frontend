@@ -1,14 +1,14 @@
-.inputPage {
+.inputSection {
   display: none;
   flex-direction: column;
   justify-content: center;
 }
 
-.inputPage[data-active='true'] {
+.inputSection[data-active='true'] {
   display: flex;
 }
 
-.pageTransitionGroup {
+.buttonContainer {
   display: flex;
   margin-top: 2rem;
   justify-content: center;

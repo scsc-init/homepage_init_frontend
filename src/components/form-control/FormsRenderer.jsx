@@ -4,19 +4,19 @@ import { useEffect, useState } from 'react';
 import TextInput from './TextInput';
 import ToggleInput from './ToggleInput';
 import EditorInput from './EditorInput';
-import InputPage from './InputPage';
+import InputSection from './InputSection';
 import SimpleGrid from '@/components/SimpleGrid';
 import DropdownInput from './DropdownInput';
 import TextListInput from './TextListInput';
 
 function renderInputElement(
-  pageIndex,
+  sectionIndex,
   formControl,
   register,
   control,
   editorKey,
-  activePageIndex,
-  setActivePageIndex,
+  activeSectionIndex,
+  setActiveSectionIndex,
 ) {
   if (!formControl.activated) return <></>;
 
@@ -29,14 +29,14 @@ function renderInputElement(
           placeholder={formControl.placeholder}
           register={register}
           name={formControl.name}
-          activePageIndex={activePageIndex}
+          activeSectionIndex={activeSectionIndex}
           activateNext={() =>
-            activePageIndex === pageIndex &&
-            setActivePageIndex(Math.max(activePageIndex, pageIndex + 1))
+            activeSectionIndex === sectionIndex &&
+            setActiveSectionIndex(Math.max(activeSectionIndex, sectionIndex + 1))
           }
           deactivateNext={() =>
-            activePageIndex > pageIndex &&
-            setActivePageIndex(Math.min(activePageIndex, pageIndex))
+            activeSectionIndex > sectionIndex &&
+            setActiveSectionIndex(Math.min(activeSectionIndex, sectionIndex))
           }
         />
       );
@@ -82,64 +82,64 @@ function renderInputElement(
   }
 }
 
-export default function InputBook({
-  inputPages,
+export default function FormsRenderer({
+  inputSections,
   register,
   control,
   editorKey,
   submitButtonText,
 }) {
-  const [activePageIndex, setActivePageIndex] = useState(0);
-  const [renderedBook, setRenderedBook] = useState(<></>);
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const [renderedElement, setRenderedElement] = useState(<></>);
 
   useEffect(() => {
-    const renderablePages = {};
-    for (const page of inputPages) {
+    const renderableSections = {};
+    for (const section of inputSections) {
       const gridElement = (
-        <SimpleGrid cols={page.gridCols}>
-          {page.formControl.map((child) => {
+        <SimpleGrid cols={section.gridCols}>
+          {section.formControls.map((formControl) => {
             return renderInputElement(
-              page.page,
-              child,
+              section.index,
+              formControl,
               register,
               control,
               editorKey,
-              activePageIndex,
-              setActivePageIndex,
+              activeSectionIndex,
+              setActiveSectionIndex,
             );
           })}
         </SimpleGrid>
       );
 
-      if (!renderablePages.hasOwnProperty(page.page)) {
-        renderablePages[page.page] = gridElement;
+      if (!renderableSections.hasOwnProperty(section.index)) {
+        renderableSections[section.index] = gridElement;
       } else {
-        renderablePages[page.page] = (
+        renderableSections[section.index] = (
           <>
-            {renderablePages[page.page]}
+            {renderableSections[section.index]}
             {gridElement}
           </>
         );
       }
     }
 
-    setRenderedBook(
-      Object.values(renderablePages).map((child, index) => {
+    setRenderedElement(
+      Object.values(renderableSections).map((child, index) => {
         return (
-          <InputPage
-            activePageIndex={activePageIndex}
-            setActivePageIndex={setActivePageIndex}
-            currentPageIndex={index}
-            numPages={Object.keys(renderablePages).length}
+          <InputSection
+            activeSectionIndex={activeSectionIndex}
+            setActiveSectionIndex={setActiveSectionIndex}
+            currentSectionIndex={index}
+            numSections={Object.keys(renderableSections).length}
             submitButtonText={submitButtonText}
             key={index}
           >
             {child}
-          </InputPage>
+          </InputSection>
         );
       }),
     );
-  }, [inputPages, activePageIndex]);
+  }, [inputSections, activeSectionIndex]);
 
-  return <>{renderedBook}</>;
+  return <>{renderedElement}</>;
 }

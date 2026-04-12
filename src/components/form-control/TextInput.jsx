@@ -8,7 +8,7 @@ export default function TextInput({
   placeholder,
   register,
   name,
-  activePageIndex,
+  activeSectionIndex,
   activateNext,
   deactivateNext,
   onEnter,
@@ -22,7 +22,7 @@ export default function TextInput({
     } else {
       deactivateNext(value);
     }
-  }, [activePageIndex]);
+  }, [activeSectionIndex]);
 
   return (
     <div className={styles.textInputGroup} key={name}>

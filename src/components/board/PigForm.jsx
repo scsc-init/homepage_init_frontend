@@ -1,5 +1,5 @@
-﻿import InputBook from '@/components/form-control/InputBook';
-import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+﻿import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+import FormsRenderer from '../form-control/FormsRenderer';
 
 export default function PigForm({
   register,
@@ -9,11 +9,11 @@ export default function PigForm({
   editorKey,
   isCreate,
 }) {
-  const inputPages = [
+  const inputSections = [
     {
-      page: 0,
+      index: 0,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'text',
           label: 'PIG 이름',
@@ -24,9 +24,9 @@ export default function PigForm({
       ],
     },
     {
-      page: 1,
+      index: 1,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'text',
           label: 'PIG 한 줄 설명',
@@ -37,9 +37,9 @@ export default function PigForm({
       ],
     },
     {
-      page: 2,
+      index: 2,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'editor',
           label: 'PIG 소개',
@@ -49,9 +49,9 @@ export default function PigForm({
       ],
     },
     {
-      page: 2,
+      index: 2,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'textlist',
           label: '웹사이트',
@@ -62,9 +62,9 @@ export default function PigForm({
       ],
     },
     {
-      page: 2,
+      index: 2,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'dropdown',
           label: '가입 기간',
@@ -79,9 +79,9 @@ export default function PigForm({
       ],
     },
     {
-      page: 2,
+      index: 2,
       gridCols: 1,
-      formControl: [
+      formControls: [
         {
           inputType: 'toggle',
           label: '다음 학기에 연장 신청',
@@ -101,8 +101,8 @@ export default function PigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputBook
-        inputPages={inputPages}
+      <FormsRenderer
+        inputSections={inputSections}
         register={register}
         control={control}
         editorKey={editorKey}
