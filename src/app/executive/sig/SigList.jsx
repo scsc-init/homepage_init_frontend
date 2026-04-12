@@ -61,7 +61,18 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
   );
 }
 
-const RenderSigRow = ({ sig }) => {
+const RenderSigRow = ({ sig, onUpdateSig }) => {
+  const [websites, setWebsites] = useState(sig.websites || []);
+  const handleUrlChange = (idx, newUrl) => {
+    const nextWebsites = [...websites];
+    nextWebsites[idx] = { ...nextWebsites[idx], url: newUrl };
+    setWebsites(nextWebsites);
+  };
+  const handleSave = () => {
+    if (onUpdateSig) {
+      onUpdateSig(sig.id, { websites });
+    }
+  };
   return (
     <tr className={styles['adm-tr']}>
       <td className={styles['adm-td']}>{sig.title ?? ''}</td>
@@ -69,6 +80,23 @@ const RenderSigRow = ({ sig }) => {
       <td className={styles['adm-td']}>{sig.year ?? ''}</td>
       <td className={styles['adm-td']}>{SEMESTER_MAP[Number(sig.semester)] ?? ''}학기</td>
       <td className={styles['adm-td']}>{sig.ownerName ?? ''}</td>
+      <td className={styles['adm-td']}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+          {websites.map((web, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
+              <input
+                type="text"
+                className={styles['adm-input']}
+                value={web.url}
+                placeholder="URL (https://...)"
+                style={{ width: '100%', padding: '4px' }}
+                onChange={(e) => handleUrlChange(idx, e.target.value)}
+                onBlur={handleSave}
+              />
+            </div>
+          ))}
+        </div>
+      </td>
       <td className={styles['adm-td']}>
         <a href={`/executive/sig/${sig.id}`}>상세보기</a>
       </td>
@@ -115,6 +143,7 @@ export default function SigList({ sigs }) {
             <th className={styles['adm-th']}>연도</th>
             <th className={styles['adm-th']}>학기</th>
             <th className={styles['adm-th']}>SIG장</th>
+            <th className={styles['adm-th']}>웹사이트</th>
             <th className={styles['adm-th']}>상세보기</th>
           </tr>
           <SigFilterRow
