@@ -27,7 +27,12 @@ export default function CreateSigClient({ scscGlobalStatus }) {
       title: '',
       description: '',
       editor: '',
-      is_rolling_admission: scscGlobalStatus === 'active',
+      is_rolling_admission:
+        typeof parsed?.is_rolling_admission === 'string'
+          ? String(parsed.is_rolling_admission)
+          : scscGlobalStatus === 'active'
+            ? 'always'
+            : 'during_recruiting',
     },
   });
 
@@ -117,6 +122,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json().catch(() => ({}));
+        console.log(err);
         alert('SIG 생성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {

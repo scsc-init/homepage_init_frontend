@@ -21,7 +21,12 @@ function generateDefaultSigForms(sig, article) {
     description: sig.description ?? '',
     editor: article.content ?? '',
     should_extend: sig.should_extend ?? false,
-    is_rolling_admission: sig.is_rolling_admission ?? false,
+    is_rolling_admission:
+      typeof parsed?.is_rolling_admission === 'string'
+        ? String(parsed.is_rolling_admission)
+        : scscGlobalStatus === 'active'
+          ? 'always'
+          : 'during_recruiting',
   };
 }
 
