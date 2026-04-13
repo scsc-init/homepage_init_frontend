@@ -173,8 +173,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = 'ì²¨ë
                 target="_blank"
                 rel="noreferrer"
               >
-                {metadataMap[id]?.original_filename ||
-                  (typeof id === 'object' ? id.file_id : id)}
+                {metadataMap[id]?.original_filename || id}
               </a>
               <button
                 type="button"
