@@ -19,15 +19,17 @@ export async function middleware(req) {
   const kakaotalk = ['kakao', 'kakaotalk'];
   const everytime = ['everytime'];
   const blockedBrowsers = ['kakao', 'kakaotalk', 'everytime'];
+  const redirectParam = buildReturnPath(req);
+  const redirectQuery = redirectParam ? `?redirect=${encodeURIComponent(redirectParam)}` : '';
 
   if (kakaotalk.some((keyword) => userAgent.includes(keyword))) {
-    return NextResponse.redirect(new URL('/err/browser/kakaotalk', req.url));
+    return NextResponse.redirect(new URL(`/err/browser/kakaotalk${redirectQuery}`, req.url));
   }
   if (everytime.some((keyword) => userAgent.includes(keyword))) {
-    return NextResponse.redirect(new URL('/err/browser/everytime', req.url));
+    return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
   }
   if (blockedBrowsers.some((browser) => userAgent.includes(browser))) {
-    return NextResponse.redirect(new URL('/err/browser', req.url));
+    return NextResponse.redirect(new URL(`/err/browser${redirectQuery}`, req.url));
   }
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
