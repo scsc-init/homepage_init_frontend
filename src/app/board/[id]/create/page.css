@@ -161,7 +161,7 @@ form input[type='text']:focus {
 }
 
 .SigCreateBtn:hover:not(:disabled) {
-  background-color: var(--color-button-bg);
+  background-color: var(--color-button-hover-bg);
   transform: translateY(-2px);
 }
 
@@ -261,7 +261,7 @@ input[type='text']:focus {
 }
 
 .SigCreateBtn:hover:not(:disabled) {
-  background-color: var(--color-button-bg);
+  background-color: var(--color-button-hover-bg);
   transform: translateY(-2px);
 }
 
