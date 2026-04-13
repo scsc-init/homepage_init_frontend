@@ -90,14 +90,29 @@ export default function WList({ wMetas }) {
   };
 
   const onClickDownload = async (name) => {
-    const res = await fetch(`/w/${encodeURIComponent(name)}`);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${name}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (isBusy) return;
+    setIsBusy(true);
+    try {
+      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/download`);
+      if (!res.ok) throw new Error('download failed');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      alert('다운로드 실패');
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return (
