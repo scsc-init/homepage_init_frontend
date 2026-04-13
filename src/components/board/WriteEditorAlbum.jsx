@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 
-// 앨범은 에디터 대신 간단한 텍스트 영역을 쓸 수 있게 구성했습니다.
 export default function WriteEditorAlbum({ boardInfo, onSubmit, submitting }) {
   const { register, handleSubmit } = useForm({
     defaultValues: { title: '', description: '' },
@@ -16,9 +15,6 @@ export default function WriteEditorAlbum({ boardInfo, onSubmit, submitting }) {
     const imageMarkdown = attachmentIds
       .map((id) => {
         const encoded = encodeURIComponent(id);
-
-        // 핵심: 주소에서 /file 을 완전히 빼야 합니다!
-        // 정답 주소 형식: /api/image/download/ID
         const url = `/api/image/download/${encoded}`;
 
         return `![album_image](${url})`;
@@ -56,11 +52,21 @@ export default function WriteEditorAlbum({ boardInfo, onSubmit, submitting }) {
 
         <textarea
           {...register('description')}
-          placeholder="사진에 대한 설명을 간단히 적어주세요..."
+          placeholder="Write a short description of the picture"
           className="w-full h-32 border p-3 rounded"
         />
 
-        <button type="submit" className="SigCreateBtn w-full py-3" disabled={submitting}>
+        <button
+          type="submit"
+          className="SigCreateBtn w-full py-4 rounded-xl font-bold transition-all"
+          disabled={submitting}
+          style={{
+            backgroundColor: submitting ? '#6B7280' : '#128e9f',
+            cursor: submitting ? 'not-allowed' : 'pointer',
+            color: 'white',
+            border: 'none',
+          }}
+        >
           {submitting ? '업로드 중...' : '앨범 등록하기'}
         </button>
       </form>
