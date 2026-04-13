@@ -130,6 +130,15 @@
   cursor: pointer;
 }
 
+.adm-button-danger {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-button-alert-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
+  cursor: pointer;
+}
 .adm-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
