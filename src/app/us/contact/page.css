@@ -62,7 +62,7 @@ body {
   padding: 2.5rem 2rem;
   border: 2px solid var(--color-button-border);
   border-radius: 1rem;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease;
 }
