@@ -25,7 +25,7 @@ function ToggleSwitch({ checked, value: valueProp, focusDisabled, onChange, ...p
         {...props}
       />
       <span
-        className={`${styles.slider} ${isOn ? styles.checked : ''} ${focusDisabled || !focus ? '' : styles.focused}`}
+        className={`${styles.slider} ${isOn ? styles.checked : ''} ${!focusDisabled && focus ? styles.focused : ''}`}
         aria-hidden="true"
       />
       <span
