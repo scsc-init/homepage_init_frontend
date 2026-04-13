@@ -89,9 +89,15 @@ export default function WList({ wMetas }) {
     }
   };
 
-  const onClickDownload = (name) => {
-    if (isBusy) return;
-    window.location.href = `/api/executive/w/${encodeURIComponent(name)}/download`;
+  const onClickDownload = async (name) => {
+    const res = await fetch(`/w/${encodeURIComponent(name)}`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
