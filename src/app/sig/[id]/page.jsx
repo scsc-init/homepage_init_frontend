@@ -6,7 +6,7 @@ import { fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const res = await fetch(`${process.env.BACKEND_URL || ''}/api/sig/${id}`, {
       method: 'GET',
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function SigDetailPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
 
   const [me] = await Promise.allSettled([fetchMe()]);
 
@@ -65,8 +65,7 @@ export default async function SigDetailPage({ params }) {
     ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
     : [];
 
-  const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
-  const article = articleRes.ok ? await articleRes.json() : { content: '' };
+  const article = sig.content ?? { content: '' };
 
   return (
     <SigClient

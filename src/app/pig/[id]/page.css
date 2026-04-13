@@ -5,8 +5,8 @@
   margin: 1.5rem auto;
   padding: 1.5rem;
   border-radius: 1rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
-  background-color: var(--executive-card-bg);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
+  background-color: var(--color-card-bg);
   user-select: text;
   -webkit-user-select: text;
 }
@@ -14,6 +14,11 @@
 .PigDetailContainer * {
   user-select: text;
   -webkit-user-select: text;
+}
+
+.PigDetailContainer button {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 html,
@@ -45,7 +50,7 @@ body {
 /* 구분선 */
 .PigDivider {
   border: none;
-  border-top: 1px solid var(--executive-card-shadow);
+  border-top: 1px solid var(--color-card-shadow);
   margin: 2rem 0;
 }
 
@@ -88,7 +93,7 @@ body {
 }
 
 .mdx-pre {
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   padding: 1rem;
   overflow-x: auto;
   border-radius: 0.5rem;
@@ -116,7 +121,7 @@ body {
   padding: 0.6rem 1rem;
   border-radius: 0.625rem;
   border: 1px solid var(--color-text-subtle);
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   color: var(--color-text);
   font-weight: 600;
   line-height: 1;
@@ -294,7 +299,7 @@ body {
   padding: 0.55rem 0.7rem;
   border-radius: 0.9rem;
   color: var(--color-button-bg);
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   border: 1px solid var(--color-button-border);
   font-weight: 450;
   font-size: 0.85rem;
@@ -302,7 +307,7 @@ body {
     transform 120ms ease,
     background-color 120ms ease,
     box-shadow 120ms ease;
-  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
   min-width: 0;
 }
 
@@ -325,7 +330,7 @@ body {
   border-color: var(--color-primary);
   box-shadow:
     inset 0 0 0 1px var(--color-primary),
-    0 2px 6px var(--executive-card-shadow);
+    0 2px 6px var(--color-card-shadow);
 }
 
 .PigButton.is-leave {
@@ -353,7 +358,7 @@ body {
   align-items: center;
   justify-content: center;
   color: var(--color-button-bg);
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 0.55rem 0.7rem;
   border-radius: 0.9rem;
   border: 1px solid var(--color-button-border);
@@ -375,7 +380,7 @@ body {
   position: absolute;
   top: 110%;
   left: 0;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   border: 1px solid var(--color-text-subtle);
   border-radius: 0.625rem;
   overflow: hidden;
@@ -482,8 +487,8 @@ body {
   margin-top: 2.25rem;
   padding: 1.25rem 1rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--executive-card-shadow);
-  background: color-mix(in srgb, var(--color-bg) 85%, var(--executive-card-bg) 15%);
+  border: 1px solid var(--color-card-shadow);
+  background: color-mix(in srgb, var(--color-bg) 85%, var(--color-card-bg) 15%);
 }
 
 .PigMembersHeader {
@@ -526,10 +531,10 @@ body {
 .PigMemberChip {
   padding: 0.45rem 0.75rem;
   border-radius: 9999px;
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   border: 1px solid var(--color-button-border);
   color: var(--color-text-body);
-  box-shadow: 0 1px 3px var(--executive-card-shadow);
+  box-shadow: 0 1px 3px var(--color-card-shadow);
 }
 
 .PigMemberOwner {
@@ -537,16 +542,16 @@ body {
   border-radius: 9999px;
   background: var(--color-text-body);
   border: 1px solid var(--color-button-border);
-  color: var(--executive-card-bg);
+  color: var(--color-card-bg);
   font-weight: bold;
-  box-shadow: 0 1px 3px var(--executive-card-shadow);
+  box-shadow: 0 1px 3px var(--color-card-shadow);
 }
 
 .PigMembersEmpty {
   padding: 0.9rem 0.75rem;
   border-radius: 0.5rem;
   border: 1px dashed var(--color-button-border);
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   color: var(--color-text-subtle);
 }
 

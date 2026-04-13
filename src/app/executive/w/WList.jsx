@@ -89,6 +89,32 @@ export default function WList({ wMetas }) {
     }
   };
 
+  const onClickDownload = async (name) => {
+    if (isBusy) return;
+    setIsBusy(true);
+    try {
+      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/download`);
+      if (!res.ok) throw new Error('download failed');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      alert('다운로드 실패');
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return (
     <div className={isBusy ? 'is-busy' : undefined}>
       <div className="adm-section">
@@ -97,13 +123,14 @@ export default function WList({ wMetas }) {
           <table className="adm-table">
             <thead>
               <tr>
-                <th>페이지명</th>
-                <th>최종수정자</th>
-                <th>파일크기(Bytes)</th>
-                <th>생성시각</th>
-                <th>수정시각</th>
-                <th>수정버튼</th>
-                <th>삭제버튼</th>
+                <th className="adm-th">페이지명</th>
+                <th className="adm-th">최종수정자</th>
+                <th className="adm-th">파일크기(Bytes)</th>
+                <th className="adm-th">생성시각</th>
+                <th className="adm-th">수정시각</th>
+                <th className="adm-th">수정버튼</th>
+                <th className="adm-th">다운로드버튼</th>
+                <th className="adm-th">삭제버튼</th>
               </tr>
             </thead>
             <tbody>
@@ -127,7 +154,19 @@ export default function WList({ wMetas }) {
                   </td>
                   <td>
                     <button
+                      type="button"
                       className="adm-button"
+                      onClick={() => onClickDownload(w[0].name)}
+                      disabled={isBusy}
+                    >
+                      다운로드
+                    </button>
+                  </td>
+
+                  <td className="adm-td">
+                    <button
+                      type="button"
+                      className="adm-button-danger"
                       onClick={() => onClickDelete(w[0].name)}
                       disabled={isBusy}
                     >

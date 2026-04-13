@@ -23,7 +23,7 @@
 .sigCard {
   border: 1px solid var(--color-border);
   border-radius: 0.75rem;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -32,7 +32,7 @@
 }
 
 .sigCard:hover {
-  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
 .sigTopbar {
@@ -136,11 +136,11 @@
   flex-direction: column;
   gap: 0.4rem;
   transition: box-shadow 0.2s ease;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
 }
 
 .sigCard:hover {
-  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
 .sigTopbar {

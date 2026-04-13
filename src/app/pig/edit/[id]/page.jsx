@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export const metadata = { title: 'PIG' };
 
 export default async function EditPigPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const [me] = await Promise.allSettled([fetchMe()]);
   if (me.status === 'rejected') redirect('/us/login');
 
@@ -24,8 +24,7 @@ export default async function EditPigPage({ params }) {
   }
   const pig = await pigRes.json();
 
-  const articleRes = await handleApiRequest('GET', `/api/article/${pig.content_id}`);
-  const article = articleRes.ok ? await articleRes.json() : { content: '' };
+  const article = pig.content ?? { content: '' };
 
   return <EditPigClient pigId={id} me={me.value} pig={pig} article={article} />;
 }

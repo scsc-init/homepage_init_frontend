@@ -24,9 +24,9 @@ body {
 }
 
 .CreateSigCard {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 2rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
   border-radius: 1rem;
 }
 .Step {
@@ -74,7 +74,7 @@ body {
   box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.28);
 }
 select.C_Input option {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   color: var(--color-text-body);
 }
 .is-disabled,

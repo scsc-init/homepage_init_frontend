@@ -1,8 +1,4 @@
-@import '@radix-ui/colors/indigo.css';
-@import '@radix-ui/colors/violet.css';
-@import '@radix-ui/colors/slate.css';
-
-#SigListContainer {
+.SigListContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,7 +7,7 @@
   padding: 2rem 1rem;
 }
 
-#SigList {
+.SigList {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -34,11 +30,11 @@
     box-shadow 0.2s ease,
     border-color 0.2s ease,
     transform 0.2s ease;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
 }
 
 .sigCard:hover {
-  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
   border-color: var(--color-text-body);
 }
 
@@ -97,7 +93,7 @@
   font-weight: 700;
 }
 
-#SigCreateButton {
+.SigCreateButton {
   all: unset;
 }
 
@@ -125,11 +121,6 @@
   gap: 1rem;
 }
 
-html,
-body {
-  background-color: var(--background-color);
-}
-
 .SigHeaderActions {
   display: flex;
   gap: 0.5rem;
@@ -142,7 +133,7 @@ body {
   padding: 0.95rem 1rem;
   border: 1px solid var(--color-text-subtle);
   border-radius: 0.75rem;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
 }
 
 .SigFilterHeader {
