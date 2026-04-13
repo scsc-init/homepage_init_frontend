@@ -3,7 +3,7 @@
 import './page.css';
 import { useEffect, useState } from 'react';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
-import InAppBrowserOutButton from '@components/InAppBrowserOutButton';
+import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
