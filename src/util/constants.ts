@@ -65,7 +65,7 @@ export const KAKAO_INVITE_LINK = pickEnv(
  */
 export const RULES_MARKDOWN_LINK =
   'https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md';
-  
+
 /**
  * 지원금 신청 가이드라인 문서 링크입니다.
  */
