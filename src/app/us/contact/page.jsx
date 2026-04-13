@@ -77,10 +77,10 @@ export default async function Contact() {
                       <td className="label">부회장</td>
                       <td className="info">
                         <span className="ViceList">
-                          {vicePresidents.map((vp, i) => (
-                            <span key={vp} className="ViceItem">
+                          {vicePresidents.map((vp, idx) => (
+                            <span key={idx} className="ViceItem">
                               {vp}
-                              {i < vicePresidents.length - 1 && ' / '}
+                              {idx < vicePresidents.length - 1 && ' / '}
                             </span>
                           ))}
                         </span>
