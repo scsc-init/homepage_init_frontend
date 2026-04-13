@@ -105,6 +105,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     try {
       const res = await fetch('/api/sig/create', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
