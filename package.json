@@ -29,6 +29,7 @@
     "immer": "^10.1.1",
     "marked": "^13.0.1",
     "marked-react": "^2.0.0",
+    "material-icons": "^1.13.14",
     "next": "15.5.10",
     "next-auth": "^4.24.13",
     "normalize.css": "^8.0.1",
