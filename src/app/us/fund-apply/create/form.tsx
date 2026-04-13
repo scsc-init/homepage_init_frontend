@@ -4,11 +4,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
-import { SEMESTER_MAP } from '@/util/constants';
+
+import { fetchBackendClient } from '@/util/fetch/client';
+
+import { academicTerm2string } from '@/util/helper/tostring';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
 import './form.css';
-import { GlobalStatus } from '@/types/api-res';
+import { GlobalStatus } from '@/types/system';
+import type { UserProfile } from '@/types/user';
 
 const GUIDE_URL =
   'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/B_SCSC_%EC%A7%80%EC%9B%90%EA%B8%88_%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8_%EB%B0%8F_%EC%8B%A0%EC%B2%AD%EC%A0%88%EC%B0%A8_%EC%84%B8%EC%B9%99.md';
@@ -46,12 +50,29 @@ const PLACEHOLDER = {
 `,
 };
 
+type FormType = {
+  applyType: 'contest' | 'fund' | 'meal' | 'pair' | '';
+  orgCategory: 'sig' | 'pig' | '';
+  target: string;
+  contestName: string;
+  pairBefore: string;
+  pairAfter: string;
+  amount: string;
+  useKakaoPay: boolean;
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+  checked: boolean;
+  reasonText: string;
+  imageIds: number[];
+};
+
 function replaceCRLF_LF(s: string): string {
   if (typeof s !== 'string') return '';
   return s.replace(/\r\n/g, '\n');
 }
 
-function extractFirstText(v) {
+function extractFirstText(v: any) {
   if (typeof v === 'string') return v.trim();
   if (v && typeof v === 'object') {
     if (typeof v.text === 'string') return v.text.trim();
@@ -62,6 +83,17 @@ function extractFirstText(v) {
   return '';
 }
 
+type SigItem = { id: number; title: string };
+function refinineSigList(sigList: any[]): SigItem[] {
+  if (!Array.isArray(sigList)) return [];
+  return sigList
+    .map((sig) => ({
+      id: sig.id,
+      title: sig.title,
+    }))
+    .filter((sig) => sig.title);
+}
+
 export default function FundApplyForm({
   boardId,
   globalStatus,
@@ -70,17 +102,35 @@ export default function FundApplyForm({
   globalStatus: GlobalStatus;
 }) {
   const router = useRouter();
+
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const [imageIds, setImageIds] = useState<number[]>([]);
+  const [imageUploading, setImageUploading] = useState(false);
+
+  const [user, setUser] = useState<UserProfile | null>(null);
+
   const currTerm = getCurrentTerm(globalStatus);
   const prevTerm = getPrevTerm(currTerm);
 
-  const [initLoading, setInitLoading] = useState<Boolean>(true);
-  const [initError, setInitError] = useState('');
-  const [submitting, setSubmitting] = useState<Boolean>(false);
+  const _curr = new URLSearchParams({
+    year: String(currTerm.year),
+    semester: String(currTerm.semester),
+  }).toString();
+  const [currSigs, setCurrSigs] = useState<SigItem[]>([]);
+  const [currPigs, setCurrPigs] = useState<SigItem[]>([]);
 
-  const [me, setMe] = useState(null);
+  const _prev = new URLSearchParams({
+    year: String(prevTerm.year),
+    semester: String(prevTerm.semester),
+  }).toString();
+  const [prevSigs, setPrevSigs] = useState<SigItem[]>([]);
+  const [prevPigs, setPrevPigs] = useState<SigItem[]>([]);
 
-  const [imageIds, setImageIds] = useState([]);
-  const [imageUploading, setImageUploading] = useState(false);
+  const [sigList, setSigList] = useState<SigItem[]>([]);
+
+  const [usePrevTerm, setUsePrevTerm] = useState<boolean>(false);
+  const prevTermLabel = academicTerm2string(prevTerm);
 
   const {
     register,
@@ -88,7 +138,7 @@ export default function FundApplyForm({
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormType>({
     defaultValues: {
       applyType: '',
       orgCategory: '',
@@ -112,75 +162,48 @@ export default function FundApplyForm({
   const isChecked = watch('checked');
   const useKakaoPay = watch('useKakaoPay');
 
-  const [usePrevTerm, setUsePrevTerm] = useState<Boolean>(false);
-
-  const semesterToKo = (s) => {
-    const v = SEMESTER_MAP?.[s];
-    if (!v) return '';
-    return `${v}학기`;
-  };
-
-  const normalizeTargets = (items) => {
-    if (!Array.isArray(items)) return [];
-    return items
-      .map((it) => ({
-        id: it?.id ?? it?.sig_id ?? it?.pig_id ?? it?.uuid ?? it?.key ?? null,
-        title: it?.title ?? it?.name ?? it?.label ?? '',
-        year: typeof it?.year === 'number' ? it.year : it?.year ? Number(it.year) : null,
-        semester:
-          typeof it?.semester === 'number'
-            ? it.semester
-            : it?.semester
-              ? Number(it.semester)
-              : null,
-        status: it?.status ?? null,
-      }))
-      .filter((it) => it.title);
-  };
-
-  const prevTermLabel = prevTerm ? `${prevTerm.year}년 ${semesterToKo(prevTerm.semester)}` : '';
-
-  const sigsList = useMemo(() => normalizeTargets(sigs), [sigs]);
-  const pigsList = useMemo(() => normalizeTargets(pigs), [pigs]);
-  const prevSigsList = useMemo(() => normalizeTargets(prevSigs), [prevSigs]);
-  const prevPigsList = useMemo(() => normalizeTargets(prevPigs), [prevPigs]);
-
-  const [targetList, setTargetList] = useState([]);
-
   useEffect(() => {
-    const init = async () => {
+    let isMounted = true;
+    const run = async () => {
       try {
-        setInitLoading(true);
-        setInitError('');
-
-        const res = await fetch('/api/user/profile', {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          if (res.status === 401) {
-            replaceLoginWithRedirect(router);
-            return;
-          }
-          throw new Error(`프로필 조회 실패 (${res.status})`);
-        }
-
-        const data = await res.json();
-        if (!data || typeof data !== 'object')
-          throw new Error('프로필 응답이 올바르지 않습니다.');
-
-        setMe(data);
-      } catch (e) {
-        setInitError(e?.message ? String(e.message) : '초기화 중 오류가 발생했습니다.');
-      } finally {
-        setInitLoading(false);
+        const data = await fetchBackendClient<UserProfile>('/api/user/profile');
+        if (isMounted) setUser(data);
+      } catch (err) {
+        replaceLoginWithRedirect(router);
       }
     };
-
-    init();
+    run();
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const run = async () => {
+      try {
+        const [currSigData, currPigData, prevSigData, prevPigData] = await Promise.all([
+          fetchBackendClient<any[]>(`/api/sigs?${_curr}`),
+          fetchBackendClient<any[]>(`/api/pigs?${_curr}`),
+          fetchBackendClient<any[]>(`/api/sigs?${_prev}`),
+          fetchBackendClient<any[]>(`/api/pigs?${_prev}`),
+        ]);
+        if (isMounted) {
+          setCurrSigs(refinineSigList(currSigData));
+          setCurrPigs(refinineSigList(currPigData));
+          setPrevSigs(refinineSigList(prevSigData));
+          setPrevPigs(refinineSigList(prevPigData));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    run();
+    return () => {
+      isMounted = false;
+    };
+  }, [_curr, _prev]);
 
   useEffect(() => {
     if (applyType !== 'fund' && applyType !== 'meal') {
@@ -203,15 +226,16 @@ export default function FundApplyForm({
 
   useEffect(() => {
     if (orgCategory === 'sig') {
-      setTargetList(usePrevTerm ? prevSigsList : sigsList);
+      setSigList(usePrevTerm ? prevSigs : currSigs);
     } else if (orgCategory === 'pig') {
-      setTargetList(usePrevTerm ? prevPigsList : pigsList);
+      setSigList(usePrevTerm ? prevPigs : currPigs);
     } else {
-      setTargetList([]);
+      setSigList([]);
     }
-  }, [orgCategory, usePrevTerm, sigsList, pigsList, prevSigsList, prevPigsList]);
+  }, [orgCategory, usePrevTerm]);
 
-  const disableOrgSelects = submitting || applyType === 'contest' || applyType === 'pair';
+  const disableOrgSelects: boolean =
+    submitting || applyType === 'contest' || applyType === 'pair';
 
   const step1Done = Boolean(applyType);
   const step2Ready = step1Done;
@@ -224,7 +248,7 @@ export default function FundApplyForm({
 
   const step3Ready = step2Done;
 
-  const computeTitle = (form) => {
+  const computeTitle = (form: FormType) => {
     if (form.applyType === 'contest') {
       const name = extractFirstText(form.contestName) || '대회 지원';
       return `[대회] ${name}`;
@@ -239,18 +263,16 @@ export default function FundApplyForm({
     return `[${typeLabel}] ${target || 'SIG/PIG'}`;
   };
 
-  const buildPayload = (form) => {
+  const buildPayload = (form: FormType) => {
+    if (!user) throw new Error('user not loaded');
     const title = computeTitle(form);
-    const applicantName = me?.name ?? '';
-    const applicantStudentId = me?.student_id ?? me?.studentId ?? '';
+
+    const userName = user.name;
+    const StudentId = user.student_id;
 
     const headerLines = [];
     headerLines.push(`# ${title}`);
-    if (applicantName || applicantStudentId) {
-      headerLines.push(
-        `- 신청자: ${applicantName}${applicantStudentId ? ` (${applicantStudentId})` : ''}`,
-      );
-    }
+    headerLines.push(`- 신청자: ${userName}(${StudentId})`);
 
     if (form.applyType === 'contest') {
       headerLines.push(`- 유형: 대회 지원`);
@@ -289,9 +311,7 @@ export default function FundApplyForm({
     }
 
     const reason = replaceCRLF_LF(String(form.reasonText ?? '')).trim();
-    const ids = (Array.isArray(form.imageIds) ? form.imageIds : [])
-      .map((id) => String(id))
-      .filter(Boolean);
+    const ids = (Array.isArray(form.imageIds) ? form.imageIds : []).filter(Boolean);
     const imgs = ids.map((id) => `![image](${buildImageUrl(id)})`);
 
     const blocks = [];
@@ -302,18 +322,15 @@ export default function FundApplyForm({
     return { title, content: blocks.join('\n').trim(), attachments: ids };
   };
 
-  const uploadImages = async (files) => {
-    const arr = Array.isArray(files)
-      ? files.filter(Boolean)
-      : Array.from(files || []).filter(Boolean);
-    if (arr.length === 0) return;
+  const uploadImages = async (files: File[]) => {
+    if (files.length === 0) return;
     if (imageUploading) return;
 
-    const ids = [];
+    const ids: number[] = [];
 
     setImageUploading(true);
     try {
-      for (const f of arr) {
+      for (const f of files) {
         const formData = new FormData();
         formData.append('file', f);
 
@@ -354,7 +371,7 @@ export default function FundApplyForm({
           continue;
         }
 
-        ids.push(String(data.id));
+        ids.push(Number(data.id));
       }
     } finally {
       setImageUploading(false);
@@ -367,16 +384,17 @@ export default function FundApplyForm({
     }
   };
 
-  const removeImageId = (id) => {
+  const removeImageId = (id: number) => {
     const next = imageIds.filter((x) => x !== id);
     setImageIds(next);
     setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
   };
 
-  const onSubmit = async (form) => {
+  const onSubmit = async (form: FormType) => {
     try {
       setSubmitting(true);
 
+      if (!user) throw new Error('사용자 데이터가 로딩되지 않았습니다.');
       if (!boardId) throw new Error('게시판 정보가 올바르지 않습니다.');
 
       const reason = String(form.reasonText ?? '').trim();
@@ -384,7 +402,7 @@ export default function FundApplyForm({
       if (!Array.isArray(form.imageIds) || form.imageIds.length === 0)
         throw new Error('이미지를 1장 이상 첨부해주세요.');
 
-      const payload = buildPayload(form);
+      const payload = await buildPayload(form);
 
       const res = await fetch('/api/article/create', {
         method: 'POST',
@@ -405,31 +423,12 @@ export default function FundApplyForm({
 
       router.replace('/us/contact');
     } catch (e) {
-      alert(e?.message ? String(e.message) : '신청 중 오류가 발생했습니다.');
+      const msg = `신청 중 ${e instanceof Error ? e.message : 'unknown'} 오류`;
+      alert(msg);
     } finally {
       setSubmitting(false);
     }
   };
-
-  if (initLoading) {
-    return (
-      <div className="CreateSigContainer">
-        <div className="CreateSigCard">
-          <p className="CreateSigSubtitle">불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (initError) {
-    return (
-      <div className="CreateSigContainer">
-        <div className="CreateSigCard">
-          <p className="C_ErrorText">{initError}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="CreateSigContainer">
@@ -506,7 +505,7 @@ export default function FundApplyForm({
                       >
                         <option value="">SIG/PIG 선택</option>
                         <option value="sig">SIG</option>
-                        <option value="pig">PIG</option>
+                        <option value="">PIG</option>
                       </select>
 
                       {(applyType === 'fund' || applyType === 'meal') && (
@@ -540,10 +539,10 @@ export default function FundApplyForm({
                       defaultValue=""
                     >
                       <option value="">대상 선택</option>
-                      {targetList.length === 0 ? (
+                      {sigList.length === 0 ? (
                         <option disabled>목록이 없습니다</option>
                       ) : (
-                        targetList.map((item, idx) => (
+                        sigList.map((item, idx) => (
                           <option
                             key={`${item.id ?? 'na'}-${item.title}-${idx}`}
                             value={item.title}
@@ -661,7 +660,7 @@ export default function FundApplyForm({
                 <div className="EditorWrapper has-content">
                   <div className="EditorMinHeight">
                     <div className="EditorPlaceholderText">
-                      {(PLACEHOLDER[applyType] ?? '').trim()}
+                      {(applyType ? PLACEHOLDER[applyType] : '').trim()}
                     </div>
 
                     <div style={{ marginTop: '1rem' }}>

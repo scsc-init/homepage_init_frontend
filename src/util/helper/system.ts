@@ -1,6 +1,6 @@
 // @/util/helper/system.ts
 
-import type { GlobalStatus, AcademicTerm } from '@/types/api-res';
+import type { GlobalStatus, AcademicTerm } from '@/types/system';
 
 const PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 

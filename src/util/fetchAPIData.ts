@@ -11,7 +11,7 @@ import type {
   AcademicTerm,
   BaseTarget,
   NormalizedTarget,
-} from '@/types/api-res';
+} from '@/types/system';
 
 interface HandleApiRequestOptions {
   params?: Record<string, string | string[]>;

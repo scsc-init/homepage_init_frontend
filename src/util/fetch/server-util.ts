@@ -1,6 +1,6 @@
 // @/util/fetch/server-util.ts
 
-import type { GlobalStatus } from '@/types/api-res';
+import type { GlobalStatus } from '@/types/system';
 import { fetchBackendServer } from './server';
 
 /** Fetches current SCSC global status. */

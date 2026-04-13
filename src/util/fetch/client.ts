@@ -23,11 +23,11 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  * @param fallback - Whether to fallback to frontend API route on failure
  * @returns Fetch `Response`
  */
-export async function fetchBackendClient(
+export async function fetchBackendClient<T>(
   path: string,
   init: RequestInit = {},
   fallback: boolean = false,
-): Promise<Response> {
+): Promise<T> {
   const method = (init.method || 'GET').toUpperCase();
   const headers = new Headers(init.headers);
   let body = init.body;
@@ -54,16 +54,23 @@ export async function fetchBackendClient(
       body,
       credentials: 'include',
     });
-    if (!fallback || res.status !== 401) return res;
+    if (res.ok) return (await res.json()) as T;
+    if (!fallback) throw new Error(`Backend Error: ${res.status} ${await res.text()}`);
   } catch (err) {
     if (!fallback) throw new Error(`Network error while fetching ${path}: ${String(err)}`);
   }
 
-  return fetch(path, {
+  const res = await fetch(path, {
     ...init,
     method,
     headers,
     body,
     credentials: 'include',
   });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Backend Error: ${res.status} ${txt}`);
+  }
+
+  return (await res.json()) as T;
 }

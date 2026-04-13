@@ -9,7 +9,7 @@ import { ENABLE_TEST_UTILS } from '@/util/constants';
 const BACKEND_URL: string = process.env.BACKEND_URL || '';
 const API_SECRET: string = process.env.API_SECRET || '';
 
-export interface Fetch2BackendOptions {
+export interface FetchBackendServerOptions {
   params?: Record<string, string | number | boolean>;
   query?: Record<string, string | number | boolean | null | undefined>;
   headers?: Record<string, string>;
@@ -68,7 +68,7 @@ function needApiSecret(path: string): boolean {
 export async function fetchBackendServer<T>(
   method: string,
   path: string,
-  options: Fetch2BackendOptions = {},
+  options: FetchBackendServerOptions = {},
   request?: Request,
 ): Promise<T> {
   const session: Session | null = await getServerSession(authOptions);
