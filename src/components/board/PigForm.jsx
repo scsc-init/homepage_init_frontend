@@ -1,5 +1,10 @@
 ﻿import { PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
-import FormsRenderer from '../form-control/FormsRenderer';
+import TextInput from '../form-control/TextInput';
+import EditorInput from '../form-control/EditorInput';
+import DropdownInput from '../form-control/DropdownInput';
+import ToggleInput from '../form-control/ToggleInput';
+import ButtonInput from '../form-control/ButtonInput';
+import TextListInput from '../form-control/TextListInput';
 
 export default function PigForm({
   register,
@@ -9,89 +14,6 @@ export default function PigForm({
   editorKey,
   isCreate,
 }) {
-  const inputSections = [
-    {
-      index: 0,
-      gridCols: 1,
-      formControls: [
-        {
-          inputType: 'text',
-          label: 'PIG 이름',
-          placeholder: 'INIT',
-          name: 'title',
-          activated: true,
-        },
-      ],
-    },
-    {
-      index: 1,
-      gridCols: 1,
-      formControls: [
-        {
-          inputType: 'text',
-          label: 'PIG 한 줄 설명',
-          placeholder: '홈페이지 관리 PIG입니다',
-          name: 'description',
-          activated: true,
-        },
-      ],
-    },
-    {
-      index: 2,
-      gridCols: 1,
-      formControls: [
-        {
-          inputType: 'editor',
-          label: 'PIG 소개',
-          name: 'editor',
-          activated: true,
-        },
-      ],
-    },
-    {
-      index: 2,
-      gridCols: 1,
-      formControls: [
-        {
-          inputType: 'textlist',
-          label: '웹사이트',
-          name: 'websites',
-          inputKey: 'url',
-          activated: true,
-        },
-      ],
-    },
-    {
-      index: 2,
-      gridCols: 1,
-      formControls: [
-        {
-          inputType: 'dropdown',
-          label: '가입 기간',
-          name: 'is_rolling_admission',
-          options: {
-            always: PIG_ADMISSION_LABEL_MAP.always,
-            during_recruiting: PIG_ADMISSION_LABEL_MAP.during_recruiting,
-            never: PIG_ADMISSION_LABEL_MAP.never,
-          },
-          activated: true,
-        },
-      ],
-    },
-    {
-      index: 2,
-      gridCols: 1,
-      formControls: [
-        {
-          inputType: 'toggle',
-          label: '다음 학기에 연장 신청',
-          name: 'should_extend',
-          activated: !isCreate,
-        },
-      ],
-    },
-  ];
-
   return (
     <form
       className="space-y-4"
@@ -101,13 +23,36 @@ export default function PigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <FormsRenderer
-        inputSections={inputSections}
+      <TextInput label="PIG 이름" placeholder="INIT" register={register} name="title" />
+      <TextInput
+        label="PIG 한 줄 설명"
+        placeholder="홈페이지 관리 PIG입니다"
+        register={register}
+        name="description"
+      />
+      <EditorInput label="PIG 소개" control={control} name="editor" editorKey={editorKey} />
+      <TextListInput
+        label="웹사이트"
+        name="websites"
         register={register}
         control={control}
-        editorKey={editorKey}
-        submitButtonText={isCreate ? 'PIG 생성' : 'PIG 수정'}
+        inputKey="url"
       />
+      <DropdownInput
+        label="가입 기간"
+        name="is_rolling_admission"
+        options={{
+          always: PIG_ADMISSION_LABEL_MAP.always,
+          during_recruiting: PIG_ADMISSION_LABEL_MAP.during_recruiting,
+          never: PIG_ADMISSION_LABEL_MAP.never,
+        }}
+        control={control}
+      />
+      {!isCreate && (
+        <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
+      )}
+
+      <ButtonInput isSubmit={true}>{isCreate ? 'PIG 생성' : 'PIG 수정'}</ButtonInput>
     </form>
   );
 }

@@ -1,6 +1,6 @@
 .currentTextList {
-  padding: 0 2rem;
-  padding-top: 2rem;
+  padding: 0 1rem;
+  padding-bottom: 1rem;
   flex-direction: column;
 }
 

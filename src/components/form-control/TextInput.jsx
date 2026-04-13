@@ -1,29 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import styles from './TextInput.module.css';
 
-export default function TextInput({
-  label,
-  placeholder,
-  register,
-  name,
-  activeSectionIndex,
-  activateNext,
-  deactivateNext,
-  onEnter,
-}) {
+export default function TextInput({ label, placeholder, register, name, onEnter }) {
   const ID = `textinput-${name.replaceAll('.', '-')}`;
-  const registration = register(name, { required: true });
-
-  useEffect(() => {
-    const value = document.querySelector(`#${ID}`).value;
-    if (value) {
-      activateNext(value);
-    } else {
-      deactivateNext(value);
-    }
-  }, [activeSectionIndex]);
 
   return (
     <div className={styles.textInputGroup} key={name}>
@@ -35,22 +15,11 @@ export default function TextInput({
         id={ID}
         placeholder={placeholder}
         className={styles.textInput}
-        {...registration}
+        {...register(name, { required: true })}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             onEnter?.();
             e.preventDefault();
-          }
-        }}
-        onChange={(e) => {
-          const value = e.target.value;
-
-          registration.onChange?.(e);
-
-          if (value) {
-            activateNext(value);
-          } else {
-            deactivateNext(value);
           }
         }}
       />

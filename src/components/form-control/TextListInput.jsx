@@ -9,17 +9,15 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoIosLink } from 'react-icons/io';
 
 export default function TextListInput({ label, name, register, control, inputKey }) {
-  const [currentInput, setCurrentInput] = useState('');
   const { fields, append, remove } = useFieldArray({ control, name });
   const ref = useRef();
 
   const handleAdd = useCallback(() => {
     let fieldValue = {};
-    fieldValue[inputKey] = currentInput;
+    fieldValue[inputKey] = ref.current.value;
     append(fieldValue);
     ref.current.value = '';
-    setCurrentInput('');
-  }, [append, currentInput]);
+  }, [append]);
 
   const removeValue = (e, index) => {
     e.currentTarget.classList.add(styles.taggedForRemoval);
@@ -30,9 +28,16 @@ export default function TextListInput({ label, name, register, control, inputKey
 
   return (
     <div className={styles.textListInputGroup} key={name}>
+      <TextInput
+        label={label}
+        name={`fakeinput-${name}`}
+        placeholder={'엔터를 눌러 추가하세요'}
+        register={() => ({ ref })}
+        onEnter={handleAdd}
+      />
       <div className={styles.currentTextList}>
         {fields.map((field, index) => {
-          if (field[inputKey] === '') return <Fragment key={'emptyFragment'}></Fragment>;
+          if (field[inputKey] === '') return <></>;
 
           return (
             <Fragment key={field.id}>
@@ -50,15 +55,6 @@ export default function TextListInput({ label, name, register, control, inputKey
           );
         })}
       </div>
-      <TextInput
-        activateNext={(v) => setCurrentInput(v)}
-        deactivateNext={() => setCurrentInput('')}
-        label={label}
-        name={`fakeinput-${name}`}
-        placeholder={'엔터를 눌러 추가하세요'}
-        register={() => ({ ref })}
-        onEnter={handleAdd}
-      />
     </div>
   );
 }
