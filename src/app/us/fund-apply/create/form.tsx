@@ -3,21 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { SEMESTER_MAP } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+import { SEMESTER_MAP } from '@/util/constants';
+import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
-import './page.css';
-
-const BACKEND_BASE_URL = (() => {
-  const base = (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim();
-  return base ? base.replace(/\/+$/, '') : '';
-})();
-
-const buildImageUrl = (id) => {
-  const relative = `/api/image/download/${encodeURIComponent(id)}`;
-  if (!BACKEND_BASE_URL) return relative;
-  return `${BACKEND_BASE_URL}${relative}`;
-};
+import './form.css';
+import { GlobalStatus } from '@/types/api-res';
 
 const GUIDE_URL =
   'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/B_SCSC_%EC%A7%80%EC%9B%90%EA%B8%88_%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8_%EB%B0%8F_%EC%8B%A0%EC%B2%AD%EC%A0%88%EC%B0%A8_%EC%84%B8%EC%B9%99.md';
@@ -55,7 +46,7 @@ const PLACEHOLDER = {
 `,
 };
 
-function normalizeLF(s) {
+function replaceCRLF_LF(s: string): string {
   if (typeof s !== 'string') return '';
   return s.replace(/\r\n/g, '\n');
 }
@@ -71,20 +62,20 @@ function extractFirstText(v) {
   return '';
 }
 
-export default function FundApplyClient({
-  boardInfo,
-  sigs,
-  pigs,
-  prevSigs,
-  prevPigs,
+export default function FundApplyForm({
+  boardId,
   globalStatus,
-  prevTerm: prevTermProp,
+}: {
+  boardId: number;
+  globalStatus: GlobalStatus;
 }) {
   const router = useRouter();
+  const currTerm = getCurrentTerm(globalStatus);
+  const prevTerm = getPrevTerm(currTerm);
 
-  const [initLoading, setInitLoading] = useState(true);
+  const [initLoading, setInitLoading] = useState<Boolean>(true);
   const [initError, setInitError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState<Boolean>(false);
 
   const [me, setMe] = useState(null);
 
@@ -121,7 +112,7 @@ export default function FundApplyClient({
   const isChecked = watch('checked');
   const useKakaoPay = watch('useKakaoPay');
 
-  const [showPrevTerm, setShowPrevTerm] = useState(false);
+  const [usePrevTerm, setUsePrevTerm] = useState<Boolean>(false);
 
   const semesterToKo = (s) => {
     const v = SEMESTER_MAP?.[s];
@@ -146,25 +137,6 @@ export default function FundApplyClient({
       }))
       .filter((it) => it.title);
   };
-
-  const currentTerm = useMemo(() => {
-    const y = globalStatus?.year;
-    const s = globalStatus?.semester;
-    if (typeof y === 'number' && typeof s === 'number') return { year: y, semester: s };
-    return null;
-  }, [globalStatus?.year, globalStatus?.semester]);
-
-  const prevTerm = useMemo(() => {
-    if (
-      prevTermProp &&
-      typeof prevTermProp.year === 'number' &&
-      typeof prevTermProp.semester === 'number'
-    )
-      return prevTermProp;
-    if (!currentTerm) return null;
-    if (currentTerm.semester === 1) return { year: currentTerm.year - 1, semester: 4 };
-    return { year: currentTerm.year, semester: currentTerm.semester - 1 };
-  }, [prevTermProp, currentTerm]);
 
   const prevTermLabel = prevTerm ? `${prevTerm.year}년 ${semesterToKo(prevTerm.semester)}` : '';
 
@@ -212,7 +184,7 @@ export default function FundApplyClient({
 
   useEffect(() => {
     if (applyType !== 'fund' && applyType !== 'meal') {
-      setShowPrevTerm(false);
+      setUsePrevTerm(false);
     }
     if (applyType === 'contest' || applyType === 'pair') {
       setValue('orgCategory', '', { shouldValidate: true, shouldDirty: true });
@@ -231,13 +203,13 @@ export default function FundApplyClient({
 
   useEffect(() => {
     if (orgCategory === 'sig') {
-      setTargetList(showPrevTerm ? prevSigsList : sigsList);
+      setTargetList(usePrevTerm ? prevSigsList : sigsList);
     } else if (orgCategory === 'pig') {
-      setTargetList(showPrevTerm ? prevPigsList : pigsList);
+      setTargetList(usePrevTerm ? prevPigsList : pigsList);
     } else {
       setTargetList([]);
     }
-  }, [orgCategory, showPrevTerm, sigsList, pigsList, prevSigsList, prevPigsList]);
+  }, [orgCategory, usePrevTerm, sigsList, pigsList, prevSigsList, prevPigsList]);
 
   const disableOrgSelects = submitting || applyType === 'contest' || applyType === 'pair';
 
@@ -295,7 +267,7 @@ export default function FundApplyClient({
       headerLines.push(`- 대상 유형: ${form.orgCategory?.toUpperCase?.() ?? ''}`);
       headerLines.push(`- 대상: ${extractFirstText(form.target)}`);
       headerLines.push(
-        `- 학기: ${showPrevTerm && prevTermLabel ? `이전학기(${prevTermLabel})` : '이번학기'}`,
+        `- 학기: ${usePrevTerm && prevTermLabel ? `이전학기(${prevTermLabel})` : '이번학기'}`,
       );
     }
 
@@ -316,7 +288,7 @@ export default function FundApplyClient({
       }
     }
 
-    const reason = normalizeLF(String(form.reasonText ?? '')).trim();
+    const reason = replaceCRLF_LF(String(form.reasonText ?? '')).trim();
     const ids = (Array.isArray(form.imageIds) ? form.imageIds : [])
       .map((id) => String(id))
       .filter(Boolean);
@@ -404,14 +376,6 @@ export default function FundApplyClient({
   const onSubmit = async (form) => {
     try {
       setSubmitting(true);
-
-      const boardIdRaw = boardInfo?.id;
-      const boardId =
-        typeof boardIdRaw === 'number'
-          ? boardIdRaw
-          : Number.isFinite(Number(boardIdRaw))
-            ? Number(boardIdRaw)
-            : null;
 
       if (!boardId) throw new Error('게시판 정보가 올바르지 않습니다.');
 
@@ -550,10 +514,10 @@ export default function FundApplyClient({
                           <input
                             type="checkbox"
                             className="C_Checkbox"
-                            checked={showPrevTerm}
+                            checked={usePrevTerm}
                             onChange={(e) => {
                               const next = e.target.checked;
-                              setShowPrevTerm(next);
+                              setUsePrevTerm(next);
                               setValue('target', '', {
                                 shouldValidate: true,
                                 shouldDirty: true,
