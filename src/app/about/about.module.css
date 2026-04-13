@@ -1,10 +1,10 @@
 /* Regulation Specific */
 .regulationCard {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 2rem;
   border-radius: 1rem;
   border: 2px solid var(--color-button-border);
-  box-shadow: 0 4px 8px var(--executive-card-shadow);
+  box-shadow: 0 4px 8px var(--color-card-shadow);
   color: var(--color-text-body);
   font-size: 1.1rem;
   line-height: 1.6;
@@ -135,18 +135,18 @@
 }
 /* Shared Card Styles */
 .card {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   border: 1px solid var(--header-border-color);
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
   color: var(--foreground-color);
   overflow: hidden;
 }
 
 .cardHover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px var(--executive-card-shadow);
+  box-shadow: 0 6px 16px var(--color-card-shadow);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -227,7 +227,7 @@
 
 .carouselCard {
   width: 200px;
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   color: var(--executive-name-color);
   border-radius: 1rem;
   text-align: center;
@@ -243,7 +243,7 @@
     opacity 0.6s ease;
   z-index: 1;
   pointer-events: none;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
 }
 
 .carouselCardCenter {
@@ -336,11 +336,11 @@
   transform: none;
   opacity: 1;
   pointer-events: auto;
-  background: var(--executive-card-bg);
+  background: var(--color-card-bg);
   border-radius: 1rem;
   text-align: center;
   padding: 1rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
 }
 
 .overlay {
@@ -423,12 +423,12 @@
 }
 
 .clubroomContainer {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   border: 1px solid var(--header-border-color);
   border-radius: 1rem;
   padding: 3rem 2rem;
   margin-top: 3rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
   color: var(--foreground-color);
 }
 
@@ -448,7 +448,7 @@
   border-radius: 0.75rem;
   text-decoration: none;
   color: var(--foreground-color);
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   transition:
     background-color 0.2s ease,
     transform 0.2s ease;
@@ -500,11 +500,11 @@
 }
 
 .faqItem {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   border: 1px solid var(--header-border-color);
   border-radius: 0.75rem;
   padding: 1rem 1.25rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
 }
 
 .faqQuestion {
@@ -565,7 +565,7 @@
   padding: 1.5rem;
   border: 2px solid var(--color-button-border);
   border-radius: 1rem;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease;
 }
@@ -600,10 +600,10 @@
 }
 
 .myPageCard {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 1rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  box-shadow: 0 4px 20px var(--color-card-shadow);
   min-width: 300px;
   width: auto;
   min-height: 40vh;
@@ -703,8 +703,8 @@
   padding: 1.35rem 1.75rem;
   border-radius: 1.25rem;
   border: 1px solid var(--color-button-border);
-  background-color: var(--executive-card-bg);
-  box-shadow: 0 4px 12px var(--executive-card-shadow);
+  background-color: var(--color-card-bg);
+  box-shadow: 0 4px 12px var(--color-card-shadow);
 }
 
 .welcomeSubtitle {
@@ -725,8 +725,8 @@
   padding: 1.6rem 1.9rem;
   border-radius: 1.25rem;
   border: 1px solid var(--color-button-border);
-  background-color: var(--executive-card-bg);
-  box-shadow: 0 6px 14px var(--executive-card-shadow);
+  background-color: var(--color-card-bg);
+  box-shadow: 0 6px 14px var(--color-card-shadow);
 }
 
 .stepHeader {
