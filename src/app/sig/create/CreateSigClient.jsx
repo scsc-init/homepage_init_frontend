@@ -4,6 +4,7 @@ import SigForm from '@/components/board/SigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { directFetch } from '@/util/directFetch';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 const sanitizeWebsites = (websites = []) =>
@@ -103,7 +104,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/sig/create', {
+      const res = await directFetch('/api/sig/create', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
