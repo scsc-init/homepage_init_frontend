@@ -23,11 +23,11 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  * @param fallback - Whether to fallback to frontend API route on failure
  * @returns Fetch `Response`
  */
-export async function fetchBackendClient<T>(
+export async function fetchBackendClient(
   path: string,
   init: RequestInit = {},
   fallback: boolean = false,
-): Promise<T> {
+): Promise<Response> {
   const method = (init.method || 'GET').toUpperCase();
   const headers = new Headers(init.headers);
   let body = init.body;
@@ -54,23 +54,43 @@ export async function fetchBackendClient<T>(
       body,
       credentials: 'include',
     });
-    if (res.ok) return (await res.json()) as T;
+    if (!fallback || res.status != 401) return res;
     if (!fallback) throw new Error(`Backend Error: ${res.status} ${await res.text()}`);
   } catch (err) {
     if (!fallback) throw new Error(`Network error while fetching ${path}: ${String(err)}`);
   }
 
-  const res = await fetch(path, {
+  return fetch(path, {
     ...init,
     method,
     headers,
     body,
     credentials: 'include',
   });
+}
+
+/**
+ * Wrapper of `fetchBackendClient` that ensures a successful response
+ * and returns the parsed JSON body.
+ *
+ * Throws an error if the response is not OK (non-2xx status).
+ *
+ * @template T - Expected response JSON type
+ * @param path - Relative API path such as `/api/...`
+ * @param init - Optional fetch options
+ * @param fallback - Whether to fallback to frontend API route on failure
+ *
+ * @returns Parsed JSON response of type `T`
+ */
+export async function fetchBackendClientJson<T>(
+  path: string,
+  init: RequestInit = {},
+  fallback: boolean = false,
+): Promise<T> {
+  const res = await fetchBackendClient(path, init, fallback);
   if (!res.ok) {
     const txt = await res.text();
     throw new Error(`Backend Error: ${res.status} ${txt}`);
   }
-
   return (await res.json()) as T;
 }

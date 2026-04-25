@@ -63,14 +63,14 @@ function needApiSecret(path: string): boolean {
  * @param options.body - Explicit request body (overrides `request` body if provided)
  *
  * @param request - Optional incoming Request to forward JSON body from
- * @returns T resolving to the backend `Response`
+ * @returns `Response` received from the backend
  */
-export async function fetchBackendServer<T>(
+export async function fetchBackendServer(
   method: string,
   path: string,
   options: FetchBackendServerOptions = {},
   request?: Request,
-): Promise<T> {
+): Promise<Response> {
   const session: Session | null = await getServerSession(authOptions);
   const backendJwt = session?.backendJwt || null;
   const params = options.params;
@@ -93,16 +93,44 @@ export async function fetchBackendServer<T>(
   if (body !== undefined && !headers['Content-Type'])
     headers['Content-Type'] = 'application/json';
 
-  const res = await fetch(fullUrl, {
+  return fetch(fullUrl, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
     cache: 'no-store',
   });
+}
+
+/**
+ * Sends a server-side request to the backend API and parses the response as JSON.
+ *
+ * This is a wrapper around `fetchBackendServer` that:
+ * - Throws an error if the response status is not in the 2xx range
+ * - Parses and returns the response body as JSON (`T`)
+ *
+ * Unlike `fetchBackendServer`, this function enforces successful responses
+ * and automatically handles JSON deserialization.
+ *
+ * @template T - Expected response JSON type
+ * @param method - HTTP method (GET, POST, PUT, PATCH, DELETE, etc.)
+ * @param path - API path template (e.g., `/api/user/{id}`)
+ *
+ * @param options - Optional request configuration
+ * @param request - Optional incoming Request to forward JSON body from
+ *
+ * @returns Parsed JSON response of type `T`
+ * @throws Error if the response is not OK (non-2xx status)
+ */
+export async function fetchBackendServerJson<T>(
+  method: string,
+  path: string,
+  options: FetchBackendServerOptions = {},
+  request?: Request,
+): Promise<T> {
+  const res = await fetchBackendServer(method, path, options, request);
   if (!res.ok) {
     const txt = await res.text();
     throw new Error(`Backend Error: ${res.status} ${txt}`);
   }
-
   return (await res.json()) as T;
 }

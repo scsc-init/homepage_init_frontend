@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 
-import { fetchBackendClient } from '@/util/fetch/client';
+import { fetchBackendClientJson } from '@/util/fetch/client';
 
 import { academicTerm2string } from '@/util/helper/tostring';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
@@ -13,6 +13,8 @@ import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system
 import './form.css';
 import { GlobalStatus } from '@/types/system';
 import type { UserProfile } from '@/types/user';
+
+const IMAGE_UPLOAD_CONCURRENCY = 3;
 
 const GUIDE_URL =
   'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/B_SCSC_%EC%A7%80%EC%9B%90%EA%B8%88_%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8_%EB%B0%8F_%EC%8B%A0%EC%B2%AD%EC%A0%88%EC%B0%A8_%EC%84%B8%EC%B9%99.md';
@@ -166,7 +168,7 @@ export default function FundApplyForm({
     let isMounted = true;
     const run = async () => {
       try {
-        const data = await fetchBackendClient<UserProfile>('/api/user/profile');
+        const data = await fetchBackendClientJson<UserProfile>('/api/user/profile');
         if (isMounted) setUser(data);
       } catch (err) {
         replaceLoginWithRedirect(router);
@@ -184,10 +186,10 @@ export default function FundApplyForm({
     const run = async () => {
       try {
         const [currSigData, currPigData, prevSigData, prevPigData] = await Promise.all([
-          fetchBackendClient<any[]>(`/api/sigs?${_curr}`),
-          fetchBackendClient<any[]>(`/api/pigs?${_curr}`),
-          fetchBackendClient<any[]>(`/api/sigs?${_prev}`),
-          fetchBackendClient<any[]>(`/api/pigs?${_prev}`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}`),
+          fetchBackendClientJson<any[]>(`/api/pigs?${_curr}`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}`),
+          fetchBackendClientJson<any[]>(`/api/pigs?${_prev}`),
         ]);
         if (isMounted) {
           setCurrSigs(refinineSigList(currSigData));
@@ -239,13 +241,12 @@ export default function FundApplyForm({
 
   const step1Done = Boolean(applyType);
   const step2Ready = step1Done;
-  const step2Done =
-    applyType === 'contest'
-      ? Boolean(watch('contestName'))
-      : applyType === 'pair'
-        ? Boolean(watch('pairBefore')) && Boolean(watch('pairAfter'))
-        : Boolean(orgCategory) && Boolean(watch('target'));
-
+  const step2CheckMap: Record<string, () => boolean> = {
+    contest: () => Boolean(watch('contestName')),
+    pair: () => Boolean(watch('pairBefore') && watch('pairAfter')),
+    default: () => Boolean(orgCategory && watch('target')),
+  };
+  const step2Done = step2CheckMap[applyType || '']?.() ?? step2CheckMap.default();
   const step3Ready = step2Done;
 
   const computeTitle = (form: FormType) => {
@@ -322,65 +323,66 @@ export default function FundApplyForm({
     return { title, content: blocks.join('\n').trim(), attachments: ids };
   };
 
-  const uploadImages = async (files: File[]) => {
-    if (files.length === 0) return;
-    if (imageUploading) return;
+  const uploadImage = async (file: File): Promise<number | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
 
-    const ids: number[] = [];
+    let res: Response;
+    try {
+      res = await fetch('/api/file/image/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+    } catch {
+      alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
+      return null;
+    }
+
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
+      } else if (res.status === 403 || res.status === 413) {
+        alert('이미지 용량이 너무 큽니다. (10MB 이하로 줄인 뒤 다시 시도해 주세요.)');
+      } else {
+        alert(data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`);
+      }
+      return null;
+    }
+
+    const id = Number(data?.id);
+    if (!id) {
+      alert('이미지 업로드 응답에 id가 없습니다.');
+      return null;
+    }
+
+    return id;
+  };
+
+  const uploadImages = async (files: File[]) => {
+    if (files.length === 0 || imageUploading) return;
 
     setImageUploading(true);
     try {
-      for (const f of files) {
-        const formData = new FormData();
-        formData.append('file', f);
-
-        let res;
-        try {
-          res = await fetch('/api/file/image/upload', {
-            method: 'POST',
-            body: formData,
-            credentials: 'include',
-          });
-        } catch {
-          alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
-          continue;
-        }
-
-        let data = null;
-        try {
-          data = await res.json();
-        } catch {
-          data = null;
-        }
-
-        if (!res.ok) {
-          if (res.status === 401) {
-            alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
-          } else if (res.status === 413 || res.status === 403) {
-            alert('이미지 용량이 너무 큽니다. (10MB 이하로 줄인 뒤 다시 시도해 주세요.)');
-          } else {
-            const msg =
-              data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`;
-            alert(msg);
-          }
-          continue;
-        }
-
-        if (!data?.id) {
-          alert('이미지 업로드 응답에 id가 없습니다.');
-          continue;
-        }
-
-        ids.push(Number(data.id));
+      const ids: number[] = [];
+      for (let i = 0; i < files.length; i += IMAGE_UPLOAD_CONCURRENCY) {
+        const chunk = files.slice(i, i + IMAGE_UPLOAD_CONCURRENCY);
+        const results = await Promise.all(chunk.map(uploadImage));
+        ids.push(...results.filter((id): id is number => id !== null));
       }
-    } finally {
-      setImageUploading(false);
-    }
-
-    if (ids.length > 0) {
+      if (ids.length === 0) return;
       const next = Array.from(new Set([...imageIds, ...ids]));
       setImageIds(next);
       setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
+    } finally {
+      setImageUploading(false);
     }
   };
 
