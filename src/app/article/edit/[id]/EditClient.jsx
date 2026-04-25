@@ -56,7 +56,7 @@ export default function EditClient({ articleId }) {
         setBoardId(article.board_id);
 
         const ids = Array.isArray(article.attachments) ? article.attachments : [];
-        setAttachmentIds(ids.map((x) => String(x)));
+        setAttachmentIds(ids.map((x) => String(x.file_id)));
       } catch {
         alert('게시글 정보를 불러오지 못했습니다.');
         router.replace(`/article/${articleId}`);

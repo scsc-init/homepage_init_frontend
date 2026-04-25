@@ -64,7 +64,7 @@ export default function ArticleDetail({ params }) {
   const attachmentIds = useMemo(
     () =>
       Array.isArray(article?.attachments)
-        ? article.attachments.map((value) => String(value))
+        ? article.attachments.map((value) => String(value.file_id))
         : [],
     [article?.attachments],
   );
@@ -200,7 +200,7 @@ export default function ArticleDetail({ params }) {
               </div>
               <ul className="AttachmentList">
                 {article.attachments.map((value) => {
-                  const attachmentId = String(value);
+                  const attachmentId = String(value.file_id);
                   return (
                     <li key={attachmentId} className="AttachmentItem">
                       <a
