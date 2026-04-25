@@ -269,7 +269,11 @@ export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.png';
 /**
  * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
  */
-export const HIDDEN_KV_KEYS: string[] = ['main-president', 'vice-president'];
+export const HIDDEN_KV_KEYS: string[] = [
+  'main-president',
+  'vice-president',
+  'enrollment_grant_until',
+];
 
 /**
  * 앨범 게시판의 id입니다.
