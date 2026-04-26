@@ -7,7 +7,7 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import './page.css';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { use, useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
@@ -89,11 +89,15 @@ export default function ArticleDetail({ params }) {
         });
         const res = await directFetch(`/api/file/metadata?${queryParams.toString()}`);
         const data = await res.json().catch(() => []);
-        if (res.ok && !cancelled) {
+        if (cancelled) return;
+        if (res.ok) {
           setAttachmentMeta(Array.isArray(data) ? data : []);
+        } else {
+          setAttachmentMeta([]);
         }
       } catch (err) {
         console.warn('첨부파일 정보를 불러오지 못했습니다.', err);
+        if (!cancelled) setAttachmentMeta([]);
       }
     };
     fetchMeta();
@@ -170,8 +174,8 @@ export default function ArticleDetail({ params }) {
             li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
             code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
             pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
-            img: ({ _node, ...props }) => (
-              <Image className="mdx-img" {...props} alt="article image" />
+            img: ({ _node, alt, ...props }) => (
+              <img className="mdx-img" alt={alt ?? ''} {...props} />
             ),
             table: ({ _node, ...props }) => (
               <div className="mdx-table-wrap">
