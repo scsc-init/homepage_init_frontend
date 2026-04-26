@@ -1,21 +1,31 @@
-import Google from 'next-auth/providers/google';
 import crypto from 'crypto';
+import type { NextAuthOptions } from 'next-auth';
+import Google from 'next-auth/providers/google';
 import * as validator from '@/util/validator';
 
-export const authOptions = {
+interface LoginResponseBody {
+  jwt?: string;
+}
+
+const googleClientId = process.env.GOOGLE_CLIENT_ID ?? '';
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
+const backendUrl = process.env.BACKEND_URL ?? '';
+const apiSecret = process.env.API_SECRET ?? '';
+
+export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 10 * 24 * 60 * 60,
   },
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
     }),
   ],
   callbacks: {
     async signIn({ user }) {
-      if (!user?.email || !user?.name) {
+      if (!user.email || !user.name) {
         return '/us/login?error=no_information';
       }
 
@@ -23,19 +33,19 @@ export const authOptions = {
         return '/us/login?error=invalid_email';
       }
 
-      let res;
-      const apiSecret = process.env.API_SECRET || '';
-
       if (!apiSecret) {
         console.error('API_SECRET is missing');
         return '/us/login?error=default';
       }
+
       const hash = crypto
         .createHmac('sha256', apiSecret)
-        .update(String(user.email).toLowerCase())
+        .update(user.email.toLowerCase())
         .digest('hex');
+
+      let res: Response;
       try {
-        res = await fetch(`${process.env.BACKEND_URL || ''}/api/user/login`, {
+        res = await fetch(`${backendUrl}/api/user/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-secret': apiSecret },
           body: JSON.stringify({
@@ -44,16 +54,16 @@ export const authOptions = {
           }),
           cache: 'no-store',
         });
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Backend login request failed:', err);
         return '/us/login?error=default';
       }
 
       if (res.status === 200) {
-        let data;
+        let data: LoginResponseBody;
         try {
-          data = await res.json();
-        } catch (error) {
+          data = (await res.json()) as LoginResponseBody;
+        } catch (error: unknown) {
           console.error('Failed to parse login response:', error);
           return '/us/login?error=default';
         }
@@ -79,22 +89,43 @@ export const authOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.backendJwt = user.backendJwt;
-        token.registered = user.registered || false;
-        token.hashToken = user.hashToken || null;
+        if (user.backendJwt) {
+          token.backendJwt = user.backendJwt;
+        } else {
+          delete token.backendJwt;
+        }
+
+        token.registered = user.registered ?? false;
+
+        if (user.hashToken) {
+          token.hashToken = user.hashToken;
+        } else {
+          delete token.hashToken;
+        }
       }
+
       if (trigger === 'update' && session?.backendJwt) {
         token.backendJwt = session.backendJwt;
       }
+
       return token;
     },
 
     async session({ session, token }) {
-      if (token) {
+      if (token.backendJwt) {
         session.backendJwt = token.backendJwt;
-        session.registered = token.registered || false;
-        session.hashToken = token.hashToken || null;
+      } else {
+        delete session.backendJwt;
       }
+
+      session.registered = token.registered ?? false;
+
+      if (token.hashToken) {
+        session.hashToken = token.hashToken;
+      } else {
+        delete session.hashToken;
+      }
+
       return session;
     },
   },

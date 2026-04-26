@@ -7,7 +7,7 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import './page.css';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState, use } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
@@ -164,14 +164,14 @@ export default function ArticleDetail({ params }) {
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw, rehypeHighlight]}
           components={{
+            h1: ({ _node, ...props }) => <h1 className="mdx-h1" {...props} />,
+            h2: ({ _node, ...props }) => <h2 className="mdx-h2" {...props} />,
+            p: ({ _node, ...props }) => <p className="mdx-p" {...props} />,
+            li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
+            code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
+            pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
             img: ({ _node, ...props }) => (
-              <Image
-                className="mdx-img"
-                {...props}
-                alt="article image"
-                width={800}
-                height={450}
-              />
+              <Image className="mdx-img" {...props} alt="article image" />
             ),
             table: ({ _node, ...props }) => (
               <div className="mdx-table-wrap">

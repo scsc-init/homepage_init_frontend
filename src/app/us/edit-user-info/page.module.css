@@ -4,7 +4,7 @@
 }
 
 .home {
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,10 +13,10 @@
 }
 
 .editUserInfoContainer {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 1rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  box-shadow: 0 4px 20px var(--color-card-shadow);
   width: 30vw;
   min-width: 300px;
   min-height: 40vh;
