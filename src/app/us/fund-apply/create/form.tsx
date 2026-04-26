@@ -504,7 +504,7 @@ export default function FundApplyForm({
                       >
                         <option value="">SIG/PIG 선택</option>
                         <option value="sig">SIG</option>
-                        <option value="">PIG</option>
+                        <option value="pig">PIG</option>
                       </select>
 
                       {(applyType === 'fund' || applyType === 'meal') && (

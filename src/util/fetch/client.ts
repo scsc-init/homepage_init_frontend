@@ -54,8 +54,8 @@ export async function fetchBackendClient(
       body,
       credentials: 'include',
     });
-    if (!fallback || res.status != 401) return res;
-    if (!fallback) throw new Error(`Backend Error: ${res.status} ${await res.text()}`);
+    if (!fallback) return res;
+    if (res.ok || res.status !== 401) return res;
   } catch (err) {
     if (!fallback) throw new Error(`Network error while fetching ${path}: ${String(err)}`);
   }

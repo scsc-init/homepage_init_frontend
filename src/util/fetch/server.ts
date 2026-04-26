@@ -37,6 +37,19 @@ function needApiSecret(path: string): boolean {
   );
 }
 
+function encodeBody(body: unknown): { isBodyInit: boolean; encodedBody: BodyInit | undefined } {
+  if (body === undefined) return { isBodyInit: false, encodedBody: undefined };
+  const isBodyInit =
+    typeof body === 'string' ||
+    body instanceof ArrayBuffer ||
+    body instanceof Blob ||
+    body instanceof FormData ||
+    body instanceof URLSearchParams ||
+    body instanceof ReadableStream;
+  if (isBodyInit) return { isBodyInit, encodedBody: body };
+  return { isBodyInit, encodedBody: JSON.stringify(body) };
+}
+
 /**
  * Sends a server-side request to the backend API with path, query, and auth handling.
  *
@@ -85,18 +98,38 @@ export async function fetchBackendServer(
   const fullUrl = `${BACKEND_URL}${resolvedPath}`;
 
   let body: unknown = options.body;
-  if (body === undefined && request) body = await request.json();
+  if (body === undefined && request) {
+    const ct = request.headers.get('content-type') || '';
+    const hasJsonBody =
+      method !== 'GET' && method !== 'HEAD' && ct.includes('application/json');
+
+    if (hasJsonBody) {
+      try {
+        body = await request.json();
+      } catch {
+        body = undefined;
+      }
+    }
+  }
 
   const headers: Record<string, string> = { ...(options.headers || {}) };
   if (needApiSecret(resolvedPath)) headers['x-api-secret'] = API_SECRET;
   if (backendJwt) headers['x-jwt'] = backendJwt;
-  if (body !== undefined && !headers['Content-Type'])
+  const { isBodyInit, encodedBody } = encodeBody(body);
+
+  if (
+    body !== undefined &&
+    !isBodyInit &&
+    !headers['Content-Type'] &&
+    !headers['content-type']
+  ) {
     headers['Content-Type'] = 'application/json';
+  }
 
   return fetch(fullUrl, {
     method,
     headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+    body: encodedBody,
     cache: 'no-store',
   });
 }
