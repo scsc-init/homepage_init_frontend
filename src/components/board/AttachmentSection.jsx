@@ -8,17 +8,21 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState({});
 
-  const ids = useMemo(
-    () => (Array.isArray(valueIds) ? valueIds.map((id) => String(id)) : []),
-    [valueIds],
-  );
+  const ids = useMemo(() => {
+    if (!Array.isArray(valueIds)) return [];
+    return valueIds.map((item) => {
+      return typeof item === 'object' && item !== null
+        ? String(item.file_id || item.id || '')
+        : String(item);
+    });
+  }, [valueIds]);
 
   const registerMetadata = useCallback((items) => {
     if (!Array.isArray(items) || items.length === 0) return;
     setMetadataMap((prev) => {
       const next = { ...prev };
       items.forEach((item) => {
-        const key = item?.id ? String(item.id) : '';
+        const key = item?.file_id ? String(item.file_id) : item?.id ? String(item.id) : '';
         if (key) {
           next[key] = item;
         }
@@ -80,7 +84,7 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
 
           let res;
           try {
-            res = await directFetch('/api/file/docs/upload', {
+            res = await fetch('/api/file/docs/upload', {
               method: 'POST',
               body: formData,
             });
@@ -88,7 +92,6 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
             alert('파일 업로드 중 네트워크 오류가 발생했습니다.');
             continue;
           }
-
           let data = null;
           try {
             data = await res.json();
@@ -124,7 +127,9 @@ export default function AttachmentSection({ valueIds, onChangeIds, label = '첨�
       }
 
       if (uploadedItems.length > 0) {
-        const merged = Array.from(new Set([...ids, ...uploadedItems.map((item) => item.id)]));
+        const newUploadIds = uploadedItems.map((item) => String(item.file_id || item.id));
+        const merged = Array.from(new Set([...ids, ...newUploadIds]));
+
         onChangeIds?.(merged);
         registerMetadata(uploadedItems);
       }

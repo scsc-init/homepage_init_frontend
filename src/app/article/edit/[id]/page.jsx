@@ -1,5 +1,6 @@
 import EditClient from './EditClient';
 
-export default function EditArticlePage({ params }) {
-  return <EditClient articleId={params.id} />;
+export default async function EditArticlePage({ params }) {
+  const { id } = await params;
+  return <EditClient articleId={id} />;
 }

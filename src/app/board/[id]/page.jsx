@@ -2,8 +2,10 @@ import './page.css';
 import BoardClient from '@/components/board/BoardClient';
 
 export async function generateMetadata({ params }) {
+  const { id } = await params;
+
   try {
-    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/board/${params.id}`, {
+    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/board/${id}`, {
       cache: 'no-store',
     });
     if (!res.ok) return { title: '게시판' };
@@ -17,7 +19,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function BoardPage({ params }) {
-  const boardId = params.id;
+  const { id } = await params;
+  const boardId = id;
 
   const boardRes = await fetch(`${process.env.BACKEND_URL || ''}/api/board/${boardId}`, {
     cache: 'no-store',
