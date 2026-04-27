@@ -2,10 +2,11 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect } from 'react';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import { useRouter } from 'next/navigation';
 
 export default function RefreshJWTClient() {
+  const { me } = useMe();
   const { data: session, status, update } = useSession();
   const router = useRouter();
 
@@ -17,22 +18,15 @@ export default function RefreshJWTClient() {
       return;
     }
 
-    (async () => {
-      let me = null;
-      try {
-        me = await fetchMeClient();
-      } catch {
-        me = null;
-      }
-
-      if (me) {
-        if (!me.is_active) {
-          router.replace('/about/welcome');
-          return;
-        }
+    if (me) {
+      if (!me.is_active) {
+        router.replace('/about/welcome');
         return;
       }
+      return;
+    }
 
+    (async () => {
       if (session?.user?.email && session?.hashToken) {
         const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
@@ -52,22 +46,18 @@ export default function RefreshJWTClient() {
         }
 
         const data = await loginRes.json();
-        if (data.jwt) await update({ backendJwt: data.jwt });
 
-        try {
-          const me2 = await fetchMeClient();
-          if (me2 && !me2.is_active) {
-            router.replace('/about/welcome');
-            return;
-          }
-        } catch {
+        if (data.jwt) {
+          await update({ backendJwt: data.jwt });
           return;
         }
-      } else {
-        await signOut({ redirect: false });
-        await fetch('/api/auth/logout', { method: 'POST' });
-        router.refresh();
+
+        return;
       }
+
+      await signOut({ redirect: false });
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.refresh();
     })();
-  }, [session, status, router, update]);
+  }, [me, session, status, router, update]);
 }

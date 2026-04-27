@@ -4,15 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import styles from '@/app/Header.module.css';
 
 function MobileProfileButton() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    fetchMeClient().then(setUser);
-  }, []);
+  const { me: user } = useMe();
 
   return (
     <>
@@ -39,12 +35,8 @@ function MobileProfileButton() {
 }
 
 function MobileExecutiveButton() {
-  const [user, setUser] = useState(null);
+  const { me: user } = useMe();
   const [isExecutive, setIsExecutive] = useState(false);
-
-  useEffect(() => {
-    fetchMeClient().then(setUser);
-  }, []);
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);

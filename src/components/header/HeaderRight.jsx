@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useEffect, useState } from 'react';
+import { useMe } from '@/util/hooks/useMe';
 import { minExecutiveLevel } from '@/util/constants';
 import styles from '@/app/Header.module.css';
 
@@ -11,19 +11,16 @@ function isMobileViewport() {
 }
 
 export default function HeaderRight() {
-  const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
 
-  useEffect(() => {
-    fetchMeClient().then(setUser);
-  }, []);
+  const { me: user, isLoading } = useMe();
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);
 
   return (
     <div>
-      {user === undefined && <div className={styles.rightLoading} />}
+      {isLoading && <div className={styles.rightLoading} />}
 
       {user === null && !isMobileViewport() && (
         <div className={styles.rightLogin}>

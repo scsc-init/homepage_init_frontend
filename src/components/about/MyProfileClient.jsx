@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
@@ -33,6 +33,7 @@ async function onAuthFail() {
 
 export default function MyProfileClient() {
   const { data: session, status, update } = useSession();
+  const { me } = useMe();
   const [user, setUser] = useState(null);
   const router = useRouter();
 
@@ -48,7 +49,6 @@ export default function MyProfileClient() {
 
       try {
         let data;
-        const me = await fetchMeClient();
         if (me) {
           data = me;
         } else if (session?.user?.email && session?.hashToken) {
@@ -60,8 +60,11 @@ export default function MyProfileClient() {
           });
           if (loginRes.ok) {
             const loginData = await loginRes.json();
-            if (loginData.jwt) await update({ backendJwt: loginData.jwt });
-            data = await fetchMeClient();
+
+            if (loginData.jwt) {
+              await update({ backendJwt: loginData.jwt });
+              return;
+            }
           } else {
             await onAuthFail();
             replaceLoginWithRedirect(router);
@@ -82,7 +85,7 @@ export default function MyProfileClient() {
       }
     };
     load();
-  }, [router, session, status, update]);
+  }, [router, session, status, update, me]);
 
   const handleLogout = async () => {
     await onAuthFail();
