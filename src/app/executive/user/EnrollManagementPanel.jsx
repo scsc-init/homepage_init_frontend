@@ -52,19 +52,19 @@ export default function EnrollManagementPanel() {
         <table className="adm-table">
           <thead>
             <tr>
-              <th className="adm-th">이름</th>
-              <th className="adm-th">입금자명</th>
-              <th className="adm-th">입금시각</th>
-              <th className="adm-th">확인여부</th>
+              <th>이름</th>
+              <th>입금자명</th>
+              <th>입금시각</th>
+              <th>확인여부</th>
             </tr>
           </thead>
           <tbody>
             {standbys.map((u) => (
               <tr key={u.standby_user_id}>
-                <td className="adm-td">{u.user_name}</td>
-                <td className="adm-td">{u.deposit_name}</td>
-                <td className="adm-td">{u.deposit_time ?? '(없음)'}</td>
-                <td className="adm-td">{u.is_checked ? '✅' : '❌'}</td>
+                <td>{u.user_name}</td>
+                <td>{u.deposit_name}</td>
+                <td>{u.deposit_time ?? '(없음)'}</td>
+                <td>{u.is_checked ? '✅' : '❌'}</td>
               </tr>
             ))}
           </tbody>

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { SEMESTER_MAP } from '@/util/constants';
+import { FUND_APPLY_GUIDELINE_LINK, SEMESTER_MAP } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 
 import './page.css';
@@ -18,9 +18,6 @@ const buildImageUrl = (id) => {
   if (!BACKEND_BASE_URL) return relative;
   return `${BACKEND_BASE_URL}${relative}`;
 };
-
-const GUIDE_URL =
-  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/B_SCSC_%EC%A7%80%EC%9B%90%EA%B8%88_%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8_%EB%B0%8F_%EC%8B%A0%EC%B2%AD%EC%A0%88%EC%B0%A8_%EC%84%B8%EC%B9%99.md';
 
 const PLACEHOLDER = {
   contest: `아래 항목을 참고해 상세 내용을 작성해주세요.
@@ -803,7 +800,12 @@ export default function FundApplyClient({
                     disabled={submitting}
                   />
                   <span className="C_CheckText">
-                    <a className="C_Link" href={GUIDE_URL} target="_blank" rel="noreferrer">
+                    <a
+                      className="C_Link"
+                      href={FUND_APPLY_GUIDELINE_LINK}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       SCSC 지원 가이드라인
                     </a>
                     을 확인했습니다.

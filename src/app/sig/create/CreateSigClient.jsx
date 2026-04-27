@@ -13,17 +13,15 @@ export default function CreateSigClient({ scscGlobalStatus }) {
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('sigForm') : null;
-  const parsed = saved ? JSON.parse(saved) : null;
-
   const {
     register,
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed || {
+    defaultValues: {
       title: '',
       description: '',
       editor: '',
@@ -35,6 +33,15 @@ export default function CreateSigClient({ scscGlobalStatus }) {
             : 'during_recruiting',
     },
   });
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('sigForm');
+    if (saved) {
+      try {
+        reset(JSON.parse(saved));
+      } catch {}
+    }
+  }, [reset]);
 
   useEffect(() => {
     const fetchProfile = async () => {
