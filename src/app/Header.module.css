@@ -227,8 +227,7 @@
 
 .mobileTrigger:hover,
 .mobileSubLink:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
+  background-color: var(--background-hover-color);
 }
 
 .mobileSubMenu {
@@ -258,8 +257,7 @@
 
 .mobileExecutiveLink:hover,
 .mobileLoginLink:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
+  background-color: var(--background-hover-color);
 }
 
 .mobileProfileLink {
@@ -327,8 +325,7 @@
   }
 
   .hamburgerButton:hover {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
+    background-color: var(--background-hover-color);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 

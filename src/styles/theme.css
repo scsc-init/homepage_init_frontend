@@ -25,6 +25,7 @@ html.theme-animating {
   --color-surface-light: #cccccc;
   --color-editor-bg: rgb(202, 202, 202);
   --background-color: #b9c9d8;
+  --background-hover-color: #bcc8d485;
   --foreground-color: #777;
   --header-background-color: var(--slate-1);
   --header-foreground-color: var(--slate-12);
@@ -93,6 +94,7 @@ html.theme-animating {
   --color-surface-light: #2c2c2c;
   --color-editor-bg: rgb(202, 202, 202);
   --background-color: #121212;
+  --background-hover-color: #49494985;
   --foreground-color: #e0e0e0;
   --header-background-color: #1a1a1a;
   --header-foreground-color: #f5f5f5;
