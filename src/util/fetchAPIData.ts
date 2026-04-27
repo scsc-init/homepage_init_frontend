@@ -1,5 +1,7 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import type {
   BoardInfo,
   GlobalStatus,
@@ -160,6 +162,12 @@ export async function safeFetch<T = unknown>(
  * @returns Current user data.
  */
 export async function fetchMe(): Promise<UserProfile> {
+  const session = await getServerSession(authOptions);
+
+  if (session?.userProfile) {
+    return session.userProfile;
+  }
+
   return safeFetch<UserProfile>('GET', '/api/user/profile');
 }
 

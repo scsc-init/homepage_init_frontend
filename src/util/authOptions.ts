@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import * as validator from '@/util/validator';
+import type { UserProfile } from '@/types/user';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -76,7 +77,21 @@ export const authOptions: NextAuthOptions = {
         user.backendJwt = data.jwt;
         user.registered = true;
         user.hashToken = hash;
+        try {
+          const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
+            headers: {
+              'x-jwt': data.jwt,
+              'x-api-secret': apiSecret,
+            },
+            cache: 'no-store',
+          });
 
+          if (profileRes.ok) {
+            user.userProfile = (await profileRes.json()) as UserProfile;
+          }
+        } catch (error) {
+          console.error('Failed to fetch user profile:', error);
+        }
         return true;
       }
 
@@ -89,6 +104,11 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
+        if (user.userProfile) {
+          token.userProfile = user.userProfile;
+        } else {
+          delete token.userProfile;
+        }
         if (user.backendJwt) {
           token.backendJwt = user.backendJwt;
         } else {
@@ -126,6 +146,11 @@ export const authOptions: NextAuthOptions = {
         delete session.hashToken;
       }
 
+      if (token.userProfile) {
+        session.userProfile = token.userProfile;
+      } else {
+        delete session.userProfile;
+      }
       return session;
     },
   },
