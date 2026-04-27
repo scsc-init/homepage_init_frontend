@@ -14,8 +14,9 @@ export default async function ExecutivePigPage({ params }) {
     return null;
   }
 
-  const pig = pigMeta.value;
-  pig.content = pig.content.content;
+  const raw = pigMeta.value;
+  const pigContent = raw?.content?.content ?? raw?.content ?? '';
+  const pig = { ...raw, content: pigContent };
 
   return (
     <WithAuthorization>
