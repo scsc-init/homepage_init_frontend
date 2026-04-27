@@ -10,7 +10,7 @@ import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
-import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
+import { MdArrowOutward, MdOutlineInfo } from 'react-icons/md';
 import Image from 'next/image';
 
 const USER_ROLE_MAP = {
@@ -108,9 +108,11 @@ export default function MyProfileClient() {
             src={user.profile_picture || '/asset/default-pfp.png'}
             alt="Profile"
             className="user-profile-picture"
+            width={50}
+            height={50}
           />
         ) : (
-          <Image alt="" height="50" src="//:0" />
+          <Image alt="profile" height={50} width={50} src="/asset/default-pfp.png" />
         )}
         <div className="user-name-container">
           <div className="user-name">
@@ -200,16 +202,6 @@ export default function MyProfileClient() {
               </span>
               <span className="btn-label">정보 수정</span>
             </a>
-            <button
-              onClick={handleLogout}
-              className="action-button"
-              style={{ cursor: 'pointer', border: 'none' }}
-            >
-              <span className="btn-icon">
-                <MdLogout size="24" />
-              </span>
-              <span className="btn-label">로그아웃</span>
-            </button>
           </div>
         </div>
       </div>

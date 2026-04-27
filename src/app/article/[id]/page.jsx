@@ -14,7 +14,6 @@ import { utc2kst } from '@/util/constants';
 import { directFetch } from '@/util/directFetch';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
-import Image from 'next/image';
 
 export default function ArticleDetail({ params }) {
   const resolvedParams = use(params);
