@@ -136,14 +136,14 @@ export default function WList({ wMetas }) {
             <tbody>
               {wMetas.map((w) => (
                 <tr key={w[0].name}>
-                  <td className="adm-td">
+                  <td>
                     <Link href={`/w/${encodeURIComponent(w[0].name)}`}>{w[0].name}</Link>
                   </td>
-                  <td className="adm-td">{w[1]}</td>
-                  <td className="adm-td">{w[0].size}</td>
-                  <td className="adm-td">{utc2kst(w[0].created_at)}</td>
-                  <td className="adm-td">{utc2kst(w[0].updated_at)}</td>
-                  <td className="adm-td">
+                  <td>{w[1]}</td>
+                  <td>{w[0].size}</td>
+                  <td>{utc2kst(w[0].created_at)}</td>
+                  <td>{utc2kst(w[0].updated_at)}</td>
+                  <td>
                     <input
                       type="file"
                       title=" "
@@ -152,7 +152,7 @@ export default function WList({ wMetas }) {
                       disabled={isBusy}
                     />
                   </td>
-                  <td className="adm-td">
+                  <td>
                     <button
                       type="button"
                       className="adm-button"
