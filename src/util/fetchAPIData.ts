@@ -335,28 +335,24 @@ export async function getKVValue(key: string): Promise<string | null> {
 export async function getKVValues(
   keys: string[] | undefined,
 ): Promise<Record<string, KvValueResult>> {
-  const list = Array.isArray(keys) ? keys : [];
-  if (list.length === 0) return {};
+  const list = Array.isArray(keys) ? keys : null;
 
-  const params = new URLSearchParams();
-  list.forEach((k) => params.append('q', k));
+  const url =
+    list === null
+      ? '/api/kvs'
+      : `/api/kvs?${list.reduce((p, k) => (p.append('q', k), p), new URLSearchParams()).toString()}`;
+
+  if (list !== null && list.length === 0) return {};
 
   const out: Record<string, KvValueResult> = {};
 
   try {
-    const response = await safeFetch<KvFetchResponse[]>('GET', `/api/kvs?${params.toString()}`);
-    const responseMap = new Map(response.map((r) => [r.key, r]));
-
-    list.forEach((key) => {
-      const result = responseMap.get(key);
-      if (result) {
-        out[key] = { status: 'fulfilled', value: result.value ?? '' };
-      } else {
-        out[key] = { status: 'rejected', reason: 'No response for this key' };
-      }
+    const response = await safeFetch<KvFetchResponse[]>('GET', url);
+    response.forEach((r) => {
+      out[r.key] = { status: 'fulfilled', value: r.value ?? '' };
     });
   } catch (error) {
-    list.forEach((key) => {
+    (list ?? []).forEach((key) => {
       out[key] = { status: 'rejected', reason: String(error ?? 'Batch request failed') };
     });
   }

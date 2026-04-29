@@ -36,20 +36,11 @@ export default function KVEditor() {
   const loadPresetKeys = useCallback(async () => {
     try {
       const res = await getKVValues();
-
-      if (res !== null) {
-        if (Array.isArray(res)) {
-          const keys = res
-            .map((item) => (typeof item?.key === 'string' ? item.key.trim() : ''))
-            .filter(Boolean);
-          const uniqueKeys = Array.from(new Set([...DEFAULT_PRESET_KEYS, ...keys]));
-          setPresetKeys(uniqueKeys);
-        }
-      } else {
-        alert('Failed to load KV presets.');
-        console.warn('Failed to load KV presets.');
-        router.refresh();
-      }
+      const keys = Object.keys(res)
+        .map((key) => key.trim())
+        .filter(Boolean);
+      const uniqueKeys = Array.from(new Set([...DEFAULT_PRESET_KEYS, ...keys]));
+      setPresetKeys(uniqueKeys);
     } catch (e) {
       console.warn('KV preset fetch failed:', e);
     }
