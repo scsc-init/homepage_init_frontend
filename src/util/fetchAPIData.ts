@@ -319,7 +319,6 @@ export async function fetchExecutiveCandidates<
 export async function getKVValue(key: string): Promise<string | null> {
   try {
     const j = await safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(key)}`);
-    console.log('getKVValue response:', j);
     const v = j.value;
     return typeof v === 'string' && v.trim() ? v.trim() : null;
   } catch {
