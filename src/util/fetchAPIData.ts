@@ -320,7 +320,7 @@ export async function getKVValue(key: string): Promise<string | null> {
   try {
     const j = await safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(key)}`);
     const v = j.value;
-    return typeof v === 'string' && v.trim() ? v.trim() : null;
+    return typeof v === 'string' && v.trim() ? v.trim() : '';
   } catch {
     return null;
   }
