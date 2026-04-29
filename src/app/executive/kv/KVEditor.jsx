@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './KV.module.css';
 import { HIDDEN_KV_KEYS } from '@/util/constants';
+import { getKVValue, getKVValues } from '@/util/fetchServerData';
 
 const DEFAULT_PRESET_KEYS = ['footer-message'];
 
@@ -34,25 +35,20 @@ export default function KVEditor() {
 
   const loadPresetKeys = useCallback(async () => {
     try {
-      const res = await fetch('/api/kvs', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await getKVValues();
 
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const keys = data
+      if (res !== null) {
+        if (Array.isArray(res)) {
+          const keys = res
             .map((item) => (typeof item?.key === 'string' ? item.key.trim() : ''))
             .filter(Boolean);
           const uniqueKeys = Array.from(new Set([...DEFAULT_PRESET_KEYS, ...keys]));
           setPresetKeys(uniqueKeys);
         }
-      } else if (res.status === 401 || res.status === 403) {
-        alert('권한이 없습니다.');
-        router.refresh();
       } else {
+        alert('Failed to load KV presets.');
         console.warn('Failed to load KV presets.');
+        router.refresh();
       }
     } catch (e) {
       console.warn('KV preset fetch failed:', e);
@@ -63,23 +59,13 @@ export default function KVEditor() {
     if (!keyInput.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const raw = typeof data?.value === 'string' ? data.value : '';
-        setOriginal(raw);
-        setValue(raw);
-      } else if (res.status === 404) {
-        setOriginal('');
-        setValue('');
-      } else if (res.status === 401 || res.status === 403) {
-        alert('권한이 없습니다.');
-        router.refresh();
+      const res = await getKVValue(keyInput.trim());
+      if (res !== null) {
+        setOriginal(res);
+        setValue(res);
       } else {
         alert('값을 불러오지 못했습니다.');
+        router.refresh();
       }
     } catch (e) {
       alert('불러오기 실패: ' + (e?.message || '네트워크 오류'));

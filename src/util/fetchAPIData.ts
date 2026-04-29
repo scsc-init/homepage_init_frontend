@@ -311,45 +311,57 @@ export async function fetchExecutiveCandidates<
 
 /**
  * Get a single KV value.
- * Returns trimmed string or '' (if not set / invalid).
+ * Returns trimmed string or null (if not set / invalid).
  *
  * @param key - KV key
  * @returns Trimmed string value or empty string
  */
-export async function getKVValue(key: string): Promise<string> {
+export async function getKVValue(key: string): Promise<string | null> {
   try {
     const j = await safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(key)}`);
+    console.log('getKVValue response:', j);
     const v = j.value;
-    return typeof v === 'string' && v.trim() ? v.trim() : '';
+    return typeof v === 'string' && v.trim() ? v.trim() : null;
   } catch {
-    return '';
+    return null;
   }
 }
 
 /**
- * Get multiple KV values in parallel.
+ * Get multiple KV values in single request.
  *
- * @param keys - KV keys
+ * @param keys - KV keys. If undefined, returns all KV values.
  * @returns Key-value result map
  */
-export async function getKVValues(keys: string[]): Promise<Record<string, KvValueResult>> {
+export async function getKVValues(
+  keys: string[] | undefined,
+): Promise<Record<string, KvValueResult>> {
   const list = Array.isArray(keys) ? keys : [];
-  const results = await Promise.allSettled(
-    list.map((k) => safeFetch<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(k)}`)),
-  );
+  if (list.length === 0) return {};
+
+  const params = new URLSearchParams();
+  list.forEach((k) => params.append('q', k));
 
   const out: Record<string, KvValueResult> = {};
-  for (let i = 0; i < list.length; i += 1) {
-    const key = list[i] ?? '';
-    const result = results[i];
 
-    if (result.status === 'fulfilled') {
-      out[key] = { status: 'fulfilled', value: result.value.value ?? '' };
-      continue;
-    }
+  try {
+    const response = await safeFetch<KvFetchResponse[]>('GET', `/api/kvs?${params.toString()}`);
+    const responseMap = new Map(response.map((r) => [r.key, r]));
 
-    out[key] = { status: 'rejected', reason: String(result.reason ?? '') };
+    list.forEach((key) => {
+      const result = responseMap.get(key);
+      if (result) {
+        out[key] = { status: 'fulfilled', value: result.value ?? '' };
+      } else {
+        out[key] = { status: 'rejected', reason: 'No response for this key' };
+      }
+    });
+  } catch (error) {
+    list.forEach((key) => {
+      out[key] = { status: 'rejected', reason: String(error ?? 'Batch request failed') };
+    });
   }
+
   return out;
 }
 

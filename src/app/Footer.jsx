@@ -5,23 +5,17 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { hideFooterRoutes, footerLogoData } from '@/util/constants';
+import { getKVValue } from '@/util/fetchServerData';
 
 export default function Footer() {
   const pathname = usePathname();
   const [footerMessage, setFooterMessage] = useState('');
-  const key = 'footer-message';
 
   useEffect(() => {
     const getFooter = async () => {
-      const res = await fetch(`/api/kv/${key}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (res.ok) {
-        const footer = await res.json();
-        setFooterMessage(footer.value);
+      const res = await getKVValue('footer-message');
+      if (res !== null) {
+        setFooterMessage(res);
       } else {
         setFooterMessage('Footer 정보를 불러오지 못했습니다.');
         return;

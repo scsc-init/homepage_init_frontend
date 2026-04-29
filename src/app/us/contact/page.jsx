@@ -4,6 +4,7 @@ import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
+import { getKVValues } from '@/util/fetchAPIData';
 
 const BACKEND_URL = process.env.BACKEND_URL || '';
 
@@ -23,12 +24,17 @@ async function fetchKvValue(key) {
 }
 
 export default async function Contact() {
-  const [presidentNameRaw, presidentPhone, viceNamesRaw, vicePhonesRaw] = await Promise.all([
-    fetchKvValue('president-name'),
-    fetchKvValue('president-phone'),
-    fetchKvValue('vice-president-name'),
-    fetchKvValue('vice-president-phone'),
+  const kvResults = await getKVValues([
+    'president-name',
+    'president-phone',
+    'vice-president-name',
+    'vice-president-phone',
   ]);
+
+  const presidentNameRaw = kvResults['president-name']?.value ?? '';
+  const presidentPhone = kvResults['president-phone']?.value ?? '';
+  const viceNamesRaw = kvResults['vice-president-name']?.value ?? '';
+  const vicePhonesRaw = kvResults['vice-president-phone']?.value ?? '';
 
   const thisYear = new Date().getFullYear();
   const presidentName = presidentNameRaw || '';
