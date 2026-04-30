@@ -834,7 +834,7 @@
   color: white;
 }
 
-a:not(.activeSectionNav) {
+.sidebarLink:not(.activeSectionNav) {
   color: gray;
 }
 

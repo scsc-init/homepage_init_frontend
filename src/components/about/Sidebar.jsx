@@ -112,6 +112,7 @@ export default function ClientSidebar({ className }) {
       <ul>
         <li>
           <a
+            className={styles.sidebarLink}
             href="#scsc"
             onClick={(e) => {
               e.preventDefault();
@@ -123,6 +124,7 @@ export default function ClientSidebar({ className }) {
         </li>
         <li>
           <a
+            className={styles.sidebarLink}
             href="#activities"
             onClick={(e) => {
               e.preventDefault();
@@ -134,6 +136,7 @@ export default function ClientSidebar({ className }) {
         </li>
         <li>
           <a
+            className={styles.sidebarLink}
             href="#faq"
             onClick={(e) => {
               e.preventDefault();
@@ -145,6 +148,7 @@ export default function ClientSidebar({ className }) {
         </li>
         <li>
           <a
+            className={styles.sidebarLink}
             href="#clubroom"
             onClick={(e) => {
               e.preventDefault();
@@ -156,6 +160,7 @@ export default function ClientSidebar({ className }) {
         </li>
         <li>
           <a
+            className={styles.sidebarLink}
             href="#more"
             onClick={(e) => {
               e.preventDefault();
