@@ -23,22 +23,6 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const saved = typeof window !== 'undefined' ? sessionStorage.getItem('pigForm') : null;
   const parsed = saved ? JSON.parse(saved) : null;
 
-  const defaultFormValues = {
-    title: parsed?.title ?? '',
-    description: parsed?.description ?? '',
-    editor: parsed?.editor ?? '',
-    is_rolling_admission:
-      typeof parsed?.is_rolling_admission === 'string'
-        ? String(parsed.is_rolling_admission)
-        : scscGlobalStatus === 'active'
-          ? 'always'
-          : 'during_recruiting',
-    websites:
-      parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
-        ? parsed.websites
-        : [{ url: '' }],
-  };
-
   const {
     register,
     control,
@@ -46,7 +30,17 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: defaultFormValues,
+    defaultValues: parsed || {
+      title: '',
+      description: '',
+      editor: '',
+      is_rolling_admission:
+        typeof parsed?.is_rolling_admission === 'string'
+          ? String(parsed.is_rolling_admission)
+          : scscGlobalStatus === 'active'
+            ? 'always'
+            : 'during_recruiting',
+    },
   });
 
   useEffect(() => {

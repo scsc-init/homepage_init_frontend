@@ -12,6 +12,8 @@ export default function CreateSigClient({ scscGlobalStatus }) {
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
+  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('sigForm') : null;
+  const parsed = saved ? JSON.parse(saved) : null;
 
   const {
     register,
@@ -21,7 +23,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: {
+    defaultValues: parsed || {
       title: '',
       description: '',
       editor: '',
