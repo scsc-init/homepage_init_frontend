@@ -59,8 +59,7 @@ export default async function SigDetailPage({ params }) {
   }
   const sig = await sigRes.json();
 
-  const membersRes = await handleApiRequest('GET', `/api/sig/${id}/members`);
-  const rawMembers = membersRes.ok ? await membersRes.json() : [];
+  const rawMembers = sig.members ?? [];
   const members = Array.isArray(rawMembers)
     ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
     : [];
