@@ -38,7 +38,6 @@ export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChang
           type="text"
           {...register('title', { required: true })}
           placeholder="제목을 입력하세요"
-          className="createBoardTextInput"
         />
 
         <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
