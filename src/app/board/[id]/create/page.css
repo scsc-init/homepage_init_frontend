@@ -1,7 +1,12 @@
+html,
+body {
+  background-color: var(--background-color);
+}
+
 .CreateSigContainer {
   max-width: 60rem;
   margin: 0 auto;
-  padding: 0.5rem 1.5rem 3rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .CreateSigCard {
@@ -39,50 +44,14 @@
   gap: 1.5rem;
 }
 
-.createBoardTextInput,
-.albumTitleInput,
-.albumDescriptionInput {
-  width: 100%;
-  background-color: white;
-  color: var(--color-text-body);
-  border: 2px solid var(--color-text-subtle);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  font-size: 1.1rem;
-  transition: border-color 0.2s ease;
-}
-
-.createBoardTextInput::placeholder,
-.albumTitleInput::placeholder,
-.albumDescriptionInput::placeholder {
-  color: var(--color-text-subtle);
-}
-
-.createBoardTextInput:focus,
-.albumTitleInput:focus,
-.albumDescriptionInput:focus {
-  outline: none;
-  border-color: var(--color-button-bg);
-}
-
-.albumDescriptionInput {
-  min-height: 8rem;
-  resize: vertical;
-}
-
 .albumUploadPanel {
-  border: 2px dashed var(--color-text-subtle);
-  border-radius: 1rem;
-  background-color: color-mix(in srgb, var(--executive-card-bg) 92%, var(--color-button-bg) 8%);
-  padding: 1.5rem;
-  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .albumUploadTitle {
   margin: 0 0 1rem;
-  color: var(--color-button-bg);
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: bold;
+  text-align: center;
 }
 
 .albumFieldGroup {
@@ -91,10 +60,60 @@
   gap: 0.5rem;
 }
 
-.albumFieldLabel {
+.albumDescriptionInput {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.albumSubmitButton {
+  margin-top: 2rem;
+}
+
+::placeholder {
   color: var(--color-text-subtle);
-  font-size: 0.95rem;
-  font-weight: 700;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.editorSection {
+  margin-top: 0.5rem;
+  margin-bottom: 1em;
+  border-radius: 1rem;
+}
+
+.mdxeditor {
+  background-color: rgb(202, 202, 202);
+  border-radius: 0.5rem;
+  min-height: 20rem;
+  margin-top: 1rem;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.5rem;
+}
+
+input[type='text'],
+textarea {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid var(--color-text-body);
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--color-text-body);
+  transition: border-color 0.2s ease;
+}
+
+input[type='text']:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-button-bg);
 }
 
 .SigCreateBtn {
@@ -102,14 +121,13 @@
   color: white;
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
-  border: none;
-  font-weight: 700;
+  font-weight: bold;
   font-size: 1rem;
   transition:
     background-color 0.2s ease,
     transform 0.1s ease;
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .SigCreateBtn:hover:not(:disabled) {
@@ -122,44 +140,33 @@
   cursor: not-allowed;
 }
 
-.albumSubmitButton {
-  margin-top: 2rem;
+.dark .CreateSigCard {
+  background-color: var(--executive-card-bg);
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  color: var(--color-text-body);
+}
+
+.dark .CreateSigTitle {
+  color: var(--color-text-body);
+}
+
+.dark .CreateSigSubtitle {
+  color: var(--color-text-subtle);
+}
+
+.dark input[type='text'],
+.dark textarea {
+  background-color: transparent;
+  color: var(--color-text-body);
+  border-bottom: 3px solid var(--color-text-body);
+}
+
+.dark input[type='text']::placeholder,
+.dark textarea::placeholder {
+  color: var(--color-text-subtle);
 }
 
 .dark .SigCreateBtn {
   background-color: var(--color-button-bg);
   color: white;
-}
-
-.dark .CreateSigSubtitle,
-.dark .albumFieldLabel {
-  color: var(--color-text-subtle);
-}
-
-.dark .createBoardTextInput,
-.dark .albumTitleInput,
-.dark .albumDescriptionInput {
-  background-color: var(--color-surface-light);
-  color: var(--color-text-body);
-  border-color: var(--color-text-subtle);
-}
-
-.dark .createBoardTextInput::placeholder,
-.dark .albumTitleInput::placeholder,
-.dark .albumDescriptionInput::placeholder {
-  color: var(--color-text-subtle);
-}
-
-@media (max-width: 768px) {
-  .CreateSigContainer {
-    padding: 0.5rem 1rem 2rem;
-  }
-
-  .CreateSigCard {
-    padding: 1.5rem;
-  }
-
-  .CreateSigTitle {
-    font-size: 2rem;
-  }
 }
