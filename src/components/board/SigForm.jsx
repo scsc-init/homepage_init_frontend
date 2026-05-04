@@ -5,6 +5,7 @@ import * as Button from '@/components/Button.jsx';
 import * as Input from '@/components/Input.jsx';
 import ToggleSwitch from '@/components/ToggleSwitch.jsx';
 import { Controller, useFieldArray } from 'react-hook-form';
+import styles from './board.module.css';
 
 export default function SigForm({
   register,
@@ -52,7 +53,7 @@ export default function SigForm({
         />
       </div>
 
-      <div className="space-y-2" style={{ marginTop: '1.5rem' }}>
+      <div className={styles.websiteSection}>
         <span className="font-semibold">웹사이트</span>
 
         <div className="space-y-3">
