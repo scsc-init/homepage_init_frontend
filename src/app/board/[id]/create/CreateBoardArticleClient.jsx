@@ -2,32 +2,16 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
-import AttachmentSection from '@/components/board/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import WriteEditorStandard from '@/components/board/WriteEditorStandard';
 import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
 
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
-
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { isDirty },
-  } = useForm({
-    defaultValues: { title: '', editor: '' },
-  });
-
   const router = useRouter();
-  const content = watch('editor');
   const [submitting, setSubmitting] = useState(false);
-  const [attachmentIds, setAttachmentIds] = useState([]);
   const isFormSubmitted = useRef(false);
+  const isDirty = false;
 
   useEffect(() => {
     const check = async () => {
@@ -83,7 +67,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardInfo.id),
-          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
+          attachments: Array.isArray(data.attachments) ? data.attachments : [],
         }),
       });
 

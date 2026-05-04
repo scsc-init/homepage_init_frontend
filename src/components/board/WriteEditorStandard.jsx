@@ -6,7 +6,7 @@ import AttachmentSection from '@/components/board/AttachmentSection';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
-export default function WriteEditorStandard({ boardInfo, onSubmit, submitting }) {
+export default function WriteEditorStandard({ onSubmit, submitting }) {
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: { title: '', editor: '' },
   });
@@ -22,13 +22,13 @@ export default function WriteEditorStandard({ boardInfo, onSubmit, submitting })
   };
 
   return (
-    <div className="CreateSigCard space-y-4">
-      <form onSubmit={handleSubmit(handleInternalSubmit)} className="space-y-4">
+    <div className="CreateSigCard">
+      <form onSubmit={handleSubmit(handleInternalSubmit)} className="createBoardForm">
         <input
           type="text"
           {...register('title', { required: true })}
           placeholder="제목을 입력하세요"
-          className="w-full border p-2 rounded"
+          className="createBoardTextInput"
         />
 
         <Editor markdown={content} onChange={(value) => setValue('editor', value)} />

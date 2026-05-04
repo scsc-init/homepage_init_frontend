@@ -2,9 +2,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
-import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 
-export default function WriteEditorAlbum({ boardInfo, onSubmit, submitting }) {
+export default function WriteEditorAlbum({ onSubmit, submitting }) {
   const { register, handleSubmit } = useForm({
     defaultValues: { title: '', description: '' },
   });
@@ -29,10 +28,10 @@ export default function WriteEditorAlbum({ boardInfo, onSubmit, submitting }) {
   };
 
   return (
-    <div className="CreateSigCard space-y-10 p-6">
-      <form onSubmit={handleSubmit(handleInternalSubmit)} className="space-y-8">
-        <div className="p-6 border-2 border-dashed rounded-xl bg-gray-50/5 text-center mb-4">
-          <p className="mb-4 font-bold text-blue-400">앨범에 올릴 사진을 선택해주세요</p>
+    <div className="CreateSigCard">
+      <form onSubmit={handleSubmit(handleInternalSubmit)} className="albumWriteForm">
+        <div className="albumUploadPanel">
+          <p className="albumUploadTitle">앨범에 올릴 사진을 선택해주세요</p>
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
@@ -40,33 +39,23 @@ export default function WriteEditorAlbum({ boardInfo, onSubmit, submitting }) {
           />
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-400">앨범 제목</label>
+        <div className="albumFieldGroup">
+          <label className="albumFieldLabel">앨범 제목</label>
           <input
             type="text"
             {...register('title', { required: true })}
             placeholder="앨범 제목 (예: 즐거운 워크샵 사진)"
-            className="w-full border p-3 rounded text-lg font-semibold"
+            className="albumTitleInput"
           />
         </div>
 
         <textarea
           {...register('description')}
           placeholder="Write a short description of the picture"
-          className="w-full h-32 border p-3 rounded"
+          className="albumDescriptionInput"
         />
 
-        <button
-          type="submit"
-          className="SigCreateBtn w-full py-4 rounded-xl font-bold transition-all"
-          disabled={submitting}
-          style={{
-            backgroundColor: submitting ? '#6B7280' : '#128e9f',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-            color: 'white',
-            border: 'none',
-          }}
-        >
+        <button type="submit" className="SigCreateBtn albumSubmitButton" disabled={submitting}>
           {submitting ? '업로드 중...' : '앨범 등록하기'}
         </button>
       </form>
