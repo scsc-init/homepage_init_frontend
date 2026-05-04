@@ -89,6 +89,32 @@ export default function WList({ wMetas }) {
     }
   };
 
+  const onClickDownload = async (name) => {
+    if (isBusy) return;
+    setIsBusy(true);
+    try {
+      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/download`);
+      if (!res.ok) throw new Error('download failed');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      alert('다운로드 실패');
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return (
     <div className={isBusy ? 'is-busy' : undefined}>
       <div className="adm-section">
@@ -103,20 +129,21 @@ export default function WList({ wMetas }) {
                 <th className="adm-th">생성시각</th>
                 <th className="adm-th">수정시각</th>
                 <th className="adm-th">수정버튼</th>
+                <th className="adm-th">다운로드버튼</th>
                 <th className="adm-th">삭제버튼</th>
               </tr>
             </thead>
             <tbody>
               {wMetas.map((w) => (
                 <tr key={w[0].name}>
-                  <td className="adm-td">
+                  <td>
                     <Link href={`/w/${encodeURIComponent(w[0].name)}`}>{w[0].name}</Link>
                   </td>
-                  <td className="adm-td">{w[1]}</td>
-                  <td className="adm-td">{w[0].size}</td>
-                  <td className="adm-td">{utc2kst(w[0].created_at)}</td>
-                  <td className="adm-td">{utc2kst(w[0].updated_at)}</td>
-                  <td className="adm-td">
+                  <td>{w[1]}</td>
+                  <td>{w[0].size}</td>
+                  <td>{utc2kst(w[0].created_at)}</td>
+                  <td>{utc2kst(w[0].updated_at)}</td>
+                  <td>
                     <input
                       type="file"
                       title=" "
@@ -125,9 +152,21 @@ export default function WList({ wMetas }) {
                       disabled={isBusy}
                     />
                   </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="adm-button"
+                      onClick={() => onClickDownload(w[0].name)}
+                      disabled={isBusy}
+                    >
+                      다운로드
+                    </button>
+                  </td>
+
                   <td className="adm-td">
                     <button
-                      className="adm-button"
+                      type="button"
+                      className="adm-button-danger"
                       onClick={() => onClickDelete(w[0].name)}
                       disabled={isBusy}
                     >

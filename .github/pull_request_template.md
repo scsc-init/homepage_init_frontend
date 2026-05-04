@@ -16,6 +16,15 @@ Common gitmoji examples for quick copy-paste:
 
 ---
 
+### Screenshots
+
+<!--
+If your changes affect the UI, please attach before/after screenshots.
+If there is no UI change, write "None".
+-->
+
+---
+
 ### Are there any caveats or things to watch out for?
 
 <!-- If none, write "None" -->

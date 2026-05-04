@@ -60,6 +60,18 @@ export const KAKAO_INVITE_LINK = pickEnv(
   'https://invite.kakao.com/tc/II2yiLsQhY',
 );
 
+/**
+ * 회칙 마크다운 문서 링크입니다.
+ */
+export const RULES_MARKDOWN_LINK =
+  'https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md';
+
+/**
+ * 지원금 신청 가이드라인 문서 링크입니다.
+ */
+export const FUND_APPLY_GUIDELINE_LINK =
+  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
+
 export interface HeaderMenuItem {
   label: string;
   url: string;
@@ -257,7 +269,11 @@ export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.png';
 /**
  * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
  */
-export const HIDDEN_KV_KEYS: string[] = ['main-president', 'vice-president'];
+export const HIDDEN_KV_KEYS: string[] = [
+  'main-president',
+  'vice-president',
+  'enrollment_grant_until',
+];
 
 /**
  * 앨범 게시판의 id입니다.

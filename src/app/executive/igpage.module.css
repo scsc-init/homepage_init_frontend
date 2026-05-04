@@ -43,14 +43,14 @@
   min-width: 1100px;
 }
 
-.adm-th {
+.adm-table th {
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid var(--color-button-border);
   background: var(--box-color);
   color: var(--color-text-body);
 }
-.adm-td {
+.adm-table td {
   padding: 8px;
   border-top: 1px solid var(--color-button-border);
   vertical-align: middle;
@@ -149,7 +149,7 @@
   min-width: 4rem;
 }
 
-.adm-td .adm-input.adm-input-id {
+.adm-table td .adm-input.adm-input-id {
   min-width: 4rem;
 }
 
@@ -157,7 +157,7 @@
   min-width: 6rem;
 }
 
-.adm-td .adm-select.adm-select-bool {
+.adm-table td .adm-select.adm-select-bool {
   min-width: 6rem;
 }
 
@@ -165,15 +165,15 @@
   min-width: 7rem;
 }
 
-.adm-td .adm-select.adm-select-bool-wide {
+.adm-table td .adm-select.adm-select-bool-wide {
   min-width: 7rem;
 }
 
-:global(.dark) .adm-th {
+:global(.dark) .adm-table th {
   background: var(--color-surface-light);
 }
-.adm-td .adm-input,
-.adm-td .adm-select {
+.adm-table td .adm-input,
+.adm-table td .adm-select {
   min-width: 8rem;
 }
 

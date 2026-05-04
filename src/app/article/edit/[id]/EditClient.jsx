@@ -55,8 +55,14 @@ export default function EditClient({ articleId }) {
         setValue('editor', article.content || '');
         setBoardId(article.board_id);
 
-        const ids = Array.isArray(article.attachments) ? article.attachments : [];
-        setAttachmentIds(ids.map((x) => String(x)));
+        const rawAttachments = Array.isArray(article.attachments) ? article.attachments : [];
+        const sanitizedIds = rawAttachments.map((item) => {
+          if (typeof item === 'object' && item !== null) {
+            return String(item.file_id || item.id || '');
+          }
+          return String(item);
+        });
+        setAttachmentIds(sanitizedIds);
       } catch {
         alert('게시글 정보를 불러오지 못했습니다.');
         router.replace(`/article/${articleId}`);
@@ -116,7 +122,7 @@ export default function EditClient({ articleId }) {
         let errText = '수정 실패';
         try {
           const err = await res.json();
-          errText = err.detail ?? JSON.stringify(err);
+          errText = err.detail || JSON.stringify(err);
         } catch {}
         throw new Error(errText);
       }
