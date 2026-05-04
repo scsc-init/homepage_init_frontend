@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 export function useMe() {
   const { data: session, status, update } = useSession();
 
-  const me = session?.user ?? null;
+  const me = session?.userProfile ?? null;
 
   return {
     me,

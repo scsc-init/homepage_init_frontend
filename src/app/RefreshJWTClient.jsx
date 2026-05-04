@@ -21,43 +21,67 @@ export default function RefreshJWTClient() {
     if (me) {
       if (!me.is_active) {
         router.replace('/about/welcome');
-        return;
       }
       return;
     }
 
     (async () => {
-      if (session?.user?.email && session?.hashToken) {
-        const loginRes = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            email: session.user.email,
-            hashToken: session.hashToken,
-          }),
-        });
-
-        if (!loginRes.ok) {
-          await signOut({ redirect: false });
-          await fetch('/api/auth/logout', { method: 'POST' });
-          router.refresh();
-          return;
-        }
-
-        const data = await loginRes.json();
-
-        if (data.jwt) {
-          await update({ backendJwt: data.jwt });
-          return;
-        }
-
+      if (!session?.user?.email || !session?.hashToken) {
+        await signOut({ redirect: false });
+        await fetch('/api/auth/logout', { method: 'POST' });
+        router.refresh();
         return;
       }
 
-      await signOut({ redirect: false });
-      await fetch('/api/auth/logout', { method: 'POST' });
-      router.refresh();
+      const loginRes = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: session.user.email,
+          hashToken: session.hashToken,
+        }),
+      });
+
+      if (!loginRes.ok) {
+        await signOut({ redirect: false });
+        await fetch('/api/auth/logout', { method: 'POST' });
+        router.refresh();
+        return;
+      }
+
+      const data = await loginRes.json();
+
+      if (!data.jwt) {
+        await signOut({ redirect: false });
+        await fetch('/api/auth/logout', { method: 'POST' });
+        router.refresh();
+        return;
+      }
+
+      await update({ backendJwt: data.jwt });
+
+      const profileRes = await fetch('/api/user/profile', {
+        cache: 'no-store',
+      });
+
+      if (!profileRes.ok) {
+        await signOut({ redirect: false });
+        await fetch('/api/auth/logout', { method: 'POST' });
+        router.refresh();
+        return;
+      }
+
+      const recoveredMe = await profileRes.json();
+
+      await update({
+        backendJwt: data.jwt,
+        userProfile: recoveredMe,
+      });
+
+      if (!recoveredMe.is_active) {
+        router.replace('/about/welcome');
+      }
     })();
   }, [me, session, status, router, update]);
 }
