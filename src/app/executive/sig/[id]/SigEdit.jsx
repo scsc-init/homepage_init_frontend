@@ -12,11 +12,18 @@ const getLeaderUserId = (sig) => {
   return String(sig.owner);
 };
 
+const createWebsiteFormKey = (site, index) =>
+  site?.id != null ? `website-${site.id}` : `website-${index}-${site?.url ?? ''}`;
+
+const createNewWebsiteFormKey = () =>
+  globalThis.crypto?.randomUUID?.() ?? `website-new-${Date.now()}-${Math.random()}`;
+
 const normalizeWebsitesForForm = (websites = []) => {
-  const normalized = (Array.isArray(websites) ? websites : []).map((site) => ({
+  const normalized = (Array.isArray(websites) ? websites : []).map((site, index) => ({
+    _key: createWebsiteFormKey(site, index),
     url: site?.url ?? '',
   }));
-  return normalized.length > 0 ? normalized : [{ url: '' }];
+  return normalized.length > 0 ? normalized : [{ _key: 'website-empty', url: '' }];
 };
 
 const sanitizeWebsites = (websites = []) =>
@@ -52,7 +59,7 @@ const renderSigEdit = (sig, ctx) => {
         <td>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {(Array.isArray(sig.websites) ? sig.websites : []).map((website, index) => (
-              <div key={index} className={styles['adm-flex']}>
+              <div key={website._key} className={styles['adm-flex']}>
                 <input
                   className={styles['adm-input']}
                   value={website?.url ?? ''}
@@ -61,7 +68,8 @@ const renderSigEdit = (sig, ctx) => {
                 />
                 <button
                   type="button"
-                  className="PigUrlRemove text-sm text-red-500 hover:underline"
+                  className="text-sm text-red-500 hover:underline"
+                  style={{ flexShrink: 0, whiteSpace: 'nowrap' }}
                   onClick={() => ctx.removeWebsite(index)}
                   disabled={ctx.saving}
                 >
@@ -294,7 +302,10 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const addWebsite = () => {
     setSig((prev) => ({
       ...prev,
-      websites: [...(Array.isArray(prev.websites) ? prev.websites : []), { url: '' }],
+      websites: [
+        ...(Array.isArray(prev.websites) ? prev.websites : []),
+        { _key: createNewWebsiteFormKey(), url: '' },
+      ],
     }));
   };
 
