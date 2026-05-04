@@ -32,11 +32,11 @@
   flex-direction: column;
   gap: 0.4rem;
   transition: box-shadow 0.2s ease;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
 }
 
 .pigCard:hover {
-  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
 .pigCard.isMine {

@@ -10,14 +10,14 @@ export default function HeaderLeft({ year, semester }) {
         <Image
           src="/vectors/logo.svg"
           alt="SCSC Logo"
-          className="logo"
+          className={`logo ${styles.logo}`}
           width={100}
           height={40}
           priority={true}
         />
       </Link>
       {year && semester && (
-        <div className={styles.executiveLink}>
+        <div style={{ fontSize: '0.875rem' }}>
           {year} - {SEMESTER_MAP[semester]}학기
         </div>
       )}

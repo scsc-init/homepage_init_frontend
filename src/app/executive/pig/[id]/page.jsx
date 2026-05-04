@@ -14,16 +14,9 @@ export default async function ExecutivePigPage({ params }) {
     return null;
   }
 
-  const [pigMembers, pigArticle] = await Promise.all([
-    safeFetch('GET', `/api/pig/${pigMeta.value.id}/members`),
-    safeFetch('GET', `/api/article/${pigMeta.value.content_id}`),
-  ]);
-
-  const pig = {
-    ...pigMeta.value,
-    content: pigArticle?.content ?? '',
-    members: Array.isArray(pigMembers) ? pigMembers : [],
-  };
+  const raw = pigMeta.value;
+  const pigContent = raw?.content?.content ?? raw?.content ?? '';
+  const pig = { ...raw, content: pigContent };
 
   return (
     <WithAuthorization>
