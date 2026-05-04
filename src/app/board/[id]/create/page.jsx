@@ -2,8 +2,11 @@
 import CreateBoardArticleClient from './CreateBoardArticleClient';
 
 export default async function CreateBoardPage({ params, searchParams }) {
-  const boardInfo = await fetchBoardInfo(params.id);
-  const boardType = searchParams?.t || 'text';
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const boardInfo = await fetchBoardInfo(resolvedParams.id);
+  const rawBoardType = resolvedSearchParams?.t;
+  const boardType = rawBoardType === 'image' || rawBoardType === 'text' ? rawBoardType : 'text';
   return <CreateBoardArticleClient boardInfo={boardInfo} boardType={boardType} />;
 }
 

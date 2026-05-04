@@ -21,8 +21,9 @@ export default function BoardClient({ board }) {
           <a
             href={`/board/${board.id}/create?t=${isAlbum ? 'image' : 'text'}`}
             id="BoardCreateButton"
+            className={styles.boardCreateBtn}
           >
-            <button className={styles.boardCreateBtn}>글 작성</button>
+            글 작성
           </a>
         </div>
       </div>
