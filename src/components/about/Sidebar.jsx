@@ -35,7 +35,6 @@ export default function ClientSidebar({ className }) {
 
       const distanceIntoSection = currentScroll - absoluteSectionTop;
 
-      // Normalized Math: 0 to 100
       let p = (distanceIntoSection / sectionHeight) * 100;
 
       if (p < 0) p = 0;
