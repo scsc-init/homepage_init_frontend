@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { directFetch } from '@/util/directFetch';
-import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
+import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmentDownloadUrl';
 
 export default function AttachmentSection({
   valueIds,
@@ -12,6 +12,7 @@ export default function AttachmentSection({
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState({});
+  const isImageUpload = uploadType === 'image';
 
   const ids = useMemo(() => {
     if (!Array.isArray(valueIds)) return [];
@@ -73,11 +74,25 @@ export default function AttachmentSection({
 
   const onPickFiles = useCallback(
     async (e) => {
-      const files = Array.from(e.target.files || []);
+      const pickedFiles = Array.from(e.target.files || []);
       e.target.value = ''; // same file re-pick 가능하게
 
-      if (files.length === 0) return;
+      if (pickedFiles.length === 0) return;
       if (isUploading) return;
+
+      const invalidFiles =
+        uploadType === 'image'
+          ? pickedFiles.filter((file) => !file.type.startsWith('image/'))
+          : [];
+      if (invalidFiles.length > 0) {
+        alert('이미지 파일만 업로드할 수 있습니다.');
+      }
+
+      const files =
+        uploadType === 'image'
+          ? pickedFiles.filter((file) => file.type.startsWith('image/'))
+          : pickedFiles;
+      if (files.length === 0) return;
 
       setIsUploading(true);
 
@@ -139,7 +154,7 @@ export default function AttachmentSection({
         registerMetadata(uploadedItems);
       }
     },
-    [ids, isUploading, onChangeIds, registerMetadata],
+    [ids, isUploading, onChangeIds, registerMetadata, uploadType],
   );
 
   const removeId = useCallback(
@@ -158,40 +173,90 @@ export default function AttachmentSection({
           <input
             type="file"
             multiple
+            accept={isImageUpload ? 'image/*' : undefined}
             onChange={onPickFiles}
             disabled={isUploading}
             className="AttachmentInput"
           />
-          {isUploading ? '업로드 중...' : '파일 추가'}
+          {isUploading ? '업로드 중...' : isImageUpload ? '이미지 추가' : '파일 추가'}
         </label>
       </div>
 
       {ids.length === 0 ? (
-        <div className="AttachmentEmpty">첨부파일이 없습니다.</div>
+        <div className="AttachmentEmpty">
+          {isImageUpload ? '첨부한 이미지가 없습니다.' : '첨부파일이 없습니다.'}
+        </div>
       ) : (
-        <ul className="AttachmentList">
-          {ids.map((id) => (
-            <li key={id} className="AttachmentItem">
-              <a
-                className="AttachmentLink"
-                href={getAttachmentDownloadUrl(id, metadataMap[id])}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {metadataMap[id]?.original_filename || id}
-              </a>
-              <button
-                type="button"
-                className="AttachmentRemove"
-                onClick={() => removeId(id)}
-                disabled={isUploading}
-                aria-label="remove attachment"
-              >
-                제거
-              </button>
-            </li>
-          ))}
-        </ul>
+        <>
+          {isImageUpload ? (
+            <ul className="AttachmentPreviewList">
+              {ids.map((id) => {
+                const meta = metadataMap[id];
+                const href = getAttachmentDownloadUrl(id, meta);
+                return (
+                  <li key={id} className="AttachmentPreviewItem">
+                    <a
+                      className="AttachmentPreviewLink"
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {isImageAttachment(meta) ? (
+                        <img
+                          src={href}
+                          alt={meta?.original_filename || '업로드한 이미지'}
+                          className="AttachmentPreviewImage"
+                        />
+                      ) : (
+                        <div className="AttachmentPreviewFallback">
+                          {meta?.original_filename || '이미지 로딩 중'}
+                        </div>
+                      )}
+                    </a>
+                    <div className="AttachmentPreviewMeta">
+                      <span className="AttachmentPreviewName">
+                        {meta?.original_filename || id}
+                      </span>
+                      <button
+                        type="button"
+                        className="AttachmentRemove"
+                        onClick={() => removeId(id)}
+                        disabled={isUploading}
+                        aria-label="remove attachment"
+                      >
+                        제거
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <ul className="AttachmentList">
+              {ids.map((id) => (
+                <li key={id} className="AttachmentItem">
+                  <a
+                    className="AttachmentLink"
+                    href={getAttachmentDownloadUrl(id, metadataMap[id])}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {metadataMap[id]?.original_filename || id}
+                  </a>
+                  <button
+                    type="button"
+                    className="AttachmentRemove"
+                    onClick={() => removeId(id)}
+                    disabled={isUploading}
+                    aria-label="remove attachment"
+                  >
+                    제거
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </section>
   );
