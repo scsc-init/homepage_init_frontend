@@ -162,12 +162,7 @@ export default function AttachmentSection({
       </div>
 
       {ids.length === 0 ? (
-        <div
-          className="AttachmentEmpty"
-          style={{ marginTop: '0', fontSize: '0.9rem', color: '#888' }}
-        >
-          첨부파일이 없습니다.
-        </div>
+        <div className="AttachmentEmpty">첨부파일이 없습니다.</div>
       ) : (
         <ul className="AttachmentList">
           {ids.map((id) => (

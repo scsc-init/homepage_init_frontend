@@ -1,18 +1,28 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import AttachmentSection from '@/components/board/AttachmentSection';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
-export default function WriteEditorStandard({ onSubmit, submitting }) {
-  const { register, handleSubmit, setValue, watch } = useForm({
+export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChange }) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isDirty },
+  } = useForm({
     defaultValues: { title: '', editor: '' },
   });
 
   const content = watch('editor');
   const [attachmentIds, setAttachmentIds] = useState([]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty || attachmentIds.length > 0);
+  }, [attachmentIds.length, isDirty, onDirtyChange]);
 
   const handleInternalSubmit = (data) => {
     onSubmit({

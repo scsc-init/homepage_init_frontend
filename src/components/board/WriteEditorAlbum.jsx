@@ -1,14 +1,22 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
 
-export default function WriteEditorAlbum({ onSubmit, submitting }) {
-  const { register, handleSubmit } = useForm({
+export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm({
     defaultValues: { title: '', description: '' },
   });
 
   const [attachmentIds, setAttachmentIds] = useState([]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty || attachmentIds.length > 0);
+  }, [attachmentIds.length, isDirty, onDirtyChange]);
 
   const handleInternalSubmit = (data) => {
     const imageMarkdown = attachmentIds
@@ -40,12 +48,11 @@ export default function WriteEditorAlbum({ onSubmit, submitting }) {
         </div>
 
         <div className="albumFieldGroup">
-          <label className="albumFieldLabel">앨범 제목</label>
+          <label>앨범 제목</label>
           <input
             type="text"
             {...register('title', { required: true })}
             placeholder="앨범 제목 (예: 즐거운 워크샵 사진)"
-            className="albumTitleInput"
           />
         </div>
 

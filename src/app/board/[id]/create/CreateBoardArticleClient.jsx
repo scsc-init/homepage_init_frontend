@@ -10,8 +10,8 @@ import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const isFormSubmitted = useRef(false);
-  const isDirty = false;
 
   useEffect(() => {
     const check = async () => {
@@ -100,12 +100,18 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
       </div>
 
       {boardType === 'image' ? (
-        <WriteEditorAlbum boardInfo={boardInfo} onSubmit={onSubmit} submitting={submitting} />
+        <WriteEditorAlbum
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
       ) : (
         <WriteEditorStandard
           boardInfo={boardInfo}
           onSubmit={onSubmit}
           submitting={submitting}
+          onDirtyChange={setIsDirty}
         />
       )}
     </div>
