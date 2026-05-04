@@ -47,18 +47,29 @@
   position: fixed;
   top: 5rem;
   left: 0;
-  width: 180px;
+  width: 230px;
   height: calc(100vh - 5rem);
-  background-color: var(--color-surface-light);
   padding: 2rem 1rem;
-  border-right: 1px solid var(--header-border-color);
   z-index: 5;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
 }
 
 .sidebar ul {
   list-style: none;
-  padding: 0;
+  background-color: color-mix(in srgb, var(--header-background-color) 60%, transparent);
+  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--header-foreground-color) 20%, transparent);
+  padding: 80px 40px;
   margin: 0;
+  border-radius: 10px;
+}
+
+.sidebar ul li {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .sidebar a {
@@ -75,7 +86,7 @@
 }
 
 .mainContent {
-  margin-left: 180px;
+  margin-left: 230px;
   padding: 4rem 3rem 6rem 3rem;
   flex-grow: 1;
   z-index: 2;
@@ -799,4 +810,34 @@
     flex-direction: column;
     gap: 0.1rem;
   }
+}
+
+.track {
+  width: 4px;
+  height: 100px;
+  background-color: color-mix(in srgb, var(--header-foreground-color) 60%, transparent);
+  justify-self: center;
+  border-radius: 2px;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.activePortion {
+  justify-self: center;
+  width: 4px;
+  border-radius: 2px;
+  height: 0px;
+  background-color: var(--color-button-bg);
+}
+
+.activeSectionNav {
+  color: white;
+}
+
+.sidebarLink:not(.activeSectionNav) {
+  color: gray;
+}
+
+.isEnd {
+  display: none;
 }

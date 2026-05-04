@@ -1,8 +1,9 @@
-'use client';
-import styles from './ToggleSwitch.module.css';
+import styles from './ToggleInput.module.css';
+
+import { Controller } from 'react-hook-form';
 import { useId, useState } from 'react';
 
-export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
+function ToggleSwitch({ checked, value: valueProp, focusDisabled, onChange, ...props }) {
   const isControlled = typeof checked !== 'undefined' || typeof valueProp !== 'undefined';
   const isOn = isControlled ? !!(typeof checked !== 'undefined' ? checked : valueProp) : false;
   const [focus, setFocus] = useState(false);
@@ -21,9 +22,10 @@ export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
         onChange={(e) => onChange?.(e.target.checked)}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
+        {...props}
       />
       <span
-        className={`${styles.slider} ${isOn ? styles.checked : ''} ${focus ? styles.focused : ''}`}
+        className={`${styles.slider} ${isOn ? styles.checked : ''} ${!focusDisabled && focus ? styles.focused : ''}`}
         aria-hidden="true"
       />
       <span
@@ -32,5 +34,24 @@ export default function ToggleSwitch({ checked, value: valueProp, onChange }) {
         aria-hidden="true"
       />
     </label>
+  );
+}
+
+export default function ToggleInput({ label, name, control }) {
+  return (
+    <div className={styles.toggleInputGroup} key={name}>
+      <span className={styles.toggleInputLabel}>{label}</span>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <ToggleSwitch
+            focusDisabled={true}
+            checked={!!field.value}
+            onChange={field.onChange}
+          />
+        )}
+      />
+    </div>
   );
 }

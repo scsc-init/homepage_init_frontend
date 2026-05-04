@@ -151,7 +151,6 @@ input::placeholder {
 }
 
 .mdxeditor {
-  background-color: var(--color-editor-bg);
   border-radius: 0.5rem;
   min-height: 10rem;
 }

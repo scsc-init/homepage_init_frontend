@@ -126,7 +126,7 @@ async function compressImageFile(file, targetBytes = IMAGE_UPLOAD_TARGET_BYTES) 
 }
 
 const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
-  { markdown = '', onChange = () => {} },
+  { markdown = '', onChange = () => {}, className = '' },
   ref,
 ) {
   const handleImageUpload = useCallback(async (file) => {
@@ -202,7 +202,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
   return (
     <MDXEditor
-      className={styles.mdxeditor}
+      className={`${styles.mdxeditor} ${className}`}
       ref={ref}
       markdown={markdown}
       onChange={onChange}

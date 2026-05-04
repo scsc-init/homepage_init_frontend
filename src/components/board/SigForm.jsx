@@ -1,11 +1,9 @@
-import { useCallback } from 'react';
-import Editor from '@/components/board/EditorWrapper.jsx';
-import InputField from './InputField';
-import * as Button from '@/components/Button.jsx';
-import * as Input from '@/components/Input.jsx';
-import ToggleSwitch from '@/components/ToggleSwitch.jsx';
-import { Controller, useFieldArray } from 'react-hook-form';
-import styles from './board.module.css';
+import TextInput from '../form-control/TextInput';
+import EditorInput from '../form-control/EditorInput';
+import DropdownInput from '../form-control/DropdownInput';
+import ToggleInput from '../form-control/ToggleInput';
+import ButtonInput from '../form-control/ButtonInput';
+import { SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 
 export default function SigForm({
   register,
@@ -30,99 +28,29 @@ export default function SigForm({
         handleSubmit(onSubmit)(e);
       }}
     >
-      <InputField label="시그 이름" placeholder="AI SIG" register={register} name="title" />
-      <InputField
-        label="시그 설명"
+      <TextInput label="SIG 이름" placeholder="AI SIG" register={register} name="title" />
+      <TextInput
+        label="SIG 한 줄 설명"
         placeholder="AI를 공부하는 SIG입니다"
         register={register}
         name="description"
       />
-
-      <div className="editorSection">
-        <label className="block mb-2 font-semibold">상세 소개</label>
-        <Controller
-          name="editor"
-          control={control}
-          render={({ field }) => (
-            <Editor
-              key={editorKey}
-              markdown={typeof field.value === 'string' ? field.value : ''}
-              onChange={field.onChange}
-            />
-          )}
-        />
-      </div>
-
-      <div className={styles.websiteSection}>
-        <span className="font-semibold">웹사이트</span>
-
-        <div className="space-y-3">
-          {fields.map((field, index) => {
-            const fieldId = `website-url-${index}`;
-            return (
-              <div key={field.id} className="PigUrlRow">
-                <Input.Root className="PigUrlField">
-                  <Input.Label htmlFor={fieldId}>URL</Input.Label>
-                  <Input.Input
-                    id={fieldId}
-                    className="PigUrlInput"
-                    type="text"
-                    inputMode="url"
-                    placeholder="https://example.com"
-                    {...register(`websites.${index}.url`)}
-                  />
-                </Input.Root>
-                {fields.length > 1 && (
-                  <button
-                    type="button"
-                    className="PigUrlRemove text-sm text-red-500 hover:underline"
-                    onClick={() => remove(index)}
-                  >
-                    삭제
-                  </button>
-                )}
-              </div>
-            );
-          })}
-          <button
-            type="button"
-            className="text-sm text-blue-500 hover:underline"
-            onClick={handleAddWebsite}
-          >
-            웹사이트 추가
-          </button>
-        </div>
-      </div>
-
-      <div className="form-toggle-row">
-        <span className="form-toggle-label">가입 기간 자유화</span>
-        <span className="form-toggle-right">
-          <Controller
-            name="is_rolling_admission"
-            control={control}
-            render={({ field }) => (
-              <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
-            )}
-          />
-        </span>
-      </div>
-
-      {isCreate ? null : (
-        <div className="form-toggle-row">
-          <span className="form-toggle-label">다음 학기에 연장 신청</span>
-          <span className="form-toggle-right">
-            <Controller
-              name="should_extend"
-              control={control}
-              render={({ field }) => (
-                <ToggleSwitch checked={!!field.value} onChange={field.onChange} />
-              )}
-            />
-          </span>
-        </div>
+      <EditorInput label="SIG 소개" control={control} name="editor" editorKey={editorKey} />
+      <DropdownInput
+        label="가입 기간"
+        name="is_rolling_admission"
+        options={{
+          always: SIG_ADMISSION_LABEL_MAP.always,
+          during_recruiting: SIG_ADMISSION_LABEL_MAP.during_recruiting,
+          never: SIG_ADMISSION_LABEL_MAP.never,
+        }}
+        control={control}
+      />
+      {!isCreate && (
+        <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
       )}
 
-      <Button.Root type="submit">{isCreate ? 'SIG 생성' : 'SIG 수정'}</Button.Root>
+      <ButtonInput isSubmit={true}>{isCreate ? 'SIG 생성' : 'SIG 수정'}</ButtonInput>
     </form>
   );
 }
