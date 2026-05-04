@@ -2,29 +2,15 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
-import AttachmentSection from '@/components/board/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import WriteEditorStandard from '@/components/board/WriteEditorStandard';
+import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
 
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
-
-export default function CreateBoardArticleClient({ boardInfo }) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { isDirty },
-  } = useForm({
-    defaultValues: { title: '', editor: '' },
-  });
-
+export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const router = useRouter();
-  const content = watch('editor');
   const [submitting, setSubmitting] = useState(false);
-  const [attachmentIds, setAttachmentIds] = useState([]);
+  const [isDirty, setIsDirty] = useState(false);
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
@@ -50,24 +36,12 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       }
     };
 
-    const handleRouteChange = () => {
-      if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
-        if (!confirmed) {
-          router.events.emit('routeChangeError');
-          throw 'Route change aborted by user.';
-        }
-      }
-    };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    router.events?.on?.('routeChangeStart', handleRouteChange);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [router, isDirty]);
+  }, [isDirty]);
 
   const onSubmit = async (data) => {
     if (submitting) return;
@@ -81,7 +55,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardInfo.id),
-          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
+          attachments: Array.isArray(data.attachments) ? data.attachments : [],
         }),
       });
 
@@ -113,22 +87,21 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         </p>
       </div>
 
-      <div className={`CreateSigCard space-y-4 ${submitting ? 'is-busy' : ''}`}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <input
-            type="text"
-            {...register('title', { required: true })}
-            placeholder="제목을 입력하세요"
-            className="w-full border p-2 rounded"
-          />
-
-          <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
-          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
-          <button type="submit" className="SigCreateBtn" disabled={submitting}>
-            {submitting ? '작성 중...' : '작성 완료'}
-          </button>
-        </form>
-      </div>
+      {boardType === 'image' ? (
+        <WriteEditorAlbum
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
+      ) : (
+        <WriteEditorStandard
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
+      )}
     </div>
   );
 }
