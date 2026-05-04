@@ -40,7 +40,10 @@ export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChang
           placeholder="제목을 입력하세요"
         />
 
-        <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
+        <Editor
+          markdown={content}
+          onChange={(value) => setValue('editor', value, { shouldDirty: true })}
+        />
         <AttachmentSection
           valueIds={attachmentIds}
           onChangeIds={setAttachmentIds}
