@@ -63,7 +63,19 @@ export default function MyProfileClient() {
 
             if (loginData.jwt) {
               await update({ backendJwt: loginData.jwt });
-              return;
+
+              const profileRes = await fetch('/api/user/profile', {
+                cache: 'no-store',
+              });
+
+              if (profileRes.ok) {
+                data = await profileRes.json();
+
+                await update({
+                  backendJwt: loginData.jwt,
+                  userProfile: data,
+                });
+              }
             }
           } else {
             await onAuthFail();
