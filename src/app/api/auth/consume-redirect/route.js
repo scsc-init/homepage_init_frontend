@@ -7,8 +7,18 @@ export function GET(request) {
   let target = null;
   if (raw) target = normalizeRedirectTarget(raw);
 
-  const baseUrl = process.env.NEXTAUTH_URL || request.url;
-  const redirectUrl = new URL(target || '/', baseUrl);
+  let baseUrl = process.env.NEXTAUTH_URL;
+  if (!baseUrl) {
+    console.warn('[consume-redirect] NEXTAUTH_URL is not set; falling back to request.url');
+    baseUrl = request.url;
+  }
+  let redirectUrl;
+  try {
+    redirectUrl = new URL(target || '/', baseUrl);
+  } catch {
+    // baseUrl was malformed; fall back to a safe absolute URL built from request.url
+    redirectUrl = new URL(target || '/', request.url);
+  }
 
   const res = NextResponse.redirect(redirectUrl);
 
