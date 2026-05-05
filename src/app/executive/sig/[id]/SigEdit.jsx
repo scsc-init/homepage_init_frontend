@@ -12,6 +12,30 @@ const getLeaderUserId = (sig) => {
   return String(sig.owner);
 };
 
+const createWebsiteFormKey = (site, index) =>
+  site?.id != null ? `website-${site.id}` : `website-${index}-${site?.url ?? ''}`;
+
+const createNewWebsiteFormKey = () =>
+  globalThis.crypto?.randomUUID?.() ?? `website-new-${Date.now()}-${Math.random()}`;
+
+const normalizeWebsitesForForm = (websites = []) => {
+  const normalized = (Array.isArray(websites) ? websites : []).map((site, index) => ({
+    _key: createWebsiteFormKey(site, index),
+    url: site?.url ?? '',
+  }));
+  return normalized.length > 0 ? normalized : [{ _key: 'website-empty', url: '' }];
+};
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site) => ({ url: site?.url?.trim() ?? '' }))
+    .filter((site) => site.url)
+    .map((site, index) => ({
+      label: site.url,
+      url: site.url,
+      sort_order: index,
+    }));
+
 const renderSigEdit = (sig, ctx) => {
   const sigIdStr = String(sig.id);
   const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
@@ -29,6 +53,41 @@ const renderSigEdit = (sig, ctx) => {
       {renderSigRow(sig, ctx, 'title', '이름')}
       {renderSigRow(sig, ctx, 'description', '설명')}
       {renderSigRow(sig, ctx, 'content', '내용')}
+
+      <tr>
+        <td>웹사이트</td>
+        <td>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {(Array.isArray(sig.websites) ? sig.websites : []).map((website, index) => (
+              <div key={website._key} className={styles['adm-flex']}>
+                <input
+                  className={styles['adm-input']}
+                  value={website?.url ?? ''}
+                  placeholder="https://example.com"
+                  onChange={(e) => ctx.updateWebsiteUrl(index, e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="text-sm text-red-500 hover:underline"
+                  style={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+                  onClick={() => ctx.removeWebsite(index)}
+                  disabled={ctx.saving}
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              className={styles['adm-button']}
+              onClick={ctx.addWebsite}
+              disabled={ctx.saving}
+            >
+              웹사이트 추가
+            </button>
+          </div>
+        </td>
+      </tr>
 
       <tr>
         <td>상태</td>
@@ -153,7 +212,10 @@ function renderSigRow(sig, ctx, attrName, attrLabel) {
 
 export default function SigExecutiveEdit({ sig: _sig }) {
   const [saving, setSaving] = useState(false);
-  const [sig, setSig] = useState(_sig);
+  const [sig, setSig] = useState({
+    ..._sig,
+    websites: normalizeWebsitesForForm(_sig?.websites),
+  });
   const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
   const tagManagerRef = useRef(null);
   const router = useRouter();
@@ -173,6 +235,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           semester: sig.semester,
           should_extend: Boolean(sig.should_extend),
           is_rolling_admission: Boolean(sig.is_rolling_admission),
+          websites: sanitizeWebsites(sig.websites),
         }),
       });
       if (!res1.ok) {
@@ -227,11 +290,42 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     setSig((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateWebsiteUrl = (index, value) => {
+    setSig((prev) => ({
+      ...prev,
+      websites: (Array.isArray(prev.websites) ? prev.websites : []).map((website, i) =>
+        i === index ? { ...website, url: value } : website,
+      ),
+    }));
+  };
+
+  const addWebsite = () => {
+    setSig((prev) => ({
+      ...prev,
+      websites: [
+        ...(Array.isArray(prev.websites) ? prev.websites : []),
+        { _key: createNewWebsiteFormKey(), url: '' },
+      ],
+    }));
+  };
+
+  const removeWebsite = (index) => {
+    setSig((prev) => ({
+      ...prev,
+      websites: (Array.isArray(prev.websites) ? prev.websites : []).filter(
+        (_, i) => i !== index,
+      ),
+    }));
+  };
+
   const rowCtx = {
     saving,
     selectedMember,
     setSelectedMember,
     updateSigField,
+    updateWebsiteUrl,
+    addWebsite,
+    removeWebsite,
     handleSave,
     handleDelete,
   };
