@@ -16,7 +16,6 @@ export function GET(request) {
   try {
     redirectUrl = new URL(target || '/', baseUrl);
   } catch {
-    // baseUrl was malformed; fall back to a safe absolute URL built from request.url
     redirectUrl = new URL(target || '/', request.url);
   }
 
