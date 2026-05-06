@@ -26,7 +26,7 @@ export default function EditorInput({ label, control, name, editorKey }) {
     <div className={styles.editorInputGroup} key={name}>
       <span className={styles.editorInputLabel}>{label}</span>
       <Controller
-        name="editor"
+        name={name}
         control={control}
         render={({ field }) => (
           <Editor
