@@ -2,7 +2,14 @@
 
 import styles from './TextInput.module.css';
 
-export default function TextInput({ label, placeholder, register, name, onEnter }) {
+export default function TextInput({
+  label,
+  placeholder,
+  register,
+  name,
+  onEnter,
+  required = true,
+}) {
   const ID = `textinput-${name.replaceAll('.', '-')}`;
 
   return (
@@ -15,7 +22,7 @@ export default function TextInput({ label, placeholder, register, name, onEnter 
         id={ID}
         placeholder={placeholder}
         className={styles.textInput}
-        {...register(name, { required: true })}
+        {...register(name, { required })}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             onEnter?.();
