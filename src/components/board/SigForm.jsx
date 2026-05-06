@@ -13,12 +13,6 @@ export default function SigForm({
   editorKey,
   isCreate,
 }) {
-  const { fields, append, remove } = useFieldArray({ control, name: 'websites' });
-
-  const handleAddWebsite = useCallback(() => {
-    append({ url: '' });
-  }, [append]);
-
   return (
     <form
       className="space-y-4"
