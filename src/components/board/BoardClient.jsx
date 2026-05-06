@@ -18,8 +18,12 @@ export default function BoardClient({ board }) {
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
         </div>
         <div className={styles.rightAction}>
-          <a href={`/board/${board.id}/create`} id="BoardCreateButton">
-            <button className={styles.boardCreateBtn}>글 작성</button>
+          <a
+            href={`/board/${board.id}/create?t=${isAlbum ? 'image' : 'text'}`}
+            id="BoardCreateButton"
+            className={styles.boardCreateBtn}
+          >
+            글 작성
           </a>
         </div>
       </div>

@@ -14,18 +14,9 @@ export default async function ExecutiveSigPage({ params }) {
     return null;
   }
 
-  const [sigMembers, sigArticle] = await Promise.all([
-    safeFetch('GET', `/api/sig/${sigMeta.value.id}/members`),
-    sigMeta.value.content_id
-      ? safeFetch('GET', `/api/article/${sigMeta.value.content_id}`)
-      : Promise.resolve({ success: false, value: null }),
-  ]);
-
-  const sig = {
-    ...sigMeta.value,
-    content: sigArticle?.content ?? '',
-    members: Array.isArray(sigMembers) ? sigMembers : [],
-  };
+  const raw = sigMeta.value;
+  const sigContent = raw?.content?.content ?? raw?.content ?? '';
+  const sig = { ...raw, content: sigContent };
 
   return (
     <WithAuthorization>

@@ -274,3 +274,39 @@ input[type='text']:focus {
   background-color: var(--color-button-bg);
   color: white;
 }
+
+.createBoardForm,
+.albumWriteForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.albumWriteForm {
+  gap: 1.5rem;
+}
+
+.albumUploadPanel {
+  margin-bottom: 1rem;
+}
+
+.albumUploadTitle {
+  margin: 0 0 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.albumFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.albumDescriptionInput {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.albumSubmitButton {
+  margin-top: 2rem;
+}
