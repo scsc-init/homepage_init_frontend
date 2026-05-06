@@ -35,12 +35,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
       title: '',
       description: '',
       editor: '',
-      is_rolling_admission:
-        typeof parsed?.is_rolling_admission === 'string'
-          ? String(parsed.is_rolling_admission)
-          : scscGlobalStatus === 'active'
-            ? 'always'
-            : 'during_recruiting',
+      is_rolling_admission: scscGlobalStatus === 'active' ? 'always' : 'during_recruiting',
     },
   });
 
