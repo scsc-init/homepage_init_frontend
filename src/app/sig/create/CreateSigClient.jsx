@@ -21,6 +21,16 @@ export default function CreateSigClient({ scscGlobalStatus }) {
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
+  const parsed = (() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = sessionStorage.getItem('sigForm');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
+
   const {
     register,
     control,
@@ -29,12 +39,11 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: {
+    defaultValues: parsed || {
       title: '',
       description: '',
       editor: '',
-      is_rolling_admission: scscGlobalStatus === 'active',
-      websites: [{ url: '' }],
+      is_rolling_admission: scscGlobalStatus === 'active' ? 'always' : 'during_recruiting',
     },
   });
 
@@ -145,11 +154,11 @@ export default function CreateSigClient({ scscGlobalStatus }) {
 
   return (
     <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 생성</h1>
-        <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요.</p>
-      </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreateSigHeader">
+          <h1 className="CreateSigTitle">신규 SIG 개설</h1>
+          <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요</p>
+        </div>
         <SigForm
           register={register}
           control={control}

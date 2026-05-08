@@ -223,6 +223,15 @@ export const PIG_ADMISSION_LABEL_MAP: Record<string, string> = {
   never: '항상 가입 받지 않기',
 };
 
+/**
+ * SIG 가입 조건의 세 가지 경우를 정의한 설정입니다.
+ */
+export const SIG_ADMISSION_LABEL_MAP: Record<string, string> = {
+  always: '항상 가입 받기',
+  during_recruiting: 'SIG 가입 기간에만 가입 받기',
+  never: '항상 가입 받지 않기',
+};
+
 /*
  * 전체적인 색상 정의와 관련된 설정입니다.
  * 반드시 @/styles/theme.css와 함께 수정해야 합니다.
