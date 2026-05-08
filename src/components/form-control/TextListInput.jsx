@@ -20,10 +20,7 @@ export default function TextListInput({ label, name, register, control, inputKey
   }, [append]);
 
   const removeValue = (e, index) => {
-    e.currentTarget.classList.add(styles.taggedForRemoval);
-    setTimeout(() => {
-      remove(index);
-    }, 1000);
+    remove(index);
   };
 
   return (
