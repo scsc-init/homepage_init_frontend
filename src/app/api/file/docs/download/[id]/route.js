@@ -1,15 +1,15 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 export async function GET(_req, { params }) {
-  const rawId = params?.id;
+  const resolvedParams = await params;
+  const rawId = resolvedParams?.id;
   if (!rawId) {
     return new Response('Missing file id', { status: 400 });
   }
 
   const id = encodeURIComponent(String(rawId));
-  const base = getBaseUrl();
+  const base = process.env.BACKEND_URL || '';
   const url = `${base}/api/file/docs/download/${id}`;
 
   const session = await getServerSession(authOptions);

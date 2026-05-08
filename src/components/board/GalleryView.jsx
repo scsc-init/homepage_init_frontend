@@ -262,8 +262,6 @@ export default function GalleryView({ board, sortOrder }) {
                     className={styles.galleryImg}
                     src={it.thumbSrc}
                     alt={it.title || 'image'}
-                    loading="lazy"
-                    decoding="async"
                   />
                 )
               ) : (

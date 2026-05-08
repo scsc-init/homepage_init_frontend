@@ -46,15 +46,15 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
 
   const grantSemestersStr = useMemo(() => {
     let grantSemesters = [];
-    let cy = scscGlobalStatus.year;
-    let cs = scscGlobalStatus.semester;
+    let cy = scscGlobalStatus?.year;
+    let cs = scscGlobalStatus?.semester;
     if (!cy || !year) return '';
     while (cy < year || (cy === year && cs <= semester)) {
       grantSemesters.push(`${cy}-${SEMESTER_MAP[cs]}학기`);
       [cy, cs] = getNextSemester(cy, cs, 1);
     }
     return grantSemesters.join(', ');
-  }, [scscGlobalStatus.year, scscGlobalStatus.semester, year, semester]);
+  }, [scscGlobalStatus?.year, scscGlobalStatus?.semester, year, semester]);
 
   const handleSelect = (value) => {
     const [y, s] = value.split('-').map((v) => Number(v));
@@ -63,39 +63,47 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
     setSemester(s);
   };
 
+  if (!scscGlobalStatus) {
+    return (
+      <div className="adm-section">
+        <h3>등록 정책 관리</h3>
+        <div>상태를 불러오지 못했습니다.</div>
+      </div>
+    );
+  }
+
+  if (year === undefined || semester === undefined) {
+    return (
+      <div className="adm-section">
+        <h3>등록 정책 관리</h3>
+        <div>등록 정책 로딩 중</div>
+      </div>
+    );
+  }
+
   return (
     <div className="adm-section">
       <h3>등록 정책 관리</h3>
-      {year !== undefined ? (
-        <div>
-          지금 등록 시
-          <select value={`${year}-${semester}`} onChange={(e) => handleSelect(e.target.value)}>
-            {[...Array(8).keys()].map((i) => {
-              const [y, s] = getNextSemester(
-                scscGlobalStatus.year,
-                scscGlobalStatus.semester,
-                i,
-              );
-              return (
-                <option value={`${y}-${s}`} key={`${y}-${s}`}>
-                  {y}-{SEMESTER_MAP[s]}학기
-                </option>
-              );
-            })}
-          </select>
-          까지 등록됩니다.
-          <br />
-          <span style={{ color: '#767676' }}>
-            지금 등록 시 {grantSemestersStr}에 등록됩니다.
-          </span>
-          <br />
-          <button className="adm-button" onClick={sendData} disabled={isFetching}>
-            저장
-          </button>
-        </div>
-      ) : (
-        <div>등록 정책 로딩 중</div>
-      )}
+      <div>
+        지금 등록 시
+        <select value={`${year}-${semester}`} onChange={(e) => handleSelect(e.target.value)}>
+          {[...Array(8).keys()].map((i) => {
+            const [y, s] = getNextSemester(scscGlobalStatus.year, scscGlobalStatus.semester, i);
+            return (
+              <option value={`${y}-${s}`} key={`${y}-${s}`}>
+                {y}-{SEMESTER_MAP[s]}학기
+              </option>
+            );
+          })}
+        </select>
+        까지 등록됩니다.
+        <br />
+        <span style={{ color: '#767676' }}>지금 등록 시 {grantSemestersStr}에 등록됩니다.</span>
+        <br />
+        <button className="adm-button" onClick={sendData} disabled={isFetching}>
+          저장
+        </button>
+      </div>
     </div>
   );
 }

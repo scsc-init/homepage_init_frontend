@@ -1,28 +1,63 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './KV.module.css';
 import { HIDDEN_KV_KEYS } from '@/util/constants';
 
+const DEFAULT_PRESET_KEYS = ['footer-message'];
+
 export default function KVEditor() {
   const router = useRouter();
-  const [keyInput, setKeyInput] = useState('footer-message');
+  const [keyInput, setKeyInput] = useState(DEFAULT_PRESET_KEYS[0]);
   const [value, setValue] = useState('');
   const [original, setOriginal] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [presetKeys, setPresetKeys] = useState(DEFAULT_PRESET_KEYS);
 
-  const presets = useMemo(
-    () =>
-      [
-        { label: 'footer-message', value: 'footer-message' },
-        { label: 'main-president', value: 'main-president' },
-        { label: 'vice-president', value: 'vice-president' },
-      ].filter((p) => !HIDDEN_KV_KEYS.includes(p.value)),
-    [],
-  );
+  const presets = useMemo(() => {
+    const sanitize = (keys) =>
+      Array.from(
+        new Set(
+          keys
+            .map((key) => (typeof key === 'string' ? key.trim() : ''))
+            .filter((key) => key && !HIDDEN_KV_KEYS.includes(key)),
+        ),
+      );
+
+    const filtered = sanitize(presetKeys);
+    const finalKeys = filtered.length ? filtered : sanitize(DEFAULT_PRESET_KEYS);
+    return finalKeys.map((key) => ({ label: key, value: key }));
+  }, [presetKeys]);
 
   const canSave = useMemo(() => keyInput.trim().length > 0, [keyInput]);
+
+  const loadPresetKeys = useCallback(async () => {
+    try {
+      const res = await fetch('/api/kvs', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const keys = data
+            .map((item) => (typeof item?.key === 'string' ? item.key.trim() : ''))
+            .filter(Boolean);
+          const uniqueKeys = Array.from(new Set([...DEFAULT_PRESET_KEYS, ...keys]));
+          setPresetKeys(uniqueKeys);
+        }
+      } else if (res.status === 401 || res.status === 403) {
+        alert('권한이 없습니다.');
+        router.refresh();
+      } else {
+        console.warn('Failed to load KV presets.');
+      }
+    } catch (e) {
+      console.warn('KV preset fetch failed:', e);
+    }
+  }, [router]);
 
   const loadKV = async () => {
     if (!keyInput.trim()) return;
@@ -110,6 +145,10 @@ export default function KVEditor() {
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+    loadPresetKeys();
+  }, [loadPresetKeys]);
 
   useEffect(() => {
     loadKV();

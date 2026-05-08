@@ -7,29 +7,45 @@ import { useForm } from 'react-hook-form';
 import { directFetch } from '@/util/directFetch';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site, index) => {
+      const url = site?.url?.trim() ?? '';
+      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
+    })
+    .filter((site) => site.url);
+
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('sigForm') : null;
-  const parsed = saved ? JSON.parse(saved) : null;
-
   const {
     register,
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed || {
+    defaultValues: {
       title: '',
       description: '',
       editor: '',
       is_rolling_admission: scscGlobalStatus === 'active',
+      websites: [{ url: '' }],
     },
   });
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('sigForm');
+    if (saved) {
+      try {
+        reset(JSON.parse(saved));
+      } catch {}
+    }
+  }, [reset]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -103,6 +119,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
         }),
       });
 

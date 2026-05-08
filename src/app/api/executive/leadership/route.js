@@ -1,7 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/util/authOptions';
 import { NextResponse } from 'next/server';
-import { getBaseUrl } from '@/util/getBaseUrl';
 
 function sanitizeId(value) {
   if (value === null || value === undefined) return '';
@@ -19,7 +18,30 @@ export async function POST(request) {
 
   const presidentId = sanitizeId(body?.president_id);
   const vicePresidentId = sanitizeId(body?.vice_president_id);
+  const vicePresidentIds = vicePresidentId
+    .split(';')
+    .map((id) => sanitizeId(id))
+    .filter((id) => id !== '');
+  if (presidentId === '') {
+    return NextResponse.json(
+      { detail: '회장 직책은 반드시 지정해야 합니다.' },
+      { status: 400 },
+    );
+  }
 
+  if (new Set(vicePresidentIds).size !== vicePresidentIds.length) {
+    return NextResponse.json(
+      { detail: '부회장끼리는 서로 다른 인물이어야 합니다.' },
+      { status: 400 },
+    );
+  }
+
+  if (vicePresidentIds.includes(presidentId)) {
+    return NextResponse.json(
+      { detail: '회장과 부회장은 서로 다른 인물이어야 합니다.' },
+      { status: 400 },
+    );
+  }
   const session = await getServerSession(authOptions);
   const appJwt = session?.backendJwt || null;
 
@@ -30,16 +52,16 @@ export async function POST(request) {
     if (appJwt) hdrs['x-jwt'] = appJwt;
 
     const [prezUpdate, viceUpdate] = await Promise.all([
-      fetch(`${getBaseUrl()}/api/kv/main-president/update`, {
+      fetch(`${process.env.BACKEND_URL || ''}/api/kv/main-president/update`, {
         method: 'POST',
         headers: hdrs,
-        body: JSON.stringify({ value: presidentId || null }),
+        body: JSON.stringify({ value: presidentId }),
         cache: 'no-store',
       }),
-      fetch(`${getBaseUrl()}/api/kv/vice-president/update`, {
+      fetch(`${process.env.BACKEND_URL || ''}/api/kv/vice-president/update`, {
         method: 'POST',
         headers: hdrs,
-        body: JSON.stringify({ value: vicePresidentId || null }),
+        body: JSON.stringify({ value: vicePresidentId }),
         cache: 'no-store',
       }),
     ]);

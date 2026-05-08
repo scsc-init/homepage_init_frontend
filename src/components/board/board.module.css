@@ -14,7 +14,7 @@
 .sigCard {
   border: 1px solid var(--executive-name-color);
   border-radius: 0.75rem;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -24,7 +24,7 @@
 }
 
 .sigCard:hover {
-  box-shadow: 0 2px 6px var(--executive-card-shadow);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
 .sigTopbar {
@@ -239,7 +239,7 @@
   border: 1px solid var(--color-border);
   border-radius: 0.9rem;
   overflow: hidden;
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   aspect-ratio: 1 / 1;
 }
 
@@ -345,4 +345,11 @@
 .extend-checkbox {
   width: 1rem;
   height: 1rem;
+}
+
+.websiteSection {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }

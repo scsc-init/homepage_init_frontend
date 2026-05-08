@@ -76,7 +76,7 @@
 }
 
 #GoogleSignupContainer {
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,8 +254,8 @@
 }
 
 :global(.dark) .GoogleSignupCard {
-  background-color: var(--executive-card-bg);
-  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  background-color: var(--color-card-bg);
+  box-shadow: 0 4px 20px var(--color-card-shadow);
 }
 
 :global(.dark) .GoogleSignupCard h2 {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
@@ -12,6 +12,30 @@ const getLeaderUserId = (sig) => {
   return String(sig.owner);
 };
 
+const createWebsiteFormKey = (site, index) =>
+  site?.id != null ? `website-${site.id}` : `website-${index}-${site?.url ?? ''}`;
+
+const createNewWebsiteFormKey = () =>
+  globalThis.crypto?.randomUUID?.() ?? `website-new-${Date.now()}-${Math.random()}`;
+
+const normalizeWebsitesForForm = (websites = []) => {
+  const normalized = (Array.isArray(websites) ? websites : []).map((site, index) => ({
+    _key: createWebsiteFormKey(site, index),
+    url: site?.url ?? '',
+  }));
+  return normalized.length > 0 ? normalized : [{ _key: 'website-empty', url: '' }];
+};
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site) => ({ url: site?.url?.trim() ?? '' }))
+    .filter((site) => site.url)
+    .map((site, index) => ({
+      label: site.url,
+      url: site.url,
+      sort_order: index,
+    }));
+
 const renderSigEdit = (sig, ctx) => {
   const sigIdStr = String(sig.id);
   const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
@@ -22,8 +46,8 @@ const renderSigEdit = (sig, ctx) => {
   return (
     <>
       <tr>
-        <td className={styles['adm-td']}>ID</td>
-        <td className={styles['adm-td']}>{sig.id}</td>
+        <td>ID</td>
+        <td>{sig.id}</td>
       </tr>
 
       {renderSigRow(sig, ctx, 'title', '이름')}
@@ -31,8 +55,43 @@ const renderSigEdit = (sig, ctx) => {
       {renderSigRow(sig, ctx, 'content', '내용')}
 
       <tr>
-        <td className={styles['adm-td']}>상태</td>
-        <td className={styles['adm-td']}>
+        <td>웹사이트</td>
+        <td>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {(Array.isArray(sig.websites) ? sig.websites : []).map((website, index) => (
+              <div key={website._key} className={styles['adm-flex']}>
+                <input
+                  className={styles['adm-input']}
+                  value={website?.url ?? ''}
+                  placeholder="https://example.com"
+                  onChange={(e) => ctx.updateWebsiteUrl(index, e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="text-sm text-red-500 hover:underline"
+                  style={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+                  onClick={() => ctx.removeWebsite(index)}
+                  disabled={ctx.saving}
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              className={styles['adm-button']}
+              onClick={ctx.addWebsite}
+              disabled={ctx.saving}
+            >
+              웹사이트 추가
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>상태</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={sig.status ?? ''}
@@ -50,8 +109,8 @@ const renderSigEdit = (sig, ctx) => {
       {renderSigRow(sig, ctx, 'year', '연도')}
 
       <tr>
-        <td className={styles['adm-td']}>학기</td>
-        <td className={styles['adm-td']}>
+        <td>학기</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={sig.semester ?? ''}
@@ -67,13 +126,13 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>최초 생성 연도</td>
-        <td className={styles['adm-td']}>{sig.created_year ?? ''}</td>
+        <td>최초 생성 연도</td>
+        <td>{sig.created_year ?? ''}</td>
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>최초 생성 학기</td>
-        <td className={styles['adm-td']}>
+        <td>최초 생성 학기</td>
+        <td>
           {sig.created_semester != null
             ? `${SEMESTER_MAP[Number(sig.created_semester)] ?? sig.created_semester}학기`
             : ''}
@@ -81,8 +140,8 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>연장 신청</td>
-        <td className={styles['adm-td']}>
+        <td>연장 신청</td>
+        <td>
           <select
             className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
             value={String(Boolean(sig.should_extend))}
@@ -95,8 +154,8 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>가입기간</td>
-        <td className={styles['adm-td']}>
+        <td>가입기간</td>
+        <td>
           <select
             className={`${styles['adm-select']} ${styles['adm-select-bool-wide']}`}
             value={String(Boolean(sig.is_rolling_admission))}
@@ -111,8 +170,8 @@ const renderSigEdit = (sig, ctx) => {
       </tr>
 
       <tr>
-        <td className={styles['adm-td']}>SIG장</td>
-        <td className={styles['adm-td']}>
+        <td>SIG장</td>
+        <td>
           <select
             className={styles['adm-select']}
             value={selected || ''}
@@ -139,8 +198,8 @@ const renderSigEdit = (sig, ctx) => {
 function renderSigRow(sig, ctx, attrName, attrLabel) {
   return (
     <tr>
-      <td className={styles['adm-td']}>{attrLabel}</td>
-      <td className={styles['adm-td']}>
+      <td>{attrLabel}</td>
+      <td>
         <input
           className={styles['adm-input']}
           value={sig[attrName] ?? ''}
@@ -153,8 +212,12 @@ function renderSigRow(sig, ctx, attrName, attrLabel) {
 
 export default function SigExecutiveEdit({ sig: _sig }) {
   const [saving, setSaving] = useState(false);
-  const [sig, setSig] = useState(_sig);
+  const [sig, setSig] = useState({
+    ..._sig,
+    websites: normalizeWebsitesForForm(_sig?.websites),
+  });
   const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
+  const tagManagerRef = useRef(null);
   const router = useRouter();
 
   const handleSave = async () => {
@@ -172,6 +235,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           semester: sig.semester,
           should_extend: Boolean(sig.should_extend),
           is_rolling_admission: Boolean(sig.is_rolling_admission),
+          websites: sanitizeWebsites(sig.websites),
         }),
       });
       if (!res1.ok) {
@@ -180,6 +244,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         setSaving(false);
         return;
       }
+
+      await tagManagerRef.current?.syncTags();
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
@@ -195,8 +261,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         alert(`저장 실패. SIG장 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
       }
       router.refresh();
-    } catch {
-      alert('저장 실패: 네트워크 오류');
+    } catch (err) {
+      alert(err.message || '저장 실패: 네트워크 오류');
     } finally {
       setSaving(false);
     }
@@ -224,11 +290,42 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     setSig((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateWebsiteUrl = (index, value) => {
+    setSig((prev) => ({
+      ...prev,
+      websites: (Array.isArray(prev.websites) ? prev.websites : []).map((website, i) =>
+        i === index ? { ...website, url: value } : website,
+      ),
+    }));
+  };
+
+  const addWebsite = () => {
+    setSig((prev) => ({
+      ...prev,
+      websites: [
+        ...(Array.isArray(prev.websites) ? prev.websites : []),
+        { _key: createNewWebsiteFormKey(), url: '' },
+      ],
+    }));
+  };
+
+  const removeWebsite = (index) => {
+    setSig((prev) => ({
+      ...prev,
+      websites: (Array.isArray(prev.websites) ? prev.websites : []).filter(
+        (_, i) => i !== index,
+      ),
+    }));
+  };
+
   const rowCtx = {
     saving,
     selectedMember,
     setSelectedMember,
     updateSigField,
+    updateWebsiteUrl,
+    addWebsite,
+    removeWebsite,
     handleSave,
     handleDelete,
   };
@@ -241,18 +338,20 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           <col />
         </colgroup>
         <thead>
-          <tr className={styles['adm-tr']}>
-            <th className={styles['adm-th']}>속성</th>
-            <th className={styles['adm-th']}>값</th>
+          <tr>
+            <th>속성</th>
+            <th>값</th>
           </tr>
         </thead>
         <tbody>{renderSigEdit(sig, rowCtx)}</tbody>
       </table>
       <div style={{ marginTop: '16px', marginBottom: '16px' }}>
         <SigTagManager
+          ref={tagManagerRef}
           sigId={sig.id}
-          initialTags={Array.isArray(sig?.tags) ? sig.tags : []}
+          initialTags={_sig?.tags}
           isExecutive
+          disabled={saving}
         />
       </div>
       <div>

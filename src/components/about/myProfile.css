@@ -11,7 +11,7 @@
   gap: 1rem;
   padding: 1rem;
   box-sizing: border-box;
-  width: 600px;
+  width: 960px;
 }
 
 .user-info-container {
@@ -58,7 +58,7 @@
   color: var(--color-button-text);
   font-weight: 800;
   line-height: 1;
-  box-shadow: 0 2px 10px var(--executive-card-shadow);
+  box-shadow: 0 2px 10px var(--color-card-shadow);
   transition:
     background-color 160ms ease,
     box-shadow 160ms ease,
@@ -67,7 +67,7 @@
 
 .enroll-button:hover {
   background: var(--color-button-hover-bg);
-  box-shadow: 0 4px 16px var(--executive-card-shadow);
+  box-shadow: 0 4px 16px var(--color-card-shadow);
 }
 .enroll-button:active {
   transform: translateY(1px);
@@ -94,7 +94,7 @@
   text-decoration: none;
   font-weight: 800;
   line-height: 1.1;
-  box-shadow: 0 2px 10px var(--executive-card-shadow);
+  box-shadow: 0 2px 10px var(--color-card-shadow);
   transition:
     background-color 160ms ease,
     box-shadow 160ms ease,
@@ -105,7 +105,7 @@
 
 .action-button:hover {
   background: var(--color-button-hover-bg);
-  box-shadow: 0 4px 16px var(--executive-card-shadow);
+  box-shadow: 0 4px 16px var(--color-card-shadow);
 }
 .action-button:active {
   transform: translateY(1px);
@@ -278,9 +278,9 @@
 .dark .user-info-container,
 .dark .user-status-container,
 .dark .buttons-container {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   color: var(--color-text-body);
-  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  box-shadow: 0 4px 20px var(--color-card-shadow);
 }
 
 .my-page-logout-button {
