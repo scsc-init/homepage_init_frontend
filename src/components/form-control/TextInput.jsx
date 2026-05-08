@@ -24,6 +24,7 @@ export default function TextInput({
         className={styles.textInput}
         {...register(name, { required })}
         onKeyDown={(e) => {
+          if (e.nativeEvent?.isComposing) return;
           if (e.key === 'Enter') {
             onEnter?.();
             e.preventDefault();

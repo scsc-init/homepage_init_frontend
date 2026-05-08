@@ -38,14 +38,19 @@ function ToggleSwitch({ checked, value: valueProp, focusDisabled, onChange, ...p
 }
 
 export default function ToggleInput({ label, name, control }) {
+  const labelId = useId();
+
   return (
     <div className={styles.toggleInputGroup} key={name}>
-      <span className={styles.toggleInputLabel}>{label}</span>
+      <span id={labelId} className={styles.toggleInputLabel}>
+        {label}
+      </span>
       <Controller
         name={name}
         control={control}
         render={({ field }) => (
           <ToggleSwitch
+            aria-labelledby={labelId}
             focusDisabled={true}
             checked={!!field.value}
             onChange={field.onChange}
