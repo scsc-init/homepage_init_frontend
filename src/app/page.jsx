@@ -1,5 +1,4 @@
 import './page.css';
-import { MainLogo } from './checkInAppBrowser';
 import RefreshJWTClient from './RefreshJWTClient';
 
 export default function HomePage() {
@@ -31,19 +30,6 @@ export default function HomePage() {
         </picture>
       </div>
       <RefreshJWTClient />
-
-      {/* 메인 로고 */}
-      {/* <div className="main-logo-wrapper">
-        <img
-          src="/main/main-logo.png"
-          alt="Main Logo"
-          className="main-logo logo"
-        />
-        <div className="main-subtitle">
-          Seoul National University Computer Study Club
-        </div>
-      </div> */}
-      <MainLogo />
     </main>
   );
 }
