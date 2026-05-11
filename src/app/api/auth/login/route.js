@@ -18,8 +18,13 @@ export async function POST(request) {
 
   if (!jwt) return NextResponse.json({ error: 'login failed' }, { status: 400 });
 
-  const backendUrl = process.env.BACKEND_URL || '';
-  const apiSecret = process.env.API_SECRET || '';
+  const backendUrl = process.env.BACKEND_URL;
+  const apiSecret = process.env.API_SECRET;
+
+  if (!backendUrl || !apiSecret) {
+    console.error('BACKEND_URL or API_SECRET is missing');
+    return NextResponse.json({ error: 'server misconfigured' }, { status: 500 });
+  }
 
   let userProfile = null;
 
@@ -46,7 +51,8 @@ export async function POST(request) {
         profile_picture: profilePictureSrc,
       };
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch user profile:', error);
     return NextResponse.json({ error: 'profile fetch failed' }, { status: 400 });
   }
 
