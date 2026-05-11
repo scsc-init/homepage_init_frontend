@@ -18,5 +18,41 @@ export async function POST(request) {
 
   if (!jwt) return NextResponse.json({ error: 'login failed' }, { status: 400 });
 
-  return NextResponse.json({ success: true, jwt });
+  const backendUrl = process.env.BACKEND_URL || '';
+  const apiSecret = process.env.API_SECRET || '';
+
+  let userProfile = null;
+
+  try {
+    const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
+      method: 'GET',
+      headers: {
+        'x-jwt': jwt,
+        'x-api-secret': apiSecret,
+      },
+      cache: 'no-store',
+    });
+
+    if (profileRes.ok) {
+      const userData = await profileRes.json();
+      const profilePictureSrc = userData.profile_picture_is_url
+        ? userData.profile_picture
+        : userData.profile_picture
+          ? `${backendUrl}/${userData.profile_picture}`
+          : null;
+
+      userProfile = {
+        ...userData,
+        profile_picture: profilePictureSrc,
+      };
+    }
+  } catch {
+    return NextResponse.json({ error: 'profile fetch failed' }, { status: 400 });
+  }
+
+  if (!userProfile) {
+    return NextResponse.json({ error: 'profile fetch failed' }, { status: 400 });
+  }
+
+  return NextResponse.json({ success: true, jwt, userProfile });
 }

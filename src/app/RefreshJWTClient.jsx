@@ -52,34 +52,19 @@ export default function RefreshJWTClient() {
 
       const data = await loginRes.json();
 
-      if (!data.jwt) {
+      if (!data.jwt || !data.userProfile) {
         await signOut({ redirect: false });
         await fetch('/api/auth/logout', { method: 'POST' });
         router.refresh();
         return;
       }
-
-      await update({ backendJwt: data.jwt });
-
-      const profileRes = await fetch('/api/user/profile', {
-        cache: 'no-store',
-      });
-
-      if (!profileRes.ok) {
-        await signOut({ redirect: false });
-        await fetch('/api/auth/logout', { method: 'POST' });
-        router.refresh();
-        return;
-      }
-
-      const recoveredMe = await profileRes.json();
 
       await update({
         backendJwt: data.jwt,
-        userProfile: recoveredMe,
+        userProfile: data.userProfile,
       });
 
-      if (!recoveredMe.is_active) {
+      if (!data.userProfile.is_active) {
         router.replace('/about/welcome');
       }
     })();

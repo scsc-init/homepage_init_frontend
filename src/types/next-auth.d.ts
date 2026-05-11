@@ -10,6 +10,7 @@ declare module 'next-auth' {
     registered?: boolean;
     hashToken?: string;
     userProfile?: UserProfile;
+    userProfileCachedAt?: number;
   }
 
   interface User extends DefaultUser {
@@ -17,6 +18,7 @@ declare module 'next-auth' {
     registered?: boolean;
     hashToken?: string;
     userProfile?: UserProfile;
+    userProfileCachedAt?: number;
   }
 }
 
@@ -26,5 +28,6 @@ declare module 'next-auth/jwt' {
     registered?: boolean;
     hashToken?: string;
     userProfile?: UserProfile;
+    userProfileCachedAt?: number;
   }
 }

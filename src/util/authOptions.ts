@@ -88,6 +88,7 @@ export const authOptions: NextAuthOptions = {
 
           if (profileRes.ok) {
             user.userProfile = (await profileRes.json()) as UserProfile;
+            user.userProfileCachedAt = Date.now();
           }
         } catch (error) {
           console.error('Failed to fetch user profile:', error);
@@ -106,8 +107,10 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         if (user.userProfile) {
           token.userProfile = user.userProfile;
+          token.userProfileCachedAt = user.userProfileCachedAt ?? Date.now();
         } else {
           delete token.userProfile;
+          delete token.userProfileCachedAt;
         }
         if (user.backendJwt) {
           token.backendJwt = user.backendJwt;
@@ -126,6 +129,11 @@ export const authOptions: NextAuthOptions = {
 
       if (trigger === 'update' && session?.backendJwt) {
         token.backendJwt = session.backendJwt;
+      }
+
+      if (trigger === 'update' && session?.userProfile) {
+        token.userProfile = session.userProfile;
+        token.userProfileCachedAt = Date.now();
       }
 
       return token;
@@ -150,6 +158,11 @@ export const authOptions: NextAuthOptions = {
         session.userProfile = token.userProfile;
       } else {
         delete session.userProfile;
+      }
+      if (token.userProfileCachedAt) {
+        session.userProfileCachedAt = token.userProfileCachedAt;
+      } else {
+        delete session.userProfileCachedAt;
       }
       return session;
     },
