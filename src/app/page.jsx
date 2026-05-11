@@ -1,5 +1,4 @@
 import './page.css';
-import { MainLogo } from './checkInAppBrowser';
 import RefreshJWTClient from './RefreshJWTClient';
 
 export default function HomePage() {
@@ -31,7 +30,6 @@ export default function HomePage() {
         </picture>
       </div>
       <RefreshJWTClient />
-      <MainLogo />
     </main>
   );
 }

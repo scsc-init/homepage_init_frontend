@@ -9,8 +9,28 @@ function buildReturnPath(req) {
 }
 
 export async function middleware(req) {
+  const pathname = req.nextUrl.pathname;
+
+  if (pathname.startsWith('/err/browser')) {
+    return NextResponse.next();
+  }
+  const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
+
+  const kakaotalk = ['kakao', 'kakaotalk'];
+  const everytime = ['everytime'];
+  const redirectParam = buildReturnPath(req);
+  const redirectQuery = redirectParam ? `?redirect=${encodeURIComponent(redirectParam)}` : '';
+
+  if (kakaotalk.some((keyword) => userAgent.includes(keyword))) {
+    return NextResponse.redirect(new URL(`/err/browser/kakaotalk${redirectQuery}`, req.url));
+  }
+  if (everytime.some((keyword) => userAgent.includes(keyword))) {
+    return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
+  }
+
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const jwt = token?.backendJwt || null;
+
   if (jwt) return NextResponse.next();
 
   const returnTo = buildReturnPath(req);
@@ -35,6 +55,7 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
+    '/',
     '/us/fund-apply/:path*',
     '/board/:path*',
     '/article/:path*',
