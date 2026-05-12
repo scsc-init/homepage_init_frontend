@@ -1,6 +1,5 @@
 import './page.css';
 import RefreshJWTClient from './RefreshJWTClient';
-import Providers from './Providers';
 
 export default function HomePage() {
   return (
@@ -30,9 +29,7 @@ export default function HomePage() {
           />
         </picture>
       </div>
-      <Providers>
-        <RefreshJWTClient />
-      </Providers>
+      <RefreshJWTClient />
     </main>
   );
 }
