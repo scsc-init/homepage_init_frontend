@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import * as validator from '@/util/validator';
+import type { UserProfile } from '@/types/user';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -76,7 +77,22 @@ export const authOptions: NextAuthOptions = {
         user.backendJwt = data.jwt;
         user.registered = true;
         user.hashToken = hash;
+        try {
+          const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
+            headers: {
+              'x-jwt': data.jwt,
+              'x-api-secret': apiSecret,
+            },
+            cache: 'no-store',
+          });
 
+          if (profileRes.ok) {
+            user.userProfile = (await profileRes.json()) as UserProfile;
+            user.userProfileCachedAt = Date.now();
+          }
+        } catch (error) {
+          console.error('Failed to fetch user profile:', error);
+        }
         return true;
       }
 
@@ -89,6 +105,13 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
+        if (user.userProfile) {
+          token.userProfile = user.userProfile;
+          token.userProfileCachedAt = user.userProfileCachedAt ?? Date.now();
+        } else {
+          delete token.userProfile;
+          delete token.userProfileCachedAt;
+        }
         if (user.backendJwt) {
           token.backendJwt = user.backendJwt;
         } else {
@@ -106,6 +129,11 @@ export const authOptions: NextAuthOptions = {
 
       if (trigger === 'update' && session?.backendJwt) {
         token.backendJwt = session.backendJwt;
+      }
+
+      if (trigger === 'update' && session?.userProfile) {
+        token.userProfile = session.userProfile;
+        token.userProfileCachedAt = Date.now();
       }
 
       return token;
@@ -126,6 +154,16 @@ export const authOptions: NextAuthOptions = {
         delete session.hashToken;
       }
 
+      if (token.userProfile) {
+        session.userProfile = token.userProfile;
+      } else {
+        delete session.userProfile;
+      }
+      if (token.userProfileCachedAt) {
+        session.userProfileCachedAt = token.userProfileCachedAt;
+      } else {
+        delete session.userProfileCachedAt;
+      }
       return session;
     },
   },

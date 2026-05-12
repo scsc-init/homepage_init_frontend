@@ -1,5 +1,7 @@
 import { handleApiRequest } from '@/app/api/apiWrapper';
 import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/util/authOptions';
 import type {
   BoardInfo,
   GlobalStatus,
@@ -154,12 +156,25 @@ export async function safeFetch<T = unknown>(
   return res.json() as Promise<T>;
 }
 
+const USER_PROFILE_CACHE_TTL_MS = 5 * 60 * 1000;
+
 /**
  * Fetches current user data.
  *
  * @returns Current user data.
  */
+
 export async function fetchMe(): Promise<UserProfile> {
+  const session = await getServerSession(authOptions);
+
+  const isUserProfileCacheFresh =
+    typeof session?.userProfileCachedAt === 'number' &&
+    Date.now() - session.userProfileCachedAt < USER_PROFILE_CACHE_TTL_MS;
+
+  if (session?.userProfile && isUserProfileCacheFresh) {
+    return session.userProfile;
+  }
+
   return safeFetch<UserProfile>('GET', '/api/user/profile');
 }
 
