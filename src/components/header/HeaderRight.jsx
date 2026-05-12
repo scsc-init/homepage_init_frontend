@@ -7,7 +7,11 @@ import { minExecutiveLevel } from '@/util/constants';
 import styles from '@/app/Header.module.css';
 
 function isMobileViewport() {
-  return (window.innerWidth || 1000) <= 768;
+  try {
+    return (window.innerWidth || 1000) <= 768;
+  } catch {
+    return false;
+  }
 }
 
 export default function HeaderRight() {
