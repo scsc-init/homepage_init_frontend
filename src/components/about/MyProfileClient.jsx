@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { useMe } from '@/util/hooks/useMe';
-import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
@@ -35,8 +34,34 @@ export default function MyProfileClient() {
   const { data: session, status, update } = useSession();
   const { me } = useMe();
   const [user, setUser] = useState(null);
+  const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
   const router = useRouter();
-
+  useEffect(() => {
+    const fetchInviteLinks = async () => {
+      const keys = ['TEXT_KAKAO_INVITE_LINK', 'TEXT_DISCORD_INVITE_LINK'];
+      const entries = await Promise.all(
+        keys.map(async (key) => {
+          try {
+            const res = await fetch(`/api/kv/${encodeURIComponent(key)}`, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json' },
+            });
+            if (!res.ok) return [key, ''];
+            const body = await res.json();
+            return [key, typeof body?.value === 'string' ? body.value : ''];
+          } catch {
+            return [key, ''];
+          }
+        }),
+      );
+      const map = Object.fromEntries(entries);
+      setInviteLinks({
+        kakao: map['TEXT_KAKAO_INVITE_LINK'] || '',
+        discord: map['TEXT_DISCORD_INVITE_LINK'] || '',
+      });
+    };
+    fetchInviteLinks();
+  }, []);
   useEffect(() => {
     const load = async () => {
       if (status === 'loading') return;
@@ -159,7 +184,7 @@ export default function MyProfileClient() {
 
           <div className="user-info-actions">
             <a
-              href={KAKAO_INVITE_LINK}
+              href={inviteLinks.kakao}
               target="_blank"
               rel="noopener noreferrer"
               className="action-button"
@@ -170,7 +195,7 @@ export default function MyProfileClient() {
               <span className="btn-label">카카오 입장</span>
             </a>
             <a
-              href={DISCORD_INVITE_LINK}
+              href={inviteLinks.discord}
               target="_blank"
               rel="noopener noreferrer"
               className="action-button"

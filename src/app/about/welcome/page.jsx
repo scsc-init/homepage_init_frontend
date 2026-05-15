@@ -1,13 +1,29 @@
 import { redirect } from 'next/navigation';
 import { handleApiRequest } from '@/app/api/apiWrapper';
-import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
 const WELCOME_LOGIN_PATH = '/about/welcome';
 
+async function fetchKvValue(key) {
+  try {
+    const res = await handleApiRequest('GET', '/api/kv/{key}', { params: { key } });
+    if (!res.ok) return '';
+    const body = await res.json().catch(() => null);
+    return typeof body?.value === 'string' ? body.value : '';
+  } catch (err) {
+    console.error(`[welcome] kv fetch failed (${key})`, err);
+    return '';
+  }
+}
+
 export default async function WelcomePage() {
-  const res = await handleApiRequest('GET', '/api/user/profile');
+  const [res, depositAcc, kakaoInviteLink, discordInviteLink] = await Promise.all([
+    handleApiRequest('GET', '/api/user/profile'),
+    fetchKvValue('TEXT_DEPOSIT_ACC'),
+    fetchKvValue('TEXT_KAKAO_INVITE_LINK'),
+    fetchKvValue('TEXT_DISCORD_INVITE_LINK'),
+  ]);
 
   if (!res.ok) {
     redirect(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
@@ -60,7 +76,7 @@ export default async function WelcomePage() {
               <div className={styles.definitionRow}>
                 <dt>입금 계좌</dt>
                 <dd>
-                  {DEPOSIT_ACC} <CopyButton link={DEPOSIT_ACC} label="계좌번호 복사" />
+                  {depositAcc} <CopyButton link={depositAcc} label="계좌번호 복사" />
                 </dd>
               </div>
             </dl>
@@ -86,14 +102,14 @@ export default async function WelcomePage() {
 
             <div className={styles.buttonsContainer}>
               <a
-                href={KAKAO_INVITE_LINK}
+                href={kakaoInviteLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.linkButton}
               >
                 카카오톡 팀 채팅방 입장
               </a>
-              <CopyButton link={KAKAO_INVITE_LINK} label="링크 복사" />
+              <CopyButton link={kakaoInviteLink} label="링크 복사" />
             </div>
 
             <p className={styles.smallNote}>
@@ -119,14 +135,14 @@ export default async function WelcomePage() {
 
             <div className={styles.buttonsContainer}>
               <a
-                href={DISCORD_INVITE_LINK}
+                href={discordInviteLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.linkButton}
               >
                 디스코드 서버 입장
               </a>
-              <CopyButton link={DISCORD_INVITE_LINK} label="링크 복사" />
+              <CopyButton link={discordInviteLink} label="링크 복사" />
             </div>
           </section>
           <section className={styles.statusCard}>

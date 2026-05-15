@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
-import { DISCORD_INVITE_LINK } from '@/util/constants';
 
 const BACKEND_URL = process.env.BACKEND_URL || '';
 
@@ -28,6 +27,7 @@ export default async function Contact() {
     fetchKvValue('president-phone'),
     fetchKvValue('vice-president-name'),
     fetchKvValue('vice-president-phone'),
+    fetchKvValue('TEXT_DISCORD_INVITE_LINK'),
   ]);
 
   const thisYear = new Date().getFullYear();
@@ -148,7 +148,7 @@ export default async function Contact() {
                     className="ico"
                   />
                   <a
-                    href={DISCORD_INVITE_LINK}
+                    href={discordInviteLink}
                     className="ContactLink"
                     target="_blank"
                     rel="noopener noreferrer"
