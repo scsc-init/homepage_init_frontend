@@ -6,26 +6,10 @@ import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import styles from './about.module.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
-
-const BACKEND_URL = process.env.BACKEND_URL || '';
-
-async function fetchKvValue(key) {
-  try {
-    const encoded_key = encodeURIComponent(key);
-    const res = await fetch(`${BACKEND_URL}/api/kv/${encoded_key}`, {
-      cache: 'no-store',
-    });
-    if (!res.ok) return '';
-    const body = await res.json().catch(() => null);
-    return typeof body?.value === 'string' ? body.value : '';
-  } catch (err) {
-    console.error(`[about] kv fetch failed (${key})`, err);
-    return '';
-  }
-}
+import { getKVValue } from '@/util/fetchAPIData';
 
 export default async function AboutPage() {
-  const discordInviteLink = await fetchKvValue('TEXT_DISCORD_INVITE_LINK');
+  const discordInviteLink = await getKVValue('TEXT_DISCORD_INVITE_LINK');
 
   return (
     <>
