@@ -2,11 +2,11 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import Image from 'next/image';
-import { cache, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
 
 const UUID_REGEX =
-  /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
+
 const API_IMG_ID_REGEX = new RegExp(
   String.raw`\/api\/file\/image\/download\/(${UUID_REGEX.source})(?=[^\w-]|$)`,
   'i',

@@ -14,7 +14,7 @@ export default function Footer() {
 
   useEffect(() => {
     const getFooter = async () => {
-      const res = await fetchBackendClient.get(
+      const res = await fetchBackendClient(
         `/api/kv/${key}`,
         {
           method: 'GET',
