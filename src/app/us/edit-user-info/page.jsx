@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as validator from '@/util/validator';
@@ -25,9 +26,9 @@ function EditUserInfoClient() {
   useEffect(() => {
     const fetchData = async () => {
       const fetches = [];
-      fetches.push(fetch('/api/user/profile'));
-      fetches.push(fetch('/api/majors'));
-      fetches.push(fetch('/api/user/oldboy/applicant'));
+      fetches.push(fetchBackendClient('/api/user/profile', undefined, true));
+      fetches.push(fetchBackendClient('/api/majors', undefined, true));
+      fetches.push(fetchBackendClient('/api/user/oldboy/applicant', undefined, true));
       const [resUser, resMajors, resOldboy] = await Promise.all(fetches);
 
       if (!resUser.ok) {
@@ -74,16 +75,20 @@ function EditUserInfoClient() {
     }
 
     setLoading(true);
-    const res = await fetch('/api/user/update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        phone,
-        student_id,
-        major_id: Number(major_id),
-      }),
-    });
+    const res = await fetchBackendClient(
+      '/api/user/update',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          student_id,
+          major_id: Number(major_id),
+        }),
+      },
+      true,
+    );
     setLoading(false);
 
     if (res.status === 204) {
@@ -102,7 +107,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 휴회원 처리하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/delete', { method: 'POST' });
+    const res = await fetchBackendClient('/api/user/delete', { method: 'POST' }, true);
     setLoading(false);
 
     if (res.status === 204) {
@@ -119,7 +124,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/register', { method: 'POST' });
+    const res = await fetchBackendClient('/api/user/oldboy/register', { method: 'POST' }, true);
     setLoading(false);
 
     if (res.status === 201) {
@@ -138,7 +143,11 @@ function EditUserInfoClient() {
     const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/unregister', { method: 'POST' });
+    const res = await fetchBackendClient(
+      '/api/user/oldboy/unregister',
+      { method: 'POST' },
+      true,
+    );
     setLoading(false);
 
     if (res.status === 204) {
@@ -161,7 +170,11 @@ function EditUserInfoClient() {
     );
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/reactivate', { method: 'POST' });
+    const res = await fetchBackendClient(
+      '/api/user/oldboy/reactivate',
+      { method: 'POST' },
+      true,
+    );
     setLoading(false);
 
     if (res.status === 204) {

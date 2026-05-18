@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useRef, useState } from 'react';
 import {
   minExecutiveLevel,
@@ -41,12 +42,8 @@ export default function ExecutivesClient() {
     const load = async () => {
       try {
         const [execRes, leadersRes] = await Promise.all([
-          fetch('/api/user/executives', {
-            cache: 'no-store',
-          }),
-          fetch('/api/leadership', {
-            cache: 'no-store',
-          }),
+          fetchBackendClient('/api/user/executives', { cache: 'no-store' }, true),
+          fetchBackendClient('/api/leadership', { cache: 'no-store' }, true),
         ]);
 
         if (!execRes.ok) throw new Error('failed');

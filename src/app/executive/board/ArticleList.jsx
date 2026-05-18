@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useEffect, useState } from 'react';
 import styles from './ArticleList.module.css';
 
@@ -9,10 +11,14 @@ export default function ArticleList({ boards: boardsDefault }) {
 
   useEffect(() => {
     async function fetchBoardArticles(boardId) {
-      const res = await fetch(`/api/articles/${boardId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/articles/${boardId}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.ok) return { [boardId]: await res.json() };
       return {};
     }
@@ -38,11 +44,15 @@ export default function ArticleList({ boards: boardsDefault }) {
   };
 
   const saveBoard = async (board) => {
-    const res = await fetch(`/api/executive/board/update/${board.id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: board.name }),
-    });
+    const res = await fetchBackendClient(
+      `/api/executive/board/update/${board.id}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: board.name }),
+      },
+      true,
+    );
     if (res.status === 204) alert('게시판 이름 수정 완료');
     else alert('게시판 이름 수정 실패: ' + res.status);
   };
@@ -50,9 +60,13 @@ export default function ArticleList({ boards: boardsDefault }) {
   const deleteBoard = async (id) => {
     const ok = confirm('게시판을 삭제하시겠습니까?');
     if (!ok) return;
-    const res = await fetch(`/api/executive/board/delete/${id}`, {
-      method: 'POST',
-    });
+    const res = await fetchBackendClient(
+      `/api/executive/board/delete/${id}`,
+      {
+        method: 'POST',
+      },
+      true,
+    );
     if (res.status === 204) {
       alert('삭제 완료');
       setBoards((prev) => prev.filter((b) => b.id !== id));
@@ -78,11 +92,15 @@ export default function ArticleList({ boards: boardsDefault }) {
     };
     try {
       setSaving((s) => ({ ...s, [article.id]: true }));
-      const res = await fetch(`/api/executive/article/update/${article.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/article/update/${article.id}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        },
+        true,
+      );
       if (res.status === 204) alert('✅ 게시글 수정 완료');
       else {
         const error = await res.text();
@@ -98,9 +116,13 @@ export default function ArticleList({ boards: boardsDefault }) {
   const deleteArticle = async (id, boardId) => {
     const ok = confirm('정말 삭제하시겠습니까?');
     if (!ok) return;
-    const res = await fetch(`/api/executive/article/delete/${id}`, {
-      method: 'POST',
-    });
+    const res = await fetchBackendClient(
+      `/api/executive/article/delete/${id}`,
+      {
+        method: 'POST',
+      },
+      true,
+    );
     if (res.status === 204) {
       setArticles((prev) => ({
         ...prev,

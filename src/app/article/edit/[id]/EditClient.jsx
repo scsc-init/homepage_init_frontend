@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -33,8 +34,8 @@ export default function EditClient({ articleId }) {
     const load = async () => {
       try {
         const [articleRes, userRes] = await Promise.all([
-          fetch(`/api/article/${articleId}`),
-          fetch(`/api/user/profile`),
+          fetchBackendClient(`/api/article/${articleId}`, undefined, true),
+          fetchBackendClient(`/api/user/profile`, undefined, true),
         ]);
         if (userRes.status === 401) {
           alert('로그인이 필요합니다.');
@@ -100,16 +101,20 @@ export default function EditClient({ articleId }) {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/article/update/${articleId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: data.title,
-          content: data.editor,
-          board_id: parseInt(boardId ?? 0),
-          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
-        }),
-      });
+      const res = await fetchBackendClient(
+        `/api/article/update/${articleId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: data.title,
+            content: data.editor,
+            board_id: parseInt(boardId ?? 0),
+            attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
+          }),
+        },
+        true,
+      );
 
       if (res.status === 204 || res.ok) {
         isFormSubmitted.current = true;

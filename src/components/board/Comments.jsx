@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { minExecutiveLevel } from '@/util/constants';
@@ -44,15 +45,19 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
-    const res = await fetch('/api/comments/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        article_id: Number(articleId),
-        parent_id: comment.id,
-        content: replyContent,
-      }),
-    });
+    const res = await fetchBackendClient(
+      '/api/comments/create',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          article_id: Number(articleId),
+          parent_id: comment.id,
+          content: replyContent,
+        }),
+      },
+      true,
+    );
     if (res.ok) {
       setReplyContent('');
       setShowReply(false);
@@ -64,17 +69,25 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
 
   const handleDeleteReply = async () => {
     if (userId === comment.author_id) {
-      const res = await fetch(`/api/comments/${comment.id}/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/comments/${comment.id}/delete`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.status === 204) onReplySubmit();
       else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
     } else {
-      const res = await fetch(`/api/comments/${comment.id}/executive/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/comments/${comment.id}/executive/delete`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.status === 204) onReplySubmit();
       else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
     }
@@ -146,7 +159,7 @@ export default function Comments({ articleId, initialComments, user }) {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/comments/${articleId}`);
+      const res = await fetchBackendClient(`/api/comments/${articleId}`, undefined, true);
       if (res.status === 401) {
         pushLoginWithRedirect(router);
         return;
@@ -165,15 +178,19 @@ export default function Comments({ articleId, initialComments, user }) {
   const submitNew = async () => {
     if (!newContent.trim()) return;
     try {
-      const res = await fetch('/api/comments/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          article_id: Number(articleId),
-          parent_id: null,
-          content: newContent,
-        }),
-      });
+      const res = await fetchBackendClient(
+        '/api/comments/create',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            article_id: Number(articleId),
+            parent_id: null,
+            content: newContent,
+          }),
+        },
+        true,
+      );
       if (res.ok) {
         setNewContent('');
         setShowNew(false);

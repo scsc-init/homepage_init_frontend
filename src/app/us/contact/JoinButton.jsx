@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState, useRef } from 'react';
 import './page.css';
 
@@ -8,7 +9,7 @@ export default function JoinButton() {
   const ref = useRef();
 
   useEffect(() => {
-    fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' })
+    fetchBackendClient('/api/user/profile', { cache: 'no-store', credentials: 'include' }, true)
       .then((r) => {
         if (r.ok) setMode('member');
         else setMode('guest');

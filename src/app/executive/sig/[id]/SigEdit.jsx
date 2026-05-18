@@ -1,10 +1,10 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import styles from '../../igpage.module.css';
-import { directFetch } from '@/util/directFetch';
 import SigTagManager from '@/components/board/SigTagManager';
 
 const getLeaderUserId = (sig) => {
@@ -223,21 +223,25 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await directFetch(`/api/executive/sig/${sig.id}/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: sig.title,
-          description: sig.description,
-          content: sig.content,
-          status: sig.status,
-          year: sig.year,
-          semester: sig.semester,
-          should_extend: Boolean(sig.should_extend),
-          is_rolling_admission: Boolean(sig.is_rolling_admission),
-          websites: sanitizeWebsites(sig.websites),
-        }),
-      });
+      const res1 = await fetchBackendClient(
+        `/api/executive/sig/${sig.id}/update`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: sig.title,
+            description: sig.description,
+            content: sig.content,
+            status: sig.status,
+            year: sig.year,
+            semester: sig.semester,
+            should_extend: Boolean(sig.should_extend),
+            is_rolling_admission: Boolean(sig.is_rolling_admission),
+            websites: sanitizeWebsites(sig.websites),
+          }),
+        },
+        true,
+      );
       if (!res1.ok) {
         const msg1 = await res1.json();
         alert(`저장 실패. SIG 정보 수정: ${msg1?.detail ?? res1.status}`);
@@ -249,11 +253,15 @@ export default function SigExecutiveEdit({ sig: _sig }) {
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
-        res2 = await directFetch(`/api/executive/sig/${sig.id}/handover`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ new_owner: selectedMember }),
-        });
+        res2 = await fetchBackendClient(
+          `/api/executive/sig/${sig.id}/handover`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ new_owner: selectedMember }),
+          },
+          true,
+        );
       }
       if (!res2 || res2.ok) alert('저장 완료');
       else {
@@ -272,7 +280,11 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await directFetch(`/api/executive/sig/${id}/delete`, { method: 'POST' });
+      const res = await fetchBackendClient(
+        `/api/executive/sig/${id}/delete`,
+        { method: 'POST' },
+        true,
+      );
       if (res.status === 204) {
         router.replace('/executive/sig');
       } else {

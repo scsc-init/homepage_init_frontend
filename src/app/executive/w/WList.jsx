@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -19,10 +21,14 @@ export default function WList({ wMetas }) {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch(`/api/executive/w/create`, {
-        method: 'POST',
-        body: form,
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/w/create`,
+        {
+          method: 'POST',
+          body: form,
+        },
+        true,
+      );
       if (res.status !== 201) {
         const err = await res.json();
         alert('파일 처리 실패: ' + err.detail);
@@ -49,10 +55,14 @@ export default function WList({ wMetas }) {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/update`, {
-        method: 'POST',
-        body: form,
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/w/${encodeURIComponent(name)}/update`,
+        {
+          method: 'POST',
+          body: form,
+        },
+        true,
+      );
       if (res.status !== 200) {
         const err = await res.json();
         alert('파일 처리 실패: ' + err.detail);
@@ -72,9 +82,13 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/delete`, {
-        method: 'POST',
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/w/${encodeURIComponent(name)}/delete`,
+        {
+          method: 'POST',
+        },
+        true,
+      );
       if (res.status !== 204) {
         const err = await res.json();
         alert('삭제 실패: ' + err.detail);
@@ -93,7 +107,11 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/download`);
+      const res = await fetchBackendClient(
+        `/api/executive/w/${encodeURIComponent(name)}/download`,
+        undefined,
+        true,
+      );
       if (!res.ok) throw new Error('download failed');
 
       const blob = await res.blob();

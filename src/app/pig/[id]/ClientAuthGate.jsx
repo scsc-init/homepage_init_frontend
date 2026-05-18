@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -16,7 +17,7 @@ export default function ClientAuthGate({ children }) {
 
     (async () => {
       try {
-        const res = await fetch('/api/user/profile', { cache: 'no-store' });
+        const res = await fetchBackendClient('/api/user/profile', { cache: 'no-store' }, true);
         if (!res.ok || res.status === 401) {
           goLogin();
           return;

@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -33,9 +34,9 @@ export default function ArticleDetail({ params }) {
     const loadAll = async () => {
       try {
         const [contentRes, commentsRes, userRes] = await Promise.all([
-          fetch(`/api/article/${id}`),
-          fetch(`/api/comments/${id}`),
-          fetch(`/api/user/profile`),
+          fetchBackendClient(`/api/article/${id}`, undefined, true),
+          fetchBackendClient(`/api/comments/${id}`, undefined, true),
+          fetchBackendClient(`/api/user/profile`, undefined, true),
         ]);
 
         if (userRes.status === 401) {
@@ -86,7 +87,11 @@ export default function ArticleDetail({ params }) {
         attachmentIds.forEach((aid) => {
           if (aid) queryParams.append('ids', aid);
         });
-        const res = await directFetch(`/api/file/metadata?${queryParams.toString()}`);
+        const res = await fetchBackendClient(
+          `/api/file/metadata?${queryParams.toString()}`,
+          undefined,
+          true,
+        );
         const data = await res.json().catch(() => []);
         if (cancelled) return;
         if (res.ok) {
@@ -127,7 +132,11 @@ export default function ArticleDetail({ params }) {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
+      const res = await fetchBackendClient(
+        `/api/article/delete/${id}`,
+        { method: 'POST' },
+        true,
+      );
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/');

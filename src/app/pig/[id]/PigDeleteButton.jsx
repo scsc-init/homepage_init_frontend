@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
@@ -24,10 +26,14 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/pig/${pigId}/delete`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.ok) {
         alert('PIG 비활성화 성공!');
         router.refresh();
@@ -44,10 +50,14 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/delete/executive`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/pig/${pigId}/delete/executive`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.ok) {
         alert('PIG 비활성화 성공!');
         router.refresh();

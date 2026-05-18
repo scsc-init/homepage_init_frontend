@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useMemo, useState, useEffect } from 'react';
 import ExportUsersButton from './ExportUsersButton';
 
@@ -52,11 +53,15 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const manualEnroll = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     try {
-      const res = await fetch(`/api/executive/user/standby/process/manual`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: user.id }),
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/user/standby/process/manual`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: user.id }),
+        },
+        true,
+      );
       if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
       else alert(`${user.name} 입금 확인 실패: ${res.status}`);
     } finally {
@@ -228,11 +233,15 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       is_active: user.is_active,
       is_banned: user.is_banned,
     };
-    const res = await fetch(`/api/executive/user/${user.id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated),
-    });
+    const res = await fetchBackendClient(
+      `/api/executive/user/${user.id}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated),
+      },
+      true,
+    );
     if (res.status === 204) alert(`${user.name} 저장 완료`);
     else alert(`${user.name} 저장 실패: ${res.status}`);
     setSaving((prev) => ({ ...prev, [user.id]: false }));

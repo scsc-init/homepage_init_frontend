@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
-import { fetchBackendClientJson } from '@/util/fetch/client';
+import { fetchBackendClient, fetchBackendClientJson } from '@/util/fetch/client';
 import { academicTerm2string } from '@/util/helper/tostring';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
@@ -165,7 +165,11 @@ export default function FundApplyForm({
     let isMounted = true;
     const run = async () => {
       try {
-        const data = await fetchBackendClientJson<UserProfile>('/api/user/profile');
+        const data = await fetchBackendClientJson<UserProfile>(
+          '/api/user/profile',
+          undefined,
+          true,
+        );
         if (isMounted) setUser(data);
       } catch (err) {
         replaceLoginWithRedirect(router);
@@ -183,10 +187,10 @@ export default function FundApplyForm({
     const run = async () => {
       try {
         const [currSigData, currPigData, prevSigData, prevPigData] = await Promise.all([
-          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}`),
-          fetchBackendClientJson<any[]>(`/api/pigs?${_curr}`),
-          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}`),
-          fetchBackendClientJson<any[]>(`/api/pigs?${_prev}`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}`, undefined, true),
+          fetchBackendClientJson<any[]>(`/api/pigs?${_curr}`, undefined, true),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}`, undefined, true),
+          fetchBackendClientJson<any[]>(`/api/pigs?${_prev}`, undefined, true),
         ]);
         if (isMounted) {
           setCurrSigs(refinineSigList(currSigData));
@@ -326,11 +330,15 @@ export default function FundApplyForm({
 
     let res: Response;
     try {
-      res = await fetch('/api/file/image/upload', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
+      res = await fetchBackendClient(
+        '/api/file/image/upload',
+        {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        },
+        true,
+      );
     } catch {
       alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
       return null;
@@ -403,17 +411,21 @@ export default function FundApplyForm({
 
       const payload = await buildPayload(form);
 
-      const res = await fetch('/api/article/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: payload.title,
-          content: payload.content,
-          board_id: boardId,
-          attachments: payload.attachments,
-        }),
-      });
+      const res = await fetchBackendClient(
+        '/api/article/create',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            title: payload.title,
+            content: payload.content,
+            board_id: boardId,
+            attachments: payload.attachments,
+          }),
+        },
+        true,
+      );
 
       if (!res.ok) {
         const text = await res.text().catch(() => '');

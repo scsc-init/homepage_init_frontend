@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 
 function TrxRecord({ record }) {
@@ -20,7 +22,7 @@ export default function EnrollManagementPanel() {
 
   useEffect(() => {
     const fetchStandbys = async () => {
-      const res = await fetch(`/api/executive/user/standby/list`);
+      const res = await fetchBackendClient(`/api/executive/user/standby/list`, undefined, true);
       if (res.ok) setStandbys(await res.json());
     };
     fetchStandbys();
@@ -31,10 +33,14 @@ export default function EnrollManagementPanel() {
     if (!file) return;
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`/api/executive/user/standby/process`, {
-      method: 'POST',
-      body: form,
-    });
+    const res = await fetchBackendClient(
+      `/api/executive/user/standby/process`,
+      {
+        method: 'POST',
+        body: form,
+      },
+      true,
+    );
     if (res.status !== 200) {
       const err = await res.json();
       alert('파일 처리 실패: ' + err.detail);

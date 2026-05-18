@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
 import SigTagManager from '@/components/board/SigTagManager';
@@ -93,7 +94,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(
+      const res = await fetchBackendClient(
         me.role >= minExecutiveLevel
           ? `/api/sig/${sigId}/update/executive`
           : `/api/sig/${sigId}/update`,
@@ -108,6 +109,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
             is_rolling_admission: data.is_rolling_admission,
           }),
         },
+        true,
       );
 
       if (res.status === 204) {

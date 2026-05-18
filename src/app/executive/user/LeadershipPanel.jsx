@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState } from 'react';
 
 function renderUserSummary(user) {
@@ -75,14 +76,18 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
     }
     setPending(true);
     try {
-      const res = await fetch('/api/executive/leadership', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          president_id: presidentTrimmed || null,
-          vice_president_id: vicePresidentTrimmed || null,
-        }),
-      });
+      const res = await fetchBackendClient(
+        '/api/executive/leadership',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            president_id: presidentTrimmed || null,
+            vice_president_id: vicePresidentTrimmed || null,
+          }),
+        },
+        true,
+      );
 
       if (!res.ok) {
         const msg = await res.text();

@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/board/[id]/create/page.css';
@@ -16,7 +17,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   useEffect(() => {
     const check = async () => {
       try {
-        const res = await fetch(`/api/user/profile`, { cache: 'no-store' });
+        const res = await fetchBackendClient(`/api/user/profile`, { cache: 'no-store' }, true);
         if (res.status === 401) {
           alert('로그인이 필요합니다.');
           pushLoginWithRedirect(router);
@@ -48,16 +49,20 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/article/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: data.title,
-          content: data.editor,
-          board_id: parseInt(boardInfo.id),
-          attachments: Array.isArray(data.attachments) ? data.attachments : [],
-        }),
-      });
+      const res = await fetchBackendClient(
+        `/api/article/create`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: data.title,
+            content: data.editor,
+            board_id: parseInt(boardInfo.id),
+            attachments: Array.isArray(data.attachments) ? data.attachments : [],
+          }),
+        },
+        true,
+      );
 
       if (res.status === 201) {
         alert('게시글 작성 완료!');

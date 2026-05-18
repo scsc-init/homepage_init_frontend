@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
@@ -48,7 +49,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
+      const res = await fetchBackendClient(`/api/user/profile`, undefined, true);
       if (res.ok) setUser(await res.json());
       else pushLoginWithRedirect(router);
     };
@@ -114,17 +115,21 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/pig/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: data.title,
-          description: data.description,
-          content: data.editor,
-          is_rolling_admission: data.is_rolling_admission,
-          websites: sanitizeWebsites(data.websites),
-        }),
-      });
+      const res = await fetchBackendClient(
+        `/api/pig/create`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: data.title,
+            description: data.description,
+            content: data.editor,
+            is_rolling_admission: data.is_rolling_admission,
+            websites: sanitizeWebsites(data.websites),
+          }),
+        },
+        true,
+      );
 
       if (res.status === 201) {
         alert('PIG 생성 성공!');

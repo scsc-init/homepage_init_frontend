@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -9,9 +10,13 @@ export default function CheckUserStatusClient() {
   useEffect(() => {
     const check = async () => {
       try {
-        const res = await fetch('/api/user/profile', {
-          credentials: 'include',
-        });
+        const res = await fetchBackendClient(
+          '/api/user/profile',
+          {
+            credentials: 'include',
+          },
+          true,
+        );
 
         if (!res.ok) return;
 
