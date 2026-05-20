@@ -12,6 +12,10 @@
 
 .adm-panel a {
   color: var(--color-text-body);
+  text-decoration: none;
+}
+
+.adm-panel a[data-underline] {
   text-decoration: underline;
 }
 

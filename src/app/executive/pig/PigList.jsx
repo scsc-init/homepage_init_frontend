@@ -65,7 +65,9 @@ const RenderPigRow = ({ pig }) => {
       <td>{SEMESTER_MAP[Number(pig.semester)] ?? ''}학기</td>
       <td>{pig.ownerName ?? ''}</td>
       <td>
-        <a href={`/executive/pig/${pig.id}`}>상세보기</a>
+        <a href={`/executive/pig/${pig.id}`} data-underline>
+          상세보기
+        </a>
       </td>
     </tr>
   );

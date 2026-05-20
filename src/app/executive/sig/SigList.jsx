@@ -65,7 +65,9 @@ const RenderSigRow = ({ sig }) => {
       <td>{SEMESTER_MAP[Number(sig.semester)] ?? ''}학기</td>
       <td>{sig.ownerName ?? ''}</td>
       <td>
-        <a href={`/executive/sig/${sig.id}`}>상세보기</a>
+        <a href={`/executive/sig/${sig.id}`} data-underline>
+          상세보기
+        </a>
       </td>
     </tr>
   );
