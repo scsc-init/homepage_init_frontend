@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
-import styles from '../../igpage.module.css';
 import { directFetch } from '@/util/directFetch';
+import * as AdminLayout from '@/components/AdminLayout';
 
 const getLeaderUserId = (pig) => {
   if (pig?.owner == null) return '';
@@ -32,8 +32,7 @@ const renderPigEdit = (pig, ctx) => {
       <tr>
         <td>상태</td>
         <td>
-          <select
-            className={styles['adm-select']}
+          <AdminLayout.AdminSelect
             value={pig.status ?? ''}
             onChange={(e) => ctx.updatePigField('status', e.target.value)}
           >
@@ -42,7 +41,7 @@ const renderPigEdit = (pig, ctx) => {
                 {STATUS_MAP[key]}
               </option>
             ))}
-          </select>
+          </AdminLayout.AdminSelect>
         </td>
       </tr>
 
@@ -51,8 +50,7 @@ const renderPigEdit = (pig, ctx) => {
       <tr>
         <td>학기</td>
         <td>
-          <select
-            className={styles['adm-select']}
+          <AdminLayout.AdminSelect
             value={pig.semester ?? ''}
             onChange={(e) => ctx.updatePigField('semester', e.target.value)}
           >
@@ -61,7 +59,7 @@ const renderPigEdit = (pig, ctx) => {
                 {SEMESTER_MAP[key]}학기
               </option>
             ))}
-          </select>
+          </AdminLayout.AdminSelect>
         </td>
       </tr>
 
@@ -82,22 +80,20 @@ const renderPigEdit = (pig, ctx) => {
       <tr>
         <td>연장 신청</td>
         <td>
-          <select
-            className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
+          <AdminLayout.AdminSelectBool
             value={String(Boolean(pig.should_extend))}
             onChange={(e) => ctx.updatePigField('should_extend', e.target.value === 'true')}
           >
             <option value="true">예</option>
             <option value="false">아니오</option>
-          </select>
+          </AdminLayout.AdminSelectBool>
         </td>
       </tr>
 
       <tr>
         <td>가입기간</td>
         <td>
-          <select
-            className={`${styles['adm-select']} ${styles['adm-select-bool-wide']}`}
+          <AdminLayout.AdminSelectBoolWide
             value={pig['is_rolling_admission'] ?? ''}
             onChange={(e) => ctx.updatePigField('is_rolling_admission', e.target.value)}
           >
@@ -106,15 +102,14 @@ const renderPigEdit = (pig, ctx) => {
             <option value="during_recruiting">
               {PIG_ADMISSION_LABEL_MAP.during_recruiting}
             </option>
-          </select>
+          </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
 
       <tr>
         <td>PIG장</td>
         <td>
-          <select
-            className={styles['adm-select']}
+          <AdminLayout.AdminSelect
             value={selected || ''}
             onChange={(e) => ctx.setSelectedMember(e.target.value)}
           >
@@ -129,7 +124,7 @@ const renderPigEdit = (pig, ctx) => {
                 </option>
               );
             })}
-          </select>
+          </AdminLayout.AdminSelect>
         </td>
       </tr>
     </>
@@ -141,8 +136,7 @@ function renderPigRow(pig, ctx, attrName, attrLabel) {
     <tr>
       <td>{attrLabel}</td>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={pig[attrName] ?? ''}
           onChange={(e) => ctx.updatePigField(attrName, e.target.value)}
         />
@@ -235,10 +229,9 @@ export default function PigExecutiveEdit({ pig: _pig }) {
 
   return (
     <div>
-      <table className={`${styles['adm-table']}`}>
+      <AdminLayout.AdminTable>
         <colgroup>
-          <col className={styles['adm-col-bool-wide']} />
-          <col />
+          <AdminLayout.AdminColBoolWide />
         </colgroup>
         <thead>
           <tr>
@@ -247,18 +240,14 @@ export default function PigExecutiveEdit({ pig: _pig }) {
           </tr>
         </thead>
         <tbody>{renderPigEdit(pig, rowCtx)}</tbody>
-      </table>
+      </AdminLayout.AdminTable>
       <div>
-        <button className={styles['adm-button']} onClick={handleSave} disabled={saving}>
+        <AdminLayout.AdminButton onClick={handleSave} disabled={saving}>
           저장
-        </button>
-        <button
-          className={styles['adm-button']}
-          onClick={() => handleDelete(pig.id)}
-          disabled={saving}
-        >
+        </AdminLayout.AdminButton>
+        <AdminLayout.AdminButton onClick={() => handleDelete(pig.id)} disabled={saving}>
           삭제
-        </button>
+        </AdminLayout.AdminButton>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
 import { fetchSCSCGlobalStatus, fetchDiscordBotStatus } from '@/util/fetchAPIData';
+import * as AdminLayout from '@/components/AdminLayout';
 import './page.css';
 
 const adminPageLinks = [
@@ -59,19 +60,19 @@ export default async function AdminPanel() {
 
   return (
     <WithAuthorization>
-      <div className="admin-panel">
-        <div className="admin-page-list">
+      <AdminLayout.AdminPanel>
+        <AdminLayout.AdminPageList>
           {adminPageLinks.map(({ title, description, href }) => {
             return (
-              <Link key={title} href={href} className="admin-page-card">
-                <div className="admin-page-card-content">
+              <AdminLayout.AdminPageCard key={title} href={href} title={title}>
+                <AdminLayout.AdminPageCardContent>
                   <h3>{title}</h3>
                   <p>{description}</p>
-                </div>
-              </Link>
+                </AdminLayout.AdminPageCardContent>
+              </AdminLayout.AdminPageCard>
             );
           })}
-        </div>
+        </AdminLayout.AdminPageList>
 
         <div className="dangerous-area">
           <span className="warning-text">
@@ -79,27 +80,27 @@ export default async function AdminPanel() {
             조작 시 주의해주세요. *
           </span>
           <h2>SCSC status 관리</h2>
-          <div className="adm-section">
+          <AdminLayout.AdminSection>
             <EnrollmentPolicyPanel scscGlobalStatus={resolvedScscGlobalStatus} />
-          </div>
-          <div className="adm-section">
+          </AdminLayout.AdminSection>
+          <AdminLayout.AdminSection>
             <ScscStatusPanel
               scscGlobalStatus={resolvedScscGlobalStatus?.status}
               semester={resolvedScscGlobalStatus?.semester}
               year={resolvedScscGlobalStatus?.year}
             />
-          </div>
+          </AdminLayout.AdminSection>
         </div>
 
         <h2>디스코드 봇 관리</h2>
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <DiscordBotPanel
             is_logged_in={
               discordBotStatus.status === 'fulfilled' ? discordBotStatus.value : 'error'
             }
           />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

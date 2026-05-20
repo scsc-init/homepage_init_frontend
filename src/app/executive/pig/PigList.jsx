@@ -2,21 +2,19 @@
 
 import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
-import styles from '../igpage.module.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function PigFilterRow({ filter, updateFilterCriteria }) {
   return (
     <tr>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={filter.title}
           onChange={(e) => updateFilterCriteria('title', e.target.value)}
         />
       </td>
       <td>
-        <select
-          className={styles['adm-select']}
+        <AdminLayout.AdminSelect
           value={filter.status}
           onChange={(e) => updateFilterCriteria('status', e.target.value)}
         >
@@ -26,18 +24,16 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
               {STATUS_MAP[key]}
             </option>
           ))}
-        </select>
+        </AdminLayout.AdminSelect>
       </td>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={filter.year}
           onChange={(e) => updateFilterCriteria('year', e.target.value)}
         />
       </td>
       <td>
-        <select
-          className={styles['adm-select']}
+        <AdminLayout.AdminSelect
           value={filter.semester}
           onChange={(e) => updateFilterCriteria('semester', e.target.value)}
         >
@@ -47,11 +43,10 @@ function PigFilterRow({ filter, updateFilterCriteria }) {
               {SEMESTER_MAP[key]}학기
             </option>
           ))}
-        </select>
+        </AdminLayout.AdminSelect>
       </td>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={filter.ownerName}
           onChange={(e) => updateFilterCriteria('ownerName', e.target.value)}
         />
@@ -101,7 +96,7 @@ export default function PigList({ pigs }) {
   }, [pigs, filter]);
 
   return (
-    <table className={styles['adm-table']}>
+    <AdminLayout.AdminTable>
       <colgroup>
         <col />
         <col />
@@ -129,6 +124,6 @@ export default function PigList({ pigs }) {
           <RenderPigRow pig={pig} key={pig.id} />
         ))}
       </tbody>
-    </table>
+    </AdminLayout.AdminTable>
   );
 }

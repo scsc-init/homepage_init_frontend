@@ -3,7 +3,7 @@ import WithAuthorization from '@/components/WithAuthorization';
 import SigEdit from './SigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
 import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
-import styles from '../../igpage.module.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage({ params }) {
   const [sigMeta, users] = await Promise.allSettled([
@@ -20,20 +20,20 @@ export default async function ExecutiveSigPage({ params }) {
 
   return (
     <WithAuthorization>
-      <div className={styles['admin-panel']}>
+      <AdminLayout.AdminPanel>
         <h2>SIG 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <SigEdit sig={sig} />
-        </div>
+        </AdminLayout.AdminSection>
         <h2>SIG 구성원 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <IgMembersPanel
             is_sig
             ig={sig}
             users={users.status === 'fulfilled' ? users.value : []}
           />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

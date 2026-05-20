@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import { utc2kst } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default function WList({ wMetas }) {
   const [isBusy, setIsBusy] = useState(false);
@@ -117,20 +118,20 @@ export default function WList({ wMetas }) {
 
   return (
     <div className={isBusy ? 'is-busy' : undefined}>
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>HTML 페이지 목록</h3>
-        <div className="adm-table-wrap">
-          <table className="adm-table">
+        <AdminLayout.AdminTableWrap>
+          <AdminLayout.AdminTable>
             <thead>
               <tr>
-                <th className="adm-th">페이지명</th>
-                <th className="adm-th">최종수정자</th>
-                <th className="adm-th">파일크기(Bytes)</th>
-                <th className="adm-th">생성시각</th>
-                <th className="adm-th">수정시각</th>
-                <th className="adm-th">수정버튼</th>
-                <th className="adm-th">다운로드버튼</th>
-                <th className="adm-th">삭제버튼</th>
+                <th>페이지명</th>
+                <th>최종수정자</th>
+                <th>파일크기(Bytes)</th>
+                <th>생성시각</th>
+                <th>수정시각</th>
+                <th>수정버튼</th>
+                <th>다운로드버튼</th>
+                <th>삭제버튼</th>
               </tr>
             </thead>
             <tbody>
@@ -153,37 +154,35 @@ export default function WList({ wMetas }) {
                     />
                   </td>
                   <td>
-                    <button
+                    <AdminLayout.AdminButton
                       type="button"
-                      className="adm-button"
                       onClick={() => onClickDownload(w[0].name)}
                       disabled={isBusy}
                     >
                       다운로드
-                    </button>
+                    </AdminLayout.AdminButton>
                   </td>
 
-                  <td className="adm-td">
-                    <button
+                  <td>
+                    <AdminLayout.AdminButtonDanger
                       type="button"
-                      className="adm-button-danger"
                       onClick={() => onClickDelete(w[0].name)}
                       disabled={isBusy}
                     >
                       페이지 삭제
-                    </button>
+                    </AdminLayout.AdminButtonDanger>
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-      </div>
+          </AdminLayout.AdminTable>
+        </AdminLayout.AdminTableWrap>
+      </AdminLayout.AdminSection>
 
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>HTML 파일 업로드</h3>
         <p>파일명이 이름으로 지정됩니다</p>
-        <div className="adm-actions">
+        <AdminLayout.AdminActions>
           <input
             type="file"
             title=" "
@@ -191,8 +190,8 @@ export default function WList({ wMetas }) {
             onChange={handleCreate}
             disabled={isBusy}
           />
-        </div>
-      </div>
+        </AdminLayout.AdminActions>
+      </AdminLayout.AdminSection>
     </div>
   );
 }

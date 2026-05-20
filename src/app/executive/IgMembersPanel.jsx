@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import styles from './igpage.module.css';
 import { useRouter } from 'next/navigation';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function IgMemberAdd({
   userFilter,
@@ -14,7 +14,7 @@ function IgMemberAdd({
   return (
     <div>
       <h4>구성원 추가</h4>
-      <table className={styles['adm-table']}>
+      <AdminLayout.AdminTable>
         <thead>
           <tr>
             <th>이름</th>
@@ -23,18 +23,16 @@ function IgMemberAdd({
           </tr>
           <tr>
             <td>
-              <input
+              <AdminLayout.AdminInput
                 name="name"
-                className={styles['adm-input']}
                 value={userFilter.name}
                 onChange={(e) => updateUserFilterCriteria('name', e.target.value)}
               />
             </td>
             <td>
-              <input
+              <AdminLayout.AdminInput
                 name="email"
                 type="email"
-                className={styles['adm-input']}
                 value={userFilter.email}
                 onChange={(e) => updateUserFilterCriteria('email', e.target.value)}
               />
@@ -47,18 +45,17 @@ function IgMemberAdd({
               <td>{u.name}</td>
               <td>{u.email}</td>
               <td>
-                <button
-                  className={styles['adm-button']}
+                <AdminLayout.AdminButton
                   onClick={() => handleAddMember(u)}
                   disabled={userLoading[u.id]}
                 >
                   추가
-                </button>
+                </AdminLayout.AdminButton>
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </AdminLayout.AdminTable>
     </div>
   );
 }
@@ -73,7 +70,7 @@ function IgMemberDelete({
   return (
     <div>
       <h4>구성원 삭제</h4>
-      <table className={styles['adm-table']}>
+      <AdminLayout.AdminTable>
         <thead>
           <tr>
             <th>이름</th>
@@ -82,18 +79,16 @@ function IgMemberDelete({
           </tr>
           <tr>
             <td>
-              <input
+              <AdminLayout.AdminInput
                 name="name"
-                className={styles['adm-input']}
                 value={memberFilter.name}
                 onChange={(e) => updateMemberFilterCriteria('name', e.target.value)}
               />
             </td>
             <td>
-              <input
+              <AdminLayout.AdminInput
                 name="email"
                 type="email"
-                className={styles['adm-input']}
                 value={memberFilter.email}
                 onChange={(e) => updateMemberFilterCriteria('email', e.target.value)}
               />
@@ -106,18 +101,17 @@ function IgMemberDelete({
               <td>{m.user?.name ?? ''}</td>
               <td>{m.user?.email ?? ''}</td>
               <td>
-                <button
-                  className={styles['adm-button']}
+                <AdminLayout.AdminButton
                   onClick={() => handleDeleteMember(m)}
                   disabled={memberLoading[m.user_id]}
                 >
                   삭제
-                </button>
+                </AdminLayout.AdminButton>
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </AdminLayout.AdminTable>
     </div>
   );
 }
@@ -227,7 +221,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
 
   return (
     <div>
-      <div className={styles['adm-table']}>
+      <AdminLayout.AdminTable>
         {ig && (
           <div>
             <hr></hr>
@@ -248,7 +242,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
             />
           </div>
         )}
-      </div>
+      </AdminLayout.AdminTable>
     </div>
   );
 }

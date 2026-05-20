@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
-import Link from 'next/link';
 import LeadershipPanel from './LeadershipPanel';
 import { ReadUserTable } from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
@@ -16,7 +15,7 @@ import {
   fetchMajors,
   fetchMe,
 } from '@/util/fetchAPIData';
-import '../page.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveUserPage() {
   const [kv, majors, me] = await Promise.all([
@@ -69,35 +68,35 @@ export default async function ExecutiveUserPage() {
 
   return (
     <WithAuthorization>
-      <div className="admin-panel">
+      <AdminLayout.AdminPanel>
         <h2>임원진 구성 관리</h2>
         <p style={{ marginBottom: '1rem', color: '#767676' }}>
           회장과 부회장을 선택한 뒤 저장하면 홈페이지 임원진 목록에 반영됩니다.
         </p>
 
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <LeadershipPanel initialLeadership={initialLeadership} candidates={candidates} />
-        </div>
+        </AdminLayout.AdminSection>
 
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <ReadUserTable users={readUsersSorted} majors={majorsSafe} />
-        </div>
+        </AdminLayout.AdminSection>
 
         {canManageLeadership && (
-          <div className="adm-section">
-            <Link href="/executive/user/leadership" className="adm-button">
+          <AdminLayout.AdminSection>
+            <AdminLayout.AdminLinkButton href="/executive/user/leadership">
               회장단 전용 페이지로 이동
-            </Link>
-          </div>
+            </AdminLayout.AdminLinkButton>
+          </AdminLayout.AdminSection>
         )}
 
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <EnrollManagementPanel />
-        </div>
-        <div className="adm-section">
+        </AdminLayout.AdminSection>
+        <AdminLayout.AdminSection>
           <OldboyManageMentPanel users={executiveUsersSorted} />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }
