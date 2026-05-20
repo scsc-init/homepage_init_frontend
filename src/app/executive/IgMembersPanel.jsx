@@ -221,7 +221,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
 
   return (
     <div>
-      <AdminLayout.AdminTable>
+      <AdminLayout.AdminTableDiv>
         {ig && (
           <div>
             <hr></hr>
@@ -242,7 +242,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
             />
           </div>
         )}
-      </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableDiv>
     </div>
   );
 }

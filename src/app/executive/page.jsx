@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
 import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';

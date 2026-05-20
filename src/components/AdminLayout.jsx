@@ -21,6 +21,15 @@ const AdminTable = ({ children, className, ...props }) => {
 };
 AdminTable.displayName = 'AdminLayout.AdminTable';
 
+const AdminTableDiv = ({ children, className, ...props }) => {
+  return (
+    <div className={`${styles['adm-table']} ${className || ''}`} {...props}>
+      {children}
+    </div>
+  );
+};
+AdminTableDiv.displayName = 'AdminLayout.AdminTableDiv';
+
 const AdminColBoolWide = ({ className, ...props }) => {
   return <col className={`${styles['adm-col-bool-wide']} ${className || ''}`} {...props} />;
 };
@@ -198,6 +207,7 @@ AdminPageCardContent.displayName = 'AdminLayout.AdminPageCardContent';
 export {
   AdminTableWrap,
   AdminTable,
+  AdminTableDiv,
   AdminColBoolWide,
   AdminPanel,
   AdminSection,
