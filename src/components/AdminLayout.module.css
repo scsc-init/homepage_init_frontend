@@ -203,16 +203,3 @@
   top: 0;
   z-index: 3;
 }
-
-/* UserList has a 2-row header (filter row). Make 2nd row sticky too. */
-.adm-table thead tr:nth-child(2) td {
-  position: sticky;
-  top: 44px; /* 1st header row height approximation */
-  z-index: 2;
-}
-
-/* Ensure sticky header cells look right */
-.adm-table thead th,
-.adm-table thead tr:nth-child(2) td {
-  background: var(--box-color);
-}
