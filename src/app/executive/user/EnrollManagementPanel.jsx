@@ -82,8 +82,11 @@ export default function EnrollManagementPanel() {
       {results.length !== 0 && (
         <AdminLayout.AdminSection>
           <div>처리 실패 요청 건수: {failedCnt}건</div>
-          {results.map((r) => (
-            <AdminLayout.AdminTableWrap key={r.record.deposit_time} style={{ padding: '1rem' }}>
+          {results.map((r, idx) => (
+            <AdminLayout.AdminTableWrap
+              key={`${r.record?.deposit_time ?? 'unknown'}-${idx}`}
+              style={{ padding: '1rem' }}
+            >
               <div>{r.result_msg}</div>
               <TrxRecord record={r.record} />
               <div>오류 관련 사용자</div>
