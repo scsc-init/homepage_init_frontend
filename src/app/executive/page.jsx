@@ -4,7 +4,6 @@ import DiscordBotPanel from './DiscordBotPanel';
 import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
 import { fetchSCSCGlobalStatus, fetchDiscordBotStatus } from '@/util/fetchAPIData';
 import * as AdminLayout from '@/components/AdminLayout';
-import './page.css';
 
 const adminPageLinks = [
   {
@@ -73,8 +72,15 @@ export default async function AdminPanel() {
           })}
         </AdminLayout.AdminPageList>
 
-        <div className="dangerous-area">
-          <span className="warning-text">
+        <div
+          style={{
+            border: '1px solid var(--color-button-alert-bg)',
+            background: 'transparent',
+            padding: '1rem',
+            'border-radius': '1rem',
+          }}
+        >
+          <span style={{ color: 'var(--color-button-alert-bg)', 'font-weight': 600 }}>
             * 본 영역은 시스템에 대한 직접적인 영향을 미칠 수 있는 기능을 포함하고 있습니다.
             조작 시 주의해주세요. *
           </span>
