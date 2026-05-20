@@ -55,7 +55,7 @@ export default function OldboyManagementPanel({ users }) {
                   <td>
                     <AdminLayout.AdminButton
                       onClick={() => user && processOldboy(user)}
-                      disabled={saving[user.id] || u.processed || !user}
+                      disabled={!user || Boolean(saving[user.id]) || u.processed}
                     >
                       승인
                     </AdminLayout.AdminButton>
