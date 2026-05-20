@@ -12,7 +12,7 @@
 
 .adm-panel a {
   color: var(--color-text-body);
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .adm-page-list {
@@ -80,13 +80,14 @@
   border: 1px solid var(--color-button-border);
   border-radius: 12px;
   box-shadow: 0 4px 20px var(--executive-card-shadow);
-  overflow: hidden;
+  overflow: auto;
 }
 
 .adm-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  min-width: 1100px;
 }
 .adm-table th {
   text-align: left;
@@ -181,6 +182,22 @@
   gap: 0.5rem;
   align-items: center;
 }
+
+.adm-table col.adm-col-id {
+  width: 80px;
+  min-width: 80px;
+}
+
+.adm-table col.adm-col-bool {
+  width: 120px;
+  min-width: 120px;
+}
+
+.adm-table col.adm-col-bool-wide {
+  width: 150px;
+  min-width: 150px;
+}
+
 :global(.dark) .adm-table th {
   background: var(--color-surface-light);
 }
