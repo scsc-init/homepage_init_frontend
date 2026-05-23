@@ -11,7 +11,11 @@ import type {
   NormalizedTarget,
 } from '@/types/system';
 import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user';
-import { fetchBackendServer, fetchBackendServerJson } from './server';
+import {
+  fetchBackendServer,
+  fetchBackendServerJson,
+  type FetchBackendServerOptions,
+} from './server';
 
 export interface TargetWithContentMembers extends BaseTarget {
   content: string;
@@ -83,12 +87,10 @@ export async function fetchGlobalStatus(): Promise<GlobalStatus> {
   return fetchBackendServerJson<GlobalStatus>('GET', '/api/scsc/global/status');
 }
 
-export async function fetchSCSCGlobalStatus(): Promise<GlobalStatus> {
-  return fetchGlobalStatus();
-}
-
-export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
-  const res = await fetchBackendServer('GET', '/api/user/profile');
+export async function fetchCurrentUserProfile(
+  options: FetchBackendServerOptions = {},
+): Promise<UserProfile | null> {
+  const res = await fetchBackendServer('GET', '/api/user/profile', options);
   return res.ok ? ((await res.json()) as UserProfile) : null;
 }
 

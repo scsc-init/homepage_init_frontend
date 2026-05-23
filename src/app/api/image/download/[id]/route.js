@@ -1,7 +1,8 @@
 import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_req, { params }) {
-  const id = encodeURIComponent(params.id);
+  const resolvedParams = await params;
+  const id = encodeURIComponent(resolvedParams.id);
 
   const res = await fetchBackendServer('GET', `/api/file/image/download/${id}`);
 

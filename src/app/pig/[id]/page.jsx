@@ -1,7 +1,7 @@
 import 'highlight.js/styles/github.css';
 import './page.css';
 import PigClient from './PigClient';
-import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 import { redirect } from 'next/navigation';
 
@@ -47,7 +47,11 @@ export default async function PigDetailPage({ params }) {
   const me = await fetchCurrentUserProfile();
   if (!me) redirect('/us/login');
 
-  const pig = await fetchBackendServerJson('GET', `/api/pig/${id}`);
+  const pigRes = await fetchBackendServer('GET', `/api/pig/${id}`);
+  if (!pigRes.ok) {
+    return <div className="p-6 text-center text-red-600">존재하지 않는 PIG입니다.</div>;
+  }
+  const pig = await pigRes.json();
 
   const rawMembers = pig.members ?? [];
   const members = Array.isArray(rawMembers)

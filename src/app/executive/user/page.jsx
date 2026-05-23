@@ -19,9 +19,9 @@ import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveUserPage() {
   const [kv, majors, me] = await Promise.all([
-    getKVValues(['main-president', 'vice-president']),
-    fetchBackendServerJson('GET', '/api/majors'),
-    fetchCurrentUserProfile(),
+    getKVValues(['main-president', 'vice-president']).catch(() => ({})),
+    fetchBackendServerJson('GET', '/api/majors').catch(() => []),
+    fetchCurrentUserProfile().catch(() => null),
   ]);
 
   const viewerRole = me?.role ?? 0;

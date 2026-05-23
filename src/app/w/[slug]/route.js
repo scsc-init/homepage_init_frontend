@@ -4,10 +4,14 @@ import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_, { params }) {
   try {
-    if (!params?.slug) {
+    const resolvedParams = await params;
+    if (!resolvedParams?.slug) {
       return await notFoundPage();
     }
-    const res = await fetchBackendServer('GET', `/api/w/${encodeURIComponent(params.slug)}`);
+    const res = await fetchBackendServer(
+      'GET',
+      `/api/w/${encodeURIComponent(resolvedParams.slug)}`,
+    );
     if (!res.ok) {
       return await notFoundPage();
     }
