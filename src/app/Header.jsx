@@ -3,12 +3,12 @@ import HeaderLeft from '@/components/header/HeaderLeft';
 import HeaderCenter from '@/components/header/HeaderCenter';
 import HeaderRight from '@/components/header/HeaderRight';
 import MobileMenuList from '@/components/header/MobileMenuList';
-import { fetchSCSCGlobalStatus } from '@/util/fetch/server-util';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import styles from './Header.module.css';
 
 export default async function Header() {
   noStore();
-  const [scscGlobalStatus] = await Promise.allSettled([fetchSCSCGlobalStatus()]);
+  const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
 
   return (
     <div>

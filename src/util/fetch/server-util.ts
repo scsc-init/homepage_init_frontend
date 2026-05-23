@@ -8,15 +8,10 @@ import type {
   GlobalStatus,
   KvFetchResponse,
   KvValueResult,
-  MajorInfo,
   NormalizedTarget,
 } from '@/types/system';
 import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user';
-import {
-  fetchBackendServer,
-  fetchBackendServerJson,
-  type FetchBackendServerOptions,
-} from './server';
+import { fetchBackendServer, fetchBackendServerJson } from './server';
 
 export interface TargetWithContentMembers extends BaseTarget {
   content: string;
@@ -84,40 +79,29 @@ function normalizeTarget(raw: Record<string, unknown>): NormalizedTarget {
   };
 }
 
-/** Fetches current SCSC global status. */
 export async function fetchGlobalStatus(): Promise<GlobalStatus> {
   return fetchBackendServerJson<GlobalStatus>('GET', '/api/scsc/global/status');
 }
 
-/** Backward-compatible alias for the existing page code name. */
 export async function fetchSCSCGlobalStatus(): Promise<GlobalStatus> {
   return fetchGlobalStatus();
 }
 
-/**
- * Fetches current login user.
- * If user does not login or error occur while fetching, then return null.
- */
-export async function fetchCurrentUserProfile(
-  options: FetchBackendServerOptions = {},
-): Promise<UserProfile | null> {
-  const res = await fetchBackendServer('GET', '/api/user/profile', options);
+export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
+  const res = await fetchBackendServer('GET', '/api/user/profile');
   return res.ok ? ((await res.json()) as UserProfile) : null;
 }
 
-/** Fetches all users. */
 export async function fetchUsers<T extends UserProfile[] = UserProfile[]>(): Promise<T> {
   return fetchBackendServerJson<T>('GET', '/api/executive/users');
 }
 
-/** Fetches executive user summaries. */
 export async function fetchUserSummaries<
   T extends UserSummary[] = UserSummary[],
 >(): Promise<T> {
   return fetchBackendServerJson<T>('GET', '/api/executive/users/summary');
 }
 
-/** Fetches board data. */
 export async function fetchBoards<T extends BoardInfo = BoardInfo>(
   boardIds: number[],
 ): Promise<PromiseSettledResult<T>[]> {
@@ -126,7 +110,6 @@ export async function fetchBoards<T extends BoardInfo = BoardInfo>(
   );
 }
 
-/** Fetches Discord bot status - logged in or not. */
 export async function fetchDiscordBotStatus(): Promise<boolean> {
   const body = await fetchBackendServerJson<DiscordBotStatusResponse>(
     'GET',
@@ -135,7 +118,6 @@ export async function fetchDiscordBotStatus(): Promise<boolean> {
   return body.logged_in === true;
 }
 
-/** Fetches executive candidates from executive and president lists. */
 export async function fetchExecutiveCandidates<
   T extends ExecutiveCandidate = ExecutiveCandidate,
 >(): Promise<T[]> {
@@ -163,7 +145,6 @@ export async function fetchExecutiveCandidates<
   return Array.from(merged.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }
 
-/** Gets multiple KV values in parallel. */
 export async function getKVValues(keys: string[]): Promise<Record<string, KvValueResult>> {
   const list = Array.isArray(keys) ? keys : [];
   const results = await Promise.allSettled(
@@ -185,7 +166,6 @@ export async function getKVValues(keys: string[]): Promise<Record<string, KvValu
   return out;
 }
 
-/** Fetches initial data for the SIG/PIG fund-apply create page. */
 export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCreateData> {
   const calcPrevTerm = (term?: AcademicTerm): AcademicTerm | undefined => {
     if (!term) return undefined;

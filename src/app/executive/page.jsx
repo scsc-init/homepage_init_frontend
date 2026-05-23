@@ -2,7 +2,7 @@ import WithAuthorization from '@/components/WithAuthorization';
 import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
-import { fetchSCSCGlobalStatus, fetchDiscordBotStatus } from '@/util/fetch/server-util';
+import { fetchGlobalStatus, fetchDiscordBotStatus } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 const adminPageLinks = [
@@ -50,7 +50,7 @@ const adminPageLinks = [
 
 export default async function AdminPanel() {
   const [scscGlobalStatus, discordBotStatus] = await Promise.allSettled([
-    fetchSCSCGlobalStatus(),
+    fetchGlobalStatus(),
     fetchDiscordBotStatus(),
   ]);
   const resolvedScscGlobalStatus =
