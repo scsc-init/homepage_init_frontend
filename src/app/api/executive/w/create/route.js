@@ -1,18 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function POST(request) {
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
-  const hdrs = {};
-  if (appJwt) hdrs['x-jwt'] = appJwt;
-
   const formData = await request.formData();
-  const res = await fetch(`${process.env.BACKEND_URL || ''}/api/executive/w/create`, {
-    method: 'POST',
-    headers: hdrs,
+  const res = await fetchBackendServer('POST', '/api/executive/w/create', {
     body: formData,
-    cache: 'no-store',
   });
   return res;
 }

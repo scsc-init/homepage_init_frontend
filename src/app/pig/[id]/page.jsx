@@ -1,19 +1,14 @@
 import 'highlight.js/styles/github.css';
 import './page.css';
 import PigClient from './PigClient';
-import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchMe } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   try {
-    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/pig/${id}`, {
-      method: 'GET',
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error();
-    const pig = await res.json();
+    const pig = await fetchBackendServerJson('GET', `/api/pig/${id}`);
     return {
       title: pig.title,
       description: pig.description || 'PIG 상세 페이지',
@@ -49,15 +44,10 @@ export async function generateMetadata({ params }) {
 export default async function PigDetailPage({ params }) {
   const { id } = await params;
 
-  const [me] = await Promise.allSettled([fetchMe()]);
+  const me = await fetchCurrentUserProfile();
+  if (!me) redirect('/us/login');
 
-  if (me.status === 'rejected') redirect('/us/login');
-
-  const pigRes = await handleApiRequest('GET', `/api/pig/${id}`);
-  if (!pigRes.ok) {
-    return <div className="p-6 text-center text-red-600">존재하지 않는 PIG입니다.</div>;
-  }
-  const pig = await pigRes.json();
+  const pig = await fetchBackendServerJson('GET', `/api/pig/${id}`);
 
   const rawMembers = pig.members ?? [];
   const members = Array.isArray(rawMembers)
@@ -71,7 +61,7 @@ export default async function PigDetailPage({ params }) {
       pig={pig}
       members={members}
       articleContent={article.content}
-      me={me.value}
+      me={me}
       pigId={id}
     />
   );

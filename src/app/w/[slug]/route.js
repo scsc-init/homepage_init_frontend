@@ -1,17 +1,13 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_, { params }) {
   try {
     if (!params?.slug) {
       return await notFoundPage();
     }
-    const res = await fetch(
-      `${process.env.BACKEND_URL || ''}/api/w/${encodeURIComponent(params.slug)}`,
-      {
-        cache: 'no-store',
-      },
-    );
+    const res = await fetchBackendServer('GET', `/api/w/${encodeURIComponent(params.slug)}`);
     if (!res.ok) {
       return await notFoundPage();
     }

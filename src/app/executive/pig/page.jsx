@@ -1,12 +1,13 @@
 // src/app/executive/pig/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import PigList from './PigList';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchUsers } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage() {
   const [pigMetas, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/pigs`),
+    fetchBackendServerJson('GET', '/api/pigs'),
     fetchUsers(),
   ]);
   if (pigMetas.status !== 'fulfilled' || users.status !== 'fulfilled') return null;

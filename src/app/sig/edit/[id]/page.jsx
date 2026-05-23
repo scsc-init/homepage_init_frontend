@@ -1,18 +1,20 @@
 import EditSigClient from './EditSigClient';
 import './page.css';
-import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchMe } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 import { redirect } from 'next/navigation';
 
 export const metadata = { title: 'SIG' };
 
 export default async function EditSigPage({ params }) {
   const { id } = await params;
-  const [me] = await Promise.allSettled([fetchMe()]);
-  if (me.status === 'rejected') redirect('/us/login');
+  const me = await fetchCurrentUserProfile();
+  if (!me) redirect('/us/login');
 
-  const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);
-  if (!sigRes.ok) {
+  let sig;
+  try {
+    sig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
+  } catch {
     return (
       <div className="CreateSigContainer">
         <div className="CreateSigHeader">
@@ -22,9 +24,8 @@ export default async function EditSigPage({ params }) {
       </div>
     );
   }
-  const sig = await sigRes.json();
 
   const article = sig.content ?? { content: '' };
 
-  return <EditSigClient sigId={id} me={me.value} sig={sig} article={article} />;
+  return <EditSigClient sigId={id} me={me} sig={sig} article={article} />;
 }

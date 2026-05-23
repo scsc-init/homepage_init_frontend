@@ -1,5 +1,6 @@
 // app/board/[id]/create/page.jsx
 import CreateBoardArticleClient from './CreateBoardArticleClient';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export default async function CreateBoardPage({ params, searchParams }) {
   const resolvedParams = await params;
@@ -11,8 +12,6 @@ export default async function CreateBoardPage({ params, searchParams }) {
 }
 
 async function fetchBoardInfo(boardId) {
-  const res = await fetch(`${process.env.BACKEND_URL || ''}/api/board/${boardId}`, {
-    cache: 'no-store',
-  });
+  const res = await fetchBackendServer('GET', `/api/board/${boardId}`);
   if (res.ok) return res.json();
 }

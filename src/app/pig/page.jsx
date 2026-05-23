@@ -1,11 +1,15 @@
 import PigListClient from './PigListClient';
 import './page.css';
-import { safeFetch, fetchMe } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 
 export const metadata = { title: 'PIG' };
 
 export default async function PigListPage() {
-  const [pigs, me] = await Promise.allSettled([safeFetch('GET', '/api/pigs'), fetchMe()]);
+  const [pigs, me] = await Promise.allSettled([
+    fetchBackendServerJson('GET', '/api/pigs'),
+    fetchCurrentUserProfile(),
+  ]);
 
   if (pigs.status === 'rejected') {
     return <div>피그 정보를 불러올 수 없습니다.</div>;

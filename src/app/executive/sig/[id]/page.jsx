@@ -2,12 +2,13 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import SigEdit from './SigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchUsers } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage({ params }) {
   const [sigMeta, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/sig/${(await params).id}`),
+    fetchBackendServerJson('GET', `/api/sig/${(await params).id}`),
     fetchUsers(),
   ]);
   if (sigMeta.status !== 'fulfilled') {

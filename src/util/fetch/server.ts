@@ -3,7 +3,6 @@
 import 'server-only';
 
 import { getServerSession, type Session } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
 
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 const BACKEND_URL: string = process.env.BACKEND_URL || '';
@@ -14,6 +13,8 @@ export interface FetchBackendServerOptions {
   query?: Record<string, string | number | boolean | null | undefined>;
   headers?: Record<string, string>;
   body?: unknown;
+  skipSession?: boolean;
+  signal?: AbortSignal;
 }
 
 /** Builds a query string from key-value pairs, skipping null and undefined values. */
@@ -84,7 +85,9 @@ export async function fetchBackendServer(
   options: FetchBackendServerOptions = {},
   request?: Request,
 ): Promise<Response> {
-  const session: Session | null = await getServerSession(authOptions);
+  const session: Session | null = options.skipSession
+    ? null
+    : await getServerSession((await import('@/util/authOptions')).authOptions);
   const backendJwt = session?.backendJwt || null;
   const params = options.params;
 
@@ -131,6 +134,7 @@ export async function fetchBackendServer(
     headers,
     body: encodedBody,
     cache: 'no-store',
+    signal: options.signal,
   });
 }
 

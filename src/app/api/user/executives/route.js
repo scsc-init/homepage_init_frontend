@@ -1,30 +1,18 @@
 import { NextResponse } from 'next/server';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export const dynamic = 'force-dynamic';
 
-function getBackendBase() {
-  const base = (process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '').trim();
-  if (!base) return '';
-  return base.replace(/\/+$/, '');
-}
-
 export async function GET(request) {
-  const backendBase = getBackendBase();
-  if (!backendBase) {
-    return NextResponse.json({ detail: 'BACKEND_URL is not set' }, { status: 500 });
-  }
-
   const url = new URL(request.url);
-  const target = `${backendBase}/api/user/executives${url.search || ''}`;
 
   let res;
   try {
-    res = await fetch(target, {
-      method: 'GET',
+    res = await fetchBackendServer('GET', '/api/user/executives', {
       headers: {
         accept: 'application/json',
       },
-      cache: 'no-store',
+      query: Object.fromEntries(url.searchParams.entries()),
     });
   } catch (_e) {
     return NextResponse.json({ detail: 'Failed to reach backend' }, { status: 502 });

@@ -1,7 +1,7 @@
 // app/sig/create/page.jsx
 import CreateSigClient from './CreateSigClient';
 import './page.css';
-import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
+import { fetchSCSCGlobalStatus } from '@/util/fetch/server-util';
 
 export const metadata = { title: 'SIG' };
 

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import AuthClient from './AuthClient';
-import { fetchMe } from '@/util/fetchAPIData';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 
 export default async function LoginPage(props) {
   const searchParams = await props.searchParams;
@@ -10,8 +10,8 @@ export default async function LoginPage(props) {
       ? searchParams.redirect
       : null;
 
-  const [me] = await Promise.allSettled([fetchMe()]);
-  if (me.status === 'fulfilled') redirect('/api/auth/consume-redirect');
+  const me = await fetchCurrentUserProfile();
+  if (me) redirect('/api/auth/consume-redirect');
 
   return <AuthClient initialRedirect={redirectTo} />;
 }

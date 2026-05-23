@@ -4,15 +4,12 @@ import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
 import { DISCORD_INVITE_LINK } from '@/util/constants';
-
-const BACKEND_URL = process.env.BACKEND_URL || '';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 async function fetchKvValue(key) {
   try {
     const encoded_key = encodeURIComponent(key);
-    const res = await fetch(`${BACKEND_URL}/api/kv/${encoded_key}`, {
-      cache: 'no-store',
-    });
+    const res = await fetchBackendServer('GET', `/api/kv/${encoded_key}`);
     if (!res.ok) return '';
     const body = await res.json().catch(() => null);
     return typeof body?.value === 'string' ? body.value : '';

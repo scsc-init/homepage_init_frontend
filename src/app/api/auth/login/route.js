@@ -1,8 +1,22 @@
 import { NextResponse } from 'next/server';
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { fetchBackendServer } from '@/util/fetch/server';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 
 export async function POST(request) {
-  const res = await handleApiRequest('POST', '/api/user/login', {}, request);
+  const backendUrl = process.env.BACKEND_URL;
+  const apiSecret = process.env.API_SECRET;
+
+  if (!backendUrl || !apiSecret) {
+    console.error('BACKEND_URL or API_SECRET is missing');
+    return NextResponse.json({ error: 'server misconfigured' }, { status: 500 });
+  }
+
+  const res = await fetchBackendServer(
+    'POST',
+    '/api/user/login',
+    { skipSession: true },
+    request,
+  );
 
   if (!res.ok) {
     return NextResponse.json({ error: 'login failed' }, { status: 400 });
@@ -18,28 +32,18 @@ export async function POST(request) {
 
   if (!jwt) return NextResponse.json({ error: 'login failed' }, { status: 400 });
 
-  const backendUrl = process.env.BACKEND_URL;
-  const apiSecret = process.env.API_SECRET;
-
-  if (!backendUrl || !apiSecret) {
-    console.error('BACKEND_URL or API_SECRET is missing');
-    return NextResponse.json({ error: 'server misconfigured' }, { status: 500 });
-  }
-
   let userProfile = null;
 
   try {
-    const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
-      method: 'GET',
+    const userData = await fetchCurrentUserProfile({
+      skipSession: true,
       headers: {
         'x-jwt': jwt,
         'x-api-secret': apiSecret,
       },
-      cache: 'no-store',
     });
 
-    if (profileRes.ok) {
-      const userData = await profileRes.json();
+    if (userData) {
       const profilePictureSrc = userData.profile_picture_is_url
         ? userData.profile_picture
         : userData.profile_picture

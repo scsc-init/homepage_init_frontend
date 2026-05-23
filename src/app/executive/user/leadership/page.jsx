@@ -3,12 +3,13 @@ export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
-import { fetchUsers, fetchMajors, fetchMe } from '@/util/fetchAPIData';
+import { fetchUsers, fetchCurrentUserProfile } from '@/util/fetch/server-util';
+import { fetchBackendServerJson } from '@/util/fetch/server';
 import { redirect } from 'next/navigation';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveLeadershipPage() {
-  const me = await fetchMe().catch(() => null);
+  const me = await fetchCurrentUserProfile();
 
   if (!me) {
     redirect('/login?redirect=/executive/user/leadership');
@@ -20,7 +21,7 @@ export default async function ExecutiveLeadershipPage() {
   }
 
   const [majors, executiveUsers] = await Promise.all([
-    fetchMajors().catch(() => []),
+    fetchBackendServerJson('GET', '/api/majors').catch(() => []),
     fetchUsers().catch(() => []),
   ]);
 

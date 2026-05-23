@@ -12,16 +12,16 @@ import {
   fetchExecutiveCandidates,
   fetchUsers,
   fetchUserSummaries,
-  fetchMajors,
-  fetchMe,
-} from '@/util/fetchAPIData';
+  fetchCurrentUserProfile,
+} from '@/util/fetch/server-util';
+import { fetchBackendServerJson } from '@/util/fetch/server';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveUserPage() {
   const [kv, majors, me] = await Promise.all([
     getKVValues(['main-president', 'vice-president']),
-    fetchMajors(),
-    fetchMe().catch(() => null),
+    fetchBackendServerJson('GET', '/api/majors'),
+    fetchCurrentUserProfile(),
   ]);
 
   const viewerRole = me?.role ?? 0;

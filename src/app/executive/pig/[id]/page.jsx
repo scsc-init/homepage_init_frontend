@@ -2,12 +2,13 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import PigEdit from './PigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchUsers } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage({ params }) {
   const [pigMeta, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/pig/${(await params).id}`),
+    fetchBackendServerJson('GET', `/api/pig/${(await params).id}`),
     fetchUsers(),
   ]);
   if (pigMeta.status !== 'fulfilled') {

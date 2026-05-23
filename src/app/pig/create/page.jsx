@@ -1,7 +1,7 @@
 // app/pig/create/page.jsx
 import CreatePigClient from './CreatePigClient';
 import './page.css';
-import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
+import { fetchSCSCGlobalStatus } from '@/util/fetch/server-util';
 
 export const metadata = { title: 'PIG' };
 

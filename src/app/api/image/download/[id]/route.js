@@ -1,21 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_req, { params }) {
   const id = encodeURIComponent(params.id);
-  const base = process.env.BACKEND_URL || '';
-  const url = `${base}/api/file/image/download/${id}`;
 
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
-
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      ...(appJwt ? { 'x-jwt': appJwt } : {}),
-    },
-    cache: 'no-store',
-  });
+  const res = await fetchBackendServer('GET', `/api/file/image/download/${id}`);
 
   return new Response(res.body, {
     status: res.status,

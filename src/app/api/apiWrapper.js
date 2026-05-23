@@ -1,6 +1,4 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
-import { ENABLE_TEST_UTILS } from '@/util/constants';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 /**
  * Handles forwarding requests to an internal API.
@@ -13,42 +11,13 @@ import { ENABLE_TEST_UTILS } from '@/util/constants';
  * @returns {Promise<Response>} - A Next.js Response object.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
-  const apiSecret = process.env.API_SECRET || '';
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
-  const params = await options.params;
-
-  let fullPath = pathTemplate;
-  if (params) {
-    for (const key of Object.keys(params)) {
-      const encoded = encodeURIComponent(String(params[key]));
-      fullPath = fullPath.replaceAll(`{${key}}`, encoded);
-    }
-  }
-  if (options.query) {
-    const qs = new URLSearchParams(options.query).toString();
-    if (qs) fullPath += `?${qs}`;
-  }
-  const FULL_URL_PATH = `${process.env.BACKEND_URL || ''}${fullPath}`;
-
-  const hasIncoming = Boolean(request);
-  const bodyJson = hasIncoming ? await request.json() : undefined;
-
-  const hdrs = {};
-  if (
-    fullPath.startsWith('/api/user/login') ||
-    fullPath.startsWith('/api/user/create') ||
-    (ENABLE_TEST_UTILS && fullPath.startsWith('/api/test'))
-  ) {
-    hdrs['x-api-secret'] = apiSecret;
-  }
-  if (appJwt) hdrs['x-jwt'] = appJwt;
-  if (bodyJson !== undefined) hdrs['Content-Type'] = 'application/json';
-
-  return fetch(FULL_URL_PATH, {
+  return fetchBackendServer(
     method,
-    headers: hdrs,
-    body: bodyJson !== undefined ? JSON.stringify(bodyJson) : undefined,
-    cache: 'no-store',
-  });
+    pathTemplate,
+    {
+      ...options,
+      params: await options.params,
+    },
+    request,
+  );
 }

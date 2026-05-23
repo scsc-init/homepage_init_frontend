@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
@@ -7,13 +7,12 @@ import styles from '../about.module.css';
 const WELCOME_LOGIN_PATH = '/about/welcome';
 
 export default async function WelcomePage() {
-  const res = await handleApiRequest('GET', '/api/user/profile');
+  const profile = await fetchCurrentUserProfile();
 
-  if (!res.ok) {
+  if (!profile) {
     redirect(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
   }
 
-  const profile = await res.json();
   const isInactive = !profile || !profile.is_active;
 
   return (

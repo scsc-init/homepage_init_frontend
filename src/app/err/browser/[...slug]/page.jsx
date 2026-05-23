@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import InAppBrowser from './InAppBrowser';
-import { fetchMe } from '@/util/fetchAPIData';
+import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 
 export default async function BrowserPage(props) {
   const params = await props.params;
@@ -8,9 +8,9 @@ export default async function BrowserPage(props) {
 
   const redirectTo = typeof searchParams?.redirect === 'string' ? searchParams.redirect : null;
 
-  const [me] = await Promise.allSettled([fetchMe()]);
+  const me = await fetchCurrentUserProfile();
 
-  if (me.status === 'fulfilled') {
+  if (me) {
     redirect('/api/auth/consume-redirect');
   }
 
