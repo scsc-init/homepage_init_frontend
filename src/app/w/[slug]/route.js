@@ -11,8 +11,8 @@ export async function GET(request, { params }) {
       {
         cache: 'no-store',
         headers: {
-          'X-Forwarded-User-Agent': request.headers.get('user-agent'),
-          'X-Forwarded-Sec-Fetch-Mode': request.headers.get('sec-fetch-mode'),
+          'X-Forwarded-User-Agent': request.headers.get('user-agent') ?? '',
+          'X-Forwarded-Sec-Fetch-Mode': request.headers.get('sec-fetch-mode') ?? '',
         },
       },
     );
