@@ -7,6 +7,7 @@ import * as AdminLayout from '@/components/AdminLayout';
 
 export default function WList({ wMetas }) {
   const [isBusy, setIsBusy] = useState(false);
+  const [createName, setCreateName] = useState('');
   const router = useRouter();
 
   const handleCreate = async (e) => {
@@ -19,6 +20,9 @@ export default function WList({ wMetas }) {
     }
     const form = new FormData();
     form.append('file', file);
+    if (createName.trim()) {
+      form.append('name', createName.trim());
+    }
     try {
       const res = await fetch(`/api/executive/w/create`, {
         method: 'POST',
@@ -29,6 +33,7 @@ export default function WList({ wMetas }) {
         alert('파일 처리 실패: ' + err.detail);
       } else {
         router.refresh();
+        setCreateName('');
         alert('파일 처리 성공');
       }
     } catch {
@@ -50,7 +55,7 @@ export default function WList({ wMetas }) {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/update`, {
+      const res = await fetch(toClientPath('/api/executive/w/update', name), {
         method: 'POST',
         body: form,
       });
@@ -73,7 +78,7 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/delete`, {
+      const res = await fetch(toClientPath('/api/executive/w/delete', name), {
         method: 'POST',
       });
       if (res.status !== 204) {
@@ -94,7 +99,7 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/download`);
+      const res = await fetch(toClientPath('/api/executive/w/download', name));
       if (!res.ok) throw new Error('download failed');
 
       const blob = await res.blob();
@@ -102,7 +107,7 @@ export default function WList({ wMetas }) {
       try {
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${name}.html`;
+        a.download = `${name.replaceAll('/', '__')}.html`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -139,7 +144,7 @@ export default function WList({ wMetas }) {
               {wMetas.map((w) => (
                 <tr key={w[0].name}>
                   <td>
-                    <Link href={`/w/${encodeURIComponent(w[0].name)}`}>{w[0].name}</Link>
+                    <Link href={toClientPath('/w', w[0].name)}>{w[0].name}</Link>
                   </td>
                   <td>{w[1]}</td>
                   <td>{w[0].size}</td>
@@ -186,6 +191,13 @@ export default function WList({ wMetas }) {
         <p>파일명이 이름으로 지정됩니다</p>
         <AdminLayout.AdminActions>
           <input
+            type="text"
+            placeholder="예: scpc2026/sponsors"
+            value={createName}
+            onChange={(e) => setCreateName(e.target.value)}
+            disabled={isBusy}
+          />
+          <input
             type="file"
             title=" "
             accept=".html"
@@ -196,4 +208,9 @@ export default function WList({ wMetas }) {
       </AdminLayout.AdminSection>
     </div>
   );
+}
+
+function toClientPath(basePath, name) {
+  const segments = name.split('/').map(encodeURIComponent).join('/');
+  return `${basePath}/${segments}`;
 }
