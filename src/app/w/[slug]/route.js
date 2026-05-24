@@ -16,7 +16,21 @@ export async function GET(_, { params }) {
       return await notFoundPage();
     }
     const html = await res.text();
-    return new Response(html, {
+
+    const viewFetchScript = `
+    <script>
+      fetch('/api/w/${encodeURIComponent(params.slug)}/view',
+        {
+          method: 'POST',
+          keepalive: true,
+        }
+      );
+    </script>
+    `;
+
+    const modifiedHtml = html.replace('</body>', `${viewFetchScript}</body>`);
+
+    return new Response(modifiedHtml, {
       status: res.status,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
