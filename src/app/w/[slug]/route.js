@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-export async function GET(_, { params }) {
+export async function GET(request, { params }) {
   try {
     if (!params?.slug) {
       return await notFoundPage();
@@ -10,27 +10,17 @@ export async function GET(_, { params }) {
       `${process.env.BACKEND_URL || ''}/api/w/${encodeURIComponent(params.slug)}`,
       {
         cache: 'no-store',
+        headers: {
+          'X-Forwarded-User-Agent': request.headers.get('user-agent'),
+          'X-Forwarded-Sec-Fetch-Mode': request.headers.get('sec-fetch-mode'),
+        },
       },
     );
     if (!res.ok) {
       return await notFoundPage();
     }
     const html = await res.text();
-
-    const viewFetchScript = `
-    <script>
-      fetch('/api/w/${encodeURIComponent(params.slug)}/view',
-        {
-          method: 'POST',
-          keepalive: true,
-        }
-      );
-    </script>
-    `;
-
-    const modifiedHtml = html.replace('</body>', `${viewFetchScript}</body>`);
-
-    return new Response(modifiedHtml, {
+    return new Response(html, {
       status: res.status,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
