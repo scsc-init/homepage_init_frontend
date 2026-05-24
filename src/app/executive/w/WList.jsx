@@ -188,7 +188,7 @@ export default function WList({ wMetas }) {
 
       <AdminLayout.AdminSection>
         <h3>HTML 파일 업로드</h3>
-        <p>경로를 비워두면 파일명이 이름으로 지정됩니다</p>
+        <p>파일명이 이름으로 지정됩니다</p>
         <AdminLayout.AdminActions>
           <input
             type="text"
