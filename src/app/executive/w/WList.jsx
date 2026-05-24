@@ -134,6 +134,7 @@ export default function WList({ wMetas }) {
                 <th>파일크기(Bytes)</th>
                 <th>생성시각</th>
                 <th>수정시각</th>
+                <th>조회수</th>
                 <th>수정버튼</th>
                 <th>다운로드버튼</th>
                 <th>삭제버튼</th>
@@ -149,6 +150,7 @@ export default function WList({ wMetas }) {
                   <td>{w[0].size}</td>
                   <td>{utc2kst(w[0].created_at)}</td>
                   <td>{utc2kst(w[0].updated_at)}</td>
+                  <td>{w[0].view_cnt}</td>
                   <td>
                     <input
                       type="file"

@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-export async function GET(_, { params }) {
+export async function GET(request, { params }) {
   try {
     const resolvedParams = await params;
     const slug = normalizeSlug(resolvedParams?.slug);
@@ -10,6 +10,10 @@ export async function GET(_, { params }) {
     }
     const res = await fetch(`${process.env.BACKEND_URL || ''}/api/w/${encodePathValue(slug)}`, {
       cache: 'no-store',
+      headers: {
+        'X-Forwarded-User-Agent': request.headers.get('user-agent') ?? '',
+        'X-Forwarded-Sec-Fetch-Mode': request.headers.get('sec-fetch-mode') ?? '',
+      },
     });
     if (!res.ok) {
       return await notFoundPage();
