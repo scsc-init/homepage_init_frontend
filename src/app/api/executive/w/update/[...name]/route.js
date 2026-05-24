@@ -7,9 +7,10 @@ export async function POST(request, { params }) {
   const hdrs = {};
   if (appJwt) hdrs['x-jwt'] = appJwt;
 
+  const name = normalizeName(params?.name);
   const formData = await request.formData();
   const res = await fetch(
-    `${process.env.BACKEND_URL || ''}/api/executive/w/${encodeURIComponent(params['name'])}/update`,
+    `${process.env.BACKEND_URL || ''}/api/executive/w/${encodePathValue(name)}/update`,
     {
       method: 'POST',
       headers: hdrs,
@@ -18,4 +19,13 @@ export async function POST(request, { params }) {
     },
   );
   return res;
+}
+
+function normalizeName(name) {
+  if (Array.isArray(name)) return name.join('/');
+  return name || '';
+}
+
+function encodePathValue(value) {
+  return value.split('/').map(encodeURIComponent).join('/');
 }

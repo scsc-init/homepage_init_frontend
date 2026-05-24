@@ -8,13 +8,12 @@ export async function GET(_, { params }) {
     return Response.json({ detail: 'Unauthorized' }, { status: 401 });
   }
 
+  const name = normalizeName(params?.name);
   const hdrs = {};
   hdrs['x-jwt'] = appJwt;
 
   const res = await fetch(
-    `${process.env.BACKEND_URL || ''}/api/executive/w/${encodeURIComponent(
-      params['name'],
-    )}/download`,
+    `${process.env.BACKEND_URL || ''}/api/executive/w/${encodePathValue(name)}/download`,
     {
       method: 'GET',
       headers: hdrs,
@@ -28,7 +27,17 @@ export async function GET(_, { params }) {
     headers: {
       'Content-Type': res.headers.get('Content-Type') || 'text/html',
       'Content-Disposition':
-        res.headers.get('Content-Disposition') || `attachment; filename="${params.name}.html"`,
+        res.headers.get('Content-Disposition') ||
+        `attachment; filename="${name.replaceAll('/', '__')}.html"`,
     },
   });
+}
+
+function normalizeName(name) {
+  if (Array.isArray(name)) return name.join('/');
+  return name || '';
+}
+
+function encodePathValue(value) {
+  return value.split('/').map(encodeURIComponent).join('/');
 }

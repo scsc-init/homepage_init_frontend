@@ -3,15 +3,13 @@ import path from 'path';
 
 export async function GET(_, { params }) {
   try {
-    if (!params?.slug) {
+    const slug = normalizeSlug(params?.slug);
+    if (!slug) {
       return await notFoundPage();
     }
-    const res = await fetch(
-      `${process.env.BACKEND_URL || ''}/api/w/${encodeURIComponent(params.slug)}`,
-      {
-        cache: 'no-store',
-      },
-    );
+    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/w/${encodePathValue(slug)}`, {
+      cache: 'no-store',
+    });
     if (!res.ok) {
       return await notFoundPage();
     }
@@ -46,4 +44,13 @@ async function notFoundPage() {
       'X-Content-Type-Options': 'nosniff',
     },
   });
+}
+
+function normalizeSlug(slug) {
+  if (Array.isArray(slug)) return slug.join('/');
+  return slug || '';
+}
+
+function encodePathValue(value) {
+  return value.split('/').map(encodeURIComponent).join('/');
 }
