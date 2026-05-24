@@ -2,20 +2,50 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { fetchMeClient } from '@/util/fetchClientData';
 import { minExecutiveLevel } from '@/util/constants';
+import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util/loginRedirect';
 import styles from '@/app/Header.module.css';
 
+function getLoginHrefFromCurrentPage() {
+  if (typeof window === 'undefined') return '/us/login';
+
+  const { pathname, search } = window.location;
+  const currentPath = `${pathname}${search || ''}`;
+
+  const shouldPreserveCurrentPath =
+    isSafeInternalPath(currentPath) &&
+    !isLoginPath(pathname) &&
+    !pathname.startsWith('/api') &&
+    pathname !== '/us/register' &&
+    pathname !== '/us/login/callback';
+
+  return shouldPreserveCurrentPath
+    ? `/us/login?redirect=${encodeURIComponent(currentPath)}`
+    : '/us/login';
+}
+
 export default function HeaderRight() {
+  const router = useRouter();
+
   const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
 
   useEffect(() => {
     fetchMeClient().then(setUser);
   }, []);
+
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);
+
+  function handleLoginClick(event) {
+    event.preventDefault();
+
+    clearRedirectAfterLogin();
+    router.push(getLoginHrefFromCurrentPage());
+  }
 
   return (
     <div>
@@ -23,7 +53,7 @@ export default function HeaderRight() {
 
       {user === null && (
         <div className={styles.rightLogin}>
-          <Link href="/us/login" className="unset decorateNone">
+          <Link href="/us/login" onClick={handleLoginClick} className="unset decorateNone">
             가입 / 로그인
           </Link>
         </div>

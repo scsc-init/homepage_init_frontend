@@ -120,6 +120,17 @@ function clearCookie(name: string): void {
 }
 
 /**
+ * 저장된 로그인 후 리다이렉트 대상을 삭제합니다.
+ */
+export function clearRedirectAfterLogin(): void {
+  clearCookie(REDIRECT_COOKIE);
+  debugLog('clear_redirect_after_login', {
+    cookie: REDIRECT_COOKIE,
+    documentCookie: typeof document !== 'undefined' ? document.cookie : null,
+  });
+}
+
+/**
  * 로그인 후 돌아갈 경로를 쿠키에 저장합니다.
  *
  * @param path - Redirect target
