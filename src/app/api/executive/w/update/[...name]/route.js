@@ -7,7 +7,8 @@ export async function POST(request, { params }) {
   const hdrs = {};
   if (appJwt) hdrs['x-jwt'] = appJwt;
 
-  const name = normalizeName(params?.name);
+  const resolvedParams = await params;
+  const name = normalizeName(resolvedParams?.name);
   const formData = await request.formData();
   const res = await fetch(
     `${process.env.BACKEND_URL || ''}/api/executive/w/${encodePathValue(name)}/update`,

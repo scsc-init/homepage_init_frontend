@@ -3,7 +3,8 @@ import path from 'path';
 
 export async function GET(_, { params }) {
   try {
-    const slug = normalizeSlug(params?.slug);
+    const resolvedParams = await params;
+    const slug = normalizeSlug(resolvedParams?.slug);
     if (!slug) {
       return await notFoundPage();
     }

@@ -8,7 +8,8 @@ export async function GET(_, { params }) {
     return Response.json({ detail: 'Unauthorized' }, { status: 401 });
   }
 
-  const name = normalizeName(params?.name);
+  const resolvedParams = await params;
+  const name = normalizeName(resolvedParams?.name);
   const hdrs = {};
   hdrs['x-jwt'] = appJwt;
 
