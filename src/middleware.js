@@ -74,9 +74,7 @@ const publicRoutes = [
   '/',
   '/board/1',
   '/board/2',
-  '/board/3',
   '/about',
-  '/about/welcome',
   '/about/executives',
   '/about/developers',
   '/about/rules',
@@ -84,7 +82,6 @@ const publicRoutes = [
   '/pig',
   '/us/contact',
   '/us/login',
-  '/us/fund-apply/create',
 ];
 
 export const config = {
