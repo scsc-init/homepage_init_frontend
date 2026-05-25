@@ -1,5 +1,6 @@
 import './page.css';
 import RefreshJWTClient from './RefreshJWTClient';
+import { MainLogoImage } from '@/components/common/MainLogoImage';
 
 export default function HomePage() {
   return (
@@ -29,7 +30,13 @@ export default function HomePage() {
           />
         </picture>
       </div>
+
       <RefreshJWTClient />
+
+      <div className="main-logo-wrapper">
+        <MainLogoImage className="main-logo logo" loading="eager" />
+        <p className="main-logo-description">Seoul National University Computer Study Club</p>
+      </div>
     </main>
   );
 }
