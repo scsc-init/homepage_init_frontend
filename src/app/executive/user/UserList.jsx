@@ -3,6 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useMemo, useState, useEffect } from 'react';
 import ExportUsersButton from './ExportUsersButton';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const [filter, setFilter] = useState({
@@ -78,8 +79,8 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
     <div>
       <h3>Read 테이블</h3>
       <p>전화번호/학번 없이 기본 정보와 입금 여부만 확인할 수 있습니다.</p>
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminTable>
           <thead>
             <tr>
               <th>이름</th>
@@ -90,15 +91,13 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
             </tr>
             <tr>
               <td>
-                <input
-                  className="adm-input"
+                <AdminLayout.AdminInput
                   value={filter.name}
                   onChange={(e) => updateFilter('name', e.target.value)}
                 />
               </td>
               <td>
-                <select
-                  className="adm-select"
+                <AdminLayout.AdminSelect
                   value={filter.major}
                   onChange={(e) => updateFilter('major', e.target.value)}
                 >
@@ -108,18 +107,16 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                       {m.college} - {m.major_name}
                     </option>
                   ))}
-                </select>
+                </AdminLayout.AdminSelect>
               </td>
               <td>
-                <input
-                  className="adm-input"
+                <AdminLayout.AdminInput
                   value={filter.role}
                   onChange={(e) => updateFilter('role', e.target.value)}
                 />
               </td>
               <td>
-                <select
-                  className="adm-select"
+                <AdminLayout.AdminSelect
                   value={filter.status}
                   onChange={(e) => updateFilter('status', e.target.value)}
                 >
@@ -127,7 +124,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   <option value="active">active</option>
                   <option value="inactive">inactive</option>
                   <option value="banned">banned</option>
-                </select>
+                </AdminLayout.AdminSelect>
               </td>
               <td></td>
             </tr>
@@ -142,20 +139,20 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   <td>{roleLabel(user.role)}</td>
                   <td>{status}</td>
                   <td>
-                    <button
-                      className="adm-button outline"
+                    <AdminLayout.AdminButton
+                      className="outline"
                       onClick={() => manualEnroll(user)}
                       disabled={saving[user.id]}
                     >
                       입금 확인
-                    </button>
+                    </AdminLayout.AdminButton>
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </table>
-      </div>
+        </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableWrap>
     </div>
   );
 }
@@ -265,8 +262,8 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       <h3>회장단 전용 테이블</h3>
       <p>아래 버튼을 눌러 csv파일을 다운 받으세요.</p>
       <ExportUsersButton allUsers={users} filteredUsers={filteredUsers} />
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminTable>
           <thead>
             <tr>
               <th>이름</th>
@@ -280,15 +277,13 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
             </tr>
             <tr>
               <td>
-                <input
-                  className="adm-input"
+                <AdminLayout.AdminInput
                   value={filter.name}
                   onChange={(e) => updateFilterCriteria('name', e.target.value)}
                 />
               </td>
               <td>
-                <select
-                  className="adm-select"
+                <AdminLayout.AdminSelect
                   value={filter.major}
                   onChange={(e) => updateFilterCriteria('major', e.target.value)}
                 >
@@ -298,32 +293,28 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                       {m.college} - {m.major_name}
                     </option>
                   ))}
-                </select>
+                </AdminLayout.AdminSelect>
               </td>
               <td>
-                <input
-                  className="adm-input"
+                <AdminLayout.AdminInput
                   value={filter.phone}
                   onChange={(e) => updateFilterCriteria('phone', e.target.value)}
                 />
               </td>
               <td>
-                <input
-                  className="adm-input"
+                <AdminLayout.AdminInput
                   value={filter.student_id}
                   onChange={(e) => updateFilterCriteria('student_id', e.target.value)}
                 />
               </td>
               <td>
-                <input
-                  className="adm-input"
+                <AdminLayout.AdminInput
                   value={filter.role}
                   onChange={(e) => updateFilterCriteria('role', e.target.value)}
                 />
               </td>
               <td>
-                <select
-                  className="adm-select"
+                <AdminLayout.AdminSelect
                   value={filter.status}
                   onChange={(e) => updateFilterCriteria('status', e.target.value)}
                 >
@@ -331,7 +322,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   <option value="active">active</option>
                   <option value="inactive">inactive</option>
                   <option value="banned">banned</option>
-                </select>
+                </AdminLayout.AdminSelect>
               </td>
               <td colSpan={2}></td>
             </tr>
@@ -340,15 +331,13 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
             {filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td>
-                  <input
-                    className="adm-input"
+                  <AdminLayout.AdminInput
                     value={user.name}
                     onChange={(e) => updateUserField(user.id, 'name', e.target.value)}
                   />
                 </td>
                 <td>
-                  <select
-                    className="adm-select"
+                  <AdminLayout.AdminSelect
                     value={user.major_id}
                     onChange={(e) =>
                       updateUserField(user.id, 'major_id', Number(e.target.value))
@@ -360,25 +349,22 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                         {m.college} - {m.major_name}
                       </option>
                     ))}
-                  </select>
+                  </AdminLayout.AdminSelect>
                 </td>
                 <td>
-                  <input
-                    className="adm-input"
+                  <AdminLayout.AdminInput
                     value={user.phone || ''}
                     onChange={(e) => updateUserField(user.id, 'phone', e.target.value)}
                   />
                 </td>
                 <td>
-                  <input
-                    className="adm-input"
+                  <AdminLayout.AdminInput
                     value={user.student_id || ''}
                     onChange={(e) => updateUserField(user.id, 'student_id', e.target.value)}
                   />
                 </td>
                 <td>
-                  <select
-                    className="adm-select"
+                  <AdminLayout.AdminSelect
                     value={roleNumberToString(user.role)}
                     onChange={(e) => updateUserField(user.id, 'role', e.target.value)}
                   >
@@ -389,38 +375,36 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     <option value="newcomer">준회원</option>
                     <option value="dormant">휴회원</option>
                     <option value="lowest">최저권한</option>
-                  </select>
+                  </AdminLayout.AdminSelect>
                 </td>
                 <td>
-                  <select
-                    className="adm-select"
+                  <AdminLayout.AdminSelect
                     value={user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive'}
                     onChange={(e) => updateUserStatus(user.id, e.target.value)}
                   >
                     <option value="active">active</option>
                     <option value="inactive">inactive</option>
                     <option value="banned">banned</option>
-                  </select>
+                  </AdminLayout.AdminSelect>
                 </td>
                 <td>
-                  <button
-                    className="adm-button"
+                  <AdminLayout.AdminButton
                     onClick={() => sendUserData(user)}
                     disabled={saving[user.id]}
                   >
                     저장
-                  </button>
+                  </AdminLayout.AdminButton>
                 </td>
                 <td>
-                  <button className="adm-button outline" onClick={() => showDetail(user)}>
+                  <AdminLayout.AdminButton className="outline" onClick={() => showDetail(user)}>
                     상세 보기
-                  </button>
+                  </AdminLayout.AdminButton>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableWrap>
     </div>
   );
 }

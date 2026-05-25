@@ -4,8 +4,9 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
-import styles from '../../igpage.module.css';
+import { directFetch } from '@/util/directFetch';
 import SigTagManager from '@/components/board/SigTagManager';
+import * as AdminLayout from '@/components/AdminLayout';
 
 const getLeaderUserId = (sig) => {
   if (sig?.owner == null) return '';
@@ -59,9 +60,8 @@ const renderSigEdit = (sig, ctx) => {
         <td>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {(Array.isArray(sig.websites) ? sig.websites : []).map((website, index) => (
-              <div key={website._key} className={styles['adm-flex']}>
-                <input
-                  className={styles['adm-input']}
+              <AdminLayout.AdminFlex key={website._key}>
+                <AdminLayout.AdminInput
                   value={website?.url ?? ''}
                   placeholder="https://example.com"
                   onChange={(e) => ctx.updateWebsiteUrl(index, e.target.value)}
@@ -75,16 +75,15 @@ const renderSigEdit = (sig, ctx) => {
                 >
                   삭제
                 </button>
-              </div>
+              </AdminLayout.AdminFlex>
             ))}
-            <button
+            <AdminLayout.AdminButton
               type="button"
-              className={styles['adm-button']}
               onClick={ctx.addWebsite}
               disabled={ctx.saving}
             >
               웹사이트 추가
-            </button>
+            </AdminLayout.AdminButton>
           </div>
         </td>
       </tr>
@@ -92,8 +91,7 @@ const renderSigEdit = (sig, ctx) => {
       <tr>
         <td>상태</td>
         <td>
-          <select
-            className={styles['adm-select']}
+          <AdminLayout.AdminSelect
             value={sig.status ?? ''}
             onChange={(e) => ctx.updateSigField('status', e.target.value)}
           >
@@ -102,7 +100,7 @@ const renderSigEdit = (sig, ctx) => {
                 {STATUS_MAP[key]}
               </option>
             ))}
-          </select>
+          </AdminLayout.AdminSelect>
         </td>
       </tr>
 
@@ -111,8 +109,7 @@ const renderSigEdit = (sig, ctx) => {
       <tr>
         <td>학기</td>
         <td>
-          <select
-            className={styles['adm-select']}
+          <AdminLayout.AdminSelect
             value={sig.semester ?? ''}
             onChange={(e) => ctx.updateSigField('semester', e.target.value)}
           >
@@ -121,7 +118,7 @@ const renderSigEdit = (sig, ctx) => {
                 {SEMESTER_MAP[key]}학기
               </option>
             ))}
-          </select>
+          </AdminLayout.AdminSelect>
         </td>
       </tr>
 
@@ -142,22 +139,20 @@ const renderSigEdit = (sig, ctx) => {
       <tr>
         <td>연장 신청</td>
         <td>
-          <select
-            className={`${styles['adm-select']} ${styles['adm-select-bool']}`}
+          <AdminLayout.AdminSelectBool
             value={String(Boolean(sig.should_extend))}
             onChange={(e) => ctx.updateSigField('should_extend', e.target.value === 'true')}
           >
             <option value="true">예</option>
             <option value="false">아니오</option>
-          </select>
+          </AdminLayout.AdminSelectBool>
         </td>
       </tr>
 
       <tr>
         <td>가입기간</td>
         <td>
-          <select
-            className={`${styles['adm-select']} ${styles['adm-select-bool-wide']}`}
+          <AdminLayout.AdminSelectBoolWide
             value={String(Boolean(sig.is_rolling_admission))}
             onChange={(e) =>
               ctx.updateSigField('is_rolling_admission', e.target.value === 'true')
@@ -165,15 +160,14 @@ const renderSigEdit = (sig, ctx) => {
           >
             <option value="true">예</option>
             <option value="false">아니오</option>
-          </select>
+          </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
 
       <tr>
         <td>SIG장</td>
         <td>
-          <select
-            className={styles['adm-select']}
+          <AdminLayout.AdminSelect
             value={selected || ''}
             onChange={(e) => ctx.setSelectedMember(e.target.value)}
           >
@@ -188,7 +182,7 @@ const renderSigEdit = (sig, ctx) => {
                 </option>
               );
             })}
-          </select>
+          </AdminLayout.AdminSelect>
         </td>
       </tr>
     </>
@@ -200,8 +194,7 @@ function renderSigRow(sig, ctx, attrName, attrLabel) {
     <tr>
       <td>{attrLabel}</td>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={sig[attrName] ?? ''}
           onChange={(e) => ctx.updateSigField(attrName, e.target.value)}
         />
@@ -344,10 +337,9 @@ export default function SigExecutiveEdit({ sig: _sig }) {
 
   return (
     <div>
-      <table className={`${styles['adm-table']}`}>
+      <AdminLayout.AdminTable>
         <colgroup>
-          <col className={styles['adm-col-bool-wide']} />
-          <col />
+          <AdminLayout.AdminColBoolWide></AdminLayout.AdminColBoolWide>
         </colgroup>
         <thead>
           <tr>
@@ -356,7 +348,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           </tr>
         </thead>
         <tbody>{renderSigEdit(sig, rowCtx)}</tbody>
-      </table>
+      </AdminLayout.AdminTable>
       <div style={{ marginTop: '16px', marginBottom: '16px' }}>
         <SigTagManager
           ref={tagManagerRef}
@@ -367,16 +359,12 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         />
       </div>
       <div>
-        <button className={styles['adm-button']} onClick={handleSave} disabled={saving}>
+        <AdminLayout.AdminButton onClick={handleSave} disabled={saving}>
           저장
-        </button>
-        <button
-          className={styles['adm-button']}
-          onClick={() => handleDelete(sig.id)}
-          disabled={saving}
-        >
+        </AdminLayout.AdminButton>
+        <AdminLayout.AdminButton onClick={() => handleDelete(sig.id)} disabled={saving}>
           삭제
-        </button>
+        </AdminLayout.AdminButton>
       </div>
     </div>
   );

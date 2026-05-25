@@ -2,7 +2,7 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import PigList from './PigList';
 import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
-import styles from '../igpage.module.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage() {
   const [pigMetas, users] = await Promise.allSettled([
@@ -18,12 +18,12 @@ export default async function ExecutivePigPage() {
 
   return (
     <WithAuthorization>
-      <div className={styles['admin-panel']}>
+      <AdminLayout.AdminPanel>
         <h2>PIG 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <PigList pigs={pigs} />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

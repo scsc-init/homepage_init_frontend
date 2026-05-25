@@ -5,7 +5,7 @@ import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
 import { fetchUsers, fetchMajors, fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
-import '../../page.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveLeadershipPage() {
   const me = await fetchMe().catch(() => null);
@@ -41,17 +41,15 @@ export default async function ExecutiveLeadershipPage() {
 
   return (
     <WithAuthorization>
-      <div className="admin-panel">
+      <AdminLayout.AdminPanel>
         <h2>회장단 전용 관리</h2>
         <p style={{ marginBottom: '1rem', color: '#767676' }}>
           회장단만 접근할 수 있으며, CSV 다운로드와 사용자 관리 기능을 제공합니다.
         </p>
-        {
-          <div className="adm-section">
-            <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
-          </div>
-        }
-      </div>
+        <AdminLayout.AdminSection>
+          <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

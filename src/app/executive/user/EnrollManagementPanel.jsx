@@ -2,6 +2,7 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function TrxRecord({ record }) {
   return (
@@ -54,8 +55,8 @@ export default function EnrollManagementPanel() {
   return (
     <div>
       <h2>입금 대기자 목록</h2>
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminTable>
           <thead>
             <tr>
               <th>이름</th>
@@ -74,23 +75,22 @@ export default function EnrollManagementPanel() {
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableWrap>
 
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>CSV 파일 업로드</h3>
-        <div className="adm-actions">
+        <AdminLayout.AdminActions>
           <input type="file" accept=".csv" onChange={handleFileUpload} />
-        </div>
-      </div>
+        </AdminLayout.AdminActions>
+      </AdminLayout.AdminSection>
 
       {results.length !== 0 && (
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <div>처리 실패 요청 건수: {failedCnt}건</div>
-          {results.map((r) => (
-            <div
-              key={r.record.deposit_time}
-              className="adm-table-wrap"
+          {results.map((r, idx) => (
+            <AdminLayout.AdminTableWrap
+              key={`${r.record?.deposit_time ?? 'unknown'}-${idx}`}
               style={{ padding: '1rem' }}
             >
               <div>{r.result_msg}</div>
@@ -99,9 +99,9 @@ export default function EnrollManagementPanel() {
               {r.users.map((u) => (
                 <div key={u.id}>{`${u.name}(${u.email})`}</div>
               ))}
-            </div>
+            </AdminLayout.AdminTableWrap>
           ))}
-        </div>
+        </AdminLayout.AdminSection>
       )}
     </div>
   );

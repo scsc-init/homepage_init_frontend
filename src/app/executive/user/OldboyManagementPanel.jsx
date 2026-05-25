@@ -3,6 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { utc2kst } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
@@ -40,8 +41,8 @@ export default function OldboyManagementPanel({ users }) {
   return (
     <div>
       <h2>졸업생 전환 신청자 목록</h2>
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminTable>
           <thead>
             <tr>
               <th>이름</th>
@@ -62,20 +63,19 @@ export default function OldboyManagementPanel({ users }) {
                   <td>{utc2kst(u.updated_at)}</td>
                   <td>{u.processed ? '✅' : '❌'}</td>
                   <td>
-                    <button
-                      className="adm-button"
+                    <AdminLayout.AdminButton
                       onClick={() => user && processOldboy(user)}
-                      disabled={saving[user.id] || u.processed || !user}
+                      disabled={!user || Boolean(saving[user.id]) || u.processed}
                     >
                       승인
-                    </button>
+                    </AdminLayout.AdminButton>
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </table>
-      </div>
+        </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableWrap>
     </div>
   );
 }
