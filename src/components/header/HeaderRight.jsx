@@ -8,14 +8,6 @@ import { minExecutiveLevel } from '@/util/constants';
 import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util/loginRedirect';
 import styles from '@/app/Header.module.css';
 
-function isMobileViewport() {
-  try {
-    return (window.innerWidth || 1000) <= 768;
-  } catch {
-    return false;
-  }
-}
-
 function getLoginHrefFromCurrentPage() {
   if (typeof window === 'undefined') return '/us/login';
 
@@ -38,8 +30,22 @@ export default function HeaderRight() {
   const router = useRouter();
 
   const [isExecutive, setIsExecutive] = useState(false);
+  const [isMobile, setIsMobile] = useState(null);
 
   const { me: user, isLoading } = useMe();
+
+  useEffect(() => {
+    function updateIsMobile() {
+      setIsMobile(window.innerWidth <= 768);
+    }
+
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
+  }, []);
 
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
@@ -52,11 +58,13 @@ export default function HeaderRight() {
     router.push(getLoginHrefFromCurrentPage());
   }
 
+  const shouldShowDesktopContent = isMobile === false;
+
   return (
     <div>
       {isLoading && <div className={styles.rightLoading} />}
 
-      {user === null && !isMobileViewport() && (
+      {!isLoading && user === null && shouldShowDesktopContent && (
         <div className={styles.rightLogin}>
           <Link href="/us/login" onClick={handleLoginClick} className="unset decorateNone">
             가입 / 로그인
@@ -64,7 +72,7 @@ export default function HeaderRight() {
         </div>
       )}
 
-      {user && !isMobileViewport() && (
+      {user && shouldShowDesktopContent && (
         <div className={styles.rightMain}>
           {isExecutive && (
             <Link href="/executive" className={`${styles.executiveLink} unset`}>
