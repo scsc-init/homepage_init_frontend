@@ -8,6 +8,18 @@ function buildReturnPath(req) {
   return isAllowedRedirectPath(target) ? target : null;
 }
 
+function isPrefetchRequest(req) {
+  const purpose = req.headers.get('purpose') || '';
+  const secPurpose = req.headers.get('sec-purpose') || '';
+
+  return (
+    req.headers.get('next-router-prefetch') === '1' ||
+    req.headers.get('x-middleware-prefetch') === '1' ||
+    purpose.toLowerCase() === 'prefetch' ||
+    secPurpose.toLowerCase().includes('prefetch')
+  );
+}
+
 export async function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
@@ -46,7 +58,7 @@ export async function middleware(req) {
 
   const res = NextResponse.redirect(loginUrl);
 
-  if (returnTo) {
+  if (returnTo && !isPrefetchRequest(req)) {
     res.cookies.set(REDIRECT_COOKIE, returnTo, {
       path: '/',
       maxAge: 300,
