@@ -84,6 +84,9 @@ const publicRoutes = [
   '/us/login',
 ];
 
+/**
+ * middleware을 거치게 되는 라우트
+ */
 export const config = {
   matcher: [
     '/',
