@@ -5,28 +5,17 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { hideFooterRoutes, footerLogoData } from '@/util/constants';
+import { getKvClient } from '@/util/fetch/client-util';
 
 export default function Footer() {
   const pathname = usePathname();
   const [footerMessage, setFooterMessage] = useState('');
   const [kvHrefs, setKvHrefs] = useState({});
-  const key = 'footer-message';
 
   useEffect(() => {
     const getFooter = async () => {
-      const res = await fetch(`/api/kv/${key}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (res.ok) {
-        const footer = await res.json();
-        setFooterMessage(footer.value);
-      } else {
-        setFooterMessage('Footer 정보를 불러오지 못했습니다.');
-        return;
-      }
+      const value = await getKvClient('footer-message');
+      setFooterMessage(value || 'Footer 정보를 불러오지 못했습니다.');
     };
     const getKvHrefs = async () => {
       const keys = footerLogoData
@@ -35,17 +24,8 @@ export default function Footer() {
       if (keys.length === 0) return;
       const entries = await Promise.all(
         keys.map(async (key) => {
-          try {
-            const res = await fetch(`/api/kv/${encodeURIComponent(key)}`, {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json' },
-            });
-            if (!res.ok) return [key, ''];
-            const body = await res.json();
-            return [key, typeof body?.value === 'string' ? body.value : ''];
-          } catch {
-            return [key, ''];
-          }
+          const value = await getKvClient(key);
+          return [key, value];
         }),
       );
       setKvHrefs(Object.fromEntries(entries));

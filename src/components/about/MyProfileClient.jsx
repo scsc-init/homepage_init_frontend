@@ -10,6 +10,7 @@ import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
+import { getKvClient } from '@/util/fetch/client-util';
 
 const USER_ROLE_MAP = {
   0: '최저권한',
@@ -38,27 +39,11 @@ export default function MyProfileClient() {
   const router = useRouter();
   useEffect(() => {
     const fetchInviteLinks = async () => {
-      const keys = ['TEXT_KAKAO_INVITE_LINK', 'TEXT_DISCORD_INVITE_LINK'];
-      const entries = await Promise.all(
-        keys.map(async (key) => {
-          try {
-            const res = await fetch(`/api/kv/${encodeURIComponent(key)}`, {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json' },
-            });
-            if (!res.ok) return [key, ''];
-            const body = await res.json();
-            return [key, typeof body?.value === 'string' ? body.value : ''];
-          } catch {
-            return [key, ''];
-          }
-        }),
-      );
-      const map = Object.fromEntries(entries);
-      setInviteLinks({
-        kakao: map['TEXT_KAKAO_INVITE_LINK'] || '',
-        discord: map['TEXT_DISCORD_INVITE_LINK'] || '',
-      });
+      const [kakao, discord] = await Promise.all([
+        getKvClient('TEXT_KAKAO_INVITE_LINK'),
+        getKvClient('TEXT_DISCORD_INVITE_LINK'),
+      ]);
+      setInviteLinks({ kakao, discord });
     };
     fetchInviteLinks();
   }, []);

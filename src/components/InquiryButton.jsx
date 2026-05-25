@@ -1,23 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getKvClient } from '@/util/fetch/client-util';
 
 export default function InquiryButton({ label = '💬' }) {
   const [href, setHref] = useState('');
 
   useEffect(() => {
     const fetchLink = async () => {
-      try {
-        const res = await fetch(`/api/kv/TEXT_DISCORD_INVITE_LINK`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (!res.ok) return;
-        const body = await res.json();
-        if (typeof body?.value === 'string') setHref(body.value);
-      } catch {
-        /* noop */
-      }
+      const value = await getKvClient('TEXT_DISCORD_INVITE_LINK');
+      if (value) setHref(value);
     };
     fetchLink();
   }, []);

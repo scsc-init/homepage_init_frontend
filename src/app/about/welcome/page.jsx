@@ -1,35 +1,42 @@
-import { redirect } from 'next/navigation';
-import { handleApiRequest } from '@/app/api/apiWrapper';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useMe } from '@/util/hooks/useMe';
+import { getKvsClient } from '@/util/fetch/client-util';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
 const WELCOME_LOGIN_PATH = '/about/welcome';
 
-async function fetchKvValue(key) {
-  try {
-    const res = await handleApiRequest('GET', '/api/kv/{key}', { params: { key } });
-    if (!res.ok) return '';
-    const body = await res.json().catch(() => null);
-    return typeof body?.value === 'string' ? body.value : '';
-  } catch (err) {
-    console.error(`[welcome] kv fetch failed (${key})`, err);
-    return '';
-  }
-}
+export default function WelcomePage() {
+  const router = useRouter();
+  const { me: profile, isLoading, isUnauthenticated } = useMe();
+  const [kvMap, setKvMap] = useState({});
 
-export default async function WelcomePage() {
-  const [res, depositAcc, kakaoInviteLink, discordInviteLink] = await Promise.all([
-    handleApiRequest('GET', '/api/user/profile'),
-    fetchKvValue('TEXT_DEPOSIT_ACC'),
-    fetchKvValue('TEXT_KAKAO_INVITE_LINK'),
-    fetchKvValue('TEXT_DISCORD_INVITE_LINK'),
-  ]);
+  useEffect(() => {
+    const fetchKvs = async () => {
+      const map = await getKvsClient([
+        'TEXT_DEPOSIT_ACC',
+        'TEXT_KAKAO_INVITE_LINK',
+        'TEXT_DISCORD_INVITE_LINK',
+      ]);
+      setKvMap(map);
+    };
+    fetchKvs();
+  }, []);
 
-  if (!res.ok) {
-    redirect(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
-  }
+  useEffect(() => {
+    if (isUnauthenticated) {
+      router.replace(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
+    }
+  }, [isUnauthenticated, router]);
 
-  const profile = await res.json();
+  if (isLoading || isUnauthenticated) return null;
+
+  const depositAcc = kvMap['TEXT_DEPOSIT_ACC'] || '';
+  const kakaoInviteLink = kvMap['TEXT_KAKAO_INVITE_LINK'] || '';
+  const discordInviteLink = kvMap['TEXT_DISCORD_INVITE_LINK'] || '';
   const isInactive = !profile || !profile.is_active;
 
   return (
