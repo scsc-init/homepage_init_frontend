@@ -13,12 +13,16 @@ export default function Footer() {
 
   useEffect(() => {
     const getFooter = async () => {
-      const res = await fetch(`/api/kv/${key}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `/api/kv/${key}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+        true,
+      );
       if (res.ok) {
         const footer = await res.json();
         setFooterMessage(footer.value);

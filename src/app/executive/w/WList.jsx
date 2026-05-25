@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -24,10 +26,14 @@ export default function WList({ wMetas }) {
       form.append('name', createName.trim());
     }
     try {
-      const res = await fetch(`/api/executive/w/create`, {
-        method: 'POST',
-        body: form,
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/w/create`,
+        {
+          method: 'POST',
+          body: form,
+        },
+        true,
+      );
       if (res.status !== 201) {
         const err = await res.json();
         alert('파일 처리 실패: ' + err.detail);

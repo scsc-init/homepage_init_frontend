@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import {
   forwardRef,
   useCallback,
@@ -51,7 +52,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     });
 
   const refreshAllTags = useCallback(async () => {
-    const res = await fetch('/api/tags', { cache: 'no-store' });
+    const res = await fetchBackendClient('/api/tags', { cache: 'no-store' });
     if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
 
     const data = await res.json();
@@ -128,13 +129,17 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     setLoading(true);
 
     try {
-      const res = await fetch(isExecutive ? '/api/executive/tag' : '/api/tag', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
-        ),
-      });
+      const res = await fetchBackendClient(
+        isExecutive ? '/api/executive/tag' : '/api/tag',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
+          ),
+        },
+        true,
+      );
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -180,9 +185,13 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
     try {
       const deleteRequests = removedTagIds.map(async (tagId) => {
-        const res = await fetch(`/api/sig/${sigId}/tag/${tagId}`, {
-          method: 'DELETE',
-        });
+        const res = await fetchBackendClient(
+          `/api/sig/${sigId}/tag/${tagId}`,
+          {
+            method: 'DELETE',
+          },
+          true,
+        );
 
         if (!res.ok && res.status !== 204) {
           const err = await res.json().catch(() => ({}));
@@ -191,11 +200,15 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       });
 
       const addRequests = addedTagIds.map(async (tagId) => {
-        const res = await fetch(`/api/sig/${sigId}/tag`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tag_id: Number(tagId) }),
-        });
+        const res = await fetchBackendClient(
+          `/api/sig/${sigId}/tag`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tag_id: Number(tagId) }),
+          },
+          true,
+        );
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));

@@ -1,7 +1,7 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { directFetch } from '@/util/directFetch';
 import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmentDownloadUrl';
 
 export default function AttachmentSection({
@@ -51,8 +51,10 @@ export default function AttachmentSection({
         const params = new URLSearchParams();
         missingIds.forEach((id) => params.append('ids', id));
         const query = params.toString();
-        const res = await directFetch(
+        const res = await fetchBackendClient(
           query ? `/api/file/metadata?${query}` : '/api/file/metadata',
+          undefined,
+          true,
         );
         const data = await res.json().catch(() => []);
         if (!res.ok) {
@@ -104,10 +106,14 @@ export default function AttachmentSection({
 
           let res;
           try {
-            res = await directFetch(`/api/file/${uploadType}/upload`, {
-              method: 'POST',
-              body: formData,
-            });
+            res = await fetchBackendClient(
+              `/api/file/${uploadType}/upload`,
+              {
+                method: 'POST',
+                body: formData,
+              },
+              true,
+            );
           } catch {
             alert('파일 업로드 중 네트워크 오류가 발생했습니다.');
             continue;

@@ -1,10 +1,12 @@
 ﻿'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 const sanitizeWebsites = (websites = []) =>
   (Array.isArray(websites) ? websites : [])
@@ -19,6 +21,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
+  const { me, isLoading, isUnauthenticated } = useMe();
 
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
@@ -47,13 +50,12 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
-      if (res.ok) setUser(await res.json());
-      else pushLoginWithRedirect(router);
-    };
-    fetchProfile();
-  }, [router]);
+    if (isLoading) return;
+    if (isUnauthenticated || !me) {
+      pushLoginWithRedirect(router);
+    }
+    setUser(me);
+  }, [isLoading, isUnauthenticated, me, router]);
 
   const watched = watch();
   useEffect(() => {
@@ -114,7 +116,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/pig/create`, {
+      const res = await fetchBackendClient(`/api/pig/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

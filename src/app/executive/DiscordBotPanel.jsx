@@ -5,9 +5,13 @@ import * as AdminLayout from '@/components/AdminLayout';
 
 export default function DiscordBotPanel({ is_logged_in }) {
   const discordLogin = async () => {
-    const res = await fetch(`/api/bot/discord/login`, {
-      method: 'POST',
-    });
+    const res = await fetchBackendClient(
+      `/api/bot/discord/login`,
+      {
+        method: 'POST',
+      },
+      true,
+    );
     if (res.status === 204) alert('로그인 성공!');
     else alert(`로그인 실패: ${await res.text()}`);
   };

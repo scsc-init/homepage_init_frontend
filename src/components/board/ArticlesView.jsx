@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -25,7 +26,7 @@ export default function ArticlesView({ board, sortOrder }) {
 
     const fetchContents = async () => {
       try {
-        const res = await fetch(`/api/articles/${boardId}`);
+        const res = await fetchBackendClient(`/api/articles/${boardId}`);
         if (res.status === 401) {
           pushLoginWithRedirect(router);
           return;
