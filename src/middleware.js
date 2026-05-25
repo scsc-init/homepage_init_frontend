@@ -15,10 +15,6 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  if (publicRoutes.includes(pathname)) {
-    return NextResponse.next();
-  }
-
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
 
   const kakaotalk = ['kakao', 'kakaotalk'];
@@ -31,6 +27,10 @@ export async function middleware(req) {
   }
   if (everytime.some((keyword) => userAgent.includes(keyword))) {
     return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
+  }
+
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
   }
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -65,7 +65,11 @@ const publicRoutes = [
   '/board/3',
   '/about',
   '/about/welcome',
-  '/about/welcome',
+  '/us/fund-apply/create',
+  '/sig',
+  '/pig',
+  '/us/contact',
+  '/us/login',
 ];
 
 export const config = {
