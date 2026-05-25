@@ -14,6 +14,11 @@ export async function middleware(req) {
   if (pathname.startsWith('/err/browser')) {
     return NextResponse.next();
   }
+
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
 
   const kakaotalk = ['kakao', 'kakaotalk'];
@@ -53,17 +58,27 @@ export async function middleware(req) {
   return res;
 }
 
+const publicRoutes = [
+  '/',
+  '/board/1',
+  '/board/2',
+  '/board/3',
+  '/about',
+  '/about/welcome',
+  '/about/welcome',
+];
+
 export const config = {
   matcher: [
     '/',
-    '/us/fund-apply/:path*',
-    '/board/:path*',
+    '/about/:path*',
     '/article/:path*',
-    '/sig/:id(\\d+)',
-    '/pig/:id(\\d+)',
-    '/sig/create',
-    '/pig/create',
-    '/sig/edit/:id(\\d+)',
-    '/pig/edit/:id(\\d+)',
+    '/board/:path*',
+    '/err/:path*',
+    '/executive/:path*',
+    '/sig/:path*',
+    '/pig/:path*',
+    '/testutils/:path*',
+    '/us/:path*',
   ],
 };
