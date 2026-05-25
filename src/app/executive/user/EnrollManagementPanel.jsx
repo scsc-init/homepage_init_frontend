@@ -23,7 +23,7 @@ export default function EnrollManagementPanel() {
 
   useEffect(() => {
     const fetchStandbys = async () => {
-      const res = await fetchBackendClient(`/api/executive/user/standby/list`, undefined, true);
+      const res = await fetchBackendClient(`/api/executive/user/standby/list`);
       if (res.ok) setStandbys(await res.json());
     };
     fetchStandbys();
@@ -34,14 +34,10 @@ export default function EnrollManagementPanel() {
     if (!file) return;
     const form = new FormData();
     form.append('file', file);
-    const res = await fetchBackendClient(
-      `/api/executive/user/standby/process`,
-      {
-        method: 'POST',
-        body: form,
-      },
-      true,
-    );
+    const res = await fetchBackendClient(`/api/executive/user/standby/process`, {
+      method: 'POST',
+      body: form,
+    });
     if (res.status !== 200) {
       const err = await res.json();
       alert('파일 처리 실패: ' + err.detail);

@@ -13,14 +13,14 @@ import { fetchBackendClientJson } from '@/util/fetch/client';
 
 /** fetch all users **/
 export async function fetchUsers<T extends UserProfile[] = UserProfile[]>(): Promise<T> {
-  return fetchBackendClientJson<T>('/api/executive/users', undefined, true);
+  return fetchBackendClientJson<T>('/api/executive/users');
 }
 
 /** Fetches executive user summaries. */
 export async function fetchUserSummaries<
   T extends UserSummary[] = UserSummary[],
 >(): Promise<T> {
-  return fetchBackendClientJson<T>('/api/executive/users/summary', undefined, true);
+  return fetchBackendClientJson<T>('/api/executive/users/summary');
 }
 
 /** Fetches board data. */
@@ -28,13 +28,13 @@ export async function fetchBoards<T extends BoardInfo = BoardInfo>(
   boardIds: number[],
 ): Promise<PromiseSettledResult<T>[]> {
   return Promise.allSettled(
-    boardIds.map((id) => fetchBackendClientJson<T>(`/api/board/${id}`, undefined, true)),
+    boardIds.map((id) => fetchBackendClientJson<T>(`/api/board/${id}`)),
   );
 }
 
 /** Fetches all majors. */
 export async function fetchMajors<T extends MajorInfo[] = MajorInfo[]>(): Promise<T> {
-  return fetchBackendClientJson<T>('/api/majors', undefined, true);
+  return fetchBackendClientJson<T>('/api/majors');
 }
 
 /** Fetches Discord bot status. */
@@ -49,7 +49,7 @@ export async function fetchDiscordBotStatus(): Promise<boolean> {
 
 /** Fetches current SCSC global status. */
 export async function fetchSCSCGlobalStatus(): Promise<GlobalStatus> {
-  return fetchBackendClientJson<GlobalStatus>('/api/scsc/global/status', undefined, true);
+  return fetchBackendClientJson<GlobalStatus>('/api/scsc/global/status');
 }
 
 /** Fetches executive candidates from executive and president lists. */
@@ -58,8 +58,8 @@ export async function fetchExecutiveCandidates<
 >(): Promise<T[]> {
   const params = (role: string) => new URLSearchParams({ user_role: role }).toString();
   const [execList, prezList] = await Promise.all([
-    fetchBackendClientJson<T[]>(`/api/executive/users?${params('executive')}`, undefined, true),
-    fetchBackendClientJson<T[]>(`/api/executive/users?${params('president')}`, undefined, true),
+    fetchBackendClientJson<T[]>(`/api/executive/users?${params('executive')}`),
+    fetchBackendClientJson<T[]>(`/api/executive/users?${params('president')}`),
   ]);
 
   const merged = new Map<string, T>();

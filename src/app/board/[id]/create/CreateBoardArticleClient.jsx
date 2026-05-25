@@ -44,20 +44,16 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
     setSubmitting(true);
 
     try {
-      const res = await fetchBackendClient(
-        `/api/article/create`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            content: data.editor,
-            board_id: parseInt(boardInfo.id),
-            attachments: Array.isArray(data.attachments) ? data.attachments : [],
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/article/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          content: data.editor,
+          board_id: parseInt(boardInfo.id),
+          attachments: Array.isArray(data.attachments) ? data.attachments : [],
+        }),
+      });
 
       if (res.status === 201) {
         alert('게시글 작성 완료!');

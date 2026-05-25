@@ -121,21 +121,17 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetchBackendClient(
-        '/api/sig/create',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            content: data.editor,
-            is_rolling_admission: data.is_rolling_admission,
-            websites: sanitizeWebsites(data.websites),
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient('/api/sig/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          content: data.editor,
+          is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
+        }),
+      });
 
       if (res.status === 201) {
         alert('SIG 생성 성공!');

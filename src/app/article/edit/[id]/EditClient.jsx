@@ -40,11 +40,7 @@ export default function EditClient({ articleId }) {
     }
     const load = async () => {
       try {
-        const articleRes = await fetchBackendClient(
-          `/api/article/${articleId}`,
-          undefined,
-          true,
-        );
+        const articleRes = await fetchBackendClient(`/api/article/${articleId}`);
         if (!article.ok) throw new Error();
         const article = await articleRes.json();
 
@@ -103,20 +99,16 @@ export default function EditClient({ articleId }) {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      const res = await fetchBackendClient(
-        `/api/article/update/${articleId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            content: data.editor,
-            board_id: parseInt(boardId ?? 0),
-            attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/article/update/${articleId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          content: data.editor,
+          board_id: parseInt(boardId ?? 0),
+          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
+        }),
+      });
 
       if (res.status === 204 || res.ok) {
         isFormSubmitted.current = true;

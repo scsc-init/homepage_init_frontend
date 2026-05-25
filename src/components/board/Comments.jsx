@@ -160,7 +160,7 @@ export default function Comments({ articleId, initialComments, user }) {
 
   const fetchComments = async () => {
     try {
-      const res = await fetchBackendClient(`/api/comments/${articleId}`, undefined, true);
+      const res = await fetchBackendClient(`/api/comments/${articleId}`);
       if (res.status === 401) {
         pushLoginWithRedirect(router);
         return;

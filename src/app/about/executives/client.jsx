@@ -42,8 +42,8 @@ export default function ExecutivesClient() {
     const load = async () => {
       try {
         const [execRes, leadersRes] = await Promise.all([
-          fetchBackendClient('/api/user/executives', { cache: 'no-store' }, true),
-          fetchBackendClient('/api/leadership', { cache: 'no-store' }, true),
+          fetchBackendClient('/api/user/executives', { cache: 'no-store' }),
+          fetchBackendClient('/api/leadership', { cache: 'no-store' }),
         ]);
 
         if (!execRes.ok) throw new Error('failed');

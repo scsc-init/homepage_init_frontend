@@ -39,8 +39,8 @@ export default function ArticleDetail({ params }) {
     const loadAll = async () => {
       try {
         const [contentRes, commentsRes] = await Promise.all([
-          fetchBackendClient(`/api/article/${id}`, undefined, true),
-          fetchBackendClient(`/api/comments/${id}`, undefined, true),
+          fetchBackendClient(`/api/article/${id}`),
+          fetchBackendClient(`/api/comments/${id}`),
         ]);
 
         if (!contentRes.ok || !commentsRes.ok) {
@@ -86,11 +86,7 @@ export default function ArticleDetail({ params }) {
         attachmentIds.forEach((aid) => {
           if (aid) queryParams.append('ids', aid);
         });
-        const res = await fetchBackendClient(
-          `/api/file/metadata?${queryParams.toString()}`,
-          undefined,
-          true,
-        );
+        const res = await fetchBackendClient(`/api/file/metadata?${queryParams.toString()}`);
         const data = await res.json().catch(() => []);
         if (cancelled) return;
         if (res.ok) {
@@ -131,11 +127,7 @@ export default function ArticleDetail({ params }) {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     setIsDeleting(true);
     try {
-      const res = await fetchBackendClient(
-        `/api/article/delete/${id}`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/');

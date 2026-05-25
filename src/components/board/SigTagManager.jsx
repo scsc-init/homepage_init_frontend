@@ -52,7 +52,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     });
 
   const refreshAllTags = useCallback(async () => {
-    const res = await fetchBackendClient('/api/tags', { cache: 'no-store' }, true);
+    const res = await fetchBackendClient('/api/tags', { cache: 'no-store' });
     if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
 
     const data = await res.json();

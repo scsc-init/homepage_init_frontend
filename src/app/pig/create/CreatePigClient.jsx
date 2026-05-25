@@ -116,21 +116,17 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetchBackendClient(
-        `/api/pig/create`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            content: data.editor,
-            is_rolling_admission: data.is_rolling_admission,
-            websites: sanitizeWebsites(data.websites),
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/pig/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          content: data.editor,
+          is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
+        }),
+      });
 
       if (res.status === 201) {
         alert('PIG 생성 성공!');

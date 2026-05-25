@@ -177,10 +177,10 @@ export default function FundApplyForm({
     const run = async () => {
       try {
         const [currSigData, currPigData, prevSigData, prevPigData] = await Promise.all([
-          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}`, undefined, true),
-          fetchBackendClientJson<any[]>(`/api/pigs?${_curr}`, undefined, true),
-          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}`, undefined, true),
-          fetchBackendClientJson<any[]>(`/api/pigs?${_prev}`, undefined, true),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}`),
+          fetchBackendClientJson<any[]>(`/api/pigs?${_curr}`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}`),
+          fetchBackendClientJson<any[]>(`/api/pigs?${_prev}`),
         ]);
         if (isMounted) {
           setCurrSigs(refinineSigList(currSigData));
@@ -320,15 +320,11 @@ export default function FundApplyForm({
 
     let res: Response;
     try {
-      res = await fetchBackendClient(
-        '/api/file/image/upload',
-        {
-          method: 'POST',
-          body: formData,
-          credentials: 'include',
-        },
-        true,
-      );
+      res = await fetchBackendClient('/api/file/image/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
     } catch {
       alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
       return null;
@@ -401,21 +397,17 @@ export default function FundApplyForm({
 
       const payload = await buildPayload(form);
 
-      const res = await fetchBackendClient(
-        '/api/article/create',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            title: payload.title,
-            content: payload.content,
-            board_id: boardId,
-            attachments: payload.attachments,
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient('/api/article/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: payload.title,
+          content: payload.content,
+          board_id: boardId,
+          attachments: payload.attachments,
+        }),
+      });
 
       if (!res.ok) {
         const text = await res.text().catch(() => '');

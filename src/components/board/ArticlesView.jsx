@@ -26,7 +26,7 @@ export default function ArticlesView({ board, sortOrder }) {
 
     const fetchContents = async () => {
       try {
-        const res = await fetchBackendClient(`/api/articles/${boardId}`, undefined, true);
+        const res = await fetchBackendClient(`/api/articles/${boardId}`);
         if (res.status === 401) {
           pushLoginWithRedirect(router);
           return;

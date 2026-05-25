@@ -35,8 +35,8 @@ function EditUserInfoClient() {
 
     const fetchData = async () => {
       const [resMajors, resOldboy] = await Promise.all([
-        fetchBackendClient('/api/majors', undefined, true),
-        fetchBackendClient('/api/user/oldboy/applicant', undefined, true),
+        fetchBackendClient('/api/majors'),
+        fetchBackendClient('/api/user/oldboy/applicant'),
       ]);
 
       setForm({
@@ -77,20 +77,16 @@ function EditUserInfoClient() {
     }
 
     setLoading(true);
-    const res = await fetchBackendClient(
-      '/api/user/update',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          phone,
-          student_id,
-          major_id: Number(major_id),
-        }),
-      },
-      true,
-    );
+    const res = await fetchBackendClient('/api/user/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        student_id,
+        major_id: Number(major_id),
+      }),
+    });
     setLoading(false);
 
     if (res.status === 204) {
@@ -109,7 +105,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 휴회원 처리하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetchBackendClient('/api/user/delete', { method: 'POST' }, true);
+    const res = await fetchBackendClient('/api/user/delete', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 204) {
@@ -126,7 +122,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetchBackendClient('/api/user/oldboy/register', { method: 'POST' }, true);
+    const res = await fetchBackendClient('/api/user/oldboy/register', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 201) {
@@ -145,11 +141,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetchBackendClient(
-      '/api/user/oldboy/unregister',
-      { method: 'POST' },
-      true,
-    );
+    const res = await fetchBackendClient('/api/user/oldboy/unregister', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 204) {
@@ -172,11 +164,7 @@ function EditUserInfoClient() {
     );
     if (!ok) return;
     setLoading(true);
-    const res = await fetchBackendClient(
-      '/api/user/oldboy/reactivate',
-      { method: 'POST' },
-      true,
-    );
+    const res = await fetchBackendClient('/api/user/oldboy/reactivate', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 204) {
