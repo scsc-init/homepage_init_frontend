@@ -12,9 +12,10 @@ import { use, useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
-import { directFetch } from '@/util/directFetch';
+import { useMe } from '@/util/hooks/useMe';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { set } from 'react-hook-form';
 
 export default function ArticleDetail({ params }) {
   const resolvedParams = use(params);
@@ -28,34 +29,32 @@ export default function ArticleDetail({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [attachmentMeta, setAttachmentMeta] = useState([]);
-
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
   useEffect(() => {
-    if (!id) return;
+    if (!id || isMeLoading) return;
+    if (isUnauthenticated || !me) {
+      pushLoginWithRedirect(router);
+      return;
+    }
     const loadAll = async () => {
       try {
-        const [contentRes, commentsRes, userRes] = await Promise.all([
+        const [contentRes, commentsRes] = await Promise.all([
           fetchBackendClient(`/api/article/${id}`, undefined, true),
           fetchBackendClient(`/api/comments/${id}`, undefined, true),
-          fetchBackendClient(`/api/user/profile`, undefined, true),
         ]);
 
-        if (userRes.status === 401) {
-          pushLoginWithRedirect(router);
-          return;
-        }
-        if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
+        if (!contentRes.ok || !commentsRes.ok) {
           setIsError(true);
           return;
         }
 
-        const [articleJson, commentsJson, userJson] = await Promise.all([
+        const [articleJson, commentsJson] = await Promise.all([
           contentRes.json(),
           commentsRes.json(),
-          userRes.json(),
         ]);
         setArticle(articleJson);
         setComments(commentsJson);
-        setUser(userJson);
+        setUser(me);
       } catch (_) {
         setIsError(true);
       } finally {
@@ -63,7 +62,7 @@ export default function ArticleDetail({ params }) {
       }
     };
     loadAll();
-  }, [router, id]);
+  }, [router, id, me, isMeLoading, isUnauthenticated]);
 
   const attachmentIds = useMemo(() => {
     if (!Array.isArray(article?.attachments)) return [];

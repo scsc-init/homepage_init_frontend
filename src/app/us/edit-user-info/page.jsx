@@ -7,10 +7,12 @@ import * as validator from '@/util/validator';
 import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function EditUserInfoClient() {
   const router = useRouter();
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -24,27 +26,27 @@ function EditUserInfoClient() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const fetches = [];
-      fetches.push(fetchBackendClient('/api/user/profile', undefined, true));
-      fetches.push(fetchBackendClient('/api/majors', undefined, true));
-      fetches.push(fetchBackendClient('/api/user/oldboy/applicant', undefined, true));
-      const [resUser, resMajors, resOldboy] = await Promise.all(fetches);
+    if (isMeLoading) return;
+    if (isUnauthenticated || !me) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+      return;
+    }
 
-      if (!resUser.ok) {
-        alert('로그인이 필요합니다.');
-        pushLoginWithRedirect(router);
-        return;
-      }
-      const user = await resUser.json();
+    const fetchData = async () => {
+      const [resMajors, resOldboy] = await Promise.all([
+        fetchBackendClient('/api/majors', undefined, true),
+        fetchBackendClient('/api/user/oldboy/applicant', undefined, true),
+      ]);
+
       setForm({
-        name: user.name || '',
-        phone: user.phone || '',
-        student_id: user.student_id || '',
-        major_id: user.major_id?.toString() || '',
-        profile_picture: user.profile_picture || '',
+        name: me.name || '',
+        phone: me.phone || '',
+        student_id: me.student_id || '',
+        major_id: me.major_id?.toString() || '',
+        profile_picture: me.profile_picture || '',
       });
-      setUserRole(user.role);
+      setUserRole(me.role);
 
       const majorList = resMajors.ok ? await resMajors.json() : [];
       setMajors(majorList);
@@ -55,7 +57,7 @@ function EditUserInfoClient() {
       setLoading(false);
     };
     fetchData();
-  }, [router]);
+  }, [router, me, isMeLoading, isUnauthenticated]);
 
   const handleSubmit = async () => {
     const { name, phone, student_id, major_id } = form;

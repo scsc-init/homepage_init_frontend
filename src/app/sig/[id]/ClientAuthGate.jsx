@@ -1,6 +1,6 @@
 'use client';
 
-import { fetchBackendClient } from '@/util/fetch/client';
+import { useMe } from '@/util/hooks/useMe';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
@@ -8,7 +8,7 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
-
+  const { me, isLoading, isUnauthenticated } = useMe();
   useEffect(() => {
     let cancelled = false;
 
@@ -16,23 +16,17 @@ export default function ClientAuthGate({ children }) {
       Promise.resolve().then(() => replaceLoginWithRedirect(router));
     };
 
-    (async () => {
-      try {
-        const res = await fetchBackendClient('/api/user/profile', { cache: 'no-store' }, true);
-        if (!res.ok || res.status === 401) {
-          goLogin();
-          return;
-        }
-        if (!cancelled) setChecking(false);
-      } catch {
-        goLogin();
-      }
-    })();
+    if (isLoading) return undefined;
+    if (isUnauthenticated || !me) {
+      goLogin();
+      return undefined;
+    }
+    if (!cancelled) setChecking(false);
 
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, [isLoading, isUnauthenticated, me, router]);
 
   return (
     <>

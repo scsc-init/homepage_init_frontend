@@ -1,8 +1,8 @@
 'use client';
 
-import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useMemo, useState } from 'react';
 import { SEMESTER_MAP } from '@/util/constants';
+import * as AdminLayout from '@/components';
 
 const ENROLLMENT_POLICY_KV_KEY = `enrollment_grant_until`;
 export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
@@ -11,11 +11,7 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const [semester, setSemester] = useState();
   useEffect(() => {
     const getGrantPolicy = async () => {
-      const res = await fetchBackendClient(
-        `/api/kv/${ENROLLMENT_POLICY_KV_KEY}`,
-        undefined,
-        true,
-      );
+      const res = await fetch(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}`);
       if (!res.ok) return;
       const data = await res.json();
       const [y, s] = data.value.split('-').map((v) => Number(v));
@@ -30,15 +26,11 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const sendData = async () => {
     setIsFetching(true);
     try {
-      const res = await fetchBackendClient(
-        `/api/kv/${ENROLLMENT_POLICY_KV_KEY}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ value: `${year}-${semester}` }),
-        },
-        true,
-      );
+      const res = await fetch(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value: `${year}-${semester}` }),
+      });
       if (res.ok) {
         alert('저장에 성공했습니다.');
       } else if (res.status === 401 || res.status === 403) {
@@ -74,24 +66,24 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
 
   if (!scscGlobalStatus) {
     return (
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>등록 정책 관리</h3>
         <div>상태를 불러오지 못했습니다.</div>
-      </div>
+      </AdminLayout.AdminSection>
     );
   }
 
   if (year === undefined || semester === undefined) {
     return (
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>등록 정책 관리</h3>
         <div>등록 정책 로딩 중</div>
-      </div>
+      </AdminLayout.AdminSection>
     );
   }
 
   return (
-    <div className="adm-section">
+    <AdminLayout.AdminSection>
       <h3>등록 정책 관리</h3>
       <div>
         지금 등록 시
@@ -109,11 +101,11 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
         <br />
         <span style={{ color: '#767676' }}>지금 등록 시 {grantSemestersStr}에 등록됩니다.</span>
         <br />
-        <button className="adm-button" onClick={sendData} disabled={isFetching}>
+        <AdminLayout.AdminButton onClick={sendData} disabled={isFetching}>
           저장
-        </button>
+        </AdminLayout.AdminButton>
       </div>
-    </div>
+    </AdminLayout.AdminSection>
   );
 }
 

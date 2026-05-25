@@ -1,35 +1,17 @@
 'use client';
 
-import { fetchBackendClient } from '@/util/fetch/client';
-import { useEffect } from 'react';
+import { useMe } from '@/util/hooks/useMe';
+import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function CheckUserStatusClient() {
   const router = useRouter();
+  const { me, isLoading } = useMe();
 
   useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await fetchBackendClient(
-          '/api/user/profile',
-          {
-            credentials: 'include',
-          },
-          true,
-        );
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-
-        if (!data?.is_active && !data?.is_banned) {
-          router.replace('/about/welcome');
-        }
-      } catch (_e) {}
-    };
-
-    check();
-  }, [router]);
+    if (isLoading) return;
+    if (!me.is_active && !me.is_banned) router.replace('/about/welcome');
+  }, [isLoading, me, router]);
 
   return null;
 }

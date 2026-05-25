@@ -1,6 +1,5 @@
 'use client';
 
-import { fetchBackendClient } from '@/util/fetch/client';
 import styles from './Footer.module.css';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,7 +13,7 @@ export default function Footer() {
 
   useEffect(() => {
     const getFooter = async () => {
-      const res = await fetchBackendClient.get(
+      const res = await fetch(
         `/api/kv/${key}`,
         {
           method: 'GET',

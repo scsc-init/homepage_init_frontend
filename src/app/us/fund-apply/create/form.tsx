@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { fetchBackendClient, fetchBackendClientJson } from '@/util/fetch/client';
 import { academicTerm2string } from '@/util/helper/tostring';
+import { useMe } from '@/util/hooks/useMe';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
 import './form.css';
@@ -101,7 +102,7 @@ export default function FundApplyForm({
   globalStatus: GlobalStatus;
 }) {
   const router = useRouter();
-
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const [imageIds, setImageIds] = useState<number[]>([]);
@@ -162,24 +163,13 @@ export default function FundApplyForm({
   const useKakaoPay = watch('useKakaoPay');
 
   useEffect(() => {
-    let isMounted = true;
-    const run = async () => {
-      try {
-        const data = await fetchBackendClientJson<UserProfile>(
-          '/api/user/profile',
-          undefined,
-          true,
-        );
-        if (isMounted) setUser(data);
-      } catch (err) {
-        replaceLoginWithRedirect(router);
-      }
-    };
-    run();
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    if (isMeLoading) return;
+    if (isUnauthenticated || !me) {
+      replaceLoginWithRedirect(router);
+      return;
+    }
+    setUser(me);
+  }, [router, me, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     let isMounted = true;

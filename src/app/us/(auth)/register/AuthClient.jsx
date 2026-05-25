@@ -2,6 +2,7 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { fetchMajors } from '@/util/fetch/client-util';
 import { useEffect, useState, useRef } from 'react';
 import '@/styles/theme.css';
 import styles from '../auth.module.css';
@@ -71,17 +72,16 @@ export default function AuthClient() {
 
   useEffect(() => {
     if (stage !== 4) return;
-    const fetchMajors = async () => {
+    const loadMajors = async () => {
       try {
-        const res = await fetchBackendClient(`/api/majors`, { credentials: 'include' }, true);
-        const data = await res.json();
+        const data = await fetchMajors();
         setMajors(data);
         log('majors_loaded', { count: Array.isArray(data) ? data.length : 0 });
       } catch (e) {
         log('majors_load_failed', { error: String(e) });
       }
     };
-    fetchMajors();
+    loadMajors();
   }, [stage]);
 
   const handleSubmit = async () => {

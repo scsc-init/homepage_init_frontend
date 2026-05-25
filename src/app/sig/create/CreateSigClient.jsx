@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 const sanitizeWebsites = (websites = []) =>
   (Array.isArray(websites) ? websites : [])
@@ -20,7 +21,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
   const [user, setUser] = useState();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-
+  const { me, isLoading, isUnauthenticated } = useMe();
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
     try {
@@ -57,13 +58,13 @@ export default function CreateSigClient({ scscGlobalStatus }) {
   }, [reset]);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetchBackendClient(`/api/user/profile`, undefined, true);
-      if (res.ok) setUser(await res.json());
-      else pushLoginWithRedirect(router);
-    };
-    fetchProfile();
-  }, [router]);
+    if (isLoading) return;
+    if (isUnauthenticated || !me) {
+      pushLoginWithRedirect(router);
+      return;
+    }
+    setUser(me);
+  }, [isLoading, isUnauthenticated, me, router]);
 
   const watched = watch();
   useEffect(() => {
