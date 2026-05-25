@@ -21,7 +21,7 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
   let fullPath = pathTemplate;
   if (params) {
     for (const key of Object.keys(params)) {
-      const encoded = encodeURIComponent(String(params[key]));
+      const encoded = encodePathValue(params[key]);
       fullPath = fullPath.replaceAll(`{${key}}`, encoded);
     }
   }
@@ -51,4 +51,9 @@ export async function handleApiRequest(method, pathTemplate, options = {}, reque
     body: bodyJson !== undefined ? JSON.stringify(bodyJson) : undefined,
     cache: 'no-store',
   });
+}
+
+function encodePathValue(value) {
+  const rawValue = Array.isArray(value) ? value.join('/') : String(value);
+  return rawValue.split('/').map(encodeURIComponent).join('/');
 }

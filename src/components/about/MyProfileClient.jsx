@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
@@ -33,6 +33,7 @@ async function onAuthFail() {
 
 export default function MyProfileClient() {
   const { data: session, status, update } = useSession();
+  const { me } = useMe();
   const [user, setUser] = useState(null);
   const router = useRouter();
 
@@ -48,7 +49,6 @@ export default function MyProfileClient() {
 
       try {
         let data;
-        const me = await fetchMeClient();
         if (me) {
           data = me;
         } else if (session?.user?.email && session?.hashToken) {
@@ -60,8 +60,15 @@ export default function MyProfileClient() {
           });
           if (loginRes.ok) {
             const loginData = await loginRes.json();
-            if (loginData.jwt) await update({ backendJwt: loginData.jwt });
-            data = await fetchMeClient();
+
+            if (loginData.jwt && loginData.userProfile) {
+              data = loginData.userProfile;
+
+              await update({
+                backendJwt: loginData.jwt,
+                userProfile: data,
+              });
+            }
           } else {
             await onAuthFail();
             replaceLoginWithRedirect(router);
@@ -82,7 +89,7 @@ export default function MyProfileClient() {
       }
     };
     load();
-  }, [router, session, status, update]);
+  }, [router, session, status, update, me]);
 
   const handleLogout = async () => {
     await onAuthFail();
@@ -206,6 +213,11 @@ export default function MyProfileClient() {
                 <MdLogout size="24" />
               </span>
               <span className="btn-label">로그아웃</span>
+            </button>
+          </div>
+          <div>
+            <button className="my-page-logout-button" onClick={handleLogout}>
+              로그아웃
             </button>
           </div>
         </div>

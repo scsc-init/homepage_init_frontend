@@ -39,7 +39,6 @@ export default async function RootLayout({ children }) {
     <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
       <head>
         <meta name="color-scheme" content="dark light" />
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -59,15 +58,15 @@ export default async function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={noto_sans_kr.className}>
-        <div id="RootContainer">
-          <Header />
-          <main id="MainContent">
-            <Providers>{children}</Providers>
-          </main>
-          <ThemeToggle initialDark={initialDark} />
-          <Footer />
-        </div>
+      <body className={noto_sans_kr.className} suppressHydrationWarning={true}>
+        <Providers>
+          <div id="RootContainer">
+            <Header />
+            <main id="MainContent">{children}</main>
+            <ThemeToggle initialDark={initialDark} />
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

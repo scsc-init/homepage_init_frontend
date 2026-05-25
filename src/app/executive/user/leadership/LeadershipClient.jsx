@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ExecutiveUserTable } from '../UserList';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default function LeadershipClient({ users, majors }) {
   const [debugMessage, setDebugMessage] = useState('');
@@ -24,9 +25,8 @@ export default function LeadershipClient({ users, majors }) {
         >
           디버깅 메시지 콘솔
         </label>
-        <textarea
+        <AdminLayout.AdminTextarea
           id="leadership-debug-console"
-          className="adm-input"
           style={{
             width: '100%',
             minHeight: '180px',

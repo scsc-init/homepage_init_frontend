@@ -1,12 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import { minExecutiveLevel } from '@/util/constants';
 import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util/loginRedirect';
 import styles from '@/app/Header.module.css';
+
+function isMobileViewport() {
+  try {
+    return (window.innerWidth || 1000) <= 768;
+  } catch {
+    return false;
+  }
+}
 
 function getLoginHrefFromCurrentPage() {
   if (typeof window === 'undefined') return '/us/login';
@@ -29,12 +37,9 @@ function getLoginHrefFromCurrentPage() {
 export default function HeaderRight() {
   const router = useRouter();
 
-  const [user, setUser] = useState(undefined);
   const [isExecutive, setIsExecutive] = useState(false);
 
-  useEffect(() => {
-    fetchMeClient().then(setUser);
-  }, []);
+  const { me: user, isLoading } = useMe();
 
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
@@ -49,9 +54,9 @@ export default function HeaderRight() {
 
   return (
     <div>
-      {user === undefined && <div className={styles.rightLoading} />}
+      {isLoading && <div className={styles.rightLoading} />}
 
-      {user === null && (
+      {user === null && !isMobileViewport() && (
         <div className={styles.rightLogin}>
           <Link href="/us/login" onClick={handleLoginClick} className="unset decorateNone">
             가입 / 로그인
@@ -59,7 +64,7 @@ export default function HeaderRight() {
         </div>
       )}
 
-      {user && (
+      {user && !isMobileViewport() && (
         <div className={styles.rightMain}>
           {isExecutive && (
             <Link href="/executive" className={`${styles.executiveLink} unset`}>

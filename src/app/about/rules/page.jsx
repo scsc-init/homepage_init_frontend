@@ -1,12 +1,11 @@
 import ReactMarkdown from 'react-markdown';
+import { RULES_MARKDOWN_LINK } from '@/util/constants';
 import styles from '../about.module.css';
 
 export const dynamic = 'force-dynamic';
 
 async function fetchMarkdown() {
-  const url =
-    'https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md';
-  const res = await fetch(url, { cache: 'no-store' });
+  const res = await fetch(RULES_MARKDOWN_LINK, { cache: 'no-store' });
   if (!res.ok) {
     throw new Error('Failed to fetch regulation markdown.');
   }

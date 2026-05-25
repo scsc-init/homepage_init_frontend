@@ -1,0 +1,28 @@
+.textInputGroup {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem;
+}
+
+.textInputLabel {
+  font-size: 0.8rem;
+  user-select: none;
+  margin-left: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.textInput {
+  color: var(--color-text-body);
+  background-color: var(--header-background-color);
+  padding: 1rem;
+  border: 1px solid transparent;
+}
+
+.textInput:focus {
+  outline: none;
+  border: 1px solid var(--color-button-bg);
+}
+
+.textInput::placeholder {
+  color: var(--slate-8);
+}

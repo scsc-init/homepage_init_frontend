@@ -21,7 +21,10 @@ function generateDefaultSigForms(sig, article) {
     description: sig.description ?? '',
     editor: article.content ?? '',
     should_extend: sig.should_extend ?? false,
-    is_rolling_admission: sig.is_rolling_admission ?? false,
+    is_rolling_admission:
+      typeof sig?.is_rolling_admission === 'string'
+        ? sig.is_rolling_admission
+        : 'during_recruiting',
   };
 }
 
@@ -118,6 +121,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
+
         alert('SIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
@@ -129,10 +133,10 @@ export default function EditSigClient({ sigId, me, sig, article }) {
 
   return (
     <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 수정</h1>
-      </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreateSigHeader">
+          <h1 className="CreateSigTitle">SIG 수정</h1>
+        </div>
         <SigForm
           register={register}
           control={control}

@@ -21,8 +21,33 @@ function isPrefetchRequest(req) {
 }
 
 export async function middleware(req) {
+  const pathname = req.nextUrl.pathname;
+
+  if (pathname.startsWith('/err/browser')) {
+    return NextResponse.next();
+  }
+
+  const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
+
+  const kakaotalk = ['kakao', 'kakaotalk'];
+  const everytime = ['everytime'];
+  const redirectParam = buildReturnPath(req);
+  const redirectQuery = redirectParam ? `?redirect=${encodeURIComponent(redirectParam)}` : '';
+
+  if (kakaotalk.some((keyword) => userAgent.includes(keyword))) {
+    return NextResponse.redirect(new URL(`/err/browser/kakaotalk${redirectQuery}`, req.url));
+  }
+  if (everytime.some((keyword) => userAgent.includes(keyword))) {
+    return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
+  }
+
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const jwt = token?.backendJwt || null;
+
   if (jwt) return NextResponse.next();
 
   const returnTo = buildReturnPath(req);
@@ -45,16 +70,31 @@ export async function middleware(req) {
   return res;
 }
 
+const publicRoutes = [
+  '/',
+  '/board/1',
+  '/board/2',
+  '/board/3',
+  '/about',
+  '/about/welcome',
+  '/us/fund-apply/create',
+  '/sig',
+  '/pig',
+  '/us/contact',
+  '/us/login',
+];
+
 export const config = {
   matcher: [
-    '/us/fund-apply/:path*',
-    '/board/:path*',
+    '/',
+    '/about/:path*',
     '/article/:path*',
-    '/sig/:id(\\d+)',
-    '/pig/:id(\\d+)',
-    '/sig/create',
-    '/pig/create',
-    '/sig/edit/:id(\\d+)',
-    '/pig/edit/:id(\\d+)',
+    '/board/:path*',
+    '/err/:path*',
+    '/executive/:path*',
+    '/sig/:path*',
+    '/pig/:path*',
+    '/testutils/:path*',
+    '/us/:path*',
   ],
 };

@@ -29,7 +29,8 @@
     "immer": "^10.1.1",
     "marked": "^13.0.1",
     "marked-react": "^2.0.0",
-    "next": "15.5.10",
+    "material-icons": "^1.13.14",
+    "next": "^15.5.15",
     "next-auth": "^4.24.13",
     "normalize.css": "^8.0.1",
     "react": "^18",
@@ -52,16 +53,24 @@
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
     "eslint": "^8.57.1",
-    "eslint-config-next": "15.5.10",
+    "eslint-config-next": "^15.5.14",
     "eslint-config-prettier": "^10.1.8",
+    "flatted": "^3.4.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.3",
+    "minimatch": "^9.0.7",
+    "picomatch": "^4.0.4",
     "postcss": "^8",
     "prettier": "^3.6.2",
+    "svgo": "^3.3.3",
     "typescript": "^5"
   },
   "overrides": {
     "glob": "10.5.0",
-    "preact": "10.28.2"
+    "preact": "10.28.2",
+    "flatted": "^3.4.2",
+    "minimatch": "^9.0.7",
+    "picomatch": "^4.0.4",
+    "svgo": "^3.3.3"
   }
 }

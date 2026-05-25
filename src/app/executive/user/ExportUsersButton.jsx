@@ -1,5 +1,6 @@
 // src/app/executive/user/ExportUsersButton.jsx (CLIENT)
 'use client';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function escapeCsvValue(value) {
   if (value === null || value === undefined) return '';
@@ -71,16 +72,16 @@ export default function ExportUsersButton({ allUsers = [], filteredUsers = [] })
     );
 
   return (
-    <div className="adm-actions" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-      <button onClick={handleExportAll} className="adm-button" type="button">
+    <AdminLayout.AdminActions style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <AdminLayout.AdminButton onClick={handleExportAll} type="button">
         회원 목록 전체 저장
-      </button>
-      <button onClick={handleExportFiltered} className="adm-button" type="button">
+      </AdminLayout.AdminButton>
+      <AdminLayout.AdminButton onClick={handleExportFiltered} type="button">
         필터된 회원만 저장
-      </button>
-      <button onClick={handleExportRegistered} className="adm-button" type="button">
+      </AdminLayout.AdminButton>
+      <AdminLayout.AdminButton onClick={handleExportRegistered} type="button">
         등록된 회원만 저장
-      </button>
-    </div>
+      </AdminLayout.AdminButton>
+    </AdminLayout.AdminActions>
   );
 }

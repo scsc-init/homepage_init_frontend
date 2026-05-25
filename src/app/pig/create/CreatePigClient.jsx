@@ -20,24 +20,15 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('pigForm') : null;
-  const parsed = saved ? JSON.parse(saved) : null;
-
-  const defaultFormValues = {
-    title: parsed?.title ?? '',
-    description: parsed?.description ?? '',
-    editor: parsed?.editor ?? '',
-    is_rolling_admission:
-      typeof parsed?.is_rolling_admission === 'string'
-        ? String(parsed.is_rolling_admission)
-        : scscGlobalStatus === 'active'
-          ? 'always'
-          : 'during_recruiting',
-    websites:
-      parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
-        ? parsed.websites
-        : [{ url: '' }],
-  };
+  const parsed = (() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = sessionStorage.getItem('sigForm');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
 
   const {
     register,
@@ -46,7 +37,13 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: defaultFormValues,
+    defaultValues: parsed || {
+      title: '',
+      description: '',
+      editor: '',
+      is_rolling_admission:
+        typeof scscGlobalStatus === 'active' ? 'always' : 'during_recruiting',
+    },
   });
 
   useEffect(() => {
@@ -151,11 +148,11 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
   return (
     <div className="CreatePigContainer">
-      <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">PIG 생성</h1>
-        <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
-      </div>
       <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreatePigHeader">
+          <h1 className="CreatePigTitle">신규 PIG 개설</h1>
+          <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요</p>
+        </div>
         <PigForm
           register={register}
           control={control}
