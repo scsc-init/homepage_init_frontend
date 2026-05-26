@@ -74,16 +74,19 @@ const publicRoutes = [
   '/',
   '/board/1',
   '/board/2',
-  '/board/3',
   '/about',
-  '/about/welcome',
-  '/us/fund-apply/create',
+  '/about/executives',
+  '/about/developers',
+  '/about/rules',
   '/sig',
   '/pig',
   '/us/contact',
   '/us/login',
 ];
 
+/**
+ * middleware을 거치게 되는 라우트
+ */
 export const config = {
   matcher: [
     '/',
