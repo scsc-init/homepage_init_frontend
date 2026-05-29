@@ -2,6 +2,8 @@
 
 'use client';
 
+import { getSession } from 'next-auth/react';
+
 const PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
 /** Checks whether the value is a plain JavaScript object */
@@ -72,6 +74,8 @@ export async function fetchBackendClient(
 ): Promise<Response> {
   const method = (init.method || 'GET').toUpperCase();
   const headers = new Headers(init.headers);
+  const jwt = (await getSession())?.backendJwt;
+  if (jwt) headers.append('x-jwt', jwt);
   let body = init.body;
 
   if (!fallback && !PUBLIC_BACKEND_URL) {
