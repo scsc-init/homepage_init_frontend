@@ -9,7 +9,11 @@ import Sidebar from '@/components/about/Sidebar.jsx';
 import { getKVValue } from '@/util/fetchAPIData';
 
 export default async function AboutPage() {
-  const discordInviteLink = await getKVValue('TEXT_DISCORD_INVITE_LINK');
+  const DEFAULT_DISCORD_INVITE_LINK = 'https://discord.gg/SmXFDxA7XE';
+  const rawDiscordInviteLink = await getKVValue('TEXT_DISCORD_INVITE_LINK');
+  const discordInviteLink = /^https?:\/\/\S+$/i.test(rawDiscordInviteLink)
+    ? rawDiscordInviteLink
+    : DEFAULT_DISCORD_INVITE_LINK;
 
   return (
     <>

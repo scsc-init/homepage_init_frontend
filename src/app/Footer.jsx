@@ -16,6 +16,23 @@ export default function Footer() {
     const getFooter = async () => {
       const value = await getKvClient('footer-message');
       setFooterMessage(value || 'Footer 정보를 불러오지 못했습니다.');
+      const res = await fetch(
+        `/api/kv/${key}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        true,
+      );
+      if (res.ok) {
+        const footer = await res.json();
+        setFooterMessage(footer.value);
+      } else {
+        setFooterMessage('Footer 정보를 불러오지 못했습니다.');
+        return;
+      }
     };
     const getKvHrefs = async () => {
       const keys = footerLogoData
@@ -60,11 +77,19 @@ export default function Footer() {
         <div className={styles.logoList}>
           {footerLogoData.map(({ href, src, alt, hrefKvKey }) => {
             const resolvedHref = hrefKvKey ? kvHrefs[hrefKvKey] || '' : href;
+            const isValidHref =
+              typeof resolvedHref === 'string' && /^(https?:\/\/|mailto:)/i.test(resolvedHref);
             return (
               <div className={styles.logo} key={alt}>
-                <a href={resolvedHref} target="_blank" rel="noopener noreferrer">
-                  <Image src={src} alt={alt} width={24} height={24} className="logo" />
-                </a>
+                {isValidHref ? (
+                  <a href={resolvedHref} target="_blank" rel="noopener noreferrer">
+                    <Image src={src} alt={alt} width={24} height={24} className="logo" />
+                  </a>
+                ) : (
+                  <span aria-disabled="true">
+                    <Image src={src} alt={alt} width={24} height={24} className="logo" />
+                  </span>
+                )}
               </div>
             );
           })}

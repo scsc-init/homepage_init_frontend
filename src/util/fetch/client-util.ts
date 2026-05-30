@@ -1,3 +1,5 @@
+'use client';
+
 // @/util/fetch/client-util.ts
 import type { UserProfile } from '@/types/user';
 import type { KvFetchResponse } from '@/types/system';
