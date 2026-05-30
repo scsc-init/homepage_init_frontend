@@ -13,28 +13,20 @@ export default function MajorList({ majors: majorsDefault }) {
   };
 
   const saveMajor = async (major) => {
-    const res = await fetchBackendClient(
-      `/api/executive/major/update/${major.id}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(major),
-      },
-      true,
-    );
+    const res = await fetchBackendClient(`/api/executive/major/update/${major.id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(major),
+    });
     if (res.status === 204) alert('저장 완료');
     else alert('저장 실패: ' + res.status);
   };
 
   const deleteMajor = async (id) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    const res = await fetchBackendClient(
-      `/api/executive/major/delete/${id}`,
-      {
-        method: 'POST',
-      },
-      true,
-    );
+    const res = await fetchBackendClient(`/api/executive/major/delete/${id}`, {
+      method: 'POST',
+    });
     if (res.status === 204) {
       alert('삭제 완료');
       setMajors((prev) => prev.filter((m) => m.id !== id));
@@ -42,15 +34,11 @@ export default function MajorList({ majors: majorsDefault }) {
   };
 
   const createMajor = async () => {
-    const res = await fetchBackendClient(
-      `/api/executive/major/create`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMajor),
-      },
-      true,
-    );
+    const res = await fetchBackendClient(`/api/executive/major/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newMajor),
+    });
     if (res.status === 201) {
       setNewMajor({ college: '', major_name: '' });
       alert('추가 완료');

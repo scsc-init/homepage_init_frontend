@@ -11,11 +11,7 @@ export default function OldboyManagementPanel({ users }) {
 
   useEffect(() => {
     const fetchApplicants = async () => {
-      const res = await fetchBackendClient(
-        `/api/executive/user/oldboy/applicants`,
-        undefined,
-        true,
-      );
+      const res = await fetchBackendClient(`/api/executive/user/oldboy/applicants`);
       if (res.ok) setApplicants(await res.json());
     };
     fetchApplicants();
@@ -23,13 +19,9 @@ export default function OldboyManagementPanel({ users }) {
 
   const processOldboy = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
-    const res = await fetchBackendClient(
-      `/api/executive/user/oldboy/${user.id}/process`,
-      {
-        method: 'POST',
-      },
-      true,
-    );
+    const res = await fetchBackendClient(`/api/executive/user/oldboy/${user.id}/process`, {
+      method: 'POST',
+    });
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
     else {
       const err = await res.json();

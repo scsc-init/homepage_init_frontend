@@ -114,22 +114,18 @@ export default function EditPigClient({ pigId, me, pig, article }) {
           ? `/api/pig/${pigId}/update/executive`
           : `/api/pig/${pigId}/update`;
 
-      const res = await fetchBackendClient(
-        endpoint,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            content: data.editor,
-            should_extend: data.should_extend,
-            is_rolling_admission: data.is_rolling_admission,
-            websites: sanitizeWebsites(data.websites),
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          content: data.editor,
+          should_extend: data.should_extend,
+          is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
+        }),
+      });
 
       if (res.status === 204) {
         isFormSubmitted.current = true;

@@ -129,11 +129,10 @@ export default function GalleryView({ board, sortOrder }) {
       fetchedDetailRef.current = new Set();
 
       try {
-        const res = await fetchBackendClient(
-          listUrl,
-          { credentials: 'include', cache: 'no-store' },
-          true,
-        );
+        const res = await fetchBackendClient(listUrl, {
+          credentials: 'include',
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
@@ -190,7 +189,6 @@ export default function GalleryView({ board, sortOrder }) {
               credentials: 'include',
               cache: 'no-store',
             },
-            true,
           );
           if (!res.ok) return { articleId: t.articleId, thumbSrc: '' };
 

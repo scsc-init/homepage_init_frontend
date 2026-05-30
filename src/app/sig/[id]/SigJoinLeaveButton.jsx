@@ -29,11 +29,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const join = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/sig/${sigId}/member/join`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/sig/${sigId}/member/join`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 가입 성공!');
         setIsMember(true);
@@ -54,11 +50,9 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const leave = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/sig/${sigId}/member/leave`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/sig/${sigId}/member/leave`, {
+        method: 'POST',
+      });
       if (res.ok) {
         alert('SIG 탈퇴 성공!');
         setIsMember(false);

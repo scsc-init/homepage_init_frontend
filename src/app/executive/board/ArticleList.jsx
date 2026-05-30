@@ -11,14 +11,10 @@ export default function ArticleList({ boards: boardsDefault }) {
 
   useEffect(() => {
     async function fetchBoardArticles(boardId) {
-      const res = await fetchBackendClient(
-        `/api/articles/${boardId}`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/articles/${boardId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
       if (res.ok) return { [boardId]: await res.json() };
       return {};
     }
@@ -45,15 +41,11 @@ export default function ArticleList({ boards: boardsDefault }) {
 
   const saveBoard = async (board) => {
     try {
-      const res = await fetchBackendClient(
-        `/api/executive/board/update/${board.id}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: board.name }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/executive/board/update/${board.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: board.name }),
+      });
       if (res.status === 204) alert('게시판 이름 수정 완료');
       else alert('게시판 이름 수정 실패: ' + res.status);
     } catch (err) {
@@ -64,13 +56,9 @@ export default function ArticleList({ boards: boardsDefault }) {
       const ok = confirm('게시판을 삭제하시겠습니까?');
       if (!ok) return;
       try {
-        const res = await fetchBackendClient(
-          `/api/executive/board/delete/${id}`,
-          {
-            method: 'POST',
-          },
-          true,
-        );
+        const res = await fetchBackendClient(`/api/executive/board/delete/${id}`, {
+          method: 'POST',
+        });
         if (res.status === 204) {
           alert('삭제 완료');
           setBoards((prev) => prev.filter((b) => b.id !== id));
@@ -99,15 +87,11 @@ export default function ArticleList({ boards: boardsDefault }) {
       };
       try {
         setSaving((s) => ({ ...s, [article.id]: true }));
-        const res = await fetchBackendClient(
-          `/api/executive/article/update/${article.id}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          },
-          true,
-        );
+        const res = await fetchBackendClient(`/api/executive/article/update/${article.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
         if (res.status === 204) alert('✅ 게시글 수정 완료');
         else {
           const error = await res.text();
@@ -124,13 +108,9 @@ export default function ArticleList({ boards: boardsDefault }) {
       const ok = confirm('정말 삭제하시겠습니까?');
       if (!ok) return;
       try {
-        const res = await fetchBackendClient(
-          `/api/executive/article/delete/${id}`,
-          {
-            method: 'POST',
-          },
-          true,
-        );
+        const res = await fetchBackendClient(`/api/executive/article/delete/${id}`, {
+          method: 'POST',
+        });
         if (res.status === 204) {
           setArticles((prev) => ({
             ...prev,

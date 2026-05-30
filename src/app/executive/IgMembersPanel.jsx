@@ -171,7 +171,6 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
             user_id: u.id,
           }),
         },
-        true,
       );
       if (res.status === 204) {
         const newMember = { user_id: u.id, user: { id: u.id, email: u.email, name: u.name } };
@@ -206,7 +205,6 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
             user_id: member.user_id,
           }),
         },
-        true,
       );
       if (res.status === 204) {
         setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));

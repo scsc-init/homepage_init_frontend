@@ -26,14 +26,10 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/pig/${pigId}/delete`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/pig/${pigId}/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
       if (res.ok) {
         alert('PIG 비활성화 성공!');
         router.refresh();
@@ -50,14 +46,10 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/pig/${pigId}/delete/executive`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/pig/${pigId}/delete/executive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
       if (res.ok) {
         alert('PIG 비활성화 성공!');
         router.refresh();

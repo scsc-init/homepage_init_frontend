@@ -28,11 +28,7 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/sig/${sigId}/delete`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/sig/${sigId}/delete`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 비활성화 성공!');
         router.refresh();
@@ -52,11 +48,9 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/sig/${sigId}/delete/executive`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/sig/${sigId}/delete/executive`, {
+        method: 'POST',
+      });
       if (res.ok) {
         alert('SIG 비활성화 성공!');
         router.refresh();

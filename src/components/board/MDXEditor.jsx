@@ -163,14 +163,10 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
     let res;
     try {
-      res = await fetchBackendClient(
-        '/api/file/image/upload',
-        {
-          method: 'POST',
-          body: formData,
-        },
-        true,
-      );
+      res = await fetchBackendClient('/api/file/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
     } catch {
       alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
       return null;
