@@ -274,13 +274,13 @@ export const IMAGE_UPLOAD_TARGET_BYTES = 4_800_000; // ~4.8MB
  * 특히 /us/login을 넣으면 무한로딩에 걸리니 주의하십시오.
  */
 export const ALLOWED_REDIRECT_PREFIXES: string[] = [
-  '/us/fund-apply',
+  '/us',
   '/board',
   '/article',
   '/sig',
   '/pig',
   '/us/edit-user-info',
-  '/about/welcome',
+  '/about',
   '/executive',
 ];
 

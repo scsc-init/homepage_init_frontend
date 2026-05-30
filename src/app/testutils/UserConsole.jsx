@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import styles from './page.module.css';
 
 export default function UserConsole() {
@@ -14,7 +15,7 @@ export default function UserConsole() {
 
 async function fetchDeleteAllUsers() {
   if (!confirm('정말 모든 유저를 삭제하시겠습니까?')) return;
-  const res = await fetch('/api/test/users', { method: 'DELETE' });
+  const res = await fetchBackendClient('/api/test/users', { method: 'DELETE' }, true);
   if (res.status === 204) alert('유저 삭제 성공');
   else alert(`유저 삭제 실패; status=${res.status}; msg=${await res.text()}`);
 }

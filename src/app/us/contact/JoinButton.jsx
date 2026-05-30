@@ -1,20 +1,19 @@
 'use client';
 
+import { useMe } from '@/util/hooks/useMe';
 import { useEffect, useState, useRef } from 'react';
 import './page.css';
+import { set } from 'react-hook-form';
 
 export default function JoinButton() {
   const [mode, setMode] = useState('unknown');
+  const { me, isLoading } = useMe();
   const ref = useRef();
 
   useEffect(() => {
-    fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' })
-      .then((r) => {
-        if (r.ok) setMode('member');
-        else setMode('guest');
-      })
-      .catch(() => setMode('guest'));
-  }, []);
+    if (isLoading) return;
+    setMode(me ? 'member' : 'guest');
+  }, [me, isLoading]);
 
   const handleMouseEnter = (e) => {
     const btn = ref.current;

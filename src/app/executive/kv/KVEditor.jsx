@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './KV.module.css';
@@ -34,10 +35,14 @@ export default function KVEditor() {
 
   const loadPresetKeys = useCallback(async () => {
     try {
-      const res = await fetch('/api/kvs', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        '/api/kvs',
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
 
       if (res.ok) {
         const data = await res.json();
@@ -94,11 +99,15 @@ export default function KVEditor() {
     setSaving(true);
     try {
       const bodyValue = value;
-      const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: bodyValue }),
-      });
+      const res = await fetch(
+        `/api/kv/${encodeURIComponent(keyInput.trim())}/update`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value: bodyValue }),
+        },
+        true,
+      );
       if (res.ok) {
         const data = await res.json();
         const raw = typeof data?.value === 'string' ? data.value : '';

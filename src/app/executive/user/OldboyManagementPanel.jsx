@@ -1,6 +1,9 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { utc2kst } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
@@ -8,7 +11,11 @@ export default function OldboyManagementPanel({ users }) {
 
   useEffect(() => {
     const fetchApplicants = async () => {
-      const res = await fetch(`/api/executive/user/oldboy/applicants`);
+      const res = await fetchBackendClient(
+        `/api/executive/user/oldboy/applicants`,
+        undefined,
+        true,
+      );
       if (res.ok) setApplicants(await res.json());
     };
     fetchApplicants();
@@ -16,9 +23,13 @@ export default function OldboyManagementPanel({ users }) {
 
   const processOldboy = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
-    const res = await fetch(`/api/executive/user/oldboy/${user.id}/process`, {
-      method: 'POST',
-    });
+    const res = await fetchBackendClient(
+      `/api/executive/user/oldboy/${user.id}/process`,
+      {
+        method: 'POST',
+      },
+      true,
+    );
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
     else {
       const err = await res.json();
@@ -30,8 +41,8 @@ export default function OldboyManagementPanel({ users }) {
   return (
     <div>
       <h2>졸업생 전환 신청자 목록</h2>
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminTable>
           <thead>
             <tr>
               <th>이름</th>
@@ -52,20 +63,19 @@ export default function OldboyManagementPanel({ users }) {
                   <td>{utc2kst(u.updated_at)}</td>
                   <td>{u.processed ? '✅' : '❌'}</td>
                   <td>
-                    <button
-                      className="adm-button"
+                    <AdminLayout.AdminButton
                       onClick={() => user && processOldboy(user)}
-                      disabled={saving[user.id] || u.processed || !user}
+                      disabled={!user || Boolean(saving[user.id]) || u.processed}
                     >
                       승인
-                    </button>
+                    </AdminLayout.AdminButton>
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </table>
-      </div>
+        </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableWrap>
     </div>
   );
 }

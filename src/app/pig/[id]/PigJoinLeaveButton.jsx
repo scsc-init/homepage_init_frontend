@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -28,10 +29,14 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const join = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/member/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/pig/${pigId}/member/join`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.ok) {
         alert('PIG 가입 성공!');
         setIsMember(true);
@@ -49,10 +54,14 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const leave = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/member/leave`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        `/api/pig/${pigId}/member/leave`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
       if (res.ok) {
         alert('PIG 탈퇴 성공!');
         setIsMember(false);

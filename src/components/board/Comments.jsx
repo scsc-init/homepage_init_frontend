@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { minExecutiveLevel } from '@/util/constants';
@@ -44,39 +45,52 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
-    const res = await fetch('/api/comments/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        article_id: Number(articleId),
-        parent_id: comment.id,
-        content: replyContent,
-      }),
-    });
-    if (res.ok) {
-      setReplyContent('');
-      setShowReply(false);
-      onReplySubmit();
-    } else {
-      alert('답글 작성 실패: ' + (await readErrorText(res)));
+    try {
+      const res = await fetchBackendClient(
+        '/api/comments/create',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            article_id: Number(articleId),
+            parent_id: comment.id,
+            content: replyContent,
+          }),
+        },
+        true,
+      );
+      if (res.ok) {
+        setReplyContent('');
+        setShowReply(false);
+        onReplySubmit();
+      } else {
+        alert('답글 작성 실패: ' + (await readErrorText(res)));
+      }
+    } catch (err) {
+      alert(`답글 작성 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
     }
   };
 
   const handleDeleteReply = async () => {
-    if (userId === comment.author_id) {
-      const res = await fetch(`/api/comments/${comment.id}/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+    try {
+      const path =
+        userId === comment.author_id
+          ? `/api/comments/${comment.id}/delete`
+          : `/api/comments/${comment.id}/executive/delete`;
+
+      const res = await fetchBackendClient(
+        path,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
+
       if (res.status === 204) onReplySubmit();
       else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
-    } else {
-      const res = await fetch(`/api/comments/${comment.id}/executive/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (res.status === 204) onReplySubmit();
-      else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
+    } catch (err) {
+      alert(`댓글 삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
     }
   };
 
@@ -146,7 +160,7 @@ export default function Comments({ articleId, initialComments, user }) {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/comments/${articleId}`);
+      const res = await fetchBackendClient(`/api/comments/${articleId}`);
       if (res.status === 401) {
         pushLoginWithRedirect(router);
         return;
@@ -165,15 +179,19 @@ export default function Comments({ articleId, initialComments, user }) {
   const submitNew = async () => {
     if (!newContent.trim()) return;
     try {
-      const res = await fetch('/api/comments/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          article_id: Number(articleId),
-          parent_id: null,
-          content: newContent,
-        }),
-      });
+      const res = await fetchBackendClient(
+        '/api/comments/create',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            article_id: Number(articleId),
+            parent_id: null,
+            content: newContent,
+          }),
+        },
+        true,
+      );
       if (res.ok) {
         setNewContent('');
         setShowNew(false);

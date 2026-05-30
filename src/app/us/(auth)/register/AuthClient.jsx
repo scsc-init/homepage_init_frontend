@@ -1,6 +1,8 @@
 // src/app/us/login/AuthClient.jsx
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
+import { fetchMajors } from '@/util/fetch/client-util';
 import { useEffect, useState, useRef } from 'react';
 import '@/styles/theme.css';
 import styles from '../auth.module.css';
@@ -70,17 +72,16 @@ export default function AuthClient() {
 
   useEffect(() => {
     if (stage !== 4) return;
-    const fetchMajors = async () => {
+    const loadMajors = async () => {
       try {
-        const res = await fetch(`/api/majors`, { credentials: 'include' });
-        const data = await res.json();
+        const data = await fetchMajors();
         setMajors(data);
         log('majors_loaded', { count: Array.isArray(data) ? data.length : 0 });
       } catch (e) {
         log('majors_load_failed', { error: String(e) });
       }
     };
-    fetchMajors();
+    loadMajors();
   }, [stage]);
 
   const handleSubmit = async () => {
@@ -89,21 +90,25 @@ export default function AuthClient() {
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
 
-    const createRes = await fetch(ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        email,
-        name: form.name,
-        student_id,
-        phone,
-        major_id: Number(form.major_id),
-        profile_picture: form.profile_picture_url,
-        profile_picture_is_url: true,
-        hashToken: session.hashToken,
-      }),
-    });
+    const createRes = await fetchBackendClient(
+      ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email,
+          name: form.name,
+          student_id,
+          phone,
+          major_id: Number(form.major_id),
+          profile_picture: form.profile_picture_url,
+          profile_picture_is_url: true,
+          hashToken: session.hashToken,
+        }),
+      },
+      true,
+    );
     if (createRes.status !== 201) {
       let createData;
       try {

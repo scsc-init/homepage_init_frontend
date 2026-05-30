@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './page.module.css';
@@ -28,14 +29,18 @@ export default function PfpUpdate() {
 
   const handleSubmit = async () => {
     if (mode === 'url' && url) {
-      const res = await fetch('/api/user/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          profile_picture: url,
-          profile_picture_is_url: true,
-        }),
-      });
+      const res = await fetchBackendClient(
+        '/api/user/update',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            profile_picture: url,
+            profile_picture_is_url: true,
+          }),
+        },
+        true,
+      );
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);
@@ -47,10 +52,14 @@ export default function PfpUpdate() {
       const form = new FormData();
       form.append('file', file);
 
-      const res = await fetch('/api/user/update-pfp-file', {
-        method: 'POST',
-        body: form,
-      });
+      const res = await fetchBackendClient(
+        '/api/user/update-pfp-file',
+        {
+          method: 'POST',
+          body: form,
+        },
+        true,
+      );
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);

@@ -59,14 +59,14 @@ export default async function RootLayout({ children }) {
         />
       </head>
       <body className={noto_sans_kr.className} suppressHydrationWarning={true}>
-        <div id="RootContainer">
-          <Header />
-          <main id="MainContent">
-            <Providers>{children}</Providers>
-          </main>
-          <ThemeToggle initialDark={initialDark} />
-          <Footer />
-        </div>
+        <Providers>
+          <div id="RootContainer">
+            <Header />
+            <main id="MainContent">{children}</main>
+            <ThemeToggle initialDark={initialDark} />
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

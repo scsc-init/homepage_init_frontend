@@ -8,12 +8,25 @@ function buildReturnPath(req) {
   return isAllowedRedirectPath(target) ? target : null;
 }
 
+function isPrefetchRequest(req) {
+  const purpose = req.headers.get('purpose') || '';
+  const secPurpose = req.headers.get('sec-purpose') || '';
+
+  return (
+    req.headers.get('next-router-prefetch') === '1' ||
+    req.headers.get('x-middleware-prefetch') === '1' ||
+    purpose.toLowerCase() === 'prefetch' ||
+    secPurpose.toLowerCase().includes('prefetch')
+  );
+}
+
 export async function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
   if (pathname.startsWith('/err/browser')) {
     return NextResponse.next();
   }
+
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
 
   const kakaotalk = ['kakao', 'kakaotalk'];
@@ -26,6 +39,10 @@ export async function middleware(req) {
   }
   if (everytime.some((keyword) => userAgent.includes(keyword))) {
     return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
+  }
+
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
   }
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -41,7 +58,7 @@ export async function middleware(req) {
 
   const res = NextResponse.redirect(loginUrl);
 
-  if (returnTo) {
+  if (returnTo && !isPrefetchRequest(req)) {
     res.cookies.set(REDIRECT_COOKIE, returnTo, {
       path: '/',
       maxAge: 300,
@@ -53,17 +70,34 @@ export async function middleware(req) {
   return res;
 }
 
+const publicRoutes = [
+  '/',
+  '/board/1',
+  '/board/2',
+  '/about',
+  '/about/executives',
+  '/about/developers',
+  '/about/rules',
+  '/sig',
+  '/pig',
+  '/us/contact',
+  '/us/login',
+];
+
+/**
+ * middleware을 거치게 되는 라우트
+ */
 export const config = {
   matcher: [
     '/',
-    '/us/fund-apply/:path*',
-    '/board/:path*',
+    '/about/:path*',
     '/article/:path*',
-    '/sig/:id(\\d+)',
-    '/pig/:id(\\d+)',
-    '/sig/create',
-    '/pig/create',
-    '/sig/edit/:id(\\d+)',
-    '/pig/edit/:id(\\d+)',
+    '/board/:path*',
+    '/err/:path*',
+    '/executive/:path*',
+    '/sig/:path*',
+    '/pig/:path*',
+    '/testutils/:path*',
+    '/us/:path*',
   ],
 };

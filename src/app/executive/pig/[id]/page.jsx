@@ -3,7 +3,7 @@ import WithAuthorization from '@/components/WithAuthorization';
 import PigEdit from './PigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
 import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
-import styles from '../../igpage.module.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage({ params }) {
   const [pigMeta, users] = await Promise.allSettled([
@@ -20,20 +20,20 @@ export default async function ExecutivePigPage({ params }) {
 
   return (
     <WithAuthorization>
-      <div className={styles['admin-panel']}>
+      <AdminLayout.AdminPanel>
         <h2>PIG 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <PigEdit pig={pig} />
-        </div>
+        </AdminLayout.AdminSection>
         <h2>PIG 구성원 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <IgMembersPanel
             is_pig
             ig={pig}
             users={users.status === 'fulfilled' ? users.value : []}
           />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

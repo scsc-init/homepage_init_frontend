@@ -1,17 +1,19 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState } from 'react';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function renderUserSummary(user) {
   if (!user) return <span>미지정</span>;
   return (
-    <div className="adm-flex" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+    <AdminLayout.AdminFlex style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
       <span>
         <strong>{user.name}</strong> ({user.email})
       </span>
       <span>전화번호: {user.phone}</span>
       <span>학번: {user.student_id}</span>
-    </div>
+    </AdminLayout.AdminFlex>
   );
 }
 
@@ -75,14 +77,18 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
     }
     setPending(true);
     try {
-      const res = await fetch('/api/executive/leadership', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          president_id: presidentTrimmed || null,
-          vice_president_id: vicePresidentTrimmed || null,
-        }),
-      });
+      const res = await fetchBackendClient(
+        '/api/executive/leadership',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            president_id: presidentTrimmed || null,
+            vice_president_id: vicePresidentTrimmed || null,
+          }),
+        },
+        true,
+      );
 
       if (!res.ok) {
         const msg = await res.text();
@@ -111,8 +117,8 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <div className="adm-table-wrap">
-          <table className="adm-table">
+        <AdminLayout.AdminTableWrap>
+          <AdminLayout.AdminTable>
             <thead>
               <tr>
                 <th style={{ width: '20%' }}>직책</th>
@@ -125,8 +131,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                 <td>회장</td>
                 <td>{renderUserSummary(registeredPresident)}</td>
                 <td>
-                  <select
-                    className="adm-select"
+                  <AdminLayout.AdminSelect
                     value={selectedPresidentId}
                     onChange={(event) => setSelectedPresidentId(event.target.value)}
                     disabled={pending}
@@ -137,7 +142,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                         {candidate.name} ({candidate.email})
                       </option>
                     ))}
-                  </select>
+                  </AdminLayout.AdminSelect>
                   {selectedPresident && (
                     <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
                       선택됨: {selectedPresident.name} / {selectedPresident.email}
@@ -156,8 +161,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                     )}
                   </td>
                   <td>
-                    <select
-                      className="adm-select"
+                    <AdminLayout.AdminSelect
                       value={id}
                       onChange={(event) => {
                         const copy = [...selectedVicePresidentIds];
@@ -172,7 +176,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                           {candidate.name} ({candidate.email})
                         </option>
                       ))}
-                    </select>
+                    </AdminLayout.AdminSelect>
                     {selectedVicePresident[idx]?.name && (
                       <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
                         선택됨: {selectedVicePresident[idx].name} /{' '}
@@ -183,27 +187,26 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-        <div className="adm-actions">
-          <button className="adm-button" type="submit" disabled={pending}>
+          </AdminLayout.AdminTable>
+        </AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminActions>
+          <AdminLayout.AdminButton type="submit" disabled={pending}>
             {pending ? '저장 중...' : '변경사항 저장'}
-          </button>
+          </AdminLayout.AdminButton>
           <span style={{ fontSize: '0.875rem' }}>
             선택하지 않으면 해당 직책은 미지정 상태로 저장됩니다.
           </span>
-        </div>
+        </AdminLayout.AdminActions>
       </form>
-      <div className="adm-actions">
-        <button
-          className="adm-button"
+      <AdminLayout.AdminActions>
+        <AdminLayout.AdminButton
           disabled={pending}
           onClick={() => setSelectedVicePresidentIds((ids) => [...ids, ''])}
         >
           부회장 추가
-        </button>
+        </AdminLayout.AdminButton>
         <span style={{ fontSize: '0.875rem' }}>미지정으로 설정하면 삭제됩니다.</span>
-      </div>
+      </AdminLayout.AdminActions>
     </div>
   );
 }

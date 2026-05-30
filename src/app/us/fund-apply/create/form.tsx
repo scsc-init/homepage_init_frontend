@@ -5,8 +5,9 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
-import { fetchBackendClientJson } from '@/util/fetch/client';
+import { fetchBackendClient, fetchBackendClientJson } from '@/util/fetch/client';
 import { academicTerm2string } from '@/util/helper/tostring';
+import { useMe } from '@/util/hooks/useMe';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
 import './form.css';
@@ -101,7 +102,7 @@ export default function FundApplyForm({
   globalStatus: GlobalStatus;
 }) {
   const router = useRouter();
-
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const [imageIds, setImageIds] = useState<number[]>([]);
@@ -162,20 +163,13 @@ export default function FundApplyForm({
   const useKakaoPay = watch('useKakaoPay');
 
   useEffect(() => {
-    let isMounted = true;
-    const run = async () => {
-      try {
-        const data = await fetchBackendClientJson<UserProfile>('/api/user/profile');
-        if (isMounted) setUser(data);
-      } catch (err) {
-        replaceLoginWithRedirect(router);
-      }
-    };
-    run();
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    if (isMeLoading) return;
+    if (isUnauthenticated || !me) {
+      replaceLoginWithRedirect(router);
+      return;
+    }
+    setUser(me);
+  }, [router, me, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     let isMounted = true;
@@ -326,7 +320,7 @@ export default function FundApplyForm({
 
     let res: Response;
     try {
-      res = await fetch('/api/file/image/upload', {
+      res = await fetchBackendClient('/api/file/image/upload', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -403,7 +397,7 @@ export default function FundApplyForm({
 
       const payload = await buildPayload(form);
 
-      const res = await fetch('/api/article/create', {
+      const res = await fetchBackendClient('/api/article/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

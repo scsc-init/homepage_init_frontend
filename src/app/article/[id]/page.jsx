@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -11,9 +12,10 @@ import { use, useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
-import { directFetch } from '@/util/directFetch';
+import { useMe } from '@/util/hooks/useMe';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { set } from 'react-hook-form';
 
 export default function ArticleDetail({ params }) {
   const resolvedParams = use(params);
@@ -27,34 +29,32 @@ export default function ArticleDetail({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [attachmentMeta, setAttachmentMeta] = useState([]);
-
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
   useEffect(() => {
-    if (!id) return;
+    if (!id || isMeLoading) return;
+    if (isUnauthenticated || !me) {
+      pushLoginWithRedirect(router);
+      return;
+    }
     const loadAll = async () => {
       try {
-        const [contentRes, commentsRes, userRes] = await Promise.all([
-          fetch(`/api/article/${id}`),
-          fetch(`/api/comments/${id}`),
-          fetch(`/api/user/profile`),
+        const [contentRes, commentsRes] = await Promise.all([
+          fetchBackendClient(`/api/article/${id}`),
+          fetchBackendClient(`/api/comments/${id}`),
         ]);
 
-        if (userRes.status === 401) {
-          pushLoginWithRedirect(router);
-          return;
-        }
-        if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
+        if (!contentRes.ok || !commentsRes.ok) {
           setIsError(true);
           return;
         }
 
-        const [articleJson, commentsJson, userJson] = await Promise.all([
+        const [articleJson, commentsJson] = await Promise.all([
           contentRes.json(),
           commentsRes.json(),
-          userRes.json(),
         ]);
         setArticle(articleJson);
         setComments(commentsJson);
-        setUser(userJson);
+        setUser(me);
       } catch (_) {
         setIsError(true);
       } finally {
@@ -62,7 +62,7 @@ export default function ArticleDetail({ params }) {
       }
     };
     loadAll();
-  }, [router, id]);
+  }, [router, id, me, isMeLoading, isUnauthenticated]);
 
   const attachmentIds = useMemo(() => {
     if (!Array.isArray(article?.attachments)) return [];
@@ -86,7 +86,7 @@ export default function ArticleDetail({ params }) {
         attachmentIds.forEach((aid) => {
           if (aid) queryParams.append('ids', aid);
         });
-        const res = await directFetch(`/api/file/metadata?${queryParams.toString()}`);
+        const res = await fetchBackendClient(`/api/file/metadata?${queryParams.toString()}`);
         const data = await res.json().catch(() => []);
         if (cancelled) return;
         if (res.ok) {
@@ -127,7 +127,7 @@ export default function ArticleDetail({ params }) {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/');

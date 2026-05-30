@@ -2,21 +2,19 @@
 
 import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
-import styles from '../igpage.module.css';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function SigFilterRow({ filter, updateFilterCriteria }) {
   return (
     <tr>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={filter.title}
           onChange={(e) => updateFilterCriteria('title', e.target.value)}
         />
       </td>
       <td>
-        <select
-          className={styles['adm-select']}
+        <AdminLayout.AdminSelect
           value={filter.status}
           onChange={(e) => updateFilterCriteria('status', e.target.value)}
         >
@@ -26,18 +24,16 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
               {STATUS_MAP[key]}
             </option>
           ))}
-        </select>
+        </AdminLayout.AdminSelect>
       </td>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={filter.year}
           onChange={(e) => updateFilterCriteria('year', e.target.value)}
         />
       </td>
       <td>
-        <select
-          className={styles['adm-select']}
+        <AdminLayout.AdminSelect
           value={filter.semester}
           onChange={(e) => updateFilterCriteria('semester', e.target.value)}
         >
@@ -47,11 +43,10 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
               {SEMESTER_MAP[key]}학기
             </option>
           ))}
-        </select>
+        </AdminLayout.AdminSelect>
       </td>
       <td>
-        <input
-          className={styles['adm-input']}
+        <AdminLayout.AdminInput
           value={filter.ownerName}
           onChange={(e) => updateFilterCriteria('ownerName', e.target.value)}
         />
@@ -70,7 +65,9 @@ const RenderSigRow = ({ sig }) => {
       <td>{SEMESTER_MAP[Number(sig.semester)] ?? ''}학기</td>
       <td>{sig.ownerName ?? ''}</td>
       <td>
-        <a href={`/executive/sig/${sig.id}`}>상세보기</a>
+        <a href={`/executive/sig/${sig.id}`} data-underline>
+          상세보기
+        </a>
       </td>
     </tr>
   );
@@ -98,8 +95,8 @@ export default function SigList({ sigs }) {
   }, [sigs, filter]);
 
   return (
-    <div className={styles['adm-table-wrap']}>
-      <table className={styles['adm-table']}>
+    <AdminLayout.AdminTableWrap>
+      <AdminLayout.AdminTable>
         <colgroup>
           <col />
           <col />
@@ -127,7 +124,7 @@ export default function SigList({ sigs }) {
             <RenderSigRow sig={sig} key={sig.id} />
           ))}
         </tbody>
-      </table>
-    </div>
+      </AdminLayout.AdminTable>
+    </AdminLayout.AdminTableWrap>
   );
 }

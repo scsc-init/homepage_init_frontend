@@ -5,7 +5,6 @@ import HeaderRight from '@/components/header/HeaderRight';
 import MobileMenuList from '@/components/header/MobileMenuList';
 import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
 import styles from './Header.module.css';
-import Providers from './Providers';
 
 export default async function Header() {
   noStore();
@@ -29,10 +28,8 @@ export default async function Header() {
             <HeaderCenter />
           </div>
           <div className={styles.right}>
-            <Providers>
-              <HeaderRight />
-              <MobileMenuList />
-            </Providers>
+            <HeaderRight />
+            <MobileMenuList />
           </div>
         </div>
       </div>
