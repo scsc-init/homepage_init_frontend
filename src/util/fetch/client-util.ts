@@ -21,13 +21,21 @@ export async function getKvClient(key: string): Promise<string> {
   }
 }
 
-export async function getKvsClient(keys: string[]): Promise<Record<string, string>> {
+export async function getKvsClient(keys: string[]): Promise<string[]> {
   const list = Array.isArray(keys) ? keys : [];
-  const entries = await Promise.all(
-    list.map(async (key): Promise<[string, string]> => {
-      const value = await getKvClient(key);
-      return [key, value];
-    }),
-  );
-  return Object.fromEntries(entries);
+  if (list.length === 0) return [];
+  try {
+    const qs = list.map((k) => `q=${encodeURIComponent(k)}`).join('&');
+    const res = await fetchBackendClient(`/api/kvs?${qs}`, {}, true);
+    if (!res.ok) return list.map(() => '');
+    const data = (await res.json()) as KvFetchResponse[];
+    const map: Record<string, string> = {};
+    for (const item of Array.isArray(data) ? data : []) {
+      const v = item?.value;
+      map[item?.key] = typeof v === 'string' && v.trim() ? v.trim() : '';
+    }
+    return list.map((k) => map[k] || '');
+  } catch {
+    return list.map(() => '');
+  }
 }

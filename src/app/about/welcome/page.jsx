@@ -12,16 +12,16 @@ const WELCOME_LOGIN_PATH = '/about/welcome';
 export default function WelcomePage() {
   const router = useRouter();
   const { me: profile, isLoading, isUnauthenticated } = useMe();
-  const [kvMap, setKvMap] = useState({});
+  const [kvValues, setKvValues] = useState(['', '', '']);
 
   useEffect(() => {
     const fetchKvs = async () => {
-      const map = await getKvsClient([
+      const values = await getKvsClient([
         'TEXT_DEPOSIT_ACC',
         'TEXT_KAKAO_INVITE_LINK',
         'TEXT_DISCORD_INVITE_LINK',
       ]);
-      setKvMap(map);
+      setKvValues(values);
     };
     fetchKvs();
   }, []);
@@ -34,9 +34,7 @@ export default function WelcomePage() {
 
   if (isLoading || isUnauthenticated) return null;
 
-  const depositAcc = kvMap['TEXT_DEPOSIT_ACC'] || '';
-  const kakaoInviteLink = kvMap['TEXT_KAKAO_INVITE_LINK'] || '';
-  const discordInviteLink = kvMap['TEXT_DISCORD_INVITE_LINK'] || '';
+  const [depositAcc, kakaoInviteLink, discordInviteLink] = kvValues;
   const isInactive = !profile || !profile.is_active;
 
   return (
