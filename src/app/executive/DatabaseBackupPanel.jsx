@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import * as AdminLayout from '@/components/AdminLayout';
 import { useMe } from '@/util/hooks/useMe';
+import { fetchBackendClient } from '@/util/fetch/client';
 
 const PRESIDENT_ROLE_LEVEL = 1000;
 
@@ -44,9 +45,8 @@ export default function DatabaseBackupPanel() {
     setDownloading(true);
 
     try {
-      const res = await fetch('/api/executive/scsc/global/status/backup', {
+      const res = await fetchBackendClient('/api/executive/scsc/global/status/backup', {
         method: 'POST',
-        cache: 'no-store',
       });
 
       if (!res.ok) {
@@ -74,7 +74,7 @@ export default function DatabaseBackupPanel() {
     <AdminLayout.AdminSection>
       <h3>DB 백업</h3>
       <p style={{ marginBottom: '0.75rem' }}>
-        회장 권한으로 현재 PostgreSQL DB를 백업하고 SQL 파일을 다운로드합니다.
+        현재 PostgreSQL DB를 백업하고 SQL 파일을 다운로드합니다.
       </p>
       <AdminLayout.AdminButtonDanger onClick={handleBackup} disabled={downloading}>
         {downloading ? '백업 중...' : 'DB 백업 다운로드'}
