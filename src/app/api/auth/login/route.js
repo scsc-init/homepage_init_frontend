@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function POST(request) {
-  const res = await handleApiRequest('POST', '/api/user/login', {}, request);
+  const res = await fetchBackendServer('POST', '/api/user/login', {}, request);
 
   if (!res.ok) {
     return NextResponse.json({ error: 'login failed' }, { status: 400 });

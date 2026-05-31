@@ -29,7 +29,7 @@ export default function PfpUpdate() {
 
   const handleSubmit = async () => {
     if (mode === 'url' && url) {
-      const res = await fetchBackendClient('/api/user/update', {
+      const res = await fetch('/api/user/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -48,7 +48,7 @@ export default function PfpUpdate() {
       const form = new FormData();
       form.append('file', file);
 
-      const res = await fetchBackendClient('/api/user/update-pfp-file', {
+      const res = await fetch('/api/user/update-pfp-file', {
         method: 'POST',
         body: form,
       });
