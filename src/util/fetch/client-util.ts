@@ -1,10 +1,9 @@
 'use client';
 
 // @/util/fetch/client-util.ts
-import type { UserProfile } from '@/types/user';
+import type { UserProfile, ExecutiveCandidate, UserSummary } from '@/types/user';
 import type { KvFetchResponse } from '@/types/system';
 import { fetchBackendClient } from './client';
-import type { ExecutiveCandidate, UserSummary, UserProfile } from '@/types/user';
 import type {
   BoardInfo,
   DiscordBotStatusResponse,
