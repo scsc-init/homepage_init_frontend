@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { hideFooterRoutes, footerLogoData } from '@/util/constants';
-import { getKvClient } from '@/util/fetch/client-util';
+import { getKvsClient } from '@/util/fetch/client-util';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -13,44 +13,19 @@ export default function Footer() {
   const [kvHrefs, setKvHrefs] = useState({});
 
   useEffect(() => {
-    const getFooter = async () => {
-      const value = await getKvClient('footer-message');
-      setFooterMessage(value || 'Footer 정보를 불러오지 못했습니다.');
-
-      const res = await fetch(
-        `/api/kv/${key}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        true,
-      );
-      if (res.ok) {
-        const footer = await res.json();
-        setFooterMessage(footer.value);
-      } else {
-        setFooterMessage('Footer 정보를 불러오지 못했습니다.');
-        return;
-      }
-    };
-    const getKvHrefs = async () => {
-      const keys = footerLogoData
+    const fetchAllKvs = async () => {
+      const hrefKeys = footerLogoData
         .map((item) => item.hrefKvKey)
         .filter((k) => typeof k === 'string' && k.length > 0);
-      if (keys.length === 0) return;
-      const entries = await Promise.all(
-        keys.map(async (key) => {
-          const value = await getKvClient(key);
-          return [key, value];
-        }),
-      );
-      setKvHrefs(Object.fromEntries(entries));
-    };
+      const allKeys = ['footer-message', ...hrefKeys];
+      const values = await getKvsClient(allKeys);
 
-    getFooter();
-    getKvHrefs();
+      setFooterMessage(values[0] || 'Footer 정보를 불러오지 못했습니다.');
+
+      const hrefEntries = hrefKeys.map((key, i) => [key, values[i + 1]]);
+      setKvHrefs(Object.fromEntries(hrefEntries));
+    };
+    fetchAllKvs();
   }, []);
 
   if (hideFooterRoutes.includes(pathname)) return null;
