@@ -129,17 +129,13 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     setLoading(true);
 
     try {
-      const res = await fetchBackendClient(
-        isExecutive ? '/api/executive/tag' : '/api/tag',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(
-            isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
-          ),
-        },
-        true,
-      );
+      const res = await fetchBackendClient(isExecutive ? '/api/executive/tag' : '/api/tag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
+        ),
+      });
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -185,13 +181,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
     try {
       const deleteRequests = removedTagIds.map(async (tagId) => {
-        const res = await fetchBackendClient(
-          `/api/sig/${sigId}/tag/${tagId}`,
-          {
-            method: 'DELETE',
-          },
-          true,
-        );
+        const res = await fetchBackendClient(`/api/sig/${sigId}/tag/${tagId}`, {
+          method: 'DELETE',
+        });
 
         if (!res.ok && res.status !== 204) {
           const err = await res.json().catch(() => ({}));
@@ -200,15 +192,11 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       });
 
       const addRequests = addedTagIds.map(async (tagId) => {
-        const res = await fetchBackendClient(
-          `/api/sig/${sigId}/tag`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tag_id: Number(tagId) }),
-          },
-          true,
-        );
+        const res = await fetchBackendClient(`/api/sig/${sigId}/tag`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag_id: Number(tagId) }),
+        });
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));

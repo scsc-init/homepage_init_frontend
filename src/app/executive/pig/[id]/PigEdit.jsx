@@ -155,24 +155,20 @@ export default function PigExecutiveEdit({ pig: _pig }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await fetchBackendClient(
-        `/api/executive/pig/${pig.id}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: pig.title,
-            description: pig.description,
-            content: pig.content,
-            status: pig.status,
-            year: pig.year,
-            semester: pig.semester,
-            should_extend: Boolean(pig.should_extend),
-            is_rolling_admission: String(pig.is_rolling_admission),
-          }),
-        },
-        true,
-      );
+      const res1 = await fetchBackendClient(`/api/executive/pig/${pig.id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: pig.title,
+          description: pig.description,
+          content: pig.content,
+          status: pig.status,
+          year: pig.year,
+          semester: pig.semester,
+          should_extend: Boolean(pig.should_extend),
+          is_rolling_admission: String(pig.is_rolling_admission),
+        }),
+      });
       if (!res1.ok) {
         const msg1 = await res1.json();
         alert(`저장 실패. PIG 정보 수정: ${msg1?.detail ?? res1.status}`);
@@ -182,15 +178,11 @@ export default function PigExecutiveEdit({ pig: _pig }) {
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(pig)) {
-        res2 = await fetchBackendClient(
-          `/api/executive/pig/${pig.id}/handover`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ new_owner: selectedMember }),
-          },
-          true,
-        );
+        res2 = await fetchBackendClient(`/api/executive/pig/${pig.id}/handover`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ new_owner: selectedMember }),
+        });
       }
       if (!res2 || res2.ok) alert('저장 완료');
       else {
@@ -209,11 +201,9 @@ export default function PigExecutiveEdit({ pig: _pig }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await fetchBackendClient(
-        `/api/executive/pig/${id}/delete`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/executive/pig/${id}/delete`, {
+        method: 'POST',
+      });
       if (res.status === 204) {
         router.replace('/executive/pig');
       } else {

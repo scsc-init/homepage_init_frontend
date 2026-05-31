@@ -53,8 +53,6 @@ export default function AttachmentSection({
         const query = params.toString();
         const res = await fetchBackendClient(
           query ? `/api/file/metadata?${query}` : '/api/file/metadata',
-          undefined,
-          true,
         );
         const data = await res.json().catch(() => []);
         if (!res.ok) {
@@ -106,14 +104,10 @@ export default function AttachmentSection({
 
           let res;
           try {
-            res = await fetchBackendClient(
-              `/api/file/${uploadType}/upload`,
-              {
-                method: 'POST',
-                body: formData,
-              },
-              true,
-            );
+            res = await fetchBackendClient(`/api/file/${uploadType}/upload`, {
+              method: 'POST',
+              body: formData,
+            });
           } catch {
             alert('파일 업로드 중 네트워크 오류가 발생했습니다.');
             continue;

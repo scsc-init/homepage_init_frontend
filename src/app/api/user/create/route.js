@@ -1,5 +1,5 @@
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function POST(request) {
-  return handleApiRequest('POST', '/api/user/create', {}, request);
+  return fetchBackendServer('POST', '/api/user/create', {}, request);
 }

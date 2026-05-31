@@ -46,19 +46,15 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
   const handleReply = async () => {
     if (!replyContent.trim()) return;
     try {
-      const res = await fetchBackendClient(
-        '/api/comments/create',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            article_id: Number(articleId),
-            parent_id: comment.id,
-            content: replyContent,
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient('/api/comments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          article_id: Number(articleId),
+          parent_id: comment.id,
+          content: replyContent,
+        }),
+      });
       if (res.ok) {
         setReplyContent('');
         setShowReply(false);
@@ -78,14 +74,10 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
           ? `/api/comments/${comment.id}/delete`
           : `/api/comments/${comment.id}/executive/delete`;
 
-      const res = await fetchBackendClient(
-        path,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
+      const res = await fetchBackendClient(path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       if (res.status === 204) onReplySubmit();
       else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
@@ -179,19 +171,15 @@ export default function Comments({ articleId, initialComments, user }) {
   const submitNew = async () => {
     if (!newContent.trim()) return;
     try {
-      const res = await fetchBackendClient(
-        '/api/comments/create',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            article_id: Number(articleId),
-            parent_id: null,
-            content: newContent,
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient('/api/comments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          article_id: Number(articleId),
+          parent_id: null,
+          content: newContent,
+        }),
+      });
       if (res.ok) {
         setNewContent('');
         setShowNew(false);

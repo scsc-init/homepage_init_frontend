@@ -109,7 +109,6 @@ export default function EditSigClient({ sigId, me, sig, article }) {
             is_rolling_admission: data.is_rolling_admission,
           }),
         },
-        true,
       );
 
       if (res.status === 204) {

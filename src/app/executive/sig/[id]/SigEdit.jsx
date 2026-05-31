@@ -216,25 +216,21 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await fetchBackendClient(
-        `/api/executive/sig/${sig.id}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: sig.title,
-            description: sig.description,
-            content: sig.content,
-            status: sig.status,
-            year: sig.year,
-            semester: sig.semester,
-            should_extend: Boolean(sig.should_extend),
-            is_rolling_admission: Boolean(sig.is_rolling_admission),
-            websites: sanitizeWebsites(sig.websites),
-          }),
-        },
-        true,
-      );
+      const res1 = await fetchBackendClient(`/api/executive/sig/${sig.id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: sig.title,
+          description: sig.description,
+          content: sig.content,
+          status: sig.status,
+          year: sig.year,
+          semester: sig.semester,
+          should_extend: Boolean(sig.should_extend),
+          is_rolling_admission: Boolean(sig.is_rolling_admission),
+          websites: sanitizeWebsites(sig.websites),
+        }),
+      });
       if (!res1.ok) {
         const msg1 = await res1.json();
         alert(`저장 실패. SIG 정보 수정: ${msg1?.detail ?? res1.status}`);
@@ -246,15 +242,11 @@ export default function SigExecutiveEdit({ sig: _sig }) {
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
-        res2 = await fetchBackendClient(
-          `/api/executive/sig/${sig.id}/handover`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ new_owner: selectedMember }),
-          },
-          true,
-        );
+        res2 = await fetchBackendClient(`/api/executive/sig/${sig.id}/handover`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ new_owner: selectedMember }),
+        });
       }
       if (!res2 || res2.ok) alert('저장 완료');
       else {
@@ -273,11 +265,9 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await fetchBackendClient(
-        `/api/executive/sig/${id}/delete`,
-        { method: 'POST' },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/executive/sig/${id}/delete`, {
+        method: 'POST',
+      });
       if (res.status === 204) {
         router.replace('/executive/sig');
       } else {

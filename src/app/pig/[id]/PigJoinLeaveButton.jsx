@@ -29,14 +29,10 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const join = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/pig/${pigId}/member/join`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/pig/${pigId}/member/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
       if (res.ok) {
         alert('PIG 가입 성공!');
         setIsMember(true);
@@ -54,14 +50,10 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const leave = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(
-        `/api/pig/${pigId}/member/leave`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
+      const res = await fetchBackendClient(`/api/pig/${pigId}/member/leave`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
       if (res.ok) {
         alert('PIG 탈퇴 성공!');
         setIsMember(false);

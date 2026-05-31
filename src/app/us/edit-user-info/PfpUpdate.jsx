@@ -29,18 +29,14 @@ export default function PfpUpdate() {
 
   const handleSubmit = async () => {
     if (mode === 'url' && url) {
-      const res = await fetchBackendClient(
-        '/api/user/update',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            profile_picture: url,
-            profile_picture_is_url: true,
-          }),
-        },
-        true,
-      );
+      const res = await fetchBackendClient('/api/user/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile_picture: url,
+          profile_picture_is_url: true,
+        }),
+      });
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);
@@ -52,14 +48,10 @@ export default function PfpUpdate() {
       const form = new FormData();
       form.append('file', file);
 
-      const res = await fetchBackendClient(
-        '/api/user/update-pfp-file',
-        {
-          method: 'POST',
-          body: form,
-        },
-        true,
-      );
+      const res = await fetchBackendClient('/api/user/update-pfp-file', {
+        method: 'POST',
+        body: form,
+      });
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);

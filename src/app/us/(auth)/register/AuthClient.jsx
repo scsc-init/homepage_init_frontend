@@ -1,7 +1,6 @@
 // src/app/us/login/AuthClient.jsx
 'use client';
 
-import { fetchBackendClient } from '@/util/fetch/client';
 import { fetchMajors } from '@/util/fetch/client-util';
 import { useEffect, useState, useRef } from 'react';
 import '@/styles/theme.css';
@@ -90,7 +89,7 @@ export default function AuthClient() {
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
 
-    const createRes = await fetchBackendClient(
+    const createRes = await fetch(
       ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`,
       {
         method: 'POST',
