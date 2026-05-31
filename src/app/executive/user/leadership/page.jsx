@@ -3,6 +3,7 @@ export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
+import DatabaseBackupPanel from '@/app/executive/DatabaseBackupPanel';
 import { fetchUsers, fetchMajors, fetchMe } from '@/util/fetchAPIData';
 import { redirect } from 'next/navigation';
 import * as AdminLayout from '@/components/AdminLayout';
@@ -49,6 +50,7 @@ export default async function ExecutiveLeadershipPage() {
         <AdminLayout.AdminSection>
           <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
         </AdminLayout.AdminSection>
+        <DatabaseBackupPanel />
       </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
