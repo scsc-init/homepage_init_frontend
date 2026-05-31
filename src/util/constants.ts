@@ -27,40 +27,6 @@ export const STATUS_MAP: Record<string, string> = {
 };
 
 /**
- * Returns the first valid string among the provided values.
- *
- * @param vals - Candidate values.
- * @returns The first non-empty string found, or an empty string if none exist.
- */
-function pickEnv(...vals: Array<string | undefined | null>): string {
-  for (const v of vals) {
-    if (typeof v === 'string' && v.trim()) return v.trim();
-  }
-  return '';
-}
-
-/**
- * 하드코딩된 정보들입니다.
- */
-export const DEPOSIT_ACC = pickEnv(
-  process.env.NEXT_PUBLIC_DEPOSIT_ACC,
-  process.env.DEPOSIT_ACC,
-  '국민은행 942902-02-054136 (강명석)',
-);
-
-export const DISCORD_INVITE_LINK = pickEnv(
-  process.env.NEXT_PUBLIC_DISCORD_INVITE_LINK,
-  process.env.DISCORD_INVITE_LINK,
-  'https://discord.gg/SmXFDxA7XE',
-);
-
-export const KAKAO_INVITE_LINK = pickEnv(
-  process.env.NEXT_PUBLIC_KAKAO_INVITE_LINK,
-  process.env.KAKAO_INVITE_LINK,
-  'https://invite.kakao.com/tc/II2yiLsQhY',
-);
-
-/**
  * 회칙 마크다운 문서 링크입니다.
  */
 export const RULES_MARKDOWN_LINK =
@@ -124,6 +90,11 @@ export interface FooterLogoItem {
   href: string;
   src: string;
   alt: string;
+  /**
+   * 지정 시, 런타임에 해당 KV의 값으로 href가 덮어씌워집니다.
+   * Footer 컴포넌트에서 처리됩니다.
+   */
+  hrefKvKey?: string;
 }
 
 /**
@@ -136,7 +107,8 @@ export const footerLogoData: FooterLogoItem[] = [
     alt: 'Mail',
   },
   {
-    href: DISCORD_INVITE_LINK,
+    href: '',
+    hrefKvKey: 'TEXT_DISCORD_INVITE_LINK',
     src: '/vectors/discord.svg',
     alt: 'Discord',
   },

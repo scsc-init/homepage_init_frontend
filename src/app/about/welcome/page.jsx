@@ -1,19 +1,40 @@
-import { redirect } from 'next/navigation';
-import { handleApiRequest } from '@/app/api/apiWrapper';
-import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useMe } from '@/util/hooks/useMe';
+import { getKvsClient } from '@/util/fetch/client-util';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
 const WELCOME_LOGIN_PATH = '/about/welcome';
 
-export default async function WelcomePage() {
-  const res = await handleApiRequest('GET', '/api/user/profile');
+export default function WelcomePage() {
+  const router = useRouter();
+  const { me: profile, isLoading, isUnauthenticated } = useMe();
+  const [kvValues, setKvValues] = useState(['', '', '']);
 
-  if (!res.ok) {
-    redirect(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
-  }
+  useEffect(() => {
+    const fetchKvs = async () => {
+      const values = await getKvsClient([
+        'TEXT_DEPOSIT_ACC',
+        'TEXT_KAKAO_INVITE_LINK',
+        'TEXT_DISCORD_INVITE_LINK',
+      ]);
+      setKvValues(values);
+    };
+    fetchKvs();
+  }, []);
 
-  const profile = await res.json();
+  useEffect(() => {
+    if (isUnauthenticated) {
+      router.replace(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
+    }
+  }, [isUnauthenticated, router]);
+
+  if (isLoading || isUnauthenticated) return null;
+
+  const [depositAcc, kakaoInviteLink, discordInviteLink] = kvValues;
   const isInactive = !profile || !profile.is_active;
 
   return (
@@ -60,7 +81,7 @@ export default async function WelcomePage() {
               <div className={styles.definitionRow}>
                 <dt>입금 계좌</dt>
                 <dd>
-                  {DEPOSIT_ACC} <CopyButton link={DEPOSIT_ACC} label="계좌번호 복사" />
+                  {depositAcc} <CopyButton link={depositAcc} label="계좌번호 복사" />
                 </dd>
               </div>
             </dl>
@@ -86,14 +107,14 @@ export default async function WelcomePage() {
 
             <div className={styles.buttonsContainer}>
               <a
-                href={KAKAO_INVITE_LINK}
+                href={kakaoInviteLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.linkButton}
               >
                 카카오톡 팀 채팅방 입장
               </a>
-              <CopyButton link={KAKAO_INVITE_LINK} label="링크 복사" />
+              <CopyButton link={kakaoInviteLink} label="링크 복사" />
             </div>
 
             <p className={styles.smallNote}>
@@ -119,14 +140,14 @@ export default async function WelcomePage() {
 
             <div className={styles.buttonsContainer}>
               <a
-                href={DISCORD_INVITE_LINK}
+                href={discordInviteLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.linkButton}
               >
                 디스코드 서버 입장
               </a>
-              <CopyButton link={DISCORD_INVITE_LINK} label="링크 복사" />
+              <CopyButton link={discordInviteLink} label="링크 복사" />
             </div>
           </section>
           <section className={styles.statusCard}>

@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { useMe } from '@/util/hooks/useMe';
-import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
+import { getKvsClient } from '@/util/fetch/client-util';
 
 const USER_ROLE_MAP = {
   0: '최저권한',
@@ -35,8 +35,18 @@ export default function MyProfileClient() {
   const { data: session, status, update } = useSession();
   const { me } = useMe();
   const [user, setUser] = useState(null);
+  const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
   const router = useRouter();
-
+  useEffect(() => {
+    const fetchInviteLinks = async () => {
+      const [kakao, discord] = await getKvsClient([
+        'TEXT_KAKAO_INVITE_LINK',
+        'TEXT_DISCORD_INVITE_LINK',
+      ]);
+      setInviteLinks({ kakao, discord });
+    };
+    fetchInviteLinks();
+  }, []);
   useEffect(() => {
     const load = async () => {
       if (status === 'loading') return;
@@ -159,7 +169,7 @@ export default function MyProfileClient() {
 
           <div className="user-info-actions">
             <a
-              href={KAKAO_INVITE_LINK}
+              href={inviteLinks.kakao}
               target="_blank"
               rel="noopener noreferrer"
               className="action-button"
@@ -170,7 +180,7 @@ export default function MyProfileClient() {
               <span className="btn-label">카카오 입장</span>
             </a>
             <a
-              href={DISCORD_INVITE_LINK}
+              href={inviteLinks.discord}
               target="_blank"
               rel="noopener noreferrer"
               className="action-button"
