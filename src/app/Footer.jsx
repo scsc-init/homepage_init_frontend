@@ -16,7 +16,7 @@ export default function Footer() {
     const getFooter = async () => {
       const value = await getKvClient('footer-message');
       setFooterMessage(value || 'Footer 정보를 불러오지 못했습니다.');
-      
+
       const res = await fetch(
         `/api/kv/${key}`,
         {
