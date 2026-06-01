@@ -33,6 +33,7 @@
 }
 
 .semesterLabel {
+  font-size: 0.875rem;
   white-space: nowrap;
   word-break: keep-all;
   flex-shrink: 0;
