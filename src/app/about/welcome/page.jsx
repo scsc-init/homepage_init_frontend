@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMe } from '@/util/hooks/useMe';
 import { getKvsClient } from '@/util/fetch/client-util';
-import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
@@ -13,11 +12,7 @@ const WELCOME_LOGIN_PATH = '/about/welcome';
 export default function WelcomePage() {
   const router = useRouter();
   const { me: profile, isLoading, isUnauthenticated } = useMe();
-  const [kvValues, setKvValues] = useState([
-    DEPOSIT_ACC,
-    KAKAO_INVITE_LINK,
-    DISCORD_INVITE_LINK,
-  ]);
+  const [kvValues, setKvValues] = useState(['', '', '']);
 
   useEffect(() => {
     const fetchKvs = async () => {
@@ -26,11 +21,7 @@ export default function WelcomePage() {
         'TEXT_KAKAO_INVITE_LINK',
         'TEXT_DISCORD_INVITE_LINK',
       ]);
-      setKvValues([
-        values[0] || DEPOSIT_ACC,
-        values[1] || KAKAO_INVITE_LINK,
-        values[2] || DISCORD_INVITE_LINK,
-      ]);
+      setKvValues(values);
     };
     fetchKvs();
   }, []);

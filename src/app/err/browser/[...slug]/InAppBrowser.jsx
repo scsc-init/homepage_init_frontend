@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
@@ -9,7 +8,6 @@ import { setRedirectAfterLogin } from '@/util/loginRedirect';
 import styles from './page.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
-import { useMe } from '@/util/hooks/useMe';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -19,8 +17,6 @@ const IN_APP_BROWSER_NAMES = {
 };
 
 export default function InAppBrowser({ initialRedirect = null, slug = [] }) {
-  const { me } = useMe();
-  const router = useRouter();
   const [inAppWarning, setInAppWarning] = useState(false);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
   const [mounted, setMounted] = useState(false);
@@ -29,10 +25,6 @@ export default function InAppBrowser({ initialRedirect = null, slug = [] }) {
     if (!initialRedirect) return;
     setRedirectAfterLogin(initialRedirect);
   }, [initialRedirect]);
-
-  useEffect(() => {
-    if (me) router.replace('/api/auth/consume-redirect');
-  }, [me, router]);
 
   useEffect(() => {
     setMounted(true);
