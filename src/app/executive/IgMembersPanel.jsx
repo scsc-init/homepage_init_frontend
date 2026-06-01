@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as AdminLayout from '@/components/AdminLayout';
@@ -161,13 +162,16 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetch(`/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: u.id,
-        }),
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/join`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: u.id,
+          }),
+        },
+      );
       if (res.status === 204) {
         const newMember = { user_id: u.id, user: { id: u.id, email: u.email, name: u.name } };
         setMembers((prev) => [...prev, newMember]);
@@ -192,7 +196,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetch(
+      const res = await fetchBackendClient(
         `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/leave`,
         {
           method: 'POST',

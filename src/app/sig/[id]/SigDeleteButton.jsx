@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
@@ -26,7 +28,7 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/delete`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/sig/${sigId}/delete`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 비활성화 성공!');
         router.refresh();
@@ -46,7 +48,9 @@ export default function SigDeleteButton({ sigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/delete/executive`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/sig/${sigId}/delete/executive`, {
+        method: 'POST',
+      });
       if (res.ok) {
         alert('SIG 비활성화 성공!');
         router.refresh();

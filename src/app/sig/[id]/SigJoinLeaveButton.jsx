@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
@@ -28,7 +29,7 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const join = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/member/join`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/sig/${sigId}/member/join`, { method: 'POST' });
       if (res.ok) {
         alert('SIG 가입 성공!');
         setIsMember(true);
@@ -49,7 +50,9 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
   const leave = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/member/leave`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/sig/${sigId}/member/leave`, {
+        method: 'POST',
+      });
       if (res.ok) {
         alert('SIG 탈퇴 성공!');
         setIsMember(false);

@@ -6,13 +6,14 @@ import { useMe } from '@/util/hooks/useMe';
 
 export default function CheckUserStatusClient() {
   const router = useRouter();
-  const { me } = useMe();
+  const { me, isLoading } = useMe();
 
   useEffect(() => {
-    if (me && !me.is_active && !me.is_banned) {
+    if (isLoading || !me) return;
+    if (!me.is_active && !me.is_banned) {
       router.replace('/about/welcome');
     }
-  }, [me, router]);
+  }, [isLoading, me, router]);
 
   return null;
 }

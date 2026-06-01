@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState } from 'react';
 import * as AdminLayout from '@/components/AdminLayout';
 
@@ -76,7 +77,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
     }
     setPending(true);
     try {
-      const res = await fetch('/api/executive/leadership', {
+      const res = await fetchBackendClient('/api/executive/leadership', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

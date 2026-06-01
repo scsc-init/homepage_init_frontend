@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
@@ -154,7 +155,7 @@ export default function PigExecutiveEdit({ pig: _pig }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await directFetch(`/api/executive/pig/${pig.id}/update`, {
+      const res1 = await fetchBackendClient(`/api/executive/pig/${pig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -177,7 +178,7 @@ export default function PigExecutiveEdit({ pig: _pig }) {
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(pig)) {
-        res2 = await directFetch(`/api/executive/pig/${pig.id}/handover`, {
+        res2 = await fetchBackendClient(`/api/executive/pig/${pig.id}/handover`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
@@ -200,7 +201,9 @@ export default function PigExecutiveEdit({ pig: _pig }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await directFetch(`/api/executive/pig/${id}/delete`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/executive/pig/${id}/delete`, {
+        method: 'POST',
+      });
       if (res.status === 204) {
         router.replace('/executive/pig');
       } else {

@@ -1,10 +1,10 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import SigForm from '@/components/board/SigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { directFetch } from '@/util/directFetch';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 
@@ -18,10 +18,9 @@ const sanitizeWebsites = (websites = []) =>
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const { me: user, isUnauthenticated } = useMe();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
     try {
@@ -58,8 +57,12 @@ export default function CreateSigClient({ scscGlobalStatus }) {
   }, [reset]);
 
   useEffect(() => {
-    if (isUnauthenticated) pushLoginWithRedirect(router);
-  }, [isUnauthenticated, router]);
+    if (isLoading) return;
+    if (isUnauthenticated || !user) {
+      pushLoginWithRedirect(router);
+      return;
+    }
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const watched = watch();
   useEffect(() => {
@@ -116,7 +119,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await directFetch('/api/sig/create', {
+      const res = await fetchBackendClient('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

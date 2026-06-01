@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
@@ -215,7 +216,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await directFetch(`/api/executive/sig/${sig.id}/update`, {
+      const res1 = await fetchBackendClient(`/api/executive/sig/${sig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -241,7 +242,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(sig)) {
-        res2 = await directFetch(`/api/executive/sig/${sig.id}/handover`, {
+        res2 = await fetchBackendClient(`/api/executive/sig/${sig.id}/handover`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
@@ -264,7 +265,9 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await directFetch(`/api/executive/sig/${id}/delete`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/executive/sig/${id}/delete`, {
+        method: 'POST',
+      });
       if (res.status === 204) {
         router.replace('/executive/sig');
       } else {

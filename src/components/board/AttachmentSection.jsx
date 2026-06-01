@@ -1,7 +1,7 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { directFetch } from '@/util/directFetch';
 import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmentDownloadUrl';
 
 export default function AttachmentSection({
@@ -51,7 +51,7 @@ export default function AttachmentSection({
         const params = new URLSearchParams();
         missingIds.forEach((id) => params.append('ids', id));
         const query = params.toString();
-        const res = await directFetch(
+        const res = await fetchBackendClient(
           query ? `/api/file/metadata?${query}` : '/api/file/metadata',
         );
         const data = await res.json().catch(() => []);
@@ -104,7 +104,7 @@ export default function AttachmentSection({
 
           let res;
           try {
-            res = await directFetch(`/api/file/${uploadType}/upload`, {
+            res = await fetchBackendClient(`/api/file/${uploadType}/upload`, {
               method: 'POST',
               body: formData,
             });

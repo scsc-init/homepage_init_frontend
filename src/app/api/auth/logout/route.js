@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { REDIRECT_COOKIE } from '@/util/loginRedirect';
 
 export async function POST(req) {
   const res = NextResponse.redirect(new URL('/', req.url));
@@ -13,5 +14,13 @@ export async function POST(req) {
 
   res.cookies.set('next-auth.session-token', '', { maxAge: 0, path: '/' });
   res.cookies.set('__Secure-next-auth.session-token', '', { maxAge: 0, path: '/' });
+
+  res.cookies.set(REDIRECT_COOKIE, '', {
+    path: '/',
+    maxAge: 0,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+
   return res;
 }

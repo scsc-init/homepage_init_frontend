@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -11,10 +12,9 @@ import { use, useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
-import { directFetch } from '@/util/directFetch';
+import { useMe } from '@/util/hooks/useMe';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
-import { useMe } from '@/util/hooks/useMe';
 
 export default function ArticleDetail({ params }) {
   const resolvedParams = use(params);
@@ -30,18 +30,17 @@ export default function ArticleDetail({ params }) {
   const [attachmentMeta, setAttachmentMeta] = useState([]);
 
   useEffect(() => {
-    if (isMeLoading) return;
+    if (!id || isMeLoading) return;
     if (isUnauthenticated || !user) {
       pushLoginWithRedirect(router);
       return;
     }
 
-    if (!id) return;
     const loadAll = async () => {
       try {
         const [contentRes, commentsRes] = await Promise.all([
-          fetch(`/api/article/${id}`),
-          fetch(`/api/comments/${id}`),
+          fetchBackendClient(`/api/article/${id}`),
+          fetchBackendClient(`/api/comments/${id}`),
         ]);
 
         if (!contentRes.ok || !commentsRes.ok) {
@@ -62,7 +61,7 @@ export default function ArticleDetail({ params }) {
       }
     };
     loadAll();
-  }, [isMeLoading, isUnauthenticated, router, id, user]);
+  }, [router, id, user, isMeLoading, isUnauthenticated]);
 
   const attachmentIds = useMemo(() => {
     if (!Array.isArray(article?.attachments)) return [];
@@ -86,7 +85,7 @@ export default function ArticleDetail({ params }) {
         attachmentIds.forEach((aid) => {
           if (aid) queryParams.append('ids', aid);
         });
-        const res = await directFetch(`/api/file/metadata?${queryParams.toString()}`);
+        const res = await fetchBackendClient(`/api/file/metadata?${queryParams.toString()}`);
         const data = await res.json().catch(() => []);
         if (cancelled) return;
         if (res.ok) {
@@ -95,7 +94,7 @@ export default function ArticleDetail({ params }) {
           setAttachmentMeta([]);
         }
       } catch (err) {
-        console.warn('첨부파일 정보를 불러오지 못했습니다.', err);
+        console.warn('첨부 파일 정보를 불러오지 못했습니다.', err);
         if (!cancelled) setAttachmentMeta([]);
       }
     };
@@ -127,7 +126,7 @@ export default function ArticleDetail({ params }) {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/article/delete/${id}`, { method: 'POST' });
+      const res = await fetchBackendClient(`/api/article/delete/${id}`, { method: 'POST' });
       if (res.ok) {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/');
@@ -144,7 +143,7 @@ export default function ArticleDetail({ params }) {
   return (
     <div className="SigDetailContainer">
       <h1 className="SigTitle">{article.title}</h1>
-      <p className="SigInfo">작성일: {utc2kst(article.created_at)}</p>
+      <p className="SigInfo">작성일 {utc2kst(article.created_at)}</p>
 
       {isAuthor && (
         <div className={`SigActionRow ${isDeleting ? 'is-busy' : ''}`}>
@@ -191,7 +190,7 @@ export default function ArticleDetail({ params }) {
         {attachmentIds.length > 0 && (
           <div className="AttachmentSection">
             <div className="AttachmentHeader">
-              <div className="AttachmentLabel">첨부파일</div>
+              <div className="AttachmentLabel">첨부 파일</div>
             </div>
             <ul className="AttachmentList">
               {attachmentIds.map((attachmentId) => {

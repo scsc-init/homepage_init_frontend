@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useState } from 'react';
 import styles from './MajorList.module.css';
 
@@ -11,7 +13,7 @@ export default function MajorList({ majors: majorsDefault }) {
   };
 
   const saveMajor = async (major) => {
-    const res = await fetch(`/api/executive/major/update/${major.id}`, {
+    const res = await fetchBackendClient(`/api/executive/major/update/${major.id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(major),
@@ -22,7 +24,7 @@ export default function MajorList({ majors: majorsDefault }) {
 
   const deleteMajor = async (id) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    const res = await fetch(`/api/executive/major/delete/${id}`, {
+    const res = await fetchBackendClient(`/api/executive/major/delete/${id}`, {
       method: 'POST',
     });
     if (res.status === 204) {
@@ -32,7 +34,7 @@ export default function MajorList({ majors: majorsDefault }) {
   };
 
   const createMajor = async () => {
-    const res = await fetch(`/api/executive/major/create`, {
+    const res = await fetchBackendClient(`/api/executive/major/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMajor),

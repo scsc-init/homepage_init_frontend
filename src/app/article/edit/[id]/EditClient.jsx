@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -41,9 +42,8 @@ export default function EditClient({ articleId }) {
 
     const load = async () => {
       try {
-        const articleRes = await fetch(`/api/article/${articleId}`);
+        const articleRes = await fetchBackendClient(`/api/article/${articleId}`);
         if (!articleRes.ok) throw new Error();
-
         const article = await articleRes.json();
 
         if (user.id !== article.author_id) {
@@ -72,7 +72,7 @@ export default function EditClient({ articleId }) {
       }
     };
     load();
-  }, [isMeLoading, isUnauthenticated, router, articleId, setValue, user]);
+  }, [router, articleId, setValue, user, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -101,7 +101,7 @@ export default function EditClient({ articleId }) {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/article/update/${articleId}`, {
+      const res = await fetchBackendClient(`/api/article/update/${articleId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -117,7 +117,7 @@ export default function EditClient({ articleId }) {
         alert('수정 완료!');
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해주세요.');
+        alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
       } else {
         let errText = '수정 실패';

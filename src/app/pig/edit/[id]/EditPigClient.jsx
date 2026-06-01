@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
@@ -119,7 +120,7 @@ export default function EditPigClient({ pigId, pig, article }) {
           ? `/api/pig/${pigId}/update/executive`
           : `/api/pig/${pigId}/update`;
 
-      const res = await fetch(endpoint, {
+      const res = await fetchBackendClient(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

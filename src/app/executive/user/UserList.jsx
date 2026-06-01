@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useMemo, useState, useEffect } from 'react';
 import ExportUsersButton from './ExportUsersButton';
 import * as AdminLayout from '@/components/AdminLayout';
@@ -53,7 +54,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const manualEnroll = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
     try {
-      const res = await fetch(`/api/executive/user/standby/process/manual`, {
+      const res = await fetchBackendClient(`/api/executive/user/standby/process/manual`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: user.id }),
@@ -225,7 +226,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       is_active: user.is_active,
       is_banned: user.is_banned,
     };
-    const res = await fetch(`/api/executive/user/${user.id}`, {
+    const res = await fetchBackendClient(`/api/executive/user/${user.id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),

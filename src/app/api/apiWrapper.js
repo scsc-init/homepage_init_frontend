@@ -1,14 +1,13 @@
 import { fetchBackendServer } from '@/util/fetch/server';
 
 /**
- * Handles forwarding requests to an internal API.
- * @param {string} method - The HTTP method (e.g., "POST").
- * @param {string} pathTemplate - A template string for the path (e.g., "/executive/user/{id}").
- * @param {object} [options] - Optional additional fetch options.
- * @param {object} [options.params] - The Next.js `params` object from the route handler.
- * @param {object} [options.query] - Object for URL query parameters (e.g., { page: 1 }).
- * @param {Request} request - If included, fetch with body from it. The incoming Next.js Request object.
- * @returns {Promise<Response>} - A Next.js Response object.
+ * Handles API requests by forwarding them to the backend server.
+ *
+ * @param {string} method - HTTP method such as GET, POST, PUT, DELETE.
+ * @param {string} pathTemplate - Backend API path template.
+ * @param {object} options - Optional fetchBackendServer options.
+ * @param {Request} request - Incoming Next.js request object.
+ * @returns {Promise<Response>} - Backend response.
  */
 export async function handleApiRequest(method, pathTemplate, options = {}, request) {
   return fetchBackendServer(

@@ -3,30 +3,24 @@
 import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
-import { DISCORD_INVITE_LINK } from '@/util/constants';
-import { fetchBackendServer } from '@/util/fetch/server';
-
-async function fetchKvValue(key) {
-  try {
-    const encoded_key = encodeURIComponent(key);
-    const res = await fetchBackendServer('GET', `/api/kv/${encoded_key}`);
-    if (!res.ok) return '';
-    const body = await res.json().catch(() => null);
-    return typeof body?.value === 'string' ? body.value : '';
-  } catch (err) {
-    console.error(`[contact] kv fetch failed (${key})`, err);
-    return '';
-  }
-}
+import { getKVValues } from '@/util/fetchAPIData';
 
 export default async function Contact() {
-  const [presidentNameRaw, presidentPhone, viceNamesRaw, vicePhonesRaw] = await Promise.all([
-    fetchKvValue('president-name'),
-    fetchKvValue('president-phone'),
-    fetchKvValue('vice-president-name'),
-    fetchKvValue('vice-president-phone'),
+  const kvMap = await getKVValues([
+    'president-name',
+    'president-phone',
+    'vice-president-name',
+    'vice-president-phone',
+    'TEXT_DISCORD_INVITE_LINK',
   ]);
 
+  const getValue = (key) => (kvMap[key]?.status === 'fulfilled' ? kvMap[key].value : '');
+
+  const presidentNameRaw = getValue('president-name');
+  const presidentPhone = getValue('president-phone');
+  const viceNamesRaw = getValue('vice-president-name');
+  const vicePhonesRaw = getValue('vice-president-phone');
+  const discordInviteLink = getValue('TEXT_DISCORD_INVITE_LINK');
   const thisYear = new Date().getFullYear();
   const presidentName = presidentNameRaw || '';
 
@@ -145,7 +139,7 @@ export default async function Contact() {
                     className="ico"
                   />
                   <a
-                    href={DISCORD_INVITE_LINK}
+                    href={discordInviteLink}
                     className="ContactLink"
                     target="_blank"
                     rel="noopener noreferrer"

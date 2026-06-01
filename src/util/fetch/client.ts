@@ -2,11 +2,55 @@
 
 'use client';
 
+import { getSession } from 'next-auth/react';
+
 const PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
 /** Checks whether the value is a plain JavaScript object */
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+/** Resolves frontend API route aliases to their backend API paths. */
+function resolveBackendPath(path: string): string {
+  const [pathname, suffix = ''] = path.split(/([?#].*)/, 2);
+
+  if (pathname === '/api/comments/create') return `/api/comment/create${suffix}`;
+
+  const commentExecutiveDelete = pathname.match(
+    /^\/api\/comments\/([^/]+)\/executive\/delete$/,
+  );
+  if (commentExecutiveDelete) {
+    return `/api/executive/comment/delete/${commentExecutiveDelete[1]}${suffix}`;
+  }
+
+  const commentDelete = pathname.match(/^\/api\/comments\/([^/]+)\/delete$/);
+  if (commentDelete) return `/api/comment/delete/${commentDelete[1]}${suffix}`;
+
+  const pigExecutiveUpdate = pathname.match(/^\/api\/pig\/([^/]+)\/update\/executive$/);
+  if (pigExecutiveUpdate) return `/api/executive/pig/${pigExecutiveUpdate[1]}/update${suffix}`;
+
+  const pigExecutiveDelete = pathname.match(/^\/api\/pig\/([^/]+)\/delete\/executive$/);
+  if (pigExecutiveDelete) return `/api/executive/pig/${pigExecutiveDelete[1]}/delete${suffix}`;
+
+  const sigExecutiveUpdate = pathname.match(/^\/api\/sig\/([^/]+)\/update\/executive$/);
+  if (sigExecutiveUpdate) return `/api/executive/sig/${sigExecutiveUpdate[1]}/update${suffix}`;
+
+  const sigExecutiveDelete = pathname.match(/^\/api\/sig\/([^/]+)\/delete\/executive$/);
+  if (sigExecutiveDelete) return `/api/executive/sig/${sigExecutiveDelete[1]}/delete${suffix}`;
+
+  return path;
+}
+
+/** Returns true when a frontend route must inject server-only credentials. */
+function requiresFrontendProxy(path: string): boolean {
+  const [pathname] = path.split(/[?#]/, 1);
+  return (
+    pathname === '/api/user/login' ||
+    pathname === '/api/user/create' ||
+    pathname === '/api/user/profile' ||
+    pathname.startsWith('/api/test/')
+  );
 }
 
 /**
@@ -30,6 +74,8 @@ export async function fetchBackendClient(
 ): Promise<Response> {
   const method = (init.method || 'GET').toUpperCase();
   const headers = new Headers(init.headers);
+  const jwt = (await getSession())?.backendJwt;
+  if (jwt) headers.append('x-jwt', jwt);
   let body = init.body;
 
   if (!fallback && !PUBLIC_BACKEND_URL) {
@@ -45,8 +91,18 @@ export async function fetchBackendClient(
     body = JSON.stringify(body);
   }
 
+  if (fallback && (!PUBLIC_BACKEND_URL || requiresFrontendProxy(path))) {
+    return fetch(path, {
+      ...init,
+      method,
+      headers,
+      body,
+      credentials: 'include',
+    });
+  }
+
   try {
-    const url = PUBLIC_BACKEND_URL + path;
+    const url = PUBLIC_BACKEND_URL + resolveBackendPath(path);
     const res = await fetch(url, {
       ...init,
       method,

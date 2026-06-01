@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
@@ -17,7 +18,7 @@ const sanitizeWebsites = (websites = []) =>
 
 export default function CreatePigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const { me: user, isUnauthenticated } = useMe();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,8 +49,11 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   });
 
   useEffect(() => {
-    if (isUnauthenticated) pushLoginWithRedirect(router);
-  }, [isUnauthenticated, router]);
+    if (isLoading) return;
+    if (isUnauthenticated || !user) {
+      pushLoginWithRedirect(router);
+    }
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const watched = watch();
   useEffect(() => {
@@ -110,7 +114,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/pig/create`, {
+      const res = await fetchBackendClient(`/api/pig/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

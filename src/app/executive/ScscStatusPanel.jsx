@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -41,7 +42,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
 
   const handleConfirmSave = async () => {
     setSaving(true);
-    const res = await fetch(`/api/executive/scsc/global/status`, {
+    const res = await fetchBackendClient(`/api/executive/scsc/global/status`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: selectedStatus }),

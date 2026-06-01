@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
-import { fetchBackendClientJson } from '@/util/fetch/client';
+import { fetchBackendClient, fetchBackendClientJson } from '@/util/fetch/client';
 import { academicTerm2string } from '@/util/helper/tostring';
-import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 import { useMe } from '@/util/hooks/useMe';
+import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
 import './form.css';
 import { GlobalStatus } from '@/types/system';
@@ -102,7 +102,6 @@ export default function FundApplyForm({
 }) {
   const router = useRouter();
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
-
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const [imageIds, setImageIds] = useState<number[]>([]);
@@ -161,8 +160,12 @@ export default function FundApplyForm({
   const useKakaoPay = watch('useKakaoPay');
 
   useEffect(() => {
-    if (isUnauthenticated) replaceLoginWithRedirect(router);
-  }, [isUnauthenticated, router]);
+    if (isMeLoading) return;
+    if (isUnauthenticated || !user) {
+      replaceLoginWithRedirect(router);
+      return;
+    }
+  }, [router, user, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     let isMounted = true;
@@ -313,7 +316,7 @@ export default function FundApplyForm({
 
     let res: Response;
     try {
-      res = await fetch('/api/file/image/upload', {
+      res = await fetchBackendClient('/api/file/image/upload', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -391,7 +394,7 @@ export default function FundApplyForm({
 
       const payload = await buildPayload(form);
 
-      const res = await fetch('/api/article/create', {
+      const res = await fetchBackendClient('/api/article/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

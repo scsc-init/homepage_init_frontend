@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import * as AdminLayout from '@/components/AdminLayout';
 
@@ -21,7 +23,7 @@ export default function EnrollManagementPanel() {
 
   useEffect(() => {
     const fetchStandbys = async () => {
-      const res = await fetch(`/api/executive/user/standby/list`);
+      const res = await fetchBackendClient(`/api/executive/user/standby/list`);
       if (res.ok) setStandbys(await res.json());
     };
     fetchStandbys();
@@ -32,7 +34,7 @@ export default function EnrollManagementPanel() {
     if (!file) return;
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`/api/executive/user/standby/process`, {
+    const res = await fetchBackendClient(`/api/executive/user/standby/process`, {
       method: 'POST',
       body: form,
     });

@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import '@/app/board/[id]/create/page.css';
@@ -10,17 +11,18 @@ import { useMe } from '@/util/hooks/useMe';
 
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const router = useRouter();
-  const { isUnauthenticated } = useMe();
+  const { me, isLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
-    if (isUnauthenticated) {
+    if (isLoading) return;
+    if (isUnauthenticated || !me) {
       alert('로그인이 필요합니다.');
       pushLoginWithRedirect(router);
     }
-  }, [isUnauthenticated, router]);
+  }, [isLoading, isUnauthenticated, me, router]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -42,7 +44,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/article/create`, {
+      const res = await fetchBackendClient(`/api/article/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -57,7 +59,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
         alert('게시글 작성 완료!');
         router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해주세요.');
+        alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
@@ -74,7 +76,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">
-          {boardInfo ? `${boardInfo.name}에 게시글 작성` : '게시글 작성'}
+          {boardInfo ? `${boardInfo.name} 게시글 작성` : '게시글 작성'}
         </h1>
         <p className="CreateSigSubtitle">
           {boardInfo?.description ?? '게시판 정보를 불러오는 중...'}

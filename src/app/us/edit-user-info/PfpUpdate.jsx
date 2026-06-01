@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './page.module.css';
@@ -28,7 +29,7 @@ export default function PfpUpdate() {
 
   const handleSubmit = async () => {
     if (mode === 'url' && url) {
-      const res = await fetch('/api/user/update', {
+      const res = await fetchBackendClient('/api/user/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -47,7 +48,7 @@ export default function PfpUpdate() {
       const form = new FormData();
       form.append('file', file);
 
-      const res = await fetch('/api/user/update-pfp-file', {
+      const res = await fetchBackendClient('/api/user/update-pfp-file', {
         method: 'POST',
         body: form,
       });
