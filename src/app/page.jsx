@@ -34,7 +34,7 @@ export default function HomePage() {
       <RefreshJWTClient />
 
       <div className="main-logo-wrapper">
-        <MainLogoImage className="main-logo logo" width={1976} height={670} loading="eager" />
+        <MainLogoImage className="main-logo logo" loading="eager" />
         <p className="main-logo-description">Seoul National University Computer Study Club</p>
       </div>
     </main>
