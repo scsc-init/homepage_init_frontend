@@ -32,6 +32,13 @@
   margin: 0 0.6rem;
 }
 
+.semesterLabel {
+  font-size: 0.875rem;
+  white-space: nowrap;
+  word-break: keep-all;
+  flex-shrink: 0;
+}
+
 .center {
   flex: 1;
   display: flex;
