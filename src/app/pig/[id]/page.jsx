@@ -55,12 +55,5 @@ export default async function PigDetailPage({ params }) {
 
   const article = pig.content ?? { content: '' };
 
-  return (
-    <PigClient
-      pig={pig}
-      members={members}
-      articleContent={article.content}
-      pigId={id}
-    />
-  );
+  return <PigClient pig={pig} members={members} articleContent={article.content} pigId={id} />;
 }

@@ -55,12 +55,5 @@ export default async function SigDetailPage({ params }) {
 
   const article = sig.content ?? { content: '' };
 
-  return (
-    <SigClient
-      sig={sig}
-      members={members}
-      articleContent={article.content}
-      sigId={id}
-    />
-  );
+  return <SigClient sig={sig} members={members} articleContent={article.content} sigId={id} />;
 }

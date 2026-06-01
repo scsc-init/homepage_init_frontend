@@ -11,10 +11,7 @@ import type {
   NormalizedTarget,
 } from '@/types/system';
 import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user';
-import {
-  fetchBackendServer,
-  fetchBackendServerJson,
-} from './server';
+import { fetchBackendServer, fetchBackendServerJson } from './server';
 
 export interface TargetWithContentMembers extends BaseTarget {
   content: string;
