@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -29,13 +30,18 @@ function generateDefaultSigForms(sig, article) {
   };
 }
 
-export default function EditSigClient({ sigId, me, sig, article }) {
+export default function EditSigClient({ sigId, sig, article }) {
+  const { me, isLoading, isUnauthenticated } = useMe();
   const router = useRouter();
   const isFormSubmitted = useRef(false);
   const tagManagerRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
+
+  useEffect(() => {
+    if (isUnauthenticated) pushLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
 
   const {
     register,
@@ -131,6 +137,8 @@ export default function EditSigClient({ sigId, me, sig, article }) {
       setSubmitting(false);
     }
   };
+
+  if (isLoading || isUnauthenticated || !me) return null;
 
   return (
     <div className="CreateSigContainer">

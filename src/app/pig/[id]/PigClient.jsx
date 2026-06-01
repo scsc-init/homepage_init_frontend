@@ -7,8 +7,10 @@ import PigMembers from './PigMembers';
 import PigOwnerHandoverButton from './PigOwnerHandoverButton';
 import PigContents from './PigContents';
 import { is_pig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
 
-export default function PigClient({ pig, members, articleContent, me, pigId }) {
+export default function PigClient({ pig, members, articleContent, pigId }) {
+  const { me, isLoading } = useMe();
   const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
   const canEdit =
     !!me &&
@@ -30,16 +32,18 @@ export default function PigClient({ pig, members, articleContent, me, pigId }) {
         {pig.year}학년도 {semesterLabel}학기 · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>
-      <div className="PigActionRow">
-        {is_pig_join_available(pig.status, pig.is_rolling_admission) && (
-          <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
-        )}
-        <EditPigButton pigId={pigId} canEdit={canEdit} />
-        {isOwner ? (
-          <PigOwnerHandoverButton pigId={pigId} members={members} owner={pig.owner} />
-        ) : null}
-        <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
-      </div>
+      {!isLoading && me ? (
+        <div className="PigActionRow">
+          {is_pig_join_available(pig.status, pig.is_rolling_admission) && (
+            <PigJoinLeaveButton pigId={pigId} initialIsMember={isMember} />
+          )}
+          <EditPigButton pigId={pigId} canEdit={canEdit} />
+          {isOwner ? (
+            <PigOwnerHandoverButton pigId={pigId} members={members} owner={pig.owner} />
+          ) : null}
+          <PigDeleteButton pigId={pigId} canDelete={canEdit} isOwner={isOwner} />
+        </div>
+      ) : null}
       <hr className="PigDivider" />
       <PigContents content={articleContent} />
       <hr className="PigDivider" />

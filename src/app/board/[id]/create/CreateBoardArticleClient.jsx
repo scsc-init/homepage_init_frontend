@@ -11,10 +11,10 @@ import { useMe } from '@/util/hooks/useMe';
 
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const router = useRouter();
+  const { me, isLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const isFormSubmitted = useRef(false);
-  const { me, isLoading, isUnauthenticated } = useMe();
 
   useEffect(() => {
     if (isLoading) return;
@@ -59,7 +59,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
         alert('게시글 작성 완료!');
         router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해주세요.');
+        alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
@@ -76,7 +76,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">
-          {boardInfo ? `${boardInfo.name}에 게시글 작성` : '게시글 작성'}
+          {boardInfo ? `${boardInfo.name} 게시글 작성` : '게시글 작성'}
         </h1>
         <p className="CreateSigSubtitle">
           {boardInfo?.description ?? '게시판 정보를 불러오는 중...'}

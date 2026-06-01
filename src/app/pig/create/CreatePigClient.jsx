@@ -4,7 +4,7 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 
@@ -18,10 +18,9 @@ const sanitizeWebsites = (websites = []) =>
 
 export default function CreatePigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const { me, isLoading, isUnauthenticated } = useMe();
 
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
@@ -51,11 +50,10 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
   useEffect(() => {
     if (isLoading) return;
-    if (isUnauthenticated || !me) {
+    if (isUnauthenticated || !user) {
       pushLoginWithRedirect(router);
     }
-    setUser(me);
-  }, [isLoading, isUnauthenticated, me, router]);
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const watched = watch();
   useEffect(() => {

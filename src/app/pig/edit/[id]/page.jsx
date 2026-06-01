@@ -1,18 +1,16 @@
 import EditPigClient from './EditPigClient';
 import './page.css';
-import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchMe } from '@/util/fetchAPIData';
-import { redirect } from 'next/navigation';
+import { fetchBackendServerJson } from '@/util/fetch/server';
 
 export const metadata = { title: 'PIG' };
 
 export default async function EditPigPage({ params }) {
   const { id } = await params;
-  const [me] = await Promise.allSettled([fetchMe()]);
-  if (me.status === 'rejected') redirect('/us/login');
 
-  const pigRes = await handleApiRequest('GET', `/api/pig/${id}`);
-  if (!pigRes.ok) {
+  let pig;
+  try {
+    pig = await fetchBackendServerJson('GET', `/api/pig/${id}`);
+  } catch {
     return (
       <div className="CreatePigContainer">
         <div className="CreatePigHeader">
@@ -22,9 +20,8 @@ export default async function EditPigPage({ params }) {
       </div>
     );
   }
-  const pig = await pigRes.json();
 
   const article = pig.content ?? { content: '' };
 
-  return <EditPigClient pigId={id} me={me.value} pig={pig} article={article} />;
+  return <EditPigClient pigId={id} pig={pig} article={article} />;
 }

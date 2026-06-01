@@ -1,26 +1,17 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_, { params }) {
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
-  if (!appJwt) {
-    return Response.json({ detail: 'Unauthorized' }, { status: 401 });
-  }
-
   const resolvedParams = await params;
   const name = normalizeName(resolvedParams?.name);
-  const hdrs = {};
-  hdrs['x-jwt'] = appJwt;
 
-  const res = await fetch(
-    `${process.env.BACKEND_URL || ''}/api/executive/w/${encodePathValue(name)}/download`,
-    {
-      method: 'GET',
-      headers: hdrs,
-      cache: 'no-store',
-    },
+  const res = await fetchBackendServer(
+    'GET',
+    `/api/executive/w/${encodePathValue(name)}/download`,
   );
+
+  if (res.status === 401) {
+    return Response.json({ detail: 'Unauthorized' }, { status: 401 });
+  }
 
   const blob = await res.blob();
   return new Response(blob, {

@@ -129,9 +129,9 @@ function EditUserInfoClient() {
       alert('졸업생 전환 신청이 완료되었습니다.');
       router.push('/about/my-page');
     } else if (res.status === 400) {
-      alert(`졸업생 전환 신청 자격이 없습니다.`);
+      alert('졸업생 전환 신청 자격이 없습니다.');
     } else if (res.status === 409) {
-      alert(`이미 졸업생 전환 신청을 완료했습니다.`);
+      alert('이미 졸업생 전환 신청을 완료했습니다.');
     } else {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
     }
@@ -149,10 +149,10 @@ function EditUserInfoClient() {
       router.push('/about/my-page');
     } else if (res.status === 400) {
       alert(
-        `이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.`,
+        '이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.',
       );
     } else if (res.status === 404) {
-      alert(`졸업생 전환 신청을 하지 않았습니다.`);
+      alert('졸업생 전환 신청을 하지 않았습니다.');
     } else {
       alert('신청 취소에 실패했습니다. 다시 시도해주세요.');
     }
@@ -171,7 +171,7 @@ function EditUserInfoClient() {
       alert('정회원 전환 신청이 완료되었습니다. 회비를 납부해야 정회원 전환이 완료됩니다.');
       router.push('/about/welcome');
     } else if (res.status === 400) {
-      alert(`졸업생이 아니어서 정회원으로 전환할 수 없습니다.`);
+      alert('졸업생이 아니어서 정회원으로 전환할 수 없습니다.');
     } else {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
     }

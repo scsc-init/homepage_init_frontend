@@ -15,12 +15,13 @@ const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: 
 
 export default function EditClient({ articleId }) {
   const router = useRouter();
+  const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [loading, setLoading] = useState(true);
   const [boardId, setBoardId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [attachmentIds, setAttachmentIds] = useState([]);
   const isFormSubmitted = useRef(false);
-  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
+
   const {
     register,
     handleSubmit,
@@ -33,18 +34,19 @@ export default function EditClient({ articleId }) {
 
   useEffect(() => {
     if (isMeLoading) return;
-    if (isUnauthenticated || !me) {
+    if (isUnauthenticated || !user) {
       alert('로그인이 필요합니다.');
       pushLoginWithRedirect(router);
       return;
     }
+
     const load = async () => {
       try {
         const articleRes = await fetchBackendClient(`/api/article/${articleId}`);
-        if (!article.ok) throw new Error();
+        if (!articleRes.ok) throw new Error();
         const article = await articleRes.json();
 
-        if (me.id !== article.author_id) {
+        if (user.id !== article.author_id) {
           alert('작성자만 수정할 수 있습니다.');
           router.replace(`/article/${articleId}`);
           return;
@@ -70,7 +72,7 @@ export default function EditClient({ articleId }) {
       }
     };
     load();
-  }, [router, articleId, setValue, me, isMeLoading, isUnauthenticated]);
+  }, [router, articleId, setValue, user, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -115,7 +117,7 @@ export default function EditClient({ articleId }) {
         alert('수정 완료!');
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해주세요.');
+        alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
       } else {
         let errText = '수정 실패';

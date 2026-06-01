@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(request, { params }) {
   try {
@@ -8,13 +9,14 @@ export async function GET(request, { params }) {
     if (!slug) {
       return await notFoundPage();
     }
-    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/w/${encodePathValue(slug)}`, {
-      cache: 'no-store',
+
+    const res = await fetchBackendServer('GET', `/api/w/${encodePathValue(slug)}`, {
       headers: {
         'X-Forwarded-User-Agent': request.headers.get('user-agent') ?? '',
         'X-Forwarded-Sec-Fetch-Mode': request.headers.get('sec-fetch-mode') ?? '',
       },
     });
+
     if (!res.ok) {
       return await notFoundPage();
     }

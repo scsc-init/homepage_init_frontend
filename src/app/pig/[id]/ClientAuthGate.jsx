@@ -1,40 +1,29 @@
 'use client';
 
-import { useMe } from '@util/hooks/useMe';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMe } from '@/util/hooks/useMe';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
   const { me, isLoading, isUnauthenticated } = useMe();
 
   useEffect(() => {
-    let cancelled = false;
-
-    const goLogin = () => {
-      Promise.resolve().then(() => router.replace('/us/login'));
-    };
-
-    if (isLoading) return undefined;
-    if (isUnauthenticated || !me) {
-      goLogin();
-      return undefined;
+    if (isUnauthenticated) {
+      router.replace('/us/login');
     }
-    if (!cancelled) setChecking(false);
+  }, [isUnauthenticated, router]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [isLoading, isUnauthenticated, me, router]);
+  const checking = isLoading || isUnauthenticated || !me;
 
   return (
     <>
-      {children}
-      {checking && (
+      {checking ? (
         <div className="AuthGateBackdrop">
           <div className="AuthGateSpinner" />
         </div>
+      ) : (
+        children
       )}
     </>
   );

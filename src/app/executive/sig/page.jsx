@@ -1,12 +1,13 @@
 // src/app/executive/sig/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import SigList from './SigList';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchUsers } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage() {
   const [sigMetas, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/sigs`),
+    fetchBackendServerJson('GET', '/api/sigs'),
     fetchUsers(),
   ]);
   if (sigMetas.status !== 'fulfilled' || users.status !== 'fulfilled') return null;

@@ -12,7 +12,6 @@ import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system
 
 import './form.css';
 import { GlobalStatus } from '@/types/system';
-import type { UserProfile } from '@/types/user';
 
 import { FUND_APPLY_GUIDELINE_LINK } from '@/util/constants';
 const IMAGE_UPLOAD_CONCURRENCY = 3;
@@ -102,13 +101,11 @@ export default function FundApplyForm({
   globalStatus: GlobalStatus;
 }) {
   const router = useRouter();
-  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
+  const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const [imageIds, setImageIds] = useState<number[]>([]);
   const [imageUploading, setImageUploading] = useState(false);
-
-  const [user, setUser] = useState<UserProfile | null>(null);
 
   const currTerm = getCurrentTerm(globalStatus);
   const prevTerm = getPrevTerm(currTerm);
@@ -164,12 +161,11 @@ export default function FundApplyForm({
 
   useEffect(() => {
     if (isMeLoading) return;
-    if (isUnauthenticated || !me) {
+    if (isUnauthenticated || !user) {
       replaceLoginWithRedirect(router);
       return;
     }
-    setUser(me);
-  }, [router, me, isMeLoading, isUnauthenticated]);
+  }, [router, user, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     let isMounted = true;
@@ -228,7 +224,7 @@ export default function FundApplyForm({
   }, [orgCategory, usePrevTerm, currSigs, currPigs, prevSigs, prevPigs]);
 
   const disableOrgSelects: boolean =
-    submitting || applyType === 'contest' || applyType === 'pair';
+    isMeLoading || submitting || applyType === 'contest' || applyType === 'pair';
 
   const step1Done = Boolean(applyType);
   const step2Ready = step1Done;
@@ -385,6 +381,7 @@ export default function FundApplyForm({
 
   const onSubmit = async (form: FormType) => {
     try {
+      if (isMeLoading) return;
       setSubmitting(true);
 
       if (!user) throw new Error('사용자 데이터가 로딩되지 않았습니다.');
@@ -432,361 +429,369 @@ export default function FundApplyForm({
 
       <div className="CreateSigCard">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-          <div className="Step fade-in space-y-4">
-            <div>
-              <label className="C_Label">신청 유형</label>
-              <select
-                {...register('applyType', { required: true })}
-                className={`C_Input ${submitting ? 'is-disabled' : ''}`}
-                disabled={submitting}
-                defaultValue=""
-              >
-                <option value="">선택</option>
-                <option value="fund">SIG/PIG 지원금</option>
-                <option value="meal">SIG/PIG 회식비</option>
-                <option value="contest">대회 참가 지원</option>
-                <option value="pair">짝후 지원</option>
-              </select>
-            </div>
-          </div>
-
-          {step2Ready && (
+          <fieldset
+            className="space-y-10"
+            disabled={isMeLoading}
+            style={{ border: 0, margin: 0, padding: 0 }}
+          >
             <div className="Step fade-in space-y-4">
-              {applyType === 'contest' || applyType === 'pair' ? (
-                applyType === 'contest' ? (
-                  <div>
-                    <label className="C_Label">대회명</label>
-                    <input
-                      {...register('contestName', { required: true })}
-                      placeholder="대회명"
-                      className="C_Input"
-                      disabled={submitting}
-                    />
-                  </div>
+              <div>
+                <label className="C_Label">신청 유형</label>
+                <select
+                  {...register('applyType', { required: true })}
+                  className={`C_Input ${isMeLoading || submitting ? 'is-disabled' : ''}`}
+                  disabled={isMeLoading || submitting}
+                  defaultValue=""
+                >
+                  <option value="">선택</option>
+                  <option value="fund">SIG/PIG 지원금</option>
+                  <option value="meal">SIG/PIG 회식비</option>
+                  <option value="contest">대회 참가 지원</option>
+                  <option value="pair">짝후 지원</option>
+                </select>
+              </div>
+            </div>
+
+            {step2Ready && (
+              <div className="Step fade-in space-y-4">
+                {applyType === 'contest' || applyType === 'pair' ? (
+                  applyType === 'contest' ? (
+                    <div>
+                      <label className="C_Label">대회명</label>
+                      <input
+                        {...register('contestName', { required: true })}
+                        placeholder="대회명"
+                        className="C_Input"
+                        disabled={submitting}
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="C_Label">짝선 이름</label>
+                        <input
+                          {...register('pairBefore', { required: true })}
+                          placeholder="짝선 이름"
+                          className="C_Input"
+                          disabled={submitting}
+                        />
+                      </div>
+                      <div>
+                        <label className="C_Label">짝후 이름</label>
+                        <input
+                          {...register('pairAfter', { required: true })}
+                          placeholder="짝후 이름"
+                          className="C_Input"
+                          disabled={submitting}
+                        />
+                      </div>
+                    </div>
+                  )
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div>
-                      <label className="C_Label">짝선 이름</label>
-                      <input
-                        {...register('pairBefore', { required: true })}
-                        placeholder="짝선 이름"
-                        className="C_Input"
-                        disabled={submitting}
-                      />
+                      <label className="C_Label">대상 유형</label>
+                      <div className="SigPigControlRow">
+                        <select
+                          {...register('orgCategory', { required: true })}
+                          className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
+                          disabled={disableOrgSelects}
+                          defaultValue=""
+                        >
+                          <option value="">SIG/PIG 선택</option>
+                          <option value="sig">SIG</option>
+                          <option value="pig">PIG</option>
+                        </select>
+
+                        {(applyType === 'fund' || applyType === 'meal') && (
+                          <label className="PrevTermInlineCheck">
+                            <input
+                              type="checkbox"
+                              className="C_Checkbox"
+                              checked={usePrevTerm}
+                              onChange={(e) => {
+                                const next = e.target.checked;
+                                setUsePrevTerm(next);
+                                setValue('target', '', {
+                                  shouldValidate: true,
+                                  shouldDirty: true,
+                                });
+                              }}
+                              disabled={disableOrgSelects || !prevTerm}
+                            />
+                            <span>이전학기{prevTermLabel ? ` (${prevTermLabel})` : ''}</span>
+                          </label>
+                        )}
+                      </div>
                     </div>
+
                     <div>
-                      <label className="C_Label">짝후 이름</label>
-                      <input
-                        {...register('pairAfter', { required: true })}
-                        placeholder="짝후 이름"
-                        className="C_Input"
-                        disabled={submitting}
-                      />
-                    </div>
-                  </div>
-                )
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <label className="C_Label">대상 유형</label>
-                    <div className="SigPigControlRow">
+                      <label className="C_Label">대상 선택</label>
                       <select
-                        {...register('orgCategory', { required: true })}
+                        {...register('target', { required: true })}
                         className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
                         disabled={disableOrgSelects}
                         defaultValue=""
                       >
-                        <option value="">SIG/PIG 선택</option>
-                        <option value="sig">SIG</option>
-                        <option value="pig">PIG</option>
+                        <option value="">대상 선택</option>
+                        {sigList.length === 0 ? (
+                          <option disabled>목록이 없습니다</option>
+                        ) : (
+                          sigList.map((item, idx) => (
+                            <option
+                              key={`${item.id ?? 'na'}-${item.title}-${idx}`}
+                              value={item.title}
+                            >
+                              {item.title}
+                            </option>
+                          ))
+                        )}
                       </select>
-
-                      {(applyType === 'fund' || applyType === 'meal') && (
-                        <label className="PrevTermInlineCheck">
-                          <input
-                            type="checkbox"
-                            className="C_Checkbox"
-                            checked={usePrevTerm}
-                            onChange={(e) => {
-                              const next = e.target.checked;
-                              setUsePrevTerm(next);
-                              setValue('target', '', {
-                                shouldValidate: true,
-                                shouldDirty: true,
-                              });
-                            }}
-                            disabled={disableOrgSelects || !prevTerm}
-                          />
-                          <span>이전학기{prevTermLabel ? ` (${prevTermLabel})` : ''}</span>
-                        </label>
-                      )}
                     </div>
                   </div>
+                )}
+              </div>
+            )}
 
-                  <div>
-                    <label className="C_Label">대상 선택</label>
-                    <select
-                      {...register('target', { required: true })}
-                      className={`C_Input ${disableOrgSelects ? 'is-disabled' : ''}`}
-                      disabled={disableOrgSelects}
-                      defaultValue=""
-                    >
-                      <option value="">대상 선택</option>
-                      {sigList.length === 0 ? (
-                        <option disabled>목록이 없습니다</option>
-                      ) : (
-                        sigList.map((item, idx) => (
-                          <option
-                            key={`${item.id ?? 'na'}-${item.title}-${idx}`}
-                            value={item.title}
-                          >
-                            {item.title}
-                          </option>
-                        ))
-                      )}
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+            {step3Ready && (
+              <div className="Step fade-in space-y-8">
+                {(applyType === 'fund' || applyType === 'meal' || applyType === 'contest') && (
+                  <div className="PayoutSection">
+                    <div className="PayoutHeader">
+                      <label className="C_Label">신청 금액</label>
+                    </div>
 
-          {step3Ready && (
-            <div className="Step fade-in space-y-8">
-              {(applyType === 'fund' || applyType === 'meal' || applyType === 'contest') && (
-                <div className="PayoutSection">
-                  <div className="PayoutHeader">
-                    <label className="C_Label">신청 금액</label>
-                  </div>
-
-                  <div className="PayoutField max-w-md">
-                    <input
-                      id="fund-amount-input"
-                      type="number"
-                      {...register('amount', { required: '신청 금액을 입력해주세요.' })}
-                      placeholder="신청 금액 (숫자만)"
-                      className="C_Input"
-                      disabled={submitting}
-                    />
-                    {errors.amount?.message && (
-                      <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
-                        {String(errors.amount.message)}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="PayoutKakaoToggle">
-                    <label className="C_CheckRow">
+                    <div className="PayoutField max-w-md">
                       <input
-                        type="checkbox"
-                        className="C_Checkbox"
-                        {...register('useKakaoPay')}
+                        id="fund-amount-input"
+                        type="number"
+                        {...register('amount', { required: '신청 금액을 입력해주세요.' })}
+                        placeholder="신청 금액 (숫자만)"
+                        className="C_Input"
                         disabled={submitting}
                       />
-                      <span className="C_CheckText">카카오페이로 받기</span>
-                    </label>
+                      {errors.amount?.message && (
+                        <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                          {String(errors.amount.message)}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="PayoutKakaoToggle">
+                      <label className="C_CheckRow">
+                        <input
+                          type="checkbox"
+                          className="C_Checkbox"
+                          {...register('useKakaoPay')}
+                          disabled={submitting}
+                        />
+                        <span className="C_CheckText">카카오페이로 받기</span>
+                      </label>
+                    </div>
+
+                    {!useKakaoPay && (
+                      <div className="PayoutGrid">
+                        <div className="PayoutField">
+                          <label className="C_SubLabel" htmlFor="fund-bank-input">
+                            은행
+                          </label>
+                          <input
+                            id="fund-bank-input"
+                            type="text"
+                            {...register('bankName')}
+                            placeholder="은행 (예: 토스뱅크)"
+                            className="C_Input"
+                            disabled={useKakaoPay || submitting}
+                          />
+                        </div>
+
+                        <div className="PayoutField">
+                          <label className="C_SubLabel" htmlFor="fund-account-input">
+                            계좌번호
+                          </label>
+                          <input
+                            id="fund-account-input"
+                            type="text"
+                            {...register('accountNumber', {
+                              pattern: {
+                                value: /^[0-9-]+$/,
+                                message: '계좌번호는 숫자와 -만 입력 가능합니다.',
+                              },
+                            })}
+                            placeholder="계좌번호"
+                            className="C_Input"
+                            disabled={useKakaoPay || submitting}
+                          />
+                          {errors.accountNumber?.message && (
+                            <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
+                              {String(errors.accountNumber.message)}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="PayoutField">
+                          <label className="C_SubLabel" htmlFor="fund-holder-input">
+                            예금주
+                          </label>
+                          <input
+                            id="fund-holder-input"
+                            type="text"
+                            {...register('accountHolder')}
+                            placeholder="예금주"
+                            className="C_Input"
+                            disabled={useKakaoPay || submitting}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="EditorSection">
+                  <div className="EditorHeader">
+                    <label className="C_Label">상세 내용</label>
                   </div>
 
-                  {!useKakaoPay && (
-                    <div className="PayoutGrid">
-                      <div className="PayoutField">
-                        <label className="C_SubLabel" htmlFor="fund-bank-input">
-                          은행
-                        </label>
-                        <input
-                          id="fund-bank-input"
-                          type="text"
-                          {...register('bankName')}
-                          placeholder="은행 (예: 토스뱅크)"
-                          className="C_Input"
-                          disabled={useKakaoPay || submitting}
-                        />
+                  <div className="EditorWrapper has-content">
+                    <div className="EditorMinHeight">
+                      <div className="EditorPlaceholderText">
+                        {(applyType ? PLACEHOLDER[applyType] : '').trim()}
                       </div>
 
-                      <div className="PayoutField">
-                        <label className="C_SubLabel" htmlFor="fund-account-input">
-                          계좌번호
-                        </label>
+                      <div style={{ marginTop: '1rem' }}>
+                        <label className="C_Label">이미지 첨부</label>
                         <input
-                          id="fund-account-input"
-                          type="text"
-                          {...register('accountNumber', {
-                            pattern: {
-                              value: /^[0-9-]+$/,
-                              message: '계좌번호는 숫자와 -만 입력 가능합니다.',
-                            },
-                          })}
-                          placeholder="계좌번호"
+                          type="file"
+                          accept="image/*"
+                          multiple
                           className="C_Input"
-                          disabled={useKakaoPay || submitting}
+                          disabled={submitting || imageUploading}
+                          onChange={async (e) => {
+                            const picked = Array.from(e.target.files || []);
+                            e.target.value = '';
+                            await uploadImages(picked);
+                          }}
                         />
-                        {errors.accountNumber?.message && (
-                          <p className="C_ErrorText" style={{ marginTop: '0.5rem' }}>
-                            {String(errors.accountNumber.message)}
+
+                        <input
+                          type="hidden"
+                          {...register('imageIds', {
+                            validate: (v) =>
+                              Array.isArray(v) && v.length > 0
+                                ? true
+                                : '이미지를 1장 이상 첨부해주세요.',
+                          })}
+                        />
+
+                        {errors.imageIds?.message && (
+                          <p className="C_ErrorText" style={{ marginTop: '0.25rem' }}>
+                            {String(errors.imageIds.message)}
                           </p>
+                        )}
+
+                        {imageIds.length > 0 && (
+                          <div style={{ marginTop: '0.5rem' }}>
+                            {imageIds.map((id) => (
+                              <div
+                                key={id}
+                                style={{
+                                  display: 'flex',
+                                  gap: '0.5rem',
+                                  alignItems: 'center',
+                                  marginTop: '0.25rem',
+                                }}
+                              >
+                                <a
+                                  className="C_Link"
+                                  href={buildImageUrl(id)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {id}
+                                </a>
+                                <button
+                                  type="button"
+                                  className="C_Link"
+                                  onClick={() => removeImageId(id)}
+                                  disabled={submitting || imageUploading}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  삭제
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
 
-                      <div className="PayoutField">
-                        <label className="C_SubLabel" htmlFor="fund-holder-input">
-                          예금주
-                        </label>
-                        <input
-                          id="fund-holder-input"
-                          type="text"
-                          {...register('accountHolder')}
-                          placeholder="예금주"
+                      <div style={{ marginTop: '1rem' }}>
+                        <label className="C_Label">지원 사유/기타</label>
+                        <textarea
+                          {...register('reasonText', {
+                            required: '지원 사유/기타를 입력해주세요.',
+                            validate: (v) =>
+                              String(v ?? '').trim().length > 0 ||
+                              '지원 사유/기타를 입력해주세요.',
+                          })}
+                          placeholder="지원 사유/기타"
                           className="C_Input"
-                          disabled={useKakaoPay || submitting}
+                          disabled={submitting}
+                          rows={8}
+                          style={{ resize: 'vertical' }}
                         />
+                        {errors.reasonText?.message && (
+                          <p className="C_ErrorText" style={{ marginTop: '0.25rem' }}>
+                            {String(errors.reasonText.message)}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  )}
-                </div>
-              )}
-
-              <div className="EditorSection">
-                <div className="EditorHeader">
-                  <label className="C_Label">상세 내용</label>
-                </div>
-
-                <div className="EditorWrapper has-content">
-                  <div className="EditorMinHeight">
-                    <div className="EditorPlaceholderText">
-                      {(applyType ? PLACEHOLDER[applyType] : '').trim()}
-                    </div>
-
-                    <div style={{ marginTop: '1rem' }}>
-                      <label className="C_Label">이미지 첨부</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="C_Input"
-                        disabled={submitting || imageUploading}
-                        onChange={async (e) => {
-                          const picked = Array.from(e.target.files || []);
-                          e.target.value = '';
-                          await uploadImages(picked);
-                        }}
-                      />
-
-                      <input
-                        type="hidden"
-                        {...register('imageIds', {
-                          validate: (v) =>
-                            Array.isArray(v) && v.length > 0
-                              ? true
-                              : '이미지를 1장 이상 첨부해주세요.',
-                        })}
-                      />
-
-                      {errors.imageIds?.message && (
-                        <p className="C_ErrorText" style={{ marginTop: '0.25rem' }}>
-                          {String(errors.imageIds.message)}
-                        </p>
-                      )}
-
-                      {imageIds.length > 0 && (
-                        <div style={{ marginTop: '0.5rem' }}>
-                          {imageIds.map((id) => (
-                            <div
-                              key={id}
-                              style={{
-                                display: 'flex',
-                                gap: '0.5rem',
-                                alignItems: 'center',
-                                marginTop: '0.25rem',
-                              }}
-                            >
-                              <a
-                                className="C_Link"
-                                href={buildImageUrl(id)}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                {id}
-                              </a>
-                              <button
-                                type="button"
-                                className="C_Link"
-                                onClick={() => removeImageId(id)}
-                                disabled={submitting || imageUploading}
-                                style={{
-                                  background: 'transparent',
-                                  border: 'none',
-                                  padding: 0,
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                삭제
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div style={{ marginTop: '1rem' }}>
-                      <label className="C_Label">지원 사유/기타</label>
-                      <textarea
-                        {...register('reasonText', {
-                          required: '지원 사유/기타를 입력해주세요.',
-                          validate: (v) =>
-                            String(v ?? '').trim().length > 0 ||
-                            '지원 사유/기타를 입력해주세요.',
-                        })}
-                        placeholder="지원 사유/기타"
-                        className="C_Input"
-                        disabled={submitting}
-                        rows={8}
-                        style={{ resize: 'vertical' }}
-                      />
-                      {errors.reasonText?.message && (
-                        <p className="C_ErrorText" style={{ marginTop: '0.25rem' }}>
-                          {String(errors.reasonText.message)}
-                        </p>
-                      )}
-                    </div>
                   </div>
+
+                  <label className="C_CheckRow" style={{ marginTop: '1rem' }}>
+                    <input
+                      type="checkbox"
+                      className="C_Checkbox"
+                      {...register('checked', { required: true })}
+                      disabled={submitting}
+                    />
+                    <span className="C_CheckText">
+                      <a
+                        className="C_Link"
+                        href={FUND_APPLY_GUIDELINE_LINK}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        SCSC 지원 가이드라인
+                      </a>
+                      을 확인했습니다.
+                    </span>
+                  </label>
                 </div>
 
-                <label className="C_CheckRow" style={{ marginTop: '1rem' }}>
-                  <input
-                    type="checkbox"
-                    className="C_Checkbox"
-                    {...register('checked', { required: true })}
-                    disabled={submitting}
-                  />
-                  <span className="C_CheckText">
-                    <a
-                      className="C_Link"
-                      href={FUND_APPLY_GUIDELINE_LINK}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      SCSC 지원 가이드라인
-                    </a>
-                    을 확인했습니다.
-                  </span>
-                </label>
+                <div className="SubmitRow">
+                  <button
+                    type="submit"
+                    className="SigCreateBtn"
+                    disabled={
+                      !isChecked || isMeLoading || !user || submitting || imageUploading
+                    }
+                  >
+                    {submitting
+                      ? '신청 중...'
+                      : imageUploading
+                        ? '이미지 업로드 중...'
+                        : '신청하기'}
+                  </button>
+                </div>
               </div>
-
-              <div className="SubmitRow">
-                <button
-                  type="submit"
-                  className="SigCreateBtn"
-                  disabled={!isChecked || submitting || imageUploading}
-                >
-                  {submitting
-                    ? '신청 중...'
-                    : imageUploading
-                      ? '이미지 업로드 중...'
-                      : '신청하기'}
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </fieldset>
         </form>
       </div>
     </div>

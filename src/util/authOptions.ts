@@ -3,6 +3,7 @@ import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import * as validator from '@/util/validator';
 import type { UserProfile } from '@/types/user';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -10,7 +11,6 @@ interface LoginResponseBody {
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID ?? '';
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
-const backendUrl = process.env.BACKEND_URL ?? '';
 const apiSecret = process.env.API_SECRET ?? '';
 
 export const authOptions: NextAuthOptions = {
@@ -46,14 +46,13 @@ export const authOptions: NextAuthOptions = {
 
       let res: Response;
       try {
-        res = await fetch(`${backendUrl}/api/user/login`, {
-          method: 'POST',
+        res = await fetchBackendServer('POST', '/api/user/login', {
+          skipSession: true,
           headers: { 'Content-Type': 'application/json', 'x-api-secret': apiSecret },
-          body: JSON.stringify({
+          body: {
             hashToken: hash,
             email: user.email,
-          }),
-          cache: 'no-store',
+          },
         });
       } catch (err: unknown) {
         console.error('Backend login request failed:', err);
@@ -78,12 +77,12 @@ export const authOptions: NextAuthOptions = {
         user.registered = true;
         user.hashToken = hash;
         try {
-          const profileRes = await fetch(`${backendUrl}/api/user/profile`, {
+          const profileRes = await fetchBackendServer('GET', '/api/user/profile', {
+            skipSession: true,
             headers: {
               'x-jwt': data.jwt,
               'x-api-secret': apiSecret,
             },
-            cache: 'no-store',
           });
 
           if (profileRes.ok) {

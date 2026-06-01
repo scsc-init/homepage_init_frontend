@@ -32,7 +32,7 @@ export default function WelcomePage() {
     }
   }, [isUnauthenticated, router]);
 
-  if (isLoading || isUnauthenticated) return null;
+  if (isLoading || isUnauthenticated || !profile) return null;
 
   const [depositAcc, kakaoInviteLink, discordInviteLink] = kvValues;
   const isInactive = !profile || !profile.is_active;

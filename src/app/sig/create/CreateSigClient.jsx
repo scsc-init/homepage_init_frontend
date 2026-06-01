@@ -18,10 +18,9 @@ const sanitizeWebsites = (websites = []) =>
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const { me, isLoading, isUnauthenticated } = useMe();
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
     try {
@@ -59,12 +58,11 @@ export default function CreateSigClient({ scscGlobalStatus }) {
 
   useEffect(() => {
     if (isLoading) return;
-    if (isUnauthenticated || !me) {
+    if (isUnauthenticated || !user) {
       pushLoginWithRedirect(router);
       return;
     }
-    setUser(me);
-  }, [isLoading, isUnauthenticated, me, router]);
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const watched = watch();
   useEffect(() => {

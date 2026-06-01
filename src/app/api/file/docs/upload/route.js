@@ -1,23 +1,10 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function POST(req) {
-  const base = process.env.BACKEND_URL || '';
-  const url = `${base}/api/file/docs/upload`;
-
   try {
-    const session = await getServerSession(authOptions);
-    const appJwt = session?.backendJwt || null;
-
     const formData = await req.formData();
 
-    const headers = {
-      ...(appJwt ? { 'x-jwt': appJwt } : {}),
-    };
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers,
+    const res = await fetchBackendServer('POST', '/api/file/docs/upload', {
       body: formData,
     });
 

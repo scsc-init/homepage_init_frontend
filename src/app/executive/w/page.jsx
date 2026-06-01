@@ -1,11 +1,11 @@
-import { handleApiRequest } from '@/app/api/apiWrapper';
+import { fetchBackendServer } from '@/util/fetch/server';
 import WithAuthorization from '@/components/WithAuthorization';
 import { redirect } from 'next/navigation';
 import WList from './WList';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function HTMLManagementPage() {
-  const res = await handleApiRequest('GET', '/api/executive/ws');
+  const res = await fetchBackendServer('GET', '/api/executive/ws');
   if (!res.ok) {
     redirect('/us/login');
   }
