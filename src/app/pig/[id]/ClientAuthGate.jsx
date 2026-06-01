@@ -2,35 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMe } from '@/util/hooks/useMe';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
+  const { me, isLoading, isUnauthenticated } = useMe();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    let cancelled = false;
+    if (isUnauthenticated) {
+      router.replace('/us/login');
+      return;
+    }
 
-    const goLogin = () => {
-      Promise.resolve().then(() => router.replace('/us/login'));
-    };
-
-    (async () => {
-      try {
-        const res = await fetch('/api/user/profile', { cache: 'no-store' });
-        if (!res.ok || res.status === 401) {
-          goLogin();
-          return;
-        }
-        if (!cancelled) setChecking(false);
-      } catch {
-        goLogin();
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [router]);
+    if (!isLoading && me) setChecking(false);
+  }, [isLoading, isUnauthenticated, me, router]);
 
   return (
     <>

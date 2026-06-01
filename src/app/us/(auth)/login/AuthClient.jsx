@@ -11,6 +11,7 @@ import { replaceLoginWithRedirect, setRedirectAfterLogin } from '@/util/loginRed
 import styles from '../auth.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
+import { useMe } from '@/util/hooks/useMe';
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -38,6 +39,7 @@ function log(event, data = {}) {
 }
 
 export default function AuthClient({ initialRedirect = null }) {
+  const { me } = useMe();
   const [inAppWarning, setInAppWarning] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
@@ -46,6 +48,10 @@ export default function AuthClient({ initialRedirect = null }) {
   const router = useRouter();
   const params = useSearchParams();
   const error = params.get('error');
+
+  useEffect(() => {
+    if (me) router.replace('/api/auth/consume-redirect');
+  }, [me, router]);
 
   useEffect(() => {
     if (!initialRedirect) return;

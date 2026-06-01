@@ -7,9 +7,11 @@ import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 function EditUserInfoClient() {
   const router = useRouter();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -23,19 +25,19 @@ function EditUserInfoClient() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isLoading) return;
+    if (isUnauthenticated || !user) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+      return;
+    }
+
     const fetchData = async () => {
       const fetches = [];
-      fetches.push(fetch('/api/user/profile'));
       fetches.push(fetch('/api/majors'));
       fetches.push(fetch('/api/user/oldboy/applicant'));
-      const [resUser, resMajors, resOldboy] = await Promise.all(fetches);
+      const [resMajors, resOldboy] = await Promise.all(fetches);
 
-      if (!resUser.ok) {
-        alert('로그인이 필요합니다.');
-        pushLoginWithRedirect(router);
-        return;
-      }
-      const user = await resUser.json();
       setForm({
         name: user.name || '',
         phone: user.phone || '',
@@ -54,7 +56,7 @@ function EditUserInfoClient() {
       setLoading(false);
     };
     fetchData();
-  }, [router]);
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const handleSubmit = async () => {
     const { name, phone, student_id, major_id } = form;

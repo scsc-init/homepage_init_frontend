@@ -6,27 +6,21 @@ import '@/app/board/[id]/create/page.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import WriteEditorStandard from '@/components/board/WriteEditorStandard';
 import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
+import { useMe } from '@/util/hooks/useMe';
 
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const router = useRouter();
+  const { isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await fetch(`/api/user/profile`, { cache: 'no-store' });
-        if (res.status === 401) {
-          alert('로그인이 필요합니다.');
-          pushLoginWithRedirect(router);
-        }
-      } catch {
-        pushLoginWithRedirect(router);
-      }
-    };
-    check();
-  }, [router]);
+    if (isUnauthenticated) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+    }
+  }, [isUnauthenticated, router]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {

@@ -1,15 +1,11 @@
 import EditSigClient from './EditSigClient';
 import './page.css';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
-import { redirect } from 'next/navigation';
 
 export const metadata = { title: 'SIG' };
 
 export default async function EditSigPage({ params }) {
   const { id } = await params;
-  const me = await fetchCurrentUserProfile();
-  if (!me) redirect('/us/login');
 
   let sig;
   try {
@@ -27,5 +23,5 @@ export default async function EditSigPage({ params }) {
 
   const article = sig.content ?? { content: '' };
 
-  return <EditSigClient sigId={id} me={me} sig={sig} article={article} />;
+  return <EditSigClient sigId={id} sig={sig} article={article} />;
 }

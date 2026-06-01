@@ -1,17 +1,25 @@
-import { redirect } from 'next/navigation';
-import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { DEPOSIT_ACC, DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
+import { useMe } from '@/util/hooks/useMe';
 
 const WELCOME_LOGIN_PATH = '/about/welcome';
 
-export default async function WelcomePage() {
-  const profile = await fetchCurrentUserProfile();
+export default function WelcomePage() {
+  const { me: profile, isLoading, isUnauthenticated } = useMe();
+  const router = useRouter();
 
-  if (!profile) {
-    redirect(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
-  }
+  useEffect(() => {
+    if (isUnauthenticated) {
+      router.replace(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
+    }
+  }, [isUnauthenticated, router]);
+
+  if (isLoading || isUnauthenticated || !profile) return null;
 
   const isInactive = !profile || !profile.is_active;
 

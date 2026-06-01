@@ -14,47 +14,47 @@ import { utc2kst } from '@/util/constants';
 import { directFetch } from '@/util/directFetch';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 export default function ArticleDetail({ params }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
 
   const router = useRouter();
+  const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState(null);
-  const [user, setUser] = useState(null);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [attachmentMeta, setAttachmentMeta] = useState([]);
 
   useEffect(() => {
+    if (isMeLoading) return;
+    if (isUnauthenticated || !user) {
+      pushLoginWithRedirect(router);
+      return;
+    }
+
     if (!id) return;
     const loadAll = async () => {
       try {
-        const [contentRes, commentsRes, userRes] = await Promise.all([
+        const [contentRes, commentsRes] = await Promise.all([
           fetch(`/api/article/${id}`),
           fetch(`/api/comments/${id}`),
-          fetch(`/api/user/profile`),
         ]);
 
-        if (userRes.status === 401) {
-          pushLoginWithRedirect(router);
-          return;
-        }
-        if (!contentRes.ok || !commentsRes.ok || !userRes.ok) {
+        if (!contentRes.ok || !commentsRes.ok) {
           setIsError(true);
           return;
         }
 
-        const [articleJson, commentsJson, userJson] = await Promise.all([
+        const [articleJson, commentsJson] = await Promise.all([
           contentRes.json(),
           commentsRes.json(),
-          userRes.json(),
         ]);
         setArticle(articleJson);
         setComments(commentsJson);
-        setUser(userJson);
       } catch (_) {
         setIsError(true);
       } finally {
@@ -62,7 +62,7 @@ export default function ArticleDetail({ params }) {
       }
     };
     loadAll();
-  }, [router, id]);
+  }, [isMeLoading, isUnauthenticated, router, id, user]);
 
   const attachmentIds = useMemo(() => {
     if (!Array.isArray(article?.attachments)) return [];

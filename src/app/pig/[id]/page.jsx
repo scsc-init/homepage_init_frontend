@@ -2,8 +2,6 @@ import 'highlight.js/styles/github.css';
 import './page.css';
 import PigClient from './PigClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
-import { redirect } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -44,9 +42,6 @@ export async function generateMetadata({ params }) {
 export default async function PigDetailPage({ params }) {
   const { id } = await params;
 
-  const me = await fetchCurrentUserProfile();
-  if (!me) redirect('/us/login');
-
   const pigRes = await fetchBackendServer('GET', `/api/pig/${id}`);
   if (!pigRes.ok) {
     return <div className="p-6 text-center text-red-600">존재하지 않는 PIG입니다.</div>;
@@ -65,7 +60,6 @@ export default async function PigDetailPage({ params }) {
       pig={pig}
       members={members}
       articleContent={article.content}
-      me={me}
       pigId={id}
     />
   );

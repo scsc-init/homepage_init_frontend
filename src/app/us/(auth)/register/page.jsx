@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 import AuthClient from './AuthClient';
 import { authOptions } from '@/util/authOptions';
 import { fetchBackendServer } from '@/util/fetch/server';
-import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
@@ -20,8 +19,7 @@ export default async function RegisterPage() {
     },
   });
   if (res.status === 200) {
-    const me = await fetchCurrentUserProfile();
-    redirect(me ? '/' : '/us/login');
+    redirect('/');
   }
   if (res.status !== 404) {
     redirect('/us/login');

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { fetchBackendServer } from '@/util/fetch/server';
-import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
 
 export async function POST(request) {
   const backendUrl = process.env.BACKEND_URL;
@@ -35,13 +34,19 @@ export async function POST(request) {
   let userProfile = null;
 
   try {
-    const userData = await fetchCurrentUserProfile({
+    const profileRes = await fetchBackendServer('GET', '/api/user/profile', {
       skipSession: true,
       headers: {
         'x-jwt': jwt,
         'x-api-secret': apiSecret,
       },
     });
+
+    if (!profileRes.ok) {
+      return NextResponse.json({ error: 'profile fetch failed' }, { status: 400 });
+    }
+
+    const userData = await profileRes.json();
 
     if (userData) {
       const profilePictureSrc = userData.profile_picture_is_url

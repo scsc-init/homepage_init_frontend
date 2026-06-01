@@ -6,8 +6,11 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import styles from './sig.module.css';
+import { useMe } from '@/util/hooks/useMe';
 
-export default function SigListClient({ sigs, myId, initialFilterTags = [] }) {
+export default function SigListClient({ sigs, initialFilterTags = [] }) {
+  const { me } = useMe();
+  const myId = me?.id ? String(me.id) : '';
   const [sortOrder, setSortOrder] = useState('latest');
   const [selectedTags, setSelectedTags] = useState(
     Array.isArray(initialFilterTags) ? initialFilterTags.filter(Boolean) : [],

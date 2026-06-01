@@ -14,7 +14,6 @@ import type { ExecutiveCandidate, UserProfile, UserSummary } from '@/types/user'
 import {
   fetchBackendServer,
   fetchBackendServerJson,
-  type FetchBackendServerOptions,
 } from './server';
 
 export interface TargetWithContentMembers extends BaseTarget {
@@ -85,13 +84,6 @@ function normalizeTarget(raw: Record<string, unknown>): NormalizedTarget {
 
 export async function fetchGlobalStatus(): Promise<GlobalStatus> {
   return fetchBackendServerJson<GlobalStatus>('GET', '/api/scsc/global/status');
-}
-
-export async function fetchCurrentUserProfile(
-  options: FetchBackendServerOptions = {},
-): Promise<UserProfile | null> {
-  const res = await fetchBackendServer('GET', '/api/user/profile', options);
-  return res.ok ? ((await res.json()) as UserProfile) : null;
 }
 
 export async function fetchUsers<T extends UserProfile[] = UserProfile[]>(): Promise<T> {

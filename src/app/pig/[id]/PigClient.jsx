@@ -7,8 +7,21 @@ import PigMembers from './PigMembers';
 import PigOwnerHandoverButton from './PigOwnerHandoverButton';
 import PigContents from './PigContents';
 import { is_pig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default function PigClient({ pig, members, articleContent, me, pigId }) {
+export default function PigClient({ pig, members, articleContent, pigId }) {
+  const { me, isLoading, isUnauthenticated } = useMe();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isUnauthenticated) pushLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
+
+  if (isLoading || isUnauthenticated || !me) return null;
+
   const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
   const canEdit =
     !!me &&

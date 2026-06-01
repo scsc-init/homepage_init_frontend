@@ -3,23 +3,12 @@ export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
-import { fetchUsers, fetchCurrentUserProfile } from '@/util/fetch/server-util';
+import LeadershipAuthorization from './LeadershipAuthorization';
+import { fetchUsers } from '@/util/fetch/server-util';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { redirect } from 'next/navigation';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveLeadershipPage() {
-  const me = await fetchCurrentUserProfile();
-
-  if (!me) {
-    redirect('/login?redirect=/executive/user/leadership');
-  }
-
-  const viewerRole = me?.role ?? 0;
-  if (viewerRole < 1000) {
-    redirect('/executive/user');
-  }
-
   const [majors, executiveUsers] = await Promise.all([
     fetchBackendServerJson('GET', '/api/majors').catch(() => []),
     fetchUsers().catch(() => []),
@@ -42,15 +31,17 @@ export default async function ExecutiveLeadershipPage() {
 
   return (
     <WithAuthorization>
-      <AdminLayout.AdminPanel>
-        <h2>회장단 전용 관리</h2>
-        <p style={{ marginBottom: '1rem', color: '#767676' }}>
-          회장단만 접근할 수 있으며, CSV 다운로드와 사용자 관리 기능을 제공합니다.
-        </p>
-        <AdminLayout.AdminSection>
-          <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
-        </AdminLayout.AdminSection>
-      </AdminLayout.AdminPanel>
+      <LeadershipAuthorization>
+        <AdminLayout.AdminPanel>
+          <h2>회장단 전용 관리</h2>
+          <p style={{ marginBottom: '1rem', color: '#767676' }}>
+            회장단만 접근할 수 있으며 CSV 다운로드와 사용자 관리 기능을 제공합니다.
+          </p>
+          <AdminLayout.AdminSection>
+            <LeadershipClient users={executiveUsersSorted} majors={majorsSafe} />
+          </AdminLayout.AdminSection>
+        </AdminLayout.AdminPanel>
+      </LeadershipAuthorization>
     </WithAuthorization>
   );
 }

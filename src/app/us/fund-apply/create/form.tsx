@@ -8,10 +8,10 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { fetchBackendClientJson } from '@/util/fetch/client';
 import { academicTerm2string } from '@/util/helper/tostring';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
+import { useMe } from '@/util/hooks/useMe';
 
 import './form.css';
 import { GlobalStatus } from '@/types/system';
-import type { UserProfile } from '@/types/user';
 
 import { FUND_APPLY_GUIDELINE_LINK } from '@/util/constants';
 const IMAGE_UPLOAD_CONCURRENCY = 3;
@@ -101,13 +101,12 @@ export default function FundApplyForm({
   globalStatus: GlobalStatus;
 }) {
   const router = useRouter();
+  const { me: user, isUnauthenticated } = useMe();
 
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const [imageIds, setImageIds] = useState<number[]>([]);
   const [imageUploading, setImageUploading] = useState(false);
-
-  const [user, setUser] = useState<UserProfile | null>(null);
 
   const currTerm = getCurrentTerm(globalStatus);
   const prevTerm = getPrevTerm(currTerm);
@@ -162,20 +161,8 @@ export default function FundApplyForm({
   const useKakaoPay = watch('useKakaoPay');
 
   useEffect(() => {
-    let isMounted = true;
-    const run = async () => {
-      try {
-        const data = await fetchBackendClientJson<UserProfile>('/api/user/profile');
-        if (isMounted) setUser(data);
-      } catch (err) {
-        replaceLoginWithRedirect(router);
-      }
-    };
-    run();
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
+    if (isUnauthenticated) replaceLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
 
   useEffect(() => {
     let isMounted = true;

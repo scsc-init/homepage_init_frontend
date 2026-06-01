@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 const sanitizeWebsites = (websites = []) =>
   (Array.isArray(websites) ? websites : [])
@@ -16,7 +17,7 @@ const sanitizeWebsites = (websites = []) =>
 
 export default function CreatePigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const { me: user, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -47,13 +48,8 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
-      if (res.ok) setUser(await res.json());
-      else pushLoginWithRedirect(router);
-    };
-    fetchProfile();
-  }, [router]);
+    if (isUnauthenticated) pushLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
 
   const watched = watch();
   useEffect(() => {

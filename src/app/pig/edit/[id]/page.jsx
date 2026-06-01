@@ -1,15 +1,11 @@
 import EditPigClient from './EditPigClient';
 import './page.css';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchCurrentUserProfile } from '@/util/fetch/server-util';
-import { redirect } from 'next/navigation';
 
 export const metadata = { title: 'PIG' };
 
 export default async function EditPigPage({ params }) {
   const { id } = await params;
-  const me = await fetchCurrentUserProfile();
-  if (!me) redirect('/us/login');
 
   let pig;
   try {
@@ -27,5 +23,5 @@ export default async function EditPigPage({ params }) {
 
   const article = pig.content ?? { content: '' };
 
-  return <EditPigClient pigId={id} me={me} pig={pig} article={article} />;
+  return <EditPigClient pigId={id} pig={pig} article={article} />;
 }

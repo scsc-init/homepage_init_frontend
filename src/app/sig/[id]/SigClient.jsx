@@ -7,8 +7,21 @@ import SigMembers from './SigMembers';
 import SigOwnerHandoverButton from './SigOwnerHandoverButton';
 import SigContents from './SigContents';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default function SigClient({ sig, members, articleContent, me, sigId }) {
+export default function SigClient({ sig, members, articleContent, sigId }) {
+  const { me, isLoading, isUnauthenticated } = useMe();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isUnauthenticated) pushLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
+
+  if (isLoading || isUnauthenticated || !me) return null;
+
   const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
   const canEdit =
     !!me &&
