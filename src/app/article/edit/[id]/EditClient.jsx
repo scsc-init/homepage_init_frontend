@@ -34,7 +34,7 @@ export default function EditClient({ articleId }) {
   useEffect(() => {
     if (isMeLoading) return;
     if (isUnauthenticated || !user) {
-      alert('濡쒓렇?몄씠 ?꾩슂?⑸땲??');
+      alert('로그인이 필요합니다.');
       pushLoginWithRedirect(router);
       return;
     }
