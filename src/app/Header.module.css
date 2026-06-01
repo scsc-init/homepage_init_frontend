@@ -32,6 +32,12 @@
   margin: 0 0.6rem;
 }
 
+.semesterLabel {
+  white-space: nowrap;
+  word-break: keep-all;
+  flex-shrink: 0;
+}
+
 .center {
   flex: 1;
   display: flex;

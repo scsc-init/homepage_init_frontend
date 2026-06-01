@@ -17,7 +17,7 @@ export default function HeaderLeft({ year, semester }) {
         />
       </Link>
       {year && semester && (
-        <div style={{ fontSize: '0.875rem' }}>
+        <div className={styles.semesterLabel} style={{ fontSize: '0.875rem' }}>
           {year} - {SEMESTER_MAP[semester]}학기
         </div>
       )}
