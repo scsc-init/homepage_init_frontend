@@ -31,6 +31,10 @@ export default function ArticlesView({ board, sortOrder }) {
           pushLoginWithRedirect(router);
           return;
         }
+        if (res.status === 403) {
+          setUnauthorized(true);
+          return;
+        }
         if (!res.ok) {
           pushLoginWithRedirect(router);
           return;
