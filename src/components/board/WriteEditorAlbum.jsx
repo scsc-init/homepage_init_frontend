@@ -2,11 +2,14 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
+import TextInput from '@/components/form-control/TextInput';
+import EditorInput from '@/components/form-control/EditorInput';
 
 export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { isDirty },
   } = useForm({
     defaultValues: { title: '', description: '' },
@@ -47,20 +50,13 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
           />
         </div>
 
-        <div className="albumFieldGroup">
-          <label>앨범 제목</label>
-          <input
-            type="text"
-            {...register('title', { required: true })}
-            placeholder="앨범 제목 (예: 즐거운 워크샵 사진)"
-          />
-        </div>
-
-        <textarea
-          {...register('description')}
-          placeholder="Write a short description of the picture"
-          className="albumDescriptionInput"
+        <TextInput
+          label="앨범 제목"
+          placeholder="앨범 제목을 입력하세요 (예: 즐거운 워크샵 사진)"
+          register={register}
+          name="title"
         />
+        <EditorInput label="앨범 설명 (선택)" control={control} name="description" />
 
         <button type="submit" className="SigCreateBtn albumSubmitButton" disabled={submitting}>
           {submitting ? '업로드 중...' : '앨범 등록하기'}
