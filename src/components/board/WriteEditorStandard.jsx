@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
-import TextInput from '@/components/form-controls/TextInput';
-import EditorInput from '@/components/form-controls/EditorInput';
+import TextInput from '@/components/form-control/TextInput';
+import EditorInput from '@/components/form-control/EditorInput';
 
 export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChange }) {
   const {
