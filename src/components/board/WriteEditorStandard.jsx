@@ -1,23 +1,20 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import dynamic from 'next/dynamic';
 import AttachmentSection from '@/components/board/AttachmentSection';
-
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
+import TextInput from '@/components/form-controls/TextInput';
+import EditorInput from '@/components/form-controls/EditorInput';
 
 export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChange }) {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    control,
     formState: { isDirty },
   } = useForm({
     defaultValues: { title: '', editor: '' },
   });
 
-  const content = watch('editor');
   const [attachmentIds, setAttachmentIds] = useState([]);
 
   useEffect(() => {
@@ -34,16 +31,13 @@ export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChang
   return (
     <div className="CreateSigCard">
       <form onSubmit={handleSubmit(handleInternalSubmit)} className="createBoardForm">
-        <input
-          type="text"
-          {...register('title', { required: true })}
+        <TextInput
+          label="제목"
           placeholder="제목을 입력하세요"
+          register={register}
+          name="title"
         />
-
-        <Editor
-          markdown={content}
-          onChange={(value) => setValue('editor', value, { shouldDirty: true })}
-        />
+        <EditorInput label="내용" control={control} name="editor" />
         <AttachmentSection
           valueIds={attachmentIds}
           onChangeIds={setAttachmentIds}
