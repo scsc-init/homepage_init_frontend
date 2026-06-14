@@ -114,7 +114,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetchBackendClient(`/api/pig/create`, {
+      const res = await fetchBackendClient(`/api/sig/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -29,7 +29,7 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const join = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(`/api/pig/${pigId}/member/join`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/member/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -50,7 +50,7 @@ export default function PigJoinLeaveButton({ pigId, initialIsMember = false }) {
   const leave = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(`/api/pig/${pigId}/member/leave`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/member/leave`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

@@ -14,7 +14,9 @@ export default async function SigListPage({ searchParams }) {
     initialTags = [resolvedSearchParams.tag];
   }
 
-  const sigs = await fetchBackendServerJson('GET', '/api/sigs').then(
+  const sigs = await fetchBackendServerJson('GET', '/api/sigs', {
+    query: { tag: 'SIG' },
+  }).then(
     (value) => ({ status: 'fulfilled', value }),
     (reason) => ({ status: 'rejected', reason }),
   );
