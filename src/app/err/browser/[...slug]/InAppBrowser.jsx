@@ -74,7 +74,7 @@ export default function InAppBrowser({ initialRedirect = null, slug = [] }) {
         </div>
 
         <div className={styles['copy-button-wrapper']}>
-          <InAppBrowserOutButton />
+          <InAppBrowserOutButton redirectTo={initialRedirect} />
         </div>
       </div>
     )

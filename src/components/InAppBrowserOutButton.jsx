@@ -2,8 +2,20 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { normalizeRedirectTarget } from '@/util/loginRedirect';
 
-export default function InAppBrowserOutButton() {
+function resolveTargetUrl(redirectTo) {
+  if (redirectTo) {
+    const normalizedRedirect = normalizeRedirectTarget(redirectTo);
+    if (normalizedRedirect) {
+      return new URL(normalizedRedirect, window.location.origin).href;
+    }
+  }
+
+  return new URL('/', window.location.origin).href;
+}
+
+export default function InAppBrowserOutButton({ redirectTo = null }) {
   const [isRedirectPossible, setIsRedirectPossible] = useState(false);
   const [useragt, setUseragt] = useState('');
 
@@ -16,16 +28,14 @@ export default function InAppBrowserOutButton() {
   }, []);
 
   const onClick = () => {
-    const target_url = window.location.href;
+    const targetUrl = resolveTargetUrl(redirectTo);
     if (useragt.match('kakaotalk')) {
       window.location.href =
-        'kakaotalk://web/openExternal?url=' + encodeURIComponent(target_url);
+        'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
     } else if (useragt.match('line')) {
-      if (target_url.indexOf('?') !== -1) {
-        window.location.href = target_url + '&openExternalBrowser=1';
-      } else {
-        window.location.href = target_url + '?openExternalBrowser=1';
-      }
+      const url = new URL(targetUrl);
+      url.searchParams.set('openExternalBrowser', '1');
+      window.location.href = url.toString();
     }
   };
 
