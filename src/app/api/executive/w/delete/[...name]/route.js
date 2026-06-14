@@ -1,9 +1,14 @@
 import { fetchBackendServer } from '@/util/fetch/server';
 
-export async function POST(_, { params }) {
+export async function POST(request, { params }) {
   const resolvedParams = await params;
   const name = normalizeName(resolvedParams?.name);
-  return fetchBackendServer('POST', `/api/executive/w/${encodePathValue(name)}/delete`);
+  return fetchBackendServer(
+    'POST',
+    `/api/executive/w/${encodePathValue(name)}/delete`,
+    {},
+    request,
+  );
 }
 
 function normalizeName(name) {
