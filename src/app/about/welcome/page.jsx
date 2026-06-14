@@ -1,17 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useMe } from '@/util/hooks/useMe';
 import { getKvsClient } from '@/util/fetch/client-util';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
-const WELCOME_LOGIN_PATH = '/about/welcome';
-
 export default function WelcomePage() {
-  const router = useRouter();
-  const { me: profile, isLoading, isUnauthenticated } = useMe();
+  const { me: profile, isLoading } = useMe();
   const [kvValues, setKvValues] = useState(['', '', '']);
 
   useEffect(() => {
@@ -26,13 +22,7 @@ export default function WelcomePage() {
     fetchKvs();
   }, []);
 
-  useEffect(() => {
-    if (isUnauthenticated) {
-      router.replace(`/us/login?redirect=${encodeURIComponent(WELCOME_LOGIN_PATH)}`);
-    }
-  }, [isUnauthenticated, router]);
-
-  if (isLoading || isUnauthenticated || !profile) return null;
+  if (isLoading || !profile) return null;
 
   const [depositAcc, kakaoInviteLink, discordInviteLink] = kvValues;
   const isInactive = !profile || !profile.is_active;
