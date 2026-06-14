@@ -78,6 +78,7 @@ src/
 | `GOOGLE_CLIENT_SECRET`     | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
 | `NEXTAUTH_SECRET`          | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
 | `NEXTAUTH_URL`             | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
+| `JWT_VALID_SECONDS`        | 로그인 세션 유지 시간. 기본값은 43200초                                                     |
 | `SNU_EMAIL_CHECK`          | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
 | `ENABLE_TEST_UTILS`        | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
 
@@ -102,6 +103,7 @@ GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
 GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
 NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
 NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
+JWT_VALID_SECONDS=43200
 SNU_EMAIL_CHECK=TRUE
 ```
 

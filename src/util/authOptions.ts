@@ -12,11 +12,27 @@ interface LoginResponseBody {
 const googleClientId = process.env.GOOGLE_CLIENT_ID ?? '';
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
 const apiSecret = process.env.API_SECRET ?? '';
+const DEFAULT_JWT_VALID_SECONDS = 12 * 60 * 60;
+const parseJwtValidSeconds = (value?: string) => {
+  if (!value?.trim()) {
+    return DEFAULT_JWT_VALID_SECONDS;
+  }
+
+  const seconds = Number(value);
+
+  if (!Number.isInteger(seconds) || seconds <= 0) {
+    return DEFAULT_JWT_VALID_SECONDS;
+  }
+
+  return seconds;
+};
+
+const jwtValidSeconds = parseJwtValidSeconds(process.env.JWT_VALID_SECONDS);
 
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
-    maxAge: 10 * 24 * 60 * 60,
+    maxAge: jwtValidSeconds,
   },
   providers: [
     Google({
