@@ -132,9 +132,46 @@ export default function CreateSigClient({ scscGlobalStatus }) {
       });
 
       if (res.status === 201) {
-        alert('SIG 생성 성공!');
+        const createdSig = await res.json().catch(() => null);
+        const createdSigId = createdSig?.id;
+
+        if (createdSigId == null) {
+          throw new Error('생성 응답에 SIG ID가 없습니다.');
+        }
+
+        const tagsRes = await fetchBackendClient('/api/tags', { cache: 'no-store' });
+        if (!tagsRes.ok) {
+          const err = await tagsRes.json().catch(() => ({}));
+          throw new Error(err.detail ?? '태그 목록을 불러오지 못했습니다.');
+        }
+
+        const tags = await tagsRes.json().catch(() => []);
+        const majorTag = (Array.isArray(tags) ? tags : []).find(
+          (tag) =>
+            tag?.is_major &&
+            String(tag?.text ?? '')
+              .trim()
+              .toUpperCase() === 'SIG',
+        );
+
+        if (!majorTag?.id) {
+          throw new Error('SIG 메이저 태그를 찾을 수 없습니다.');
+        }
+
+        const attachRes = await fetchBackendClient(`/api/sig/${createdSigId}/tag`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag_id: Number(majorTag.id) }),
+        });
+
+        if (!attachRes.ok) {
+          const err = await attachRes.json().catch(() => ({}));
+          throw new Error(err.detail ?? 'SIG 메이저 태그를 붙이지 못했습니다.');
+        }
+
         isFormSubmitted.current = true;
         sessionStorage.removeItem('sigForm');
+        alert('SIG 생성 성공!');
         router.push('/sig');
         router.refresh();
       } else if (res.status === 401) {
