@@ -173,10 +173,10 @@ export default function FundApplyForm({
     const run = async () => {
       try {
         const [currSigData, currPigData, prevSigData, prevPigData] = await Promise.all([
-          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}`),
-          fetchBackendClientJson<any[]>(`/api/pigs?${_curr}`),
-          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}`),
-          fetchBackendClientJson<any[]>(`/api/pigs?${_prev}`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}&tag=SIG`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_curr}&tag=PIG`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}&tag=SIG`),
+          fetchBackendClientJson<any[]>(`/api/sigs?${_prev}&tag=PIG`),
         ]);
         if (isMounted) {
           setCurrSigs(refinineSigList(currSigData));

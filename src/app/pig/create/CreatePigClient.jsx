@@ -114,11 +114,12 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetchBackendClient(`/api/pig/create`, {
+      const res = await fetchBackendClient(`/api/sig/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
+          tags: ['PIG'],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -127,9 +128,9 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       });
 
       if (res.status === 201) {
-        alert('PIG 생성 성공!');
         isFormSubmitted.current = true;
         sessionStorage.removeItem('pigForm');
+        alert('PIG 생성 성공!');
         router.push('/pig');
         router.refresh();
       } else if (res.status === 401) {

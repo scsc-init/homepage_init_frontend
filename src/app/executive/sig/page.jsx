@@ -7,7 +7,7 @@ import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage() {
   const [sigMetas, users] = await Promise.allSettled([
-    fetchBackendServerJson('GET', '/api/sigs'),
+    fetchBackendServerJson('GET', '/api/sigs', { query: { tag: 'SIG' } }),
     fetchUsers(),
   ]);
   if (sigMetas.status !== 'fulfilled' || users.status !== 'fulfilled') return null;

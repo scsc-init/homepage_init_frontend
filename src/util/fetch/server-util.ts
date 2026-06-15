@@ -205,20 +205,22 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
         year: currentTerm.year,
         semester: currentTerm.semester,
         status: globalStatus?.status,
+        tag: 'SIG',
       },
     }).catch(() => []),
     fetchBackendServerJson('GET', '/api/sigs', {
-      query: { year: prevTerm.year, semester: prevTerm.semester },
+      query: { year: prevTerm.year, semester: prevTerm.semester, tag: 'SIG' },
     }).catch(() => []),
-    fetchBackendServerJson('GET', '/api/pigs', {
+    fetchBackendServerJson('GET', '/api/sigs', {
       query: {
         year: currentTerm.year,
         semester: currentTerm.semester,
         status: globalStatus?.status,
+        tag: 'PIG',
       },
     }).catch(() => []),
-    fetchBackendServerJson('GET', '/api/pigs', {
-      query: { year: prevTerm.year, semester: prevTerm.semester },
+    fetchBackendServerJson('GET', '/api/sigs', {
+      query: { year: prevTerm.year, semester: prevTerm.semester, tag: 'PIG' },
     }).catch(() => []),
   ]);
 

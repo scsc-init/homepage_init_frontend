@@ -43,7 +43,7 @@ export default function PigOwnerHandoverButton({ pigId, members, owner }) {
     if (!window.confirm('정말 양도하시겠습니까?')) return;
     try {
       setPending(true);
-      const res = await fetchBackendClient(`/api/pig/${pigId}/handover`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/handover`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

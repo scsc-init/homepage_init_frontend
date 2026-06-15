@@ -117,8 +117,8 @@ export default function EditPigClient({ pigId, pig, article }) {
     try {
       const endpoint =
         me.role >= minExecutiveLevel
-          ? `/api/pig/${pigId}/update/executive`
-          : `/api/pig/${pigId}/update`;
+          ? `/api/sig/${pigId}/update/executive`
+          : `/api/sig/${pigId}/update`;
 
       const res = await fetchBackendClient(endpoint, {
         method: 'POST',

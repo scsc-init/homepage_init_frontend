@@ -5,7 +5,9 @@ import { fetchBackendServerJson } from '@/util/fetch/server';
 export const metadata = { title: 'PIG' };
 
 export default async function PigListPage() {
-  const pigs = await fetchBackendServerJson('GET', '/api/pigs').then(
+  const pigs = await fetchBackendServerJson('GET', '/api/sigs', {
+    query: { tag: 'PIG' },
+  }).then(
     (value) => ({ status: 'fulfilled', value }),
     (reason) => ({ status: 'rejected', reason }),
   );

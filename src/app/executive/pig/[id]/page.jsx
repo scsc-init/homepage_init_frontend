@@ -8,7 +8,7 @@ import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage({ params }) {
   const [pigMeta, users] = await Promise.allSettled([
-    fetchBackendServerJson('GET', `/api/pig/${(await params).id}`),
+    fetchBackendServerJson('GET', `/api/sig/${(await params).id}`),
     fetchUsers(),
   ]);
   if (pigMeta.status !== 'fulfilled') {

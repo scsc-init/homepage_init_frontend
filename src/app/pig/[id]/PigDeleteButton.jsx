@@ -26,7 +26,7 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(`/api/pig/${pigId}/delete`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -46,7 +46,7 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(`/api/pig/${pigId}/delete/executive`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/delete/executive`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
