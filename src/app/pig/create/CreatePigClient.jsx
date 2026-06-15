@@ -119,6 +119,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
+          major_tag: 'PIG',
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -127,43 +128,6 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       });
 
       if (res.status === 201) {
-        const createdPig = await res.json().catch(() => null);
-        const createdPigId = createdPig?.id;
-
-        if (createdPigId == null) {
-          throw new Error('생성 응답에 PIG ID가 없습니다.');
-        }
-
-        const tagsRes = await fetchBackendClient('/api/tags', { cache: 'no-store' });
-        if (!tagsRes.ok) {
-          const err = await tagsRes.json().catch(() => ({}));
-          throw new Error(err.detail ?? '태그 목록을 불러오지 못했습니다.');
-        }
-
-        const tags = await tagsRes.json().catch(() => []);
-        const majorTag = (Array.isArray(tags) ? tags : []).find(
-          (tag) =>
-            tag?.is_major &&
-            String(tag?.text ?? '')
-              .trim()
-              .toUpperCase() === 'PIG',
-        );
-
-        if (!majorTag?.id) {
-          throw new Error('PIG 메이저 태그를 찾을 수 없습니다.');
-        }
-
-        const attachRes = await fetchBackendClient(`/api/sig/${createdPigId}/tag`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tag_id: Number(majorTag.id) }),
-        });
-
-        if (!attachRes.ok) {
-          const err = await attachRes.json().catch(() => ({}));
-          throw new Error(err.detail ?? 'PIG 메이저 태그를 붙이지 못했습니다.');
-        }
-
         isFormSubmitted.current = true;
         sessionStorage.removeItem('pigForm');
         alert('PIG 생성 성공!');
