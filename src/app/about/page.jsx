@@ -6,7 +6,7 @@ import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import styles from './about.module.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
-import { getKVValue } from '@/util/fetchAPIData';
+import { getKVValue } from '@/util/fetch/server-util';
 
 export default async function AboutPage() {
   const DEFAULT_DISCORD_INVITE_LINK = 'https://discord.gg/SmXFDxA7XE';

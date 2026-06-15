@@ -77,7 +77,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
     }
     setPending(true);
     try {
-      const res = await fetchBackendClient('/api/executive/leadership', {
+      const res = await fetch('/api/executive/leadership', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
