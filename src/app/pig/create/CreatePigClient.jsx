@@ -119,7 +119,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
-          major_tag: 'PIG',
+          tags: ['PIG'],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
