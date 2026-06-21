@@ -84,7 +84,9 @@ export const headerMenuData: HeaderMenuSection[] = [
   },
 ];
 
-/** Low-priority informational pages shown in the footer instead of the main navigation. */
+/**
+ * 푸터에 표시되는 페이지 정보입니다.
+ */
 export const footerMenuData: HeaderMenuItem[] = [
   { label: 'Executives', url: '/about/executives' },
   { label: 'Developers', url: '/about/developers' },
