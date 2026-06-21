@@ -841,6 +841,7 @@ export default function FundApplyForm({
                           disabled={submitting || attachmentUploading}
                           onChange={async (e) => {
                             const picked = Array.from(e.target.files || []);
+                            e.target.value = '';
                             await uploadAttachments(picked);
                           }}
                         />
@@ -946,7 +947,7 @@ export default function FundApplyForm({
                     {submitting
                       ? '신청 중...'
                       : imageUploading || attachmentUploading
-                        ? '이미지 업로드 중...'
+                        ? '업로드 중...'
                         : '신청하기'}
                   </button>
                 </div>
