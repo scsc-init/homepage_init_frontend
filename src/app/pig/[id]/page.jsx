@@ -6,7 +6,7 @@ import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server'
 export async function generateMetadata({ params }) {
   const { id } = await params;
   try {
-    const pig = await fetchBackendServerJson('GET', `/api/pig/${id}`);
+    const pig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: pig.title,
       description: pig.description || 'PIG 상세 페이지',
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
 export default async function PigDetailPage({ params }) {
   const { id } = await params;
 
-  const pigRes = await fetchBackendServer('GET', `/api/pig/${id}`);
+  const pigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!pigRes.ok) {
     return <div className="p-6 text-center text-red-600">존재하지 않는 PIG입니다.</div>;
   }

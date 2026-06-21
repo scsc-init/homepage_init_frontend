@@ -9,7 +9,7 @@ export default async function EditPigPage({ params }) {
 
   let pig;
   try {
-    pig = await fetchBackendServerJson('GET', `/api/pig/${id}`);
+    pig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
   } catch {
     return (
       <div className="CreatePigContainer">

@@ -28,10 +28,10 @@ function resolveBackendPath(path: string): string {
   if (commentDelete) return `/api/comment/delete/${commentDelete[1]}${suffix}`;
 
   const pigExecutiveUpdate = pathname.match(/^\/api\/pig\/([^/]+)\/update\/executive$/);
-  if (pigExecutiveUpdate) return `/api/executive/pig/${pigExecutiveUpdate[1]}/update${suffix}`;
+  if (pigExecutiveUpdate) return `/api/executive/sig/${pigExecutiveUpdate[1]}/update${suffix}`;
 
   const pigExecutiveDelete = pathname.match(/^\/api\/pig\/([^/]+)\/delete\/executive$/);
-  if (pigExecutiveDelete) return `/api/executive/pig/${pigExecutiveDelete[1]}/delete${suffix}`;
+  if (pigExecutiveDelete) return `/api/executive/sig/${pigExecutiveDelete[1]}/delete${suffix}`;
 
   const sigExecutiveUpdate = pathname.match(/^\/api\/sig\/([^/]+)\/update\/executive$/);
   if (sigExecutiveUpdate) return `/api/executive/sig/${sigExecutiveUpdate[1]}/update${suffix}`;
