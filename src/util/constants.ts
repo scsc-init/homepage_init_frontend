@@ -57,8 +57,6 @@ export const headerMenuData: HeaderMenuSection[] = [
     items: [
       { label: 'SCSC', url: '/about' },
       { label: 'Welcome Guide', url: '/about/welcome' },
-      { label: 'Executives', url: '/about/executives' },
-      { label: 'Developers', url: '/about/developers' },
       { label: 'Rules', url: '/about/rules' },
     ],
   },
@@ -84,6 +82,12 @@ export const headerMenuData: HeaderMenuSection[] = [
       { label: 'Fund Apply', url: '/us/fund-apply/create' },
     ],
   },
+];
+
+/** Low-priority informational pages shown in the footer instead of the main navigation. */
+export const footerMenuData: HeaderMenuItem[] = [
+  { label: 'Executives', url: '/about/executives' },
+  { label: 'Developers', url: '/about/developers' },
 ];
 
 export interface FooterLogoItem {
