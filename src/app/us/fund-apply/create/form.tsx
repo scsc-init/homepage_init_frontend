@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { fetchBackendClient, fetchBackendClientJson } from '@/util/fetch/client';
 import { academicTerm2string } from '@/util/helper/tostring';
+import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { useMe } from '@/util/hooks/useMe';
 import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
@@ -64,6 +65,7 @@ type FormType = {
   checked: boolean;
   reasonText: string;
   imageIds: number[];
+  attachmentIds: string[];
 };
 
 function replaceCRLF_LF(s: string): string {
@@ -106,6 +108,10 @@ export default function FundApplyForm({
 
   const [imageIds, setImageIds] = useState<number[]>([]);
   const [imageUploading, setImageUploading] = useState(false);
+  const [attachmentItems, setAttachmentItems] = useState<
+    { id: string; original_filename: string }[]
+  >([]);
+  const [attachmentUploading, setAttachmentUploading] = useState(false);
 
   const currTerm = getCurrentTerm(globalStatus);
   const prevTerm = getPrevTerm(currTerm);
@@ -151,6 +157,7 @@ export default function FundApplyForm({
       checked: false,
       reasonText: '',
       imageIds: [],
+      attachmentIds: [],
     },
   });
 
@@ -211,6 +218,8 @@ export default function FundApplyForm({
     setValue('reasonText', '', { shouldValidate: true, shouldDirty: true });
     setImageIds([]);
     setValue('imageIds', [], { shouldValidate: true, shouldDirty: true });
+    setAttachmentItems([]);
+    setValue('attachmentIds', [], { shouldValidate: true, shouldDirty: true });
   }, [applyType, setValue]);
 
   useEffect(() => {
@@ -299,15 +308,22 @@ export default function FundApplyForm({
     }
 
     const reason = replaceCRLF_LF(String(form.reasonText ?? '')).trim();
-    const ids = (Array.isArray(form.imageIds) ? form.imageIds : []).filter(Boolean);
-    const imgs = ids.map((id) => `![image](${buildImageUrl(id)})`);
+    const imageIds = (Array.isArray(form.imageIds) ? form.imageIds : []).filter(Boolean);
+    const attachmentIds = (Array.isArray(form.attachmentIds) ? form.attachmentIds : []).filter(
+      Boolean,
+    );
+    const imgs = imageIds.map((id) => `![image](${buildImageUrl(id)})`);
 
     const blocks = [];
     blocks.push(`${headerLines.join('\n')}\n\n---\n`);
     blocks.push(`## 지원 사유/기타\n\n${reason}\n`);
     if (imgs.length > 0) blocks.push(`\n## 첨부 이미지\n\n${imgs.join('\n')}\n`);
 
-    return { title, content: blocks.join('\n').trim(), attachments: ids };
+    return {
+      title,
+      content: blocks.join('\n').trim(),
+      attachments: [...imageIds, ...attachmentIds],
+    };
   };
 
   const uploadImage = async (file: File): Promise<number | null> => {
@@ -377,6 +393,92 @@ export default function FundApplyForm({
     const next = imageIds.filter((x) => x !== id);
     setImageIds(next);
     setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const uploadAttachment = async (
+    file: File,
+  ): Promise<{ id: string; original_filename: string } | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    let res: Response;
+    try {
+      res = await fetchBackendClient('/api/file/docs/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+    } catch {
+      alert('파일 업로드 중 네트워크 오류가 발생했습니다.');
+      return null;
+    }
+
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        alert('로그인이 필요합니다. 다시 로그인한 후 파일을 업로드해 주세요.');
+      } else {
+        alert(data?.detail || data?.message || `파일 업로드 실패 (status ${res.status})`);
+      }
+      return null;
+    }
+
+    if (!data?.id) {
+      alert('파일 업로드 응답에 id가 없습니다.');
+      return null;
+    }
+
+    return {
+      id: String(data.id),
+      original_filename: data.original_filename || file.name,
+    };
+  };
+
+  const uploadAttachments = async (files: File[]) => {
+    if (files.length === 0 || attachmentUploading) return;
+
+    setAttachmentUploading(true);
+    try {
+      const uploaded = [];
+      for (const file of files) {
+        const item = await uploadAttachment(file);
+        if (item) uploaded.push(item);
+      }
+      if (uploaded.length === 0) return;
+
+      const mergedItems = [...attachmentItems];
+      const seen = new Set(mergedItems.map((item) => item.id));
+      for (const item of uploaded) {
+        if (seen.has(item.id)) continue;
+        mergedItems.push(item);
+        seen.add(item.id);
+      }
+
+      setAttachmentItems(mergedItems);
+      setValue(
+        'attachmentIds',
+        mergedItems.map((item) => item.id),
+        { shouldValidate: true, shouldDirty: true },
+      );
+    } finally {
+      setAttachmentUploading(false);
+    }
+  };
+
+  const removeAttachmentId = (id: string) => {
+    const nextItems = attachmentItems.filter((item) => item.id !== id);
+    setAttachmentItems(nextItems);
+    setValue(
+      'attachmentIds',
+      nextItems.map((item) => item.id),
+      { shouldValidate: true, shouldDirty: true },
+    );
   };
 
   const onSubmit = async (form: FormType) => {
@@ -730,6 +832,60 @@ export default function FundApplyForm({
                       </div>
 
                       <div style={{ marginTop: '1rem' }}>
+                        <input type="hidden" {...register('attachmentIds')} />
+                        <label className="C_Label">파일 첨부</label>
+                        <input
+                          type="file"
+                          multiple
+                          className="C_Input"
+                          disabled={submitting || attachmentUploading}
+                          onChange={async (e) => {
+                            const picked = Array.from(e.target.files || []);
+                            await uploadAttachments(picked);
+                          }}
+                        />
+
+                        {attachmentItems.length > 0 && (
+                          <div style={{ marginTop: '0.5rem' }}>
+                            {attachmentItems.map((item) => (
+                              <div
+                                key={item.id}
+                                style={{
+                                  display: 'flex',
+                                  gap: '0.5rem',
+                                  alignItems: 'center',
+                                  marginTop: '0.25rem',
+                                }}
+                              >
+                                <a
+                                  className="C_Link"
+                                  href={getAttachmentDownloadUrl(item.id)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {item.original_filename || item.id}
+                                </a>
+                                <button
+                                  type="button"
+                                  className="C_Link"
+                                  onClick={() => removeAttachmentId(item.id)}
+                                  disabled={submitting || attachmentUploading}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  삭제
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ marginTop: '1rem' }}>
                         <label className="C_Label">지원 사유/기타</label>
                         <textarea
                           {...register('reasonText', {
@@ -779,12 +935,17 @@ export default function FundApplyForm({
                     type="submit"
                     className="SigCreateBtn"
                     disabled={
-                      !isChecked || isMeLoading || !user || submitting || imageUploading
+                      !isChecked ||
+                      isMeLoading ||
+                      !user ||
+                      submitting ||
+                      imageUploading ||
+                      attachmentUploading
                     }
                   >
                     {submitting
                       ? '신청 중...'
-                      : imageUploading
+                      : imageUploading || attachmentUploading
                         ? '이미지 업로드 중...'
                         : '신청하기'}
                   </button>
