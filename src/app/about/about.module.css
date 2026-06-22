@@ -413,7 +413,6 @@
   text-align: center;
 }
 
-/* Image already sits inside a rounded card — drop the redundant nested rounding */
 .facilityCard .imageWrapper {
   border-radius: 0;
 }
@@ -499,7 +498,6 @@
   transform: translateY(0);
 }
 
-/* Gentle opacity-only reveal (no "fly-up" motion) */
 .fadeIn {
   opacity: 0;
   transition: opacity 0.6s ease-out;
