@@ -80,7 +80,7 @@ export default async function AdminPanel() {
             'border-radius': '1rem',
           }}
         >
-          <span style={{ color: 'var(--color-button-alert-bg)', 'font-weight': 600 }}>
+          <span style={{ color: 'var(--color-button-alert-bg)', fontWeight: 600 }}>
             * 본 영역은 시스템에 대한 직접적인 영향을 미칠 수 있는 기능을 포함하고 있습니다.
             조작 시 주의해주세요. *
           </span>

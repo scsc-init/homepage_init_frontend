@@ -1,12 +1,17 @@
 import PigListClient from './PigListClient';
 import './page.css';
 import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
+import { getCurrentTerm } from '@/util/helper/system';
 
 export const metadata = { title: 'PIG' };
 
 export default async function PigListPage() {
+  const globalStatus = await fetchGlobalStatus();
+  const currTerm = getCurrentTerm(globalStatus);
+
   const pigs = await fetchBackendServerJson('GET', '/api/sigs', {
-    query: { tag: 'PIG' },
+    query: { tag: 'PIG', year: currTerm.year, semester: currTerm.semester },
   }).then(
     (value) => ({ status: 'fulfilled', value }),
     (reason) => ({ status: 'rejected', reason }),
