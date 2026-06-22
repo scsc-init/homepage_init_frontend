@@ -3,20 +3,20 @@ import WithAuthorization from '@/components/WithAuthorization';
 import PigEdit from './PigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchUsers } from '@/util/fetch/server-util';
+import { fetchUserSummaries } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage({ params }) {
   const [pigMeta, users] = await Promise.allSettled([
     fetchBackendServerJson('GET', `/api/sig/${(await params).id}`),
-    fetchUsers(),
+    fetchUserSummaries(),
   ]);
   if (pigMeta.status !== 'fulfilled') {
     return null;
   }
 
   const raw = pigMeta.value;
-  const pigContent = raw?.content?.content ?? raw?.content ?? '';
+  const pigContent = raw?.content?.content ?? '';
   const pig = { ...raw, content: pigContent };
 
   return (

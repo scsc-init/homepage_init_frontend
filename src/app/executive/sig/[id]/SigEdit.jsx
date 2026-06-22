@@ -3,8 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
-import { directFetch } from '@/util/directFetch';
+import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 import SigTagManager from '@/components/board/SigTagManager';
 import * as AdminLayout from '@/components/AdminLayout';
 
@@ -153,13 +152,14 @@ const renderSigEdit = (sig, ctx) => {
         <td>가입기간</td>
         <td>
           <AdminLayout.AdminSelectBoolWide
-            value={String(Boolean(sig.is_rolling_admission))}
-            onChange={(e) =>
-              ctx.updateSigField('is_rolling_admission', e.target.value === 'true')
-            }
+            value={sig['is_rolling_admission'] ?? ''}
+            onChange={(e) => ctx.updatePigField('is_rolling_admission', e.target.value)}
           >
-            <option value="true">예</option>
-            <option value="false">아니오</option>
+            <option value="always">{PIG_ADMISSION_LABEL_MAP.always}</option>
+            <option value="never">{PIG_ADMISSION_LABEL_MAP.never}</option>
+            <option value="during_recruiting">
+              {PIG_ADMISSION_LABEL_MAP.during_recruiting}
+            </option>
           </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
@@ -227,7 +227,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
           year: sig.year,
           semester: sig.semester,
           should_extend: Boolean(sig.should_extend),
-          is_rolling_admission: Boolean(sig.is_rolling_admission),
+          is_rolling_admission: String(sig.is_rolling_admission),
           websites: sanitizeWebsites(sig.websites),
         }),
       });

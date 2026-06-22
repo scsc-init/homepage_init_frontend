@@ -2,19 +2,17 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import PigList from './PigList';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchUsers } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage() {
   const [pigMetas, users] = await Promise.allSettled([
     fetchBackendServerJson('GET', '/api/sigs', { query: { tag: 'PIG' } }),
-    fetchUsers(),
   ]);
-  if (pigMetas.status !== 'fulfilled' || users.status !== 'fulfilled') return null;
+  if (pigMetas.status !== 'fulfilled') return null;
 
   const pigs = pigMetas.value.map((p) => ({
     ...p,
-    ownerName: users.value.find((u) => u.id === p.owner)?.name,
+    ownerName: p.owner_user.name,
   }));
 
   return (
