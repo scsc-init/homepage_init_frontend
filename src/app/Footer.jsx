@@ -4,7 +4,8 @@ import styles from './Footer.module.css';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { hideFooterRoutes, footerLogoData } from '@/util/constants';
+import Link from 'next/link';
+import { hideFooterRoutes, footerLogoData, footerMenuData } from '@/util/constants';
 import { getKvsClient } from '@/util/fetch/client-util';
 
 export default function Footer() {
@@ -48,6 +49,16 @@ export default function Footer() {
                   ))}
               </p>
             </div>
+            <nav className={styles.footerNav} aria-label="People">
+              <span className={styles.footerNavTitle}>People</span>
+              <ul className={styles.footerNavList}>
+                {footerMenuData.map((item) => (
+                  <li key={item.url}>
+                    <Link href={item.url}>{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
         <div className={styles.logoList}>

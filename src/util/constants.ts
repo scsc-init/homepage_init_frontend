@@ -57,8 +57,6 @@ export const headerMenuData: HeaderMenuSection[] = [
     items: [
       { label: 'SCSC', url: '/about' },
       { label: 'Welcome Guide', url: '/about/welcome' },
-      { label: 'Executives', url: '/about/executives' },
-      { label: 'Developers', url: '/about/developers' },
       { label: 'Rules', url: '/about/rules' },
     ],
   },
@@ -84,6 +82,14 @@ export const headerMenuData: HeaderMenuSection[] = [
       { label: 'Fund Apply', url: '/us/fund-apply/create' },
     ],
   },
+];
+
+/**
+ * 푸터에 표시되는 페이지 정보입니다.
+ */
+export const footerMenuData: HeaderMenuItem[] = [
+  { label: 'Executives', url: '/about/executives' },
+  { label: 'Developers', url: '/about/developers' },
 ];
 
 export interface FooterLogoItem {
