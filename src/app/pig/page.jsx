@@ -7,15 +7,17 @@ import { getCurrentTerm } from '@/util/helper/system';
 export const metadata = { title: 'PIG' };
 
 export default async function PigListPage() {
-  const globalStatus = await fetchGlobalStatus();
+  const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
+  if (globalStatus.status === 'rejected') {
+    return <div>피그 정보를 불러올 수 없습니다.</div>;
+  }
   const currTerm = getCurrentTerm(globalStatus);
 
-  const pigs = await fetchBackendServerJson('GET', '/api/sigs', {
-    query: { tag: 'PIG', year: currTerm.year, semester: currTerm.semester },
-  }).then(
-    (value) => ({ status: 'fulfilled', value }),
-    (reason) => ({ status: 'rejected', reason }),
-  );
+  const [pigs] = await Promise.allSettled([
+    fetchBackendServerJson('GET', '/api/sigs', {
+      query: { tag: 'PIG', year: currTerm.year, semester: currTerm.semester },
+    }),
+  ]);
 
   if (pigs.status === 'rejected') {
     return <div>피그 정보를 불러올 수 없습니다.</div>;

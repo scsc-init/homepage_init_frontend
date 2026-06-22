@@ -76,12 +76,21 @@ export default function ArticlesView({ board, sortOrder }) {
               <span className={styles.sigTitle}>{article.title}</span>
               <span className={styles.sigUserCount}>{utc2kst(article.created_at)}</span>
             </div>
-            <div className={styles.sigDescription}>
-              {article.content && article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...
-            </div>
+            <div className={styles.sigDescription}>{toPreview(article.content, 80)}</div>
           </div>
         </Link>
       ))}
     </div>
   );
+}
+
+/**
+ *
+ * @param {string|null} str text
+ * @param {number} limit text length limit before ...(ellipsis)
+ * @returns
+ */
+function toPreview(str, limit) {
+  const preview = str?.replace(/\s+/g, ' ').trim() ?? '';
+  return preview ? `${preview.slice(0, limit)}${preview.length > limit ? '...' : ''}` : '';
 }

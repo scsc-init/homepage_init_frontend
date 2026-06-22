@@ -64,7 +64,7 @@ type FormType = {
   accountHolder: string;
   checked: boolean;
   reasonText: string;
-  imageIds: number[];
+  imageIds: string[];
   attachmentIds: string[];
 };
 
@@ -106,7 +106,7 @@ export default function FundApplyForm({
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const [imageIds, setImageIds] = useState<number[]>([]);
+  const [imageIds, setImageIds] = useState<string[]>([]);
   const [imageUploading, setImageUploading] = useState(false);
   const [attachmentItems, setAttachmentItems] = useState<
     { id: string; original_filename: string }[]
@@ -326,7 +326,7 @@ export default function FundApplyForm({
     };
   };
 
-  const uploadImage = async (file: File): Promise<number | null> => {
+  const uploadImage = async (file: File): Promise<string | null> => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -366,7 +366,7 @@ export default function FundApplyForm({
       return null;
     }
 
-    return id;
+    return String(id);
   };
 
   const uploadImages = async (files: File[]) => {
@@ -374,11 +374,11 @@ export default function FundApplyForm({
 
     setImageUploading(true);
     try {
-      const ids: number[] = [];
+      const ids: string[] = [];
       for (let i = 0; i < files.length; i += IMAGE_UPLOAD_CONCURRENCY) {
         const chunk = files.slice(i, i + IMAGE_UPLOAD_CONCURRENCY);
         const results = await Promise.all(chunk.map(uploadImage));
-        ids.push(...results.filter((id): id is number => id !== null));
+        ids.push(...results.filter((id): id is string => id !== null));
       }
       if (ids.length === 0) return;
       const next = Array.from(new Set([...imageIds, ...ids]));
@@ -389,7 +389,7 @@ export default function FundApplyForm({
     }
   };
 
-  const removeImageId = (id: number) => {
+  const removeImageId = (id: string) => {
     const next = imageIds.filter((x) => x !== id);
     setImageIds(next);
     setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
@@ -960,9 +960,8 @@ export default function FundApplyForm({
   );
 }
 
-function buildImageUrl(id: number): string {
+function buildImageUrl(id: string): string {
   const PUBLIC_FRONTEND_URL = window.location.origin;
   const relative = `/api/image/download/${encodeURIComponent(id)}`;
-  console.log(`${PUBLIC_FRONTEND_URL}${relative}`);
   return `${PUBLIC_FRONTEND_URL}${relative}`;
 }

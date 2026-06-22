@@ -8,7 +8,10 @@ export const metadata = { title: 'SIG' };
 
 export default async function SigListPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
-  const globalStatus = await fetchGlobalStatus();
+  const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
+  if (globalStatus.status === 'rejected') {
+    return <div>시그 정보를 불러올 수 없습니다.</div>;
+  }
   const currTerm = getCurrentTerm(globalStatus);
 
   let initialTags = [];
@@ -18,12 +21,11 @@ export default async function SigListPage({ searchParams }) {
     initialTags = [resolvedSearchParams.tag];
   }
 
-  const sigs = await fetchBackendServerJson('GET', '/api/sigs', {
-    query: { tag: 'SIG', year: currTerm.year, semester: currTerm.semester },
-  }).then(
-    (value) => ({ status: 'fulfilled', value }),
-    (reason) => ({ status: 'rejected', reason }),
-  );
+  const [sigs] = await Promise.allSettled([
+    fetchBackendServerJson('GET', '/api/sigs', {
+      query: { tag: 'SIG', year: currTerm.year, semester: currTerm.semester },
+    }),
+  ]);
 
   if (sigs.status === 'rejected') {
     return <div>시그 정보를 불러올 수 없습니다.</div>;

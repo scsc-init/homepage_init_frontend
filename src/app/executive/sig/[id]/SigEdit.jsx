@@ -152,8 +152,8 @@ const renderSigEdit = (sig, ctx) => {
         <td>가입기간</td>
         <td>
           <AdminLayout.AdminSelectBoolWide
-            value={sig['is_rolling_admission'] ?? ''}
-            onChange={(e) => ctx.updatePigField('is_rolling_admission', e.target.value)}
+            value={sig['is_rolling_admission'] ?? SIG_ADMISSION_LABEL_MAP.during_recruiting}
+            onChange={(e) => ctx.updateSigField('is_rolling_admission', e.target.value)}
           >
             <option value="always">{SIG_ADMISSION_LABEL_MAP.always}</option>
             <option value="never">{SIG_ADMISSION_LABEL_MAP.never}</option>

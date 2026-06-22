@@ -2,14 +2,6 @@
 
 import type { GlobalStatus, AcademicTerm } from '@/types/system';
 
-const PUBLIC_FRONTEND_URL = process.env.NEXTAUTH_URL || '';
-
-export function buildImageUrl(id: number): string {
-  const relative = `/api/image/download/${encodeURIComponent(id)}`;
-  console.log(`${PUBLIC_FRONTEND_URL}${relative}`);
-  return `${PUBLIC_FRONTEND_URL}${relative}`;
-}
-
 /** The current academic term from global status. */
 export function getCurrentTerm(status: GlobalStatus): AcademicTerm {
   return { year: status.year, semester: status.semester };
