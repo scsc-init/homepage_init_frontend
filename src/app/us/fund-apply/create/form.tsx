@@ -9,7 +9,7 @@ import { fetchBackendClient, fetchBackendClientJson } from '@/util/fetch/client'
 import { academicTerm2string } from '@/util/helper/tostring';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { useMe } from '@/util/hooks/useMe';
-import { buildImageUrl, getCurrentTerm, getPrevTerm } from '@/util/helper/system';
+import { getCurrentTerm, getPrevTerm } from '@/util/helper/system';
 
 import './form.css';
 import { GlobalStatus } from '@/types/system';
@@ -360,7 +360,7 @@ export default function FundApplyForm({
       return null;
     }
 
-    const id = Number(data?.id);
+    const id = data?.id;
     if (!id) {
       alert('이미지 업로드 응답에 id가 없습니다.');
       return null;
@@ -958,4 +958,11 @@ export default function FundApplyForm({
       </div>
     </div>
   );
+}
+
+function buildImageUrl(id: number): string {
+  const PUBLIC_FRONTEND_URL = window.location.origin;
+  const relative = `/api/image/download/${encodeURIComponent(id)}`;
+  console.log(`${PUBLIC_FRONTEND_URL}${relative}`);
+  return `${PUBLIC_FRONTEND_URL}${relative}`;
 }

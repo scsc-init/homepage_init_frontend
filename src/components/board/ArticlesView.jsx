@@ -77,7 +77,7 @@ export default function ArticlesView({ board, sortOrder }) {
               <span className={styles.sigUserCount}>{utc2kst(article.created_at)}</span>
             </div>
             <div className={styles.sigDescription}>
-              {article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...
+              {article.content && article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...
             </div>
           </div>
         </Link>

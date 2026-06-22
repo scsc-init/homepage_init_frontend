@@ -2,11 +2,12 @@
 
 import type { GlobalStatus, AcademicTerm } from '@/types/system';
 
-const PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+const PUBLIC_FRONTEND_URL = process.env.NEXTAUTH_URL || '';
 
 export function buildImageUrl(id: number): string {
   const relative = `/api/image/download/${encodeURIComponent(id)}`;
-  return `${PUBLIC_BACKEND_URL}${relative}`;
+  console.log(`${PUBLIC_FRONTEND_URL}${relative}`);
+  return `${PUBLIC_FRONTEND_URL}${relative}`;
 }
 
 /** The current academic term from global status. */

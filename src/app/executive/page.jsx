@@ -77,7 +77,7 @@ export default async function AdminPanel() {
             border: '1px solid var(--color-button-alert-bg)',
             background: 'transparent',
             padding: '1rem',
-            'border-radius': '1rem',
+            borderRadius: '1rem',
           }}
         >
           <span style={{ color: 'var(--color-button-alert-bg)', fontWeight: 600 }}>
