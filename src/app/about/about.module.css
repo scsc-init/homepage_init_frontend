@@ -155,14 +155,6 @@
   overflow: hidden;
 }
 
-.cardHover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px var(--color-card-shadow);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
 /* Shared Image Styles */
 .imageWrapper {
   position: relative;
@@ -421,6 +413,11 @@
   text-align: center;
 }
 
+/* Image already sits inside a rounded card — drop the redundant nested rounding */
+.facilityCard .imageWrapper {
+  border-radius: 0;
+}
+
 .facilityCard h3 {
   margin: 0.25rem 0 0.25rem 0;
   font-weight: 700;
@@ -500,6 +497,16 @@
 .fadeOnScrollVisible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Gentle opacity-only reveal (no "fly-up" motion) */
+.fadeIn {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+.fadeInVisible {
+  opacity: 1;
 }
 
 /* --- Added from faq.css --- */
