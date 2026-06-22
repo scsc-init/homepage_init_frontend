@@ -3,7 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+import { STATUS_MAP, SEMESTER_MAP, SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 import SigTagManager from '@/components/board/SigTagManager';
 import * as AdminLayout from '@/components/AdminLayout';
 
@@ -155,10 +155,10 @@ const renderSigEdit = (sig, ctx) => {
             value={sig['is_rolling_admission'] ?? ''}
             onChange={(e) => ctx.updatePigField('is_rolling_admission', e.target.value)}
           >
-            <option value="always">{PIG_ADMISSION_LABEL_MAP.always}</option>
-            <option value="never">{PIG_ADMISSION_LABEL_MAP.never}</option>
+            <option value="always">{SIG_ADMISSION_LABEL_MAP.always}</option>
+            <option value="never">{SIG_ADMISSION_LABEL_MAP.never}</option>
             <option value="during_recruiting">
-              {PIG_ADMISSION_LABEL_MAP.during_recruiting}
+              {SIG_ADMISSION_LABEL_MAP.during_recruiting}
             </option>
           </AdminLayout.AdminSelectBoolWide>
         </td>
