@@ -6,11 +6,13 @@ import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import styles from './about.module.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
-import { getKVValue } from '@/util/fetch/server-util';
+import { getKVValues } from '@/util/fetch/server-util';
 
 export default async function AboutPage() {
   const DEFAULT_DISCORD_INVITE_LINK = 'https://discord.gg/SmXFDxA7XE';
-  const rawDiscordInviteLink = await getKVValue('TEXT_DISCORD_INVITE_LINK');
+  const rawDiscordInviteLink = (await getKVValues(['TEXT_DISCORD_INVITE_LINK']))[
+    'TEXT_DISCORD_INVITE_LINK'
+  ].value;
   const discordInviteLink = /^https?:\/\/\S+$/i.test(rawDiscordInviteLink)
     ? rawDiscordInviteLink
     : DEFAULT_DISCORD_INVITE_LINK;

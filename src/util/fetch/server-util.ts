@@ -135,7 +135,6 @@ export async function fetchExecutiveCandidates<
 
   return Array.from(merged.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }
-
 export async function getKVValues(keys: string[]): Promise<Record<string, KvValueResult>> {
   const list = Array.isArray(keys) ? keys : [];
   const results = await Promise.allSettled(
