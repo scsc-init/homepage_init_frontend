@@ -202,7 +202,7 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
 
   const [currentSigsRaw, prevSigsRaw, currentPigsRaw, prevPigsRaw] = await Promise.all([
     fetchBackendClientJson(
-      `/api/pigs?year=${prevTerm.year}&semester=${prevTerm.semester}&status=${globalStatus?.status}`,
+      `/api/sigs?year=${currentTerm.year}&semester=${currentTerm.semester}&status=${globalStatus?.status}`,
       {
         method: 'GET',
       },
@@ -211,7 +211,7 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
       method: 'GET',
     }).catch(() => []),
     fetchBackendClientJson(
-      `/api/pigs?year=${prevTerm.year}&semester=${prevTerm.semester}&status=${globalStatus?.status}`,
+      `/api/pigs?year=${currentTerm.year}&semester=${currentTerm.semester}&status=${globalStatus?.status}`,
       {
         method: 'GET',
       },
