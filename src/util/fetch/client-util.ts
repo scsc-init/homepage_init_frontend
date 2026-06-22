@@ -216,7 +216,7 @@ export async function fetchFundApplyCreateData(boardId = 6): Promise<FundApplyCr
         method: 'GET',
       },
     ).catch(() => []),
-    fetchBackendClientJson('/api/pigs?year=${prevTerm.year}&semester=${prevTerm.semester}', {
+    fetchBackendClientJson(`/api/pigs?year=${prevTerm.year}&semester=${prevTerm.semester}`, {
       method: 'GET',
     }).catch(() => []),
   ]);
