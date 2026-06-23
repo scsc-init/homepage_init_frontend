@@ -1,6 +1,5 @@
 'use client';
 
-import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState } from 'react';
 import * as AdminLayout from '@/components/AdminLayout';
 
