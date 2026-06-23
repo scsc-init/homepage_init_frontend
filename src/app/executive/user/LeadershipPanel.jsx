@@ -45,7 +45,7 @@ export async function reqLeadership(body) {
       const text =
         [msg1, msg2].filter(Boolean).join(' | ') || 'Failed to update leadership entries';
       return {
-        text,
+        detail: text,
         status: -1,
       };
     }
@@ -143,7 +143,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
       });
 
       if (res.status === -1) {
-        const msg = await res.text();
+        const msg = res.detail;
         throw new Error(msg);
       }
 
