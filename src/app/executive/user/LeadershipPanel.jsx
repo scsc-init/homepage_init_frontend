@@ -3,6 +3,67 @@
 import { useCallback, useMemo, useState } from 'react';
 import * as AdminLayout from '@/components/AdminLayout';
 
+function sanitizeId(value) {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string' && value.trim()) return value.trim();
+  return '';
+}
+
+export async function reqLeadership(body) {
+  const presidentId = sanitizeId(body?.president_id);
+  const vicePresidentId = sanitizeId(body?.vice_president_id);
+  const vicePresidentIds = vicePresidentId
+    .split(';')
+    .map((id) => sanitizeId(id))
+    .filter((id) => id !== '');
+  if (presidentId === '') {
+    return { detail: '회장 직책은 반드시 지정해야 합니다.', status: -1 };
+  }
+
+  if (new Set(vicePresidentIds).size !== vicePresidentIds.length) {
+    return { detail: '부회장끼리는 서로 다른 인물이어야 합니다.', status: -1 };
+  }
+
+  if (vicePresidentIds.includes(presidentId)) {
+    return { detail: '회장과 부회장은 서로 다른 인물이어야 합니다.', status: -1 };
+  }
+  try {
+    const [prezUpdate, viceUpdate] = await Promise.all([
+      fetchBackendClient('/api/kv/main-president/update', {
+        method: 'POST',
+        body: { value: presidentId },
+      }),
+      fetchBackendClient('/api/kv/vice-president/update', {
+        method: 'POST',
+        body: { value: vicePresidentId },
+      }),
+    ]);
+
+    if (!prezUpdate.ok || !viceUpdate.ok) {
+      const msg1 = prezUpdate.ok ? '' : await prezUpdate.text().catch(() => '');
+      const msg2 = viceUpdate.ok ? '' : await viceUpdate.text().catch(() => '');
+      const text =
+        [msg1, msg2].filter(Boolean).join(' | ') || 'Failed to update leadership entries';
+      return {
+        detail: text,
+        status: -1,
+      };
+    }
+
+    return {
+      president_id: presidentId || null,
+      vice_president_id: vicePresidentId || null,
+      status: 1,
+    };
+  } catch (err) {
+    const detail =
+      err instanceof Error && err.message
+        ? `Upstream update failed: ${err.message}`
+        : 'Upstream update failed';
+    return { detail, status: -1 };
+  }
+}
+
 function renderUserSummary(user) {
   if (!user) return <span>미지정</span>;
   return (
@@ -76,18 +137,14 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
     }
     setPending(true);
     try {
-      const res = await fetch('/api/executive/leadership', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          president_id: presidentTrimmed || null,
-          vice_president_id: vicePresidentTrimmed || null,
-        }),
+      const res = await reqLeadership({
+        president_id: presidentTrimmed || null,
+        vice_president_id: vicePresidentTrimmed || null,
       });
 
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || `HTTP ${res.status}`);
+      if (res.status === -1) {
+        const msg = res.detail;
+        throw new Error(msg);
       }
 
       alert('임원진 정보가 갱신되었습니다.');
