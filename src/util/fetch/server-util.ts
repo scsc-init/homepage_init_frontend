@@ -109,33 +109,6 @@ export async function fetchDiscordBotStatus(): Promise<boolean> {
   return body.logged_in === true;
 }
 
-export async function fetchExecutiveCandidates<
-  T extends ExecutiveCandidate = ExecutiveCandidate,
->(): Promise<T[]> {
-  const [execRes, prezRes] = await Promise.all([
-    fetchBackendServer('GET', '/api/executive/users', {
-      query: { user_role: 'executive' },
-    }),
-    fetchBackendServer('GET', '/api/executive/users', {
-      query: { user_role: 'president' },
-    }),
-  ]);
-
-  const execList = (execRes.ok ? await execRes.json().catch(() => []) : []) as T[];
-  const prezList = (prezRes.ok ? await prezRes.json().catch(() => []) : []) as T[];
-
-  const merged = new Map<string, T>();
-  for (const entry of [
-    ...(Array.isArray(execList) ? execList : []),
-    ...(Array.isArray(prezList) ? prezList : []),
-  ]) {
-    const key = entry.id || entry.email || entry.name;
-    if (!merged.has(key)) merged.set(key, entry);
-  }
-
-  return Array.from(merged.values()).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-}
-
 export async function getKVValues(keys: string[]): Promise<Record<string, KvValueResult>> {
   const list = Array.isArray(keys) ? keys : [];
   const results = await Promise.allSettled(

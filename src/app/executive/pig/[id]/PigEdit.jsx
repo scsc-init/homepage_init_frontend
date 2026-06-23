@@ -4,7 +4,6 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
-import { directFetch } from '@/util/directFetch';
 import * as AdminLayout from '@/components/AdminLayout';
 
 const getLeaderUserId = (pig) => {

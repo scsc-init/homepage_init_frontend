@@ -8,12 +8,7 @@ import { ReadUserTable } from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
 import LeadershipPageLink from './LeadershipPageLink';
-import {
-  getKVValues,
-  fetchExecutiveCandidates,
-  fetchUsers,
-  fetchUserSummaries,
-} from '@/util/fetch/server-util';
+import { getKVValues, fetchUserSummaries } from '@/util/fetch/server-util';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import * as AdminLayout from '@/components/AdminLayout';
 
@@ -24,11 +19,9 @@ export default async function ExecutiveUserPage() {
   ]);
 
   const readUsers = await fetchUserSummaries().catch(() => []);
-
-  const [candidates, executiveUsers] = await Promise.all([
-    fetchExecutiveCandidates().catch(() => []),
-    fetchUsers().catch(() => []),
-  ]);
+  const candidates = readUsers
+    .filter((u) => u.role >= 500)
+    .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 
   const presidentId =
     kv['main-president']?.status === 'fulfilled' ? kv['main-president'].value || '' : '';
@@ -53,16 +46,6 @@ export default async function ExecutiveUserPage() {
       is_active: Boolean(u?.is_active),
     }));
 
-  const executiveUsersSorted = Array.from(
-    new Map((Array.isArray(executiveUsers) ? executiveUsers : []).map((u) => [u.id, u])),
-  )
-    .map(([, v]) => v)
-    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
-    .map((u) => ({
-      ...u,
-      major: majorsMap[u.major_id],
-    }));
-
   return (
     <WithAuthorization>
       <AdminLayout.AdminPanel>
@@ -85,7 +68,7 @@ export default async function ExecutiveUserPage() {
           <EnrollManagementPanel />
         </AdminLayout.AdminSection>
         <AdminLayout.AdminSection>
-          <OldboyManageMentPanel users={executiveUsersSorted} />
+          <OldboyManageMentPanel users={readUsers} />
         </AdminLayout.AdminSection>
       </AdminLayout.AdminPanel>
     </WithAuthorization>

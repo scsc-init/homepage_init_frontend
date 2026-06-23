@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './KV.module.css';
 import { HIDDEN_KV_KEYS } from '@/util/constants';
+import { fetchBackendClient } from '@/util/fetch/client';
 
 const DEFAULT_PRESET_KEYS = ['footer-message'];
 
@@ -68,7 +69,7 @@ export default function KVEditor() {
     if (!keyInput.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}`, {
+      const res = await fetchBackendClient(`/api/kv/${encodeURIComponent(keyInput.trim())}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -99,7 +100,7 @@ export default function KVEditor() {
     setSaving(true);
     try {
       const bodyValue = value;
-      const res = await fetch(
+      const res = await fetchBackendClient(
         `/api/kv/${encodeURIComponent(keyInput.trim())}/update`,
         {
           method: 'POST',

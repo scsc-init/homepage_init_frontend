@@ -3,20 +3,20 @@ import WithAuthorization from '@/components/WithAuthorization';
 import SigEdit from './SigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchUsers } from '@/util/fetch/server-util';
+import { fetchUserSummaries } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage({ params }) {
   const [sigMeta, users] = await Promise.allSettled([
     fetchBackendServerJson('GET', `/api/sig/${(await params).id}`),
-    fetchUsers(),
+    fetchUserSummaries(),
   ]);
   if (sigMeta.status !== 'fulfilled') {
     return null;
   }
 
   const raw = sigMeta.value;
-  const sigContent = raw?.content?.content ?? raw?.content ?? '';
+  const sigContent = raw?.content?.content ?? '';
   const sig = { ...raw, content: sigContent };
 
   return (

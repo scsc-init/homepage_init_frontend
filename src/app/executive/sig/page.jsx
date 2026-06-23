@@ -2,19 +2,17 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import SigList from './SigList';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import { fetchUsers } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage() {
-  const [sigMetas, users] = await Promise.allSettled([
+  const [sigMetas] = await Promise.allSettled([
     fetchBackendServerJson('GET', '/api/sigs', { query: { tag: 'SIG' } }),
-    fetchUsers(),
   ]);
-  if (sigMetas.status !== 'fulfilled' || users.status !== 'fulfilled') return null;
+  if (sigMetas.status !== 'fulfilled') return null;
 
   const sigs = sigMetas.value.map((s) => ({
     ...s,
-    ownerName: users.value.find((u) => u.id === s.owner)?.name,
+    ownerName: s.owner_user.name,
   }));
 
   return (

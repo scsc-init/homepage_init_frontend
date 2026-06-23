@@ -2,13 +2,6 @@
 
 import type { GlobalStatus, AcademicTerm } from '@/types/system';
 
-const PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-
-export function buildImageUrl(id: number): string {
-  const relative = `/api/image/download/${encodeURIComponent(id)}`;
-  return `${PUBLIC_BACKEND_URL}${relative}`;
-}
-
 /** The current academic term from global status. */
 export function getCurrentTerm(status: GlobalStatus): AcademicTerm {
   return { year: status.year, semester: status.semester };
