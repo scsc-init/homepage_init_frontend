@@ -57,7 +57,7 @@ export default function WList({ wMetas }) {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch(toClientPath('/api/executive/w/update', name), {
+      const res = await fetchBackendClient(toBackendWPath(name, 'update'), {
         method: 'POST',
         body: form,
       });
@@ -80,7 +80,7 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(toClientPath('/api/executive/w/delete', name), {
+      const res = await fetchBackendClient(toBackendWPath(name, 'delete'), {
         method: 'POST',
       });
       if (res.status !== 204) {
@@ -101,7 +101,7 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(toClientPath('/api/executive/w/download', name));
+      const res = await fetchBackendClient(toBackendWPath(name, 'download'));
       if (!res.ok) throw new Error('download failed');
 
       const blob = await res.blob();
@@ -213,6 +213,13 @@ export default function WList({ wMetas }) {
 }
 
 function toClientPath(basePath, name) {
-  const segments = name.split('/').map(encodeURIComponent).join('/');
-  return `${basePath}/${segments}`;
+  return `${basePath}/${encodePathValue(name)}`;
+}
+
+function toBackendWPath(name, action) {
+  return `/api/executive/w/${encodePathValue(name)}/${action}`;
+}
+
+function encodePathValue(value) {
+  return value.split('/').map(encodeURIComponent).join('/');
 }

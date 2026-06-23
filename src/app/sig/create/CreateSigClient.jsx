@@ -124,6 +124,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
+          tags: ['SIG'],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -132,9 +133,9 @@ export default function CreateSigClient({ scscGlobalStatus }) {
       });
 
       if (res.status === 201) {
-        alert('SIG 생성 성공!');
         isFormSubmitted.current = true;
         sessionStorage.removeItem('sigForm');
+        alert('SIG 생성 성공!');
         router.push('/sig');
         router.refresh();
       } else if (res.status === 401) {

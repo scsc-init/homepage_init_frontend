@@ -155,7 +155,7 @@ export default function PigExecutiveEdit({ pig: _pig }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await fetchBackendClient(`/api/executive/pig/${pig.id}/update`, {
+      const res1 = await fetchBackendClient(`/api/executive/sig/${pig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -178,7 +178,7 @@ export default function PigExecutiveEdit({ pig: _pig }) {
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(pig)) {
-        res2 = await fetchBackendClient(`/api/executive/pig/${pig.id}/handover`, {
+        res2 = await fetchBackendClient(`/api/executive/sig/${pig.id}/handover`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
@@ -201,7 +201,7 @@ export default function PigExecutiveEdit({ pig: _pig }) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await fetchBackendClient(`/api/executive/pig/${id}/delete`, {
+      const res = await fetchBackendClient(`/api/executive/sig/${id}/delete`, {
         method: 'POST',
       });
       if (res.status === 204) {
