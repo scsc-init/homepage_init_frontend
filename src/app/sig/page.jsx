@@ -12,7 +12,7 @@ export default async function SigListPage({ searchParams }) {
   if (globalStatus.status === 'rejected') {
     return <div>시그 정보를 불러올 수 없습니다.</div>;
   }
-  const currTerm = getCurrentTerm(globalStatus);
+  const currTerm = getCurrentTerm(globalStatus.value);
 
   let initialTags = [];
   if (Array.isArray(resolvedSearchParams?.tag)) {
