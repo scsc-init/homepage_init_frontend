@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from '@/app/about/about.module.css';
 
-export default function ScrollEffectWrapper({ children }) {
+export default function ScrollEffectWrapper({ children, variant }) {
   const [isVisible, setIsVisible] = useState(false);
   const domRef = useRef();
 
@@ -28,11 +28,13 @@ export default function ScrollEffectWrapper({ children }) {
     };
   }, []);
 
+  // `variant="fade"` does a gentle opacity-only fade (no upward "fly-up" motion).
+  // Default keeps the original translateY fade used elsewhere on the about pages.
+  const baseClass = variant === 'fade' ? styles.fadeIn : styles.fadeOnScroll;
+  const visibleClass = variant === 'fade' ? styles.fadeInVisible : styles.fadeOnScrollVisible;
+
   return (
-    <div
-      className={`${styles.fadeOnScroll} ${isVisible ? styles.fadeOnScrollVisible : ''}`}
-      ref={domRef}
-    >
+    <div className={`${baseClass} ${isVisible ? visibleClass : ''}`} ref={domRef}>
       {children}
     </div>
   );
