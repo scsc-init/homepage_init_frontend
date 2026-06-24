@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
-      ...(process.env.SNU_EMAIL_CHECK === 'TRUE' && {
+      ...(process.env.SNU_EMAIL_CHECK?.toUpperCase() === 'TRUE' && {
         authorization: {
           params: { hd: 'snu.ac.kr' },
         },
