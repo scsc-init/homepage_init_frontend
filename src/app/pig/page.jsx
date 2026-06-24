@@ -1,11 +1,23 @@
 import PigListClient from './PigListClient';
 import './page.css';
-import { safeFetch, fetchMe } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
+import { getCurrentTerm } from '@/util/helper/system';
 
 export const metadata = { title: 'PIG' };
 
 export default async function PigListPage() {
-  const [pigs, me] = await Promise.allSettled([safeFetch('GET', '/api/pigs'), fetchMe()]);
+  const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
+  if (globalStatus.status === 'rejected') {
+    return <div>피그 정보를 불러올 수 없습니다.</div>;
+  }
+  const currTerm = getCurrentTerm(globalStatus);
+
+  const [pigs] = await Promise.allSettled([
+    fetchBackendServerJson('GET', '/api/sigs', {
+      query: { tag: 'PIG', year: currTerm.year, semester: currTerm.semester },
+    }),
+  ]);
 
   if (pigs.status === 'rejected') {
     return <div>피그 정보를 불러올 수 없습니다.</div>;
@@ -17,14 +29,9 @@ export default async function PigListPage() {
     (p) => p && typeof p === 'object' && allowed.has(p.status),
   );
 
-  let myId = '';
-  if (me.status === 'fulfilled' && me.value?.id != null) {
-    myId = String(me.value.id);
-  }
-
   return (
     <div id="PigListContainer">
-      <PigListClient pigs={visiblePigs} myId={myId} />
+      <PigListClient pigs={visiblePigs} />
     </div>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { cache, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
 
 const UUID_REGEX =
@@ -128,7 +129,10 @@ export default function GalleryView({ board, sortOrder }) {
       fetchedDetailRef.current = new Set();
 
       try {
-        const res = await fetch(listUrl, { credentials: 'include', cache: 'no-store' });
+        const res = await fetchBackendClient(listUrl, {
+          credentials: 'include',
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
@@ -179,10 +183,13 @@ export default function GalleryView({ board, sortOrder }) {
 
       const results = await pLimitMap(targets, 6, async (t) => {
         try {
-          const res = await fetch(`/api/article/${encodeURIComponent(t.articleId)}`, {
-            credentials: 'include',
-            cache: 'no-store',
-          });
+          const res = await fetchBackendClient(
+            `/api/article/${encodeURIComponent(t.articleId)}`,
+            {
+              credentials: 'include',
+              cache: 'no-store',
+            },
+          );
           if (!res.ok) return { articleId: t.articleId, thumbSrc: '' };
 
           const data = await res.json();

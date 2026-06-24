@@ -6,9 +6,15 @@ import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import styles from './about.module.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
-import { DISCORD_INVITE_LINK } from '@/util/constants';
+import { getKVValue } from '@/util/fetchAPIData';
 
 export default async function AboutPage() {
+  const DEFAULT_DISCORD_INVITE_LINK = 'https://discord.gg/SmXFDxA7XE';
+  const rawDiscordInviteLink = await getKVValue('TEXT_DISCORD_INVITE_LINK');
+  const discordInviteLink = /^https?:\/\/\S+$/i.test(rawDiscordInviteLink)
+    ? rawDiscordInviteLink
+    : DEFAULT_DISCORD_INVITE_LINK;
+
   return (
     <>
       <div className="wallLogo"></div>
@@ -229,7 +235,7 @@ export default async function AboutPage() {
                       { title: '리크루팅 정보 바로가기', url: '/us/contact' },
                       { title: '시그 목록 바로가기', url: '/sig' },
                       { title: '피그 목록 바로가기', url: '/pig' },
-                      { title: '공식 디스코드 서버', url: DISCORD_INVITE_LINK },
+                      { title: '공식 디스코드 서버', url: discordInviteLink },
                       {
                         title: '공식 인스타그램',
                         url: 'https://www.instagram.com/scsc_snu/?hl=ko',

@@ -1,10 +1,12 @@
 ﻿'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 const sanitizeWebsites = (websites = []) =>
   (Array.isArray(websites) ? websites : [])
@@ -16,28 +18,19 @@ const sanitizeWebsites = (websites = []) =>
 
 export default function CreatePigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('pigForm') : null;
-  const parsed = saved ? JSON.parse(saved) : null;
-
-  const defaultFormValues = {
-    title: parsed?.title ?? '',
-    description: parsed?.description ?? '',
-    editor: parsed?.editor ?? '',
-    is_rolling_admission:
-      typeof parsed?.is_rolling_admission === 'string'
-        ? String(parsed.is_rolling_admission)
-        : scscGlobalStatus === 'active'
-          ? 'always'
-          : 'during_recruiting',
-    websites:
-      parsed && Array.isArray(parsed.websites) && parsed.websites.length > 0
-        ? parsed.websites
-        : [{ url: '' }],
-  };
+  const parsed = (() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = sessionStorage.getItem('sigForm');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
 
   const {
     register,
@@ -46,17 +39,21 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     watch,
     formState: { isDirty },
   } = useForm({
-    defaultValues: defaultFormValues,
+    defaultValues: parsed || {
+      title: '',
+      description: '',
+      editor: '',
+      is_rolling_admission:
+        typeof scscGlobalStatus === 'active' ? 'always' : 'during_recruiting',
+    },
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
-      if (res.ok) setUser(await res.json());
-      else pushLoginWithRedirect(router);
-    };
-    fetchProfile();
-  }, [router]);
+    if (isLoading) return;
+    if (isUnauthenticated || !user) {
+      pushLoginWithRedirect(router);
+    }
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const watched = watch();
   useEffect(() => {
@@ -117,11 +114,12 @@ export default function CreatePigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/pig/create`, {
+      const res = await fetchBackendClient(`/api/sig/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
+          tags: ['PIG'],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -130,9 +128,9 @@ export default function CreatePigClient({ scscGlobalStatus }) {
       });
 
       if (res.status === 201) {
-        alert('PIG 생성 성공!');
         isFormSubmitted.current = true;
         sessionStorage.removeItem('pigForm');
+        alert('PIG 생성 성공!');
         router.push('/pig');
         router.refresh();
       } else if (res.status === 401) {
@@ -151,11 +149,11 @@ export default function CreatePigClient({ scscGlobalStatus }) {
 
   return (
     <div className="CreatePigContainer">
-      <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">PIG 생성</h1>
-        <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요.</p>
-      </div>
       <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreatePigHeader">
+          <h1 className="CreatePigTitle">신규 PIG 개설</h1>
+          <p className="CreatePigSubtitle">새로운 PIG를 만들어 보세요</p>
+        </div>
         <PigForm
           register={register}
           control={control}

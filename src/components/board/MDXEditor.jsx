@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import React, { forwardRef, useCallback } from 'react';
 import {
   MDXEditor,
@@ -18,7 +19,6 @@ import {
   Separator,
 } from '@mdxeditor/editor';
 import styles from './editor.module.css';
-import { directFetch } from '@/util/directFetch';
 import {
   IMAGE_UPLOAD_MAX_ORIGINAL_BYTES,
   IMAGE_UPLOAD_VERCEL_BLOCK_BYTES,
@@ -126,7 +126,7 @@ async function compressImageFile(file, targetBytes = IMAGE_UPLOAD_TARGET_BYTES) 
 }
 
 const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
-  { markdown = '', onChange = () => {} },
+  { markdown = '', onChange = () => {}, className = '' },
   ref,
 ) {
   const handleImageUpload = useCallback(async (file) => {
@@ -163,7 +163,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
     let res;
     try {
-      res = await directFetch('/api/file/image/upload', {
+      res = await fetchBackendClient('/api/file/image/upload', {
         method: 'POST',
         body: formData,
       });
@@ -202,7 +202,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
   return (
     <MDXEditor
-      className={styles.mdxeditor}
+      className={`${styles.mdxeditor} ${className}`}
       ref={ref}
       markdown={markdown}
       onChange={onChange}

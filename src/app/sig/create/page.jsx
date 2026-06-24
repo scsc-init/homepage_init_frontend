@@ -1,12 +1,12 @@
 // app/sig/create/page.jsx
 import CreateSigClient from './CreateSigClient';
 import './page.css';
-import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
 
 export const metadata = { title: 'SIG' };
 
 export default async function CreateSigPage() {
-  const [scscGlobalStatus] = await Promise.allSettled([fetchSCSCGlobalStatus()]);
+  const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
   return (
     <CreateSigClient
       scscGlobalStatus={

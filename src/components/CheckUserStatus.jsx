@@ -2,29 +2,18 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMe } from '@/util/hooks/useMe';
 
 export default function CheckUserStatusClient() {
   const router = useRouter();
+  const { me, isLoading } = useMe();
 
   useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await fetch('/api/user/profile', {
-          credentials: 'include',
-        });
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-
-        if (!data?.is_active && !data?.is_banned) {
-          router.replace('/about/welcome');
-        }
-      } catch (_e) {}
-    };
-
-    check();
-  }, [router]);
+    if (isLoading || !me) return;
+    if (!me.is_active && !me.is_banned) {
+      router.replace('/about/welcome');
+    }
+  }, [isLoading, me, router]);
 
   return null;
 }

@@ -1,20 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
+import { useMe } from '@/util/hooks/useMe';
 import './page.css';
 
 export default function JoinButton() {
-  const [mode, setMode] = useState('unknown');
+  const { me, isLoading } = useMe();
   const ref = useRef();
-
-  useEffect(() => {
-    fetch('/api/user/profile', { cache: 'no-store', credentials: 'include' })
-      .then((r) => {
-        if (r.ok) setMode('member');
-        else setMode('guest');
-      })
-      .catch(() => setMode('guest'));
-  }, []);
 
   const handleMouseEnter = (e) => {
     const btn = ref.current;
@@ -29,14 +21,14 @@ export default function JoinButton() {
     setTimeout(() => ripple.remove(), 800);
   };
 
-  if (mode === 'unknown') return null;
+  if (isLoading) return null;
 
-  if (mode === 'guest') {
+  if (!me) {
     return (
       <div className="ActivityBlock FadeInBlock" id="JoinUsSection">
         <div className="SectionHeader">JOIN US:</div>
         <p className="JoinDescription">
-          SCSC에 관심 있으신가요? 아래 버튼을 눌러 가입 신청서를 작성해주세요.
+          SCSC에 관심이 있으신가요? 아래 버튼을 눌러 가입 신청서를 작성해주세요.
         </p>
         <a href="/us/login" className="JoinButton" ref={ref} onMouseEnter={handleMouseEnter}>
           Join us!

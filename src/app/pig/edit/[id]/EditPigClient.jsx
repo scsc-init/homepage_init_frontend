@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import PigForm from '@/components/board/PigForm';
 import { useRouter } from 'next/navigation';
@@ -7,6 +8,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -44,12 +46,17 @@ function generateDefaultForms(pig, article) {
   };
 }
 
-export default function EditPigClient({ pigId, me, pig, article }) {
+export default function EditPigClient({ pigId, pig, article }) {
+  const { me, isLoading, isUnauthenticated } = useMe();
   const router = useRouter();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
+
+  useEffect(() => {
+    if (isUnauthenticated) pushLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
 
   const {
     register,
@@ -110,10 +117,10 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     try {
       const endpoint =
         me.role >= minExecutiveLevel
-          ? `/api/pig/${pigId}/update/executive`
-          : `/api/pig/${pigId}/update`;
+          ? `/api/sig/${pigId}/update/executive`
+          : `/api/sig/${pigId}/update`;
 
-      const res = await fetch(endpoint, {
+      const res = await fetchBackendClient(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,12 +152,14 @@ export default function EditPigClient({ pigId, me, pig, article }) {
     }
   };
 
+  if (isLoading || isUnauthenticated || !me) return null;
+
   return (
     <div className="CreatePigContainer">
-      <div className="CreatePigHeader">
-        <h1 className="CreatePigTitle">PIG 수정</h1>
-      </div>
       <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreatePigHeader">
+          <h1 className="CreatePigTitle">PIG 수정</h1>
+        </div>
         <PigForm
           register={register}
           control={control}

@@ -1,35 +1,29 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function POST(req) {
-  const base = process.env.BACKEND_URL || '';
-  const url = `${base}/api/file/docs/upload`;
+  try {
+    const formData = await req.formData();
 
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
+    const res = await fetchBackendServer('POST', '/api/file/docs/upload', {
+      body: formData,
+    });
 
-  const headers = {
-    ...(appJwt ? { 'x-jwt': appJwt } : {}),
-  };
+    const status = res.status;
+    const contentType = res.headers.get('Content-Type') || 'application/json';
+    const text = await res.text();
 
-  const contentType = req.headers.get('Content-Type');
-  if (contentType) {
-    headers['Content-Type'] = contentType;
+    return new Response(text, {
+      status,
+      headers: { 'Content-Type': contentType },
+    });
+  } catch (error) {
+    console.error('Upload Route Error:', error);
+    return new Response(
+      JSON.stringify({ error: 'Internal Server Error', message: error.message }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: req.body,
-    duplex: 'half',
-  });
-
-  const text = await res.text();
-
-  return new Response(text, {
-    status: res.status,
-    headers: {
-      'Content-Type': res.headers.get('Content-Type') || 'application/json',
-    },
-  });
 }

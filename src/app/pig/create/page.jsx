@@ -1,12 +1,12 @@
 // app/pig/create/page.jsx
 import CreatePigClient from './CreatePigClient';
 import './page.css';
-import { fetchSCSCGlobalStatus } from '@/util/fetchAPIData';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
 
 export const metadata = { title: 'PIG' };
 
 export default async function CreatePigPage() {
-  const [scscGlobalStatus] = await Promise.allSettled([fetchSCSCGlobalStatus()]);
+  const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
   return (
     <CreatePigClient
       scscGlobalStatus={

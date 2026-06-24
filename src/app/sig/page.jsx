@@ -1,11 +1,18 @@
 import SigListClient from './SigListClient';
 import styles from './sig.module.css';
-import { safeFetch, fetchMe } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
+import { getCurrentTerm } from '@/util/helper/system';
 
 export const metadata = { title: 'SIG' };
 
 export default async function SigListPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
+  const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
+  if (globalStatus.status === 'rejected') {
+    return <div>시그 정보를 불러올 수 없습니다.</div>;
+  }
+  const currTerm = getCurrentTerm(globalStatus);
 
   let initialTags = [];
   if (Array.isArray(resolvedSearchParams?.tag)) {
@@ -14,7 +21,11 @@ export default async function SigListPage({ searchParams }) {
     initialTags = [resolvedSearchParams.tag];
   }
 
-  const [sigs, me] = await Promise.allSettled([safeFetch('GET', '/api/sigs'), fetchMe()]);
+  const [sigs] = await Promise.allSettled([
+    fetchBackendServerJson('GET', '/api/sigs', {
+      query: { tag: 'SIG', year: currTerm.year, semester: currTerm.semester },
+    }),
+  ]);
 
   if (sigs.status === 'rejected') {
     return <div>시그 정보를 불러올 수 없습니다.</div>;
@@ -25,14 +36,9 @@ export default async function SigListPage({ searchParams }) {
     allowed.has(s.status),
   );
 
-  let myId = '';
-  if (me.status === 'fulfilled' && me.value?.id) {
-    myId = String(me.value.id);
-  }
-
   return (
     <div className={styles.SigListContainer}>
-      <SigListClient sigs={visibleSigs} myId={myId} initialFilterTags={initialTags} />
+      <SigListClient sigs={visibleSigs} initialFilterTags={initialTags} />
     </div>
   );
 }

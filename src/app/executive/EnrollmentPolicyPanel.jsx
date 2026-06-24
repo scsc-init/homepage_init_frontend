@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { SEMESTER_MAP } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 const ENROLLMENT_POLICY_KV_KEY = `enrollment_grant_until`;
 export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
@@ -65,24 +66,24 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
 
   if (!scscGlobalStatus) {
     return (
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>등록 정책 관리</h3>
         <div>상태를 불러오지 못했습니다.</div>
-      </div>
+      </AdminLayout.AdminSection>
     );
   }
 
   if (year === undefined || semester === undefined) {
     return (
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>등록 정책 관리</h3>
         <div>등록 정책 로딩 중</div>
-      </div>
+      </AdminLayout.AdminSection>
     );
   }
 
   return (
-    <div className="adm-section">
+    <AdminLayout.AdminSection>
       <h3>등록 정책 관리</h3>
       <div>
         지금 등록 시
@@ -100,11 +101,11 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
         <br />
         <span style={{ color: '#767676' }}>지금 등록 시 {grantSemestersStr}에 등록됩니다.</span>
         <br />
-        <button className="adm-button" onClick={sendData} disabled={isFetching}>
+        <AdminLayout.AdminButton onClick={sendData} disabled={isFetching}>
           저장
-        </button>
+        </AdminLayout.AdminButton>
       </div>
-    </div>
+    </AdminLayout.AdminSection>
   );
 }
 

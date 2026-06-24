@@ -12,9 +12,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 3.5rem;
+  height: 5rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 .left,
@@ -27,6 +28,17 @@
   min-width: 12rem;
 }
 
+.logo {
+  margin: 0 0.6rem;
+}
+
+.semesterLabel {
+  font-size: 0.875rem;
+  white-space: nowrap;
+  word-break: keep-all;
+  flex-shrink: 0;
+}
+
 .center {
   flex: 1;
   display: flex;
@@ -37,8 +49,8 @@
 .right {
   justify-content: flex-end;
   gap: 0.75rem;
-  flex: 0 0 8rem;
-  min-width: 8rem;
+  flex: 0 0 12rem;
+  min-width: 12rem;
   white-space: nowrap;
   height: 2rem;
 }
@@ -62,7 +74,7 @@
 .executiveLink {
   font-size: 0.875rem;
   text-decoration: none;
-  color: var(--header-foreground-color);
+  color: var(--color-button-alert-bg);
 }
 
 .userLink {
@@ -168,8 +180,7 @@
 }
 
 .menuLink:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
+  background-color: var(--background-hover-color);
 }
 
 .hamburgerButton {
@@ -222,14 +233,59 @@
 
 .mobileTrigger:hover,
 .mobileSubLink:hover {
-  background-color: var(--foreground-color);
-  color: var(--background-color);
+  background-color: var(--background-hover-color);
 }
 
 .mobileSubMenu {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
+}
+
+.mobileExecutiveLink {
+  color: var(--color-button-alert-bg);
+}
+
+.mobileExecutiveLink,
+.mobileLoginLink {
+  padding: 12px;
+  height: calc(2rem + 24px);
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.mobileExecutiveLink:hover,
+.mobileLoginLink:hover {
+  background-color: var(--background-hover-color);
+}
+
+.mobileProfileLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  justify-content: left;
+  color: var(--header-foreground-color);
+  padding: 12px;
+}
+
+.mobileProfileLink:hover .mobileUserPic {
+  border: 2px solid var(--color-button-bg);
+}
+
+.mobileUserPic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 2px;
+  object-fit: cover;
+  margin-right: 1.5rem;
 }
 
 .mobileSubMenuOpen {
@@ -247,7 +303,7 @@
 }
 
 .spacer {
-  height: 3.5rem;
+  height: 5rem;
 }
 
 /* 모바일 전용 */
@@ -261,9 +317,10 @@
   }
 
   .hamburgerButton {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(--header-background-color);
-    border: 1px solid var(--header-border-color);
     border-radius: 0.5rem;
     font-size: 1.5rem;
     color: var(--header-foreground-color);
@@ -274,15 +331,14 @@
   }
 
   .hamburgerButton:hover {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
+    background-color: var(--background-hover-color);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 
   .mobileWrapper {
     display: block;
     position: fixed;
-    top: 3.5rem;
+    top: 5rem;
     left: 0;
     width: 100%;
     z-index: 2000;
@@ -290,15 +346,17 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
+    border-radius: 0 0 15px 15px;
   }
 
   .mobileWrapperOpen {
     max-height: 100vh;
+    box-shadow: 0 28px 28px rgba(0, 0, 0, 0.25);
   }
 
   .mobileMenu {
     gap: 1rem;
-    padding: 1rem 1rem 1.25rem;
+    padding: 1rem 1.5rem 1.25rem 1.5rem;
     border-top: 1px solid var(--header-border-color);
     box-shadow: 0 4px 12px var(--header-shadow-color);
   }
@@ -315,12 +373,14 @@
 
   .mobileTrigger,
   .mobileSubLink {
-    padding: 0.75rem 0.75rem;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.75rem 0.75rem 1rem;
     font-size: 1rem;
     font-weight: 600;
-    text-align: left;
     color: var(--header-foreground-color);
     border-radius: 0.5rem;
+    justify-content: space-between;
   }
 
   .mobileSubMenu {

@@ -1,4 +1,6 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
@@ -24,7 +26,7 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/delete`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -44,7 +46,7 @@ export default function PigDeleteButton({ pigId, canDelete, isOwner }) {
   const deleteByExec = async () => {
     try {
       setPending(true);
-      const res = await fetch(`/api/pig/${pigId}/delete/executive`, {
+      const res = await fetchBackendClient(`/api/sig/${pigId}/delete/executive`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

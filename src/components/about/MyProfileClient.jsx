@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { fetchMeClient } from '@/util/fetchClientData';
-import { DISCORD_INVITE_LINK, KAKAO_INVITE_LINK } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import './myProfile.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
+import { getKvsClient } from '@/util/fetch/client-util';
 
 const USER_ROLE_MAP = {
   0: '최저권한',
@@ -33,9 +33,20 @@ async function onAuthFail() {
 
 export default function MyProfileClient() {
   const { data: session, status, update } = useSession();
+  const { me } = useMe();
   const [user, setUser] = useState(null);
+  const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
   const router = useRouter();
-
+  useEffect(() => {
+    const fetchInviteLinks = async () => {
+      const [kakao, discord] = await getKvsClient([
+        'TEXT_KAKAO_INVITE_LINK',
+        'TEXT_DISCORD_INVITE_LINK',
+      ]);
+      setInviteLinks({ kakao, discord });
+    };
+    fetchInviteLinks();
+  }, []);
   useEffect(() => {
     const load = async () => {
       if (status === 'loading') return;
@@ -48,7 +59,6 @@ export default function MyProfileClient() {
 
       try {
         let data;
-        const me = await fetchMeClient();
         if (me) {
           data = me;
         } else if (session?.user?.email && session?.hashToken) {
@@ -60,8 +70,15 @@ export default function MyProfileClient() {
           });
           if (loginRes.ok) {
             const loginData = await loginRes.json();
-            if (loginData.jwt) await update({ backendJwt: loginData.jwt });
-            data = await fetchMeClient();
+
+            if (loginData.jwt && loginData.userProfile) {
+              data = loginData.userProfile;
+
+              await update({
+                backendJwt: loginData.jwt,
+                userProfile: data,
+              });
+            }
           } else {
             await onAuthFail();
             replaceLoginWithRedirect(router);
@@ -82,7 +99,7 @@ export default function MyProfileClient() {
       }
     };
     load();
-  }, [router, session, status, update]);
+  }, [router, session, status, update, me]);
 
   const handleLogout = async () => {
     await onAuthFail();
@@ -152,7 +169,7 @@ export default function MyProfileClient() {
 
           <div className="user-info-actions">
             <a
-              href={KAKAO_INVITE_LINK}
+              href={inviteLinks.kakao}
               target="_blank"
               rel="noopener noreferrer"
               className="action-button"
@@ -163,7 +180,7 @@ export default function MyProfileClient() {
               <span className="btn-label">카카오 입장</span>
             </a>
             <a
-              href={DISCORD_INVITE_LINK}
+              href={inviteLinks.discord}
               target="_blank"
               rel="noopener noreferrer"
               className="action-button"

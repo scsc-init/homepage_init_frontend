@@ -1,8 +1,9 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
-import styles from './igpage.module.css';
 import { useRouter } from 'next/navigation';
+import * as AdminLayout from '@/components/AdminLayout';
 
 function IgMemberAdd({
   userFilter,
@@ -14,27 +15,25 @@ function IgMemberAdd({
   return (
     <div>
       <h4>구성원 추가</h4>
-      <table className={styles['adm-table']}>
+      <AdminLayout.AdminTable>
         <thead>
           <tr>
-            <th className={styles['adm-th']}>이름</th>
-            <th className={styles['adm-th']}>이메일</th>
-            <th className={styles['adm-th']}>작업</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>작업</th>
           </tr>
           <tr>
-            <td className={styles['adm-td']}>
-              <input
+            <td>
+              <AdminLayout.AdminInput
                 name="name"
-                className={styles['adm-input']}
                 value={userFilter.name}
                 onChange={(e) => updateUserFilterCriteria('name', e.target.value)}
               />
             </td>
-            <td className={styles['adm-td']}>
-              <input
+            <td>
+              <AdminLayout.AdminInput
                 name="email"
                 type="email"
-                className={styles['adm-input']}
                 value={userFilter.email}
                 onChange={(e) => updateUserFilterCriteria('email', e.target.value)}
               />
@@ -44,21 +43,20 @@ function IgMemberAdd({
         <tbody>
           {filteredUsers.map((u) => (
             <tr key={u.id}>
-              <td className={styles['adm-td']}>{u.name}</td>
-              <td className={styles['adm-td']}>{u.email}</td>
-              <td className={styles['adm-td']}>
-                <button
-                  className={styles['adm-button']}
+              <td>{u.name}</td>
+              <td>{u.email}</td>
+              <td>
+                <AdminLayout.AdminButton
                   onClick={() => handleAddMember(u)}
                   disabled={userLoading[u.id]}
                 >
                   추가
-                </button>
+                </AdminLayout.AdminButton>
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </AdminLayout.AdminTable>
     </div>
   );
 }
@@ -73,27 +71,25 @@ function IgMemberDelete({
   return (
     <div>
       <h4>구성원 삭제</h4>
-      <table className={styles['adm-table']}>
+      <AdminLayout.AdminTable>
         <thead>
           <tr>
-            <th className={styles['adm-th']}>이름</th>
-            <th className={styles['adm-th']}>이메일</th>
-            <th className={styles['adm-th']}>작업</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>작업</th>
           </tr>
           <tr>
-            <td className={styles['adm-td']}>
-              <input
+            <td>
+              <AdminLayout.AdminInput
                 name="name"
-                className={styles['adm-input']}
                 value={memberFilter.name}
                 onChange={(e) => updateMemberFilterCriteria('name', e.target.value)}
               />
             </td>
-            <td className={styles['adm-td']}>
-              <input
+            <td>
+              <AdminLayout.AdminInput
                 name="email"
                 type="email"
-                className={styles['adm-input']}
                 value={memberFilter.email}
                 onChange={(e) => updateMemberFilterCriteria('email', e.target.value)}
               />
@@ -103,21 +99,20 @@ function IgMemberDelete({
         <tbody>
           {filteredMembers.map((m) => (
             <tr key={m.user_id}>
-              <td className={styles['adm-td']}>{m.user?.name ?? ''}</td>
-              <td className={styles['adm-td']}>{m.user?.email ?? ''}</td>
-              <td className={styles['adm-td']}>
-                <button
-                  className={styles['adm-button']}
+              <td>{m.user?.name ?? ''}</td>
+              <td>{m.user?.email ?? ''}</td>
+              <td>
+                <AdminLayout.AdminButton
                   onClick={() => handleDeleteMember(m)}
                   disabled={memberLoading[m.user_id]}
                 >
                   삭제
-                </button>
+                </AdminLayout.AdminButton>
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </AdminLayout.AdminTable>
     </div>
   );
 }
@@ -167,13 +162,16 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetch(`/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: u.id,
-        }),
-      });
+      const res = await fetchBackendClient(
+        `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/join`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: u.id,
+          }),
+        },
+      );
       if (res.status === 204) {
         const newMember = { user_id: u.id, user: { id: u.id, email: u.email, name: u.name } };
         setMembers((prev) => [...prev, newMember]);
@@ -198,7 +196,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetch(
+      const res = await fetchBackendClient(
         `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/leave`,
         {
           method: 'POST',
@@ -227,7 +225,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
 
   return (
     <div>
-      <div className={styles['adm-table']}>
+      <AdminLayout.AdminTableDiv>
         {ig && (
           <div>
             <hr></hr>
@@ -248,7 +246,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
             />
           </div>
         )}
-      </div>
+      </AdminLayout.AdminTableDiv>
     </div>
   );
 }

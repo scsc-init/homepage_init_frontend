@@ -1,7 +1,7 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import ArticleList from './ArticleList';
 import styles from './ArticleList.module.css';
-import { fetchBoards } from '@/util/fetchAPIData';
+import { fetchBoards } from '@/util/fetch/server-util';
 
 export default async function ArticleListPage() {
   const [boards] = await Promise.allSettled([fetchBoards([3, 4, 5, 6])]);

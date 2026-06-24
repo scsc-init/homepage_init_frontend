@@ -1,0 +1,226 @@
+.adm-panel {
+  padding: 2rem;
+  background: var(--background-color);
+  color: var(--color-text-body);
+}
+
+.adm-panel h2 {
+  margin: 2rem 0 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.adm-panel a {
+  color: var(--color-text-body);
+  text-decoration: none;
+}
+
+.adm-panel a[data-underline] {
+  text-decoration: underline;
+}
+
+.adm-page-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.adm-page-card {
+  background: var(--executive-card-bg);
+  border: 1px solid var(--header-border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  overflow: hidden;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.adm-page-card:hover {
+  box-shadow: 0 6px 24px var(--executive-card-shadow);
+  background: var(--color-surface-light);
+}
+
+.adm-page-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.adm-page-card h3 {
+  font-size: 1.25rem;
+  color: var(--color-text-strong);
+}
+
+.adm-section {
+  margin-bottom: 2rem;
+}
+.adm-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.dangerous-area {
+  border: 1px solid var(--color-button-alert-bg);
+  background: transparent;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.warning-text {
+  color: var(--color-button-alert-bg);
+  font-weight: 600;
+}
+
+/* Card wrapper */
+.adm-table-wrap {
+  background: var(--executive-card-bg);
+  border: 1px solid var(--color-button-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  overflow: auto;
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 1100px;
+}
+.adm-table th {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-button-border);
+  background: var(--box-color);
+  color: var(--color-text-body);
+}
+.adm-table td {
+  padding: 8px;
+  border-top: 1px solid var(--color-button-border);
+  vertical-align: middle;
+}
+
+/* Controls */
+.adm-input,
+.adm-select,
+.adm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-surface-light);
+  color: var(--color-text-body);
+}
+
+.adm-textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.adm-button {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adm-button-danger {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 8px;
+  background: var(--color-button-alert-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+.adm-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.adm-button.outline {
+  background: transparent;
+  color: var(--color-text-body);
+}
+
+/* Modal */
+.adm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+}
+.adm-modal-card {
+  background: var(--executive-card-bg);
+  color: var(--color-text-body);
+  padding: 2rem;
+  border-radius: 12px;
+  width: min(420px, 90vw);
+  box-shadow: 0 4px 20px var(--executive-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.adm-pre {
+  background: var(--color-surface-light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  overflow: auto;
+}
+
+/* Utilities */
+.adm-flex {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.adm-table col.adm-col-id {
+  width: 80px;
+  min-width: 80px;
+}
+
+.adm-table col.adm-col-bool {
+  width: 120px;
+  min-width: 120px;
+}
+
+.adm-table col.adm-col-bool-wide {
+  width: 150px;
+  min-width: 150px;
+}
+
+:global(.dark) .adm-table th {
+  background: var(--color-surface-light);
+}
+.adm-table td .adm-input,
+.adm-table td .adm-select {
+  min-width: 8rem;
+}
+
+/* Long tables: constrain height + make each section independently scrollable */
+.adm-table-wrap {
+  /* 기존 스타일 유지하면서 “세로 길이만” 제한 */
+  max-height: min(70vh, 640px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* Optional: keep header visible while scrolling (works well for long lists) */
+.adm-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}

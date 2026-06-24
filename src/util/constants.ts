@@ -27,38 +27,16 @@ export const STATUS_MAP: Record<string, string> = {
 };
 
 /**
- * Returns the first valid string among the provided values.
- *
- * @param vals - Candidate values.
- * @returns The first non-empty string found, or an empty string if none exist.
+ * 회칙 마크다운 문서 링크입니다.
  */
-function pickEnv(...vals: Array<string | undefined | null>): string {
-  for (const v of vals) {
-    if (typeof v === 'string' && v.trim()) return v.trim();
-  }
-  return '';
-}
+export const RULES_MARKDOWN_LINK =
+  'https://raw.githubusercontent.com/scsc-init/homepage_init/master/%ED%9A%8C%EC%B9%99.md';
 
 /**
- * 하드코딩된 정보들입니다.
+ * 지원금 신청 가이드라인 문서 링크입니다.
  */
-export const DEPOSIT_ACC = pickEnv(
-  process.env.NEXT_PUBLIC_DEPOSIT_ACC,
-  process.env.DEPOSIT_ACC,
-  '국민은행 942902-02-054136 (강명석)',
-);
-
-export const DISCORD_INVITE_LINK = pickEnv(
-  process.env.NEXT_PUBLIC_DISCORD_INVITE_LINK,
-  process.env.DISCORD_INVITE_LINK,
-  'https://discord.gg/SmXFDxA7XE',
-);
-
-export const KAKAO_INVITE_LINK = pickEnv(
-  process.env.NEXT_PUBLIC_KAKAO_INVITE_LINK,
-  process.env.KAKAO_INVITE_LINK,
-  'https://invite.kakao.com/tc/II2yiLsQhY',
-);
+export const FUND_APPLY_GUIDELINE_LINK =
+  'https://github.com/scsc-init/homepage_init/blob/master/%EC%9A%B4%EC%98%81%EB%B0%A9%EC%B9%A8/%EC%A7%80%EC%9B%90%EA%B8%88_%EC%8B%A0%EC%B2%AD_%EC%95%88%EB%82%B4%EC%82%AC%ED%95%AD.md';
 
 export interface HeaderMenuItem {
   label: string;
@@ -79,8 +57,6 @@ export const headerMenuData: HeaderMenuSection[] = [
     items: [
       { label: 'SCSC', url: '/about' },
       { label: 'Welcome Guide', url: '/about/welcome' },
-      { label: 'Executives', url: '/about/executives' },
-      { label: 'Developers', url: '/about/developers' },
       { label: 'Rules', url: '/about/rules' },
     ],
   },
@@ -108,10 +84,23 @@ export const headerMenuData: HeaderMenuSection[] = [
   },
 ];
 
+/**
+ * 푸터에 표시되는 페이지 정보입니다.
+ */
+export const footerMenuData: HeaderMenuItem[] = [
+  { label: 'Executives', url: '/about/executives' },
+  { label: 'Developers', url: '/about/developers' },
+];
+
 export interface FooterLogoItem {
   href: string;
   src: string;
   alt: string;
+  /**
+   * 지정 시, 런타임에 해당 KV의 값으로 href가 덮어씌워집니다.
+   * Footer 컴포넌트에서 처리됩니다.
+   */
+  hrefKvKey?: string;
 }
 
 /**
@@ -124,7 +113,8 @@ export const footerLogoData: FooterLogoItem[] = [
     alt: 'Mail',
   },
   {
-    href: DISCORD_INVITE_LINK,
+    href: '',
+    hrefKvKey: 'TEXT_DISCORD_INVITE_LINK',
     src: '/vectors/discord.svg',
     alt: 'Discord',
   },
@@ -211,6 +201,15 @@ export const PIG_ADMISSION_LABEL_MAP: Record<string, string> = {
   never: '항상 가입 받지 않기',
 };
 
+/**
+ * SIG 가입 조건의 세 가지 경우를 정의한 설정입니다.
+ */
+export const SIG_ADMISSION_LABEL_MAP: Record<string, string> = {
+  always: '항상 가입 받기',
+  during_recruiting: 'SIG 가입 기간에만 가입 받기',
+  never: '항상 가입 받지 않기',
+};
+
 /*
  * 전체적인 색상 정의와 관련된 설정입니다.
  * 반드시 @/styles/theme.css와 함께 수정해야 합니다.
@@ -257,7 +256,11 @@ export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.png';
 /**
  * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
  */
-export const HIDDEN_KV_KEYS: string[] = ['main-president', 'vice-president'];
+export const HIDDEN_KV_KEYS: string[] = [
+  'main-president',
+  'vice-president',
+  'enrollment_grant_until',
+];
 
 /**
  * 앨범 게시판의 id입니다.
@@ -277,13 +280,13 @@ export const IMAGE_UPLOAD_TARGET_BYTES = 4_800_000; // ~4.8MB
  * 특히 /us/login을 넣으면 무한로딩에 걸리니 주의하십시오.
  */
 export const ALLOWED_REDIRECT_PREFIXES: string[] = [
-  '/us/fund-apply',
+  '/us',
   '/board',
   '/article',
   '/sig',
   '/pig',
   '/us/edit-user-info',
-  '/about/welcome',
+  '/about',
   '/executive',
 ];
 

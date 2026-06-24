@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import SigForm from '@/components/board/SigForm';
 import SigTagManager from '@/components/board/SigTagManager';
@@ -8,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -21,17 +23,25 @@ function generateDefaultSigForms(sig, article) {
     description: sig.description ?? '',
     editor: article.content ?? '',
     should_extend: sig.should_extend ?? false,
-    is_rolling_admission: sig.is_rolling_admission ?? false,
+    is_rolling_admission:
+      typeof sig?.is_rolling_admission === 'string'
+        ? sig.is_rolling_admission
+        : 'during_recruiting',
   };
 }
 
-export default function EditSigClient({ sigId, me, sig, article }) {
+export default function EditSigClient({ sigId, sig, article }) {
+  const { me, isLoading, isUnauthenticated } = useMe();
   const router = useRouter();
   const isFormSubmitted = useRef(false);
   const tagManagerRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
+
+  useEffect(() => {
+    if (isUnauthenticated) pushLoginWithRedirect(router);
+  }, [isUnauthenticated, router]);
 
   const {
     register,
@@ -90,7 +100,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(
+      const res = await fetchBackendClient(
         me.role >= minExecutiveLevel
           ? `/api/sig/${sigId}/update/executive`
           : `/api/sig/${sigId}/update`,
@@ -118,6 +128,7 @@ export default function EditSigClient({ sigId, me, sig, article }) {
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
+
         alert('SIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
@@ -127,12 +138,14 @@ export default function EditSigClient({ sigId, me, sig, article }) {
     }
   };
 
+  if (isLoading || isUnauthenticated || !me) return null;
+
   return (
     <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 수정</h1>
-      </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreateSigHeader">
+          <h1 className="CreateSigTitle">SIG 수정</h1>
+        </div>
         <SigForm
           register={register}
           control={control}

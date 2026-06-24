@@ -1,45 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const { me, isLoading, isUnauthenticated } = useMe();
 
   useEffect(() => {
-    let cancelled = false;
+    if (isUnauthenticated) {
+      replaceLoginWithRedirect(router);
+    }
+  }, [isUnauthenticated, router]);
 
-    const goLogin = () => {
-      Promise.resolve().then(() => replaceLoginWithRedirect(router));
-    };
-
-    (async () => {
-      try {
-        const res = await fetch('/api/user/profile', { cache: 'no-store' });
-        if (!res.ok || res.status === 401) {
-          goLogin();
-          return;
-        }
-        if (!cancelled) setChecking(false);
-      } catch {
-        goLogin();
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [router]);
+  const checking = isLoading || isUnauthenticated || !me;
 
   return (
     <>
-      {children}
-      {checking && (
+      {checking ? (
         <div className="AuthGateBackdrop">
           <div className="AuthGateSpinner" />
         </div>
+      ) : (
+        children
       )}
     </>
   );

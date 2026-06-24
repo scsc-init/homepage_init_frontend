@@ -1,26 +1,14 @@
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function POST(request) {
-  const session = await getServerSession(authOptions);
-  const jwt = session?.backendJwt || null;
-
   const formData = await request.formData();
 
-  const res = await fetch(
-    `${process.env.BACKEND_URL || ''}/api/executive/user/standby/process`,
-    {
-      method: 'POST',
-      headers: {
-        ...(jwt ? { 'x-jwt': jwt } : {}),
-      },
-      body: formData,
-      cache: 'no-store',
-    },
-  );
+  const res = await fetchBackendServer('POST', '/api/executive/user/standby/process', {
+    body: formData,
+  });
 
   return res;
 }

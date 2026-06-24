@@ -3,36 +3,25 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import WithAuthorization from '@/components/WithAuthorization';
-import Link from 'next/link';
 import LeadershipPanel from './LeadershipPanel';
 import { ReadUserTable } from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
-import {
-  getKVValues,
-  fetchExecutiveCandidates,
-  fetchUsers,
-  fetchUserSummaries,
-  fetchMajors,
-  fetchMe,
-} from '@/util/fetchAPIData';
-import '../page.css';
+import LeadershipPageLink from './LeadershipPageLink';
+import { getKVValues, fetchUserSummaries } from '@/util/fetch/server-util';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveUserPage() {
-  const [kv, majors, me] = await Promise.all([
-    getKVValues(['main-president', 'vice-president']),
-    fetchMajors(),
-    fetchMe().catch(() => null),
+  const [kv, majors] = await Promise.all([
+    getKVValues(['main-president', 'vice-president']).catch(() => ({})),
+    fetchBackendServerJson('GET', '/api/majors').catch(() => []),
   ]);
 
-  const viewerRole = me?.role ?? 0;
-  const canManageLeadership = viewerRole >= 1000;
   const readUsers = await fetchUserSummaries().catch(() => []);
-
-  const [candidates, executiveUsers] = await Promise.all([
-    fetchExecutiveCandidates().catch(() => []),
-    fetchUsers().catch(() => []),
-  ]);
+  const candidates = readUsers
+    .filter((u) => u.role >= 500)
+    .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 
   const presidentId =
     kv['main-president']?.status === 'fulfilled' ? kv['main-president'].value || '' : '';
@@ -57,47 +46,31 @@ export default async function ExecutiveUserPage() {
       is_active: Boolean(u?.is_active),
     }));
 
-  const executiveUsersSorted = Array.from(
-    new Map((Array.isArray(executiveUsers) ? executiveUsers : []).map((u) => [u.id, u])),
-  )
-    .map(([, v]) => v)
-    .sort((a, b) => (a?.name || '').localeCompare(b?.name || '', 'ko'))
-    .map((u) => ({
-      ...u,
-      major: majorsMap[u.major_id],
-    }));
-
   return (
     <WithAuthorization>
-      <div className="admin-panel">
+      <AdminLayout.AdminPanel>
         <h2>임원진 구성 관리</h2>
         <p style={{ marginBottom: '1rem', color: '#767676' }}>
           회장과 부회장을 선택한 뒤 저장하면 홈페이지 임원진 목록에 반영됩니다.
         </p>
 
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <LeadershipPanel initialLeadership={initialLeadership} candidates={candidates} />
-        </div>
+        </AdminLayout.AdminSection>
 
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <ReadUserTable users={readUsersSorted} majors={majorsSafe} />
-        </div>
+        </AdminLayout.AdminSection>
 
-        {canManageLeadership && (
-          <div className="adm-section">
-            <Link href="/executive/user/leadership" className="adm-button">
-              회장단 전용 페이지로 이동
-            </Link>
-          </div>
-        )}
+        <LeadershipPageLink />
 
-        <div className="adm-section">
+        <AdminLayout.AdminSection>
           <EnrollManagementPanel />
-        </div>
-        <div className="adm-section">
-          <OldboyManageMentPanel users={executiveUsersSorted} />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+        <AdminLayout.AdminSection>
+          <OldboyManageMentPanel users={readUsers} />
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

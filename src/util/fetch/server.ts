@@ -1,0 +1,173 @@
+// @/util/fetch/server.ts
+
+import 'server-only';
+
+import { getServerSession, type Session } from 'next-auth';
+
+import { ENABLE_TEST_UTILS } from '@/util/constants';
+const BACKEND_URL: string = process.env.BACKEND_URL || '';
+const API_SECRET: string = process.env.API_SECRET || '';
+
+export interface FetchBackendServerOptions {
+  params?: Record<string, string | number | boolean>;
+  query?: Record<string, string | number | boolean | null | undefined>;
+  headers?: Record<string, string>;
+  body?: unknown;
+  skipSession?: boolean;
+  signal?: AbortSignal;
+}
+
+/** Builds a query string from key-value pairs, skipping null and undefined values. */
+function buildQueryString(
+  query?: Record<string, string | number | boolean | null | undefined>,
+): string {
+  if (!query) return '';
+  const entries: string[][] = Object.entries(query)
+    .filter(([, v]) => v !== undefined && v !== null)
+    .map(([k, v]) => [k, String(v)]);
+  const qs = new URLSearchParams(entries).toString();
+  return qs ? `?${qs}` : '';
+}
+
+/** Determines whether the given path requires the `x-api-secret` header. */
+function needApiSecret(path: string): boolean {
+  return (
+    path.startsWith('/api/user/login') ||
+    path.startsWith('/api/user/create') ||
+    (ENABLE_TEST_UTILS && path.startsWith('/api/test'))
+  );
+}
+
+function encodeBody(body: unknown): { isBodyInit: boolean; encodedBody: BodyInit | undefined } {
+  if (body === undefined) return { isBodyInit: false, encodedBody: undefined };
+  const isBodyInit =
+    typeof body === 'string' ||
+    body instanceof ArrayBuffer ||
+    body instanceof Blob ||
+    body instanceof FormData ||
+    body instanceof URLSearchParams ||
+    body instanceof ReadableStream;
+  if (isBodyInit) return { isBodyInit, encodedBody: body };
+  return { isBodyInit, encodedBody: JSON.stringify(body) };
+}
+
+/**
+ * Sends a server-side request to the backend API with path, query, and auth handling.
+ *
+ * Builds a full backend URL from a path template by replacing `{param}` placeholders
+ * using `options.params`, and appends a query string from `options.query`
+ * Automatically injects authentication headers:
+ * `x-jwt` from the current session (`backendJwt`) if available
+ * `x-api-secret` for specific internal routes (login, create, test)
+ *
+ * Additional headers from `options.headers` are merged, and
+ * `Content-Type: application/json` is set when a body is present.
+ * Uses `cache: 'no-store'` to ensure fresh backend responses.
+ *
+ * This function does NOT throw on non-2xx responses and returns the raw `Response`.
+ * JSON parsing and error handling must be handled by the caller.
+ *
+ * @param method - HTTP method (GET, POST, PUT, PATCH, DELETE, etc.)
+ * @param path - API path template (e.g., `/api/user/{id}`)
+ *
+ * @param options - Optional request configuration
+ * @param options.params - Path parameters to replace in `pathTemplate`
+ * @param options.query - Query parameters appended to the URL
+ * @param options.headers - Additional headers to include in the request
+ * @param options.body - Explicit request body (overrides `request` body if provided)
+ *
+ * @param request - Optional incoming Request to forward JSON body from
+ * @returns `Response` received from the backend
+ */
+export async function fetchBackendServer(
+  method: string,
+  path: string,
+  options: FetchBackendServerOptions = {},
+  request?: Request,
+): Promise<Response> {
+  const session: Session | null = options.skipSession
+    ? null
+    : await getServerSession((await import('@/util/authOptions')).authOptions);
+  const backendJwt = session?.backendJwt || null;
+  const params = options.params;
+
+  let resolvedPath = path;
+  if (params) {
+    for (const [key, value] of Object.entries(params))
+      resolvedPath = resolvedPath.replaceAll(`{${key}}`, encodeURIComponent(String(value)));
+  }
+  resolvedPath += buildQueryString(options.query);
+
+  const fullUrl = `${BACKEND_URL}${resolvedPath}`;
+
+  let body: unknown = options.body;
+  if (body === undefined && request) {
+    const ct = request.headers.get('content-type') || '';
+    const hasJsonBody =
+      method !== 'GET' && method !== 'HEAD' && ct.includes('application/json');
+
+    if (hasJsonBody) {
+      try {
+        body = await request.json();
+      } catch {
+        body = undefined;
+      }
+    }
+  }
+
+  const headers: Record<string, string> = { ...(options.headers || {}) };
+  if (needApiSecret(resolvedPath)) headers['x-api-secret'] = API_SECRET;
+  if (backendJwt) headers['x-jwt'] = backendJwt;
+  const { isBodyInit, encodedBody } = encodeBody(body);
+
+  if (
+    body !== undefined &&
+    !isBodyInit &&
+    !headers['Content-Type'] &&
+    !headers['content-type']
+  ) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  return fetch(fullUrl, {
+    method,
+    headers,
+    body: encodedBody,
+    cache: 'no-store',
+    signal: options.signal,
+  });
+}
+
+/**
+ * Sends a server-side request to the backend API and parses the response as JSON.
+ *
+ * This is a wrapper around `fetchBackendServer` that:
+ * - Throws an error if the response status is not in the 2xx range
+ * - Parses and returns the response body as JSON (`T`)
+ *
+ * Unlike `fetchBackendServer`, this function enforces successful responses
+ * and automatically handles JSON deserialization.
+ *
+ * @template T - Expected response JSON type
+ * @param method - HTTP method (GET, POST, PUT, PATCH, DELETE, etc.)
+ * @param path - API path template (e.g., `/api/user/{id}`)
+ *
+ * @param options - Optional request configuration
+ * @param request - Optional incoming Request to forward JSON body from
+ *
+ * @returns Parsed JSON response of type `T`
+ * @throws Error if the response is not OK (non-2xx status)
+ */
+export async function fetchBackendServerJson<T>(
+  method: string,
+  path: string,
+  options: FetchBackendServerOptions = {},
+  request?: Request,
+): Promise<T> {
+  const res = await fetchBackendServer(method, path, options, request);
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Backend Error: ${res.status} ${txt}`);
+  }
+  return (await res.json()) as T;
+}

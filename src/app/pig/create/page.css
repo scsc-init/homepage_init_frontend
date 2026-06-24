@@ -37,9 +37,9 @@ body {
   margin-top: 1rem;
 }
 .CreatePigCard {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   padding: 2rem;
-  box-shadow: 0 3px 12px var(--executive-card-shadow);
+  box-shadow: 0 3px 12px var(--color-card-shadow);
   border-radius: 1rem;
 }
 .CreatePigContainer {
@@ -93,7 +93,6 @@ input::placeholder {
 }
 
 .mdxeditor {
-  background-color: rgb(202, 202, 202);
   border-radius: 0.5rem;
   min-height: 10rem;
 }

@@ -2,47 +2,39 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import SigEdit from './SigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
-import styles from '../../igpage.module.css';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchUserSummaries } from '@/util/fetch/server-util';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutiveSigPage({ params }) {
   const [sigMeta, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/sig/${(await params).id}`),
-    fetchUsers(),
+    fetchBackendServerJson('GET', `/api/sig/${(await params).id}`),
+    fetchUserSummaries(),
   ]);
   if (sigMeta.status !== 'fulfilled') {
     return null;
   }
 
-  const [sigMembers, sigArticle] = await Promise.all([
-    safeFetch('GET', `/api/sig/${sigMeta.value.id}/members`),
-    sigMeta.value.content_id
-      ? safeFetch('GET', `/api/article/${sigMeta.value.content_id}`)
-      : Promise.resolve({ success: false, value: null }),
-  ]);
-
-  const sig = {
-    ...sigMeta.value,
-    content: sigArticle?.content ?? '',
-    members: Array.isArray(sigMembers) ? sigMembers : [],
-  };
+  const raw = sigMeta.value;
+  const sigContent = raw?.content?.content ?? '';
+  const sig = { ...raw, content: sigContent };
 
   return (
     <WithAuthorization>
-      <div className={styles['admin-panel']}>
+      <AdminLayout.AdminPanel>
         <h2>SIG 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <SigEdit sig={sig} />
-        </div>
+        </AdminLayout.AdminSection>
         <h2>SIG 구성원 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <IgMembersPanel
             is_sig
             ig={sig}
             users={users.status === 'fulfilled' ? users.value : []}
           />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

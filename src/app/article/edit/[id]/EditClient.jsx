@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -8,11 +9,13 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import '@/app/board/[id]/create/page.css';
 import AttachmentSection from '@/components/board/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
 
 const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
 
 export default function EditClient({ articleId }) {
   const router = useRouter();
+  const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [loading, setLoading] = useState(true);
   const [boardId, setBoardId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -30,20 +33,18 @@ export default function EditClient({ articleId }) {
   const content = watch('editor');
 
   useEffect(() => {
+    if (isMeLoading) return;
+    if (isUnauthenticated || !user) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+      return;
+    }
+
     const load = async () => {
       try {
-        const [articleRes, userRes] = await Promise.all([
-          fetch(`/api/article/${articleId}`),
-          fetch(`/api/user/profile`),
-        ]);
-        if (userRes.status === 401) {
-          alert('로그인이 필요합니다.');
-          pushLoginWithRedirect(router);
-          return;
-        }
-        if (!articleRes.ok || !userRes.ok) throw new Error();
-
-        const [article, user] = await Promise.all([articleRes.json(), userRes.json()]);
+        const articleRes = await fetchBackendClient(`/api/article/${articleId}`);
+        if (!articleRes.ok) throw new Error();
+        const article = await articleRes.json();
 
         if (user.id !== article.author_id) {
           alert('작성자만 수정할 수 있습니다.');
@@ -55,8 +56,14 @@ export default function EditClient({ articleId }) {
         setValue('editor', article.content || '');
         setBoardId(article.board_id);
 
-        const ids = Array.isArray(article.attachments) ? article.attachments : [];
-        setAttachmentIds(ids.map((x) => String(x)));
+        const rawAttachments = Array.isArray(article.attachments) ? article.attachments : [];
+        const sanitizedIds = rawAttachments.map((item) => {
+          if (typeof item === 'object' && item !== null) {
+            return String(item.file_id || item.id || '');
+          }
+          return String(item);
+        });
+        setAttachmentIds(sanitizedIds);
       } catch {
         alert('게시글 정보를 불러오지 못했습니다.');
         router.replace(`/article/${articleId}`);
@@ -65,7 +72,7 @@ export default function EditClient({ articleId }) {
       }
     };
     load();
-  }, [router, articleId, setValue]);
+  }, [router, articleId, setValue, user, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -94,7 +101,7 @@ export default function EditClient({ articleId }) {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/article/update/${articleId}`, {
+      const res = await fetchBackendClient(`/api/article/update/${articleId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -110,13 +117,13 @@ export default function EditClient({ articleId }) {
         alert('수정 완료!');
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해주세요.');
+        alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
       } else {
         let errText = '수정 실패';
         try {
           const err = await res.json();
-          errText = err.detail ?? JSON.stringify(err);
+          errText = err.detail || JSON.stringify(err);
         } catch {}
         throw new Error(errText);
       }

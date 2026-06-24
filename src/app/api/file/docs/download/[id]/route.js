@@ -1,18 +1,13 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_req, { params }) {
-  const rawId = params?.id;
+  const resolvedParams = await params;
+  const rawId = resolvedParams?.id;
   if (!rawId) {
     return new Response('Missing file id', { status: 400 });
   }
 
   const id = encodeURIComponent(String(rawId));
-  const base = process.env.BACKEND_URL || '';
-  const url = `${base}/api/file/docs/download/${id}`;
-
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
 
   const controller = new AbortController();
   const timeoutMs = 20_000;
@@ -20,12 +15,7 @@ export async function GET(_req, { params }) {
 
   let res;
   try {
-    res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        ...(appJwt ? { 'x-jwt': appJwt } : {}),
-      },
-      cache: 'no-store',
+    res = await fetchBackendServer('GET', `/api/file/docs/download/${id}`, {
       signal: controller.signal,
     });
   } catch (err) {

@@ -1,46 +1,28 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import dynamic from 'next/dynamic';
 import '@/app/board/[id]/create/page.css';
-import AttachmentSection from '@/components/board/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import WriteEditorStandard from '@/components/board/WriteEditorStandard';
+import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
+import { useMe } from '@/util/hooks/useMe';
 
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
-
-export default function CreateBoardArticleClient({ boardInfo }) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { isDirty },
-  } = useForm({
-    defaultValues: { title: '', editor: '' },
-  });
-
+export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   const router = useRouter();
-  const content = watch('editor');
+  const { me, isLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState(false);
-  const [attachmentIds, setAttachmentIds] = useState([]);
+  const [isDirty, setIsDirty] = useState(false);
   const isFormSubmitted = useRef(false);
 
   useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await fetch(`/api/user/profile`, { cache: 'no-store' });
-        if (res.status === 401) {
-          alert('로그인이 필요합니다.');
-          pushLoginWithRedirect(router);
-        }
-      } catch {
-        pushLoginWithRedirect(router);
-      }
-    };
-    check();
-  }, [router]);
+    if (isLoading) return;
+    if (isUnauthenticated || !me) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+    }
+  }, [isLoading, isUnauthenticated, me, router]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -50,38 +32,26 @@ export default function CreateBoardArticleClient({ boardInfo }) {
       }
     };
 
-    const handleRouteChange = () => {
-      if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
-        if (!confirmed) {
-          router.events.emit('routeChangeError');
-          throw 'Route change aborted by user.';
-        }
-      }
-    };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    router.events?.on?.('routeChangeStart', handleRouteChange);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [router, isDirty]);
+  }, [isDirty]);
 
   const onSubmit = async (data) => {
     if (submitting) return;
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/article/create`, {
+      const res = await fetchBackendClient(`/api/article/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
           board_id: parseInt(boardInfo.id),
-          attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
+          attachments: Array.isArray(data.attachments) ? data.attachments : [],
         }),
       });
 
@@ -89,7 +59,7 @@ export default function CreateBoardArticleClient({ boardInfo }) {
         alert('게시글 작성 완료!');
         router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해주세요.');
+        alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
@@ -106,29 +76,28 @@ export default function CreateBoardArticleClient({ boardInfo }) {
     <div className="CreateSigContainer">
       <div className="CreateSigHeader">
         <h1 className="CreateSigTitle">
-          {boardInfo ? `${boardInfo.name}에 게시글 작성` : '게시글 작성'}
+          {boardInfo ? `${boardInfo.name} 게시글 작성` : '게시글 작성'}
         </h1>
         <p className="CreateSigSubtitle">
           {boardInfo?.description ?? '게시판 정보를 불러오는 중...'}
         </p>
       </div>
 
-      <div className={`CreateSigCard space-y-4 ${submitting ? 'is-busy' : ''}`}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <input
-            type="text"
-            {...register('title', { required: true })}
-            placeholder="제목을 입력하세요"
-            className="w-full border p-2 rounded"
-          />
-
-          <Editor markdown={content} onChange={(value) => setValue('editor', value)} />
-          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
-          <button type="submit" className="SigCreateBtn" disabled={submitting}>
-            {submitting ? '작성 중...' : '작성 완료'}
-          </button>
-        </form>
-      </div>
+      {boardType === 'image' ? (
+        <WriteEditorAlbum
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
+      ) : (
+        <WriteEditorStandard
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -42,7 +43,7 @@ export default function SigOwnerHandoverButton({ sigId, members, owner }) {
     if (!window.confirm('정말 양도하시겠습니까?')) return;
     try {
       setPending(true);
-      const res = await fetch(`/api/sig/${sigId}/handover`, {
+      const res = await fetchBackendClient(`/api/sig/${sigId}/handover`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

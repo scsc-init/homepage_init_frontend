@@ -1,19 +1,19 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { STATUS_MAP } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 const TRANSITION_MAP_REGULAR = {
-  inactive: 'recruiting',
   recruiting: 'active',
   active: 'recruiting',
 };
 const TRANSITION_MAP_SEASONAL = {
-  inactive: 'recruiting',
   recruiting: 'active',
-  active: 'inactive',
+  active: 'recruiting',
 };
 
 const getNextStatus = (currentStatus, currentSemester, currentYear) => {
@@ -42,7 +42,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
 
   const handleConfirmSave = async () => {
     setSaving(true);
-    const res = await fetch(`/api/executive/scsc/global/status`, {
+    const res = await fetchBackendClient(`/api/executive/scsc/global/status`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: selectedStatus }),
@@ -67,8 +67,8 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   return (
     <>
       {currentStatus && modalOpen && (
-        <div className="adm-modal-overlay">
-          <div className="adm-modal-card">
+        <AdminLayout.AdminModalOverlay>
+          <AdminLayout.AdminModalCard>
             <h3>상태 변경 확인</h3>
             <h4>
               {year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}
@@ -78,33 +78,31 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               {STATUS_MAP[currentStatus]} → {STATUS_MAP[nextStatus]}
             </h4>
             <p>다음 문구를 입력해야 변경됩니다:</p>
-            <pre className="adm-pre" style={{ userSelect: 'none' }}>
+            <AdminLayout.AdminPre style={{ userSelect: 'none' }}>
               {totalRequiredPhrase}
-            </pre>
-            <input
-              className="adm-input"
+            </AdminLayout.AdminPre>
+            <AdminLayout.AdminInput
               type="text"
               value={confirmationText}
               onChange={(e) => setConfirmationText(e.target.value)}
               placeholder="확인 문구 입력"
             />
-            <div className="adm-flex" style={{ justifyContent: 'flex-end' }}>
-              <button className="adm-button outline" onClick={() => setModalOpen(false)}>
+            <AdminLayout.AdminFlex style={{ justifyContent: 'flex-end' }}>
+              <AdminLayout.AdminButton className="outline" onClick={() => setModalOpen(false)}>
                 취소
-              </button>
-              <button
-                className="adm-button"
+              </AdminLayout.AdminButton>
+              <AdminLayout.AdminButton
                 onClick={handleConfirmSave}
                 disabled={confirmationText !== totalRequiredPhrase || saving}
               >
                 확인
-              </button>
-            </div>
-          </div>
-        </div>
+              </AdminLayout.AdminButton>
+            </AdminLayout.AdminFlex>
+          </AdminLayout.AdminModalCard>
+        </AdminLayout.AdminModalOverlay>
       )}
 
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>SCSC 전체 상태 관리</h3>
         {!currentStatus ? (
           <div>상태를 불러오지 못했습니다.</div>
@@ -114,23 +112,23 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               {year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}
               학기
             </div>
-            <div className="adm-flex" style={{ flexWrap: 'wrap' }}>
+            <AdminLayout.AdminFlex style={{ flexWrap: 'wrap' }}>
               <div style={{ fontWeight: 700 }}>
                 {STATUS_MAP[currentStatus] || currentStatus}
               </div>
               <span style={{ fontSize: '1.2rem' }}>→</span>
-              <button
+              <AdminLayout.AdminButton
                 key={nextStatus}
-                className="adm-button outline"
+                className="outline"
                 onClick={() => saveToModal(nextStatus)}
                 disabled={saving}
               >
                 {STATUS_MAP[nextStatus] || nextStatus}
-              </button>
-            </div>
+              </AdminLayout.AdminButton>
+            </AdminLayout.AdminFlex>
           </div>
         )}
-      </div>
+      </AdminLayout.AdminSection>
     </>
   );
 }

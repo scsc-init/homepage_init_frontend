@@ -4,27 +4,46 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import styles from '@/app/Header.module.css';
 
-function MobileExecutiveButton() {
-  const [user, setUser] = useState(undefined);
-  const [isExecutive, setIsExecutive] = useState(false);
+function MobileProfileButton() {
+  const { me: user } = useMe();
 
-  useEffect(() => {
-    fetchMeClient().then(setUser);
-  }, []);
+  return (
+    <>
+      {user === null && (
+        <Link href="/us/login" className={`${styles.mobileLoginLink} unset decorateNone`}>
+          가입 / 로그인
+        </Link>
+      )}
+
+      {user && (
+        <Link href="/about/my-page" className={`${styles.mobileProfileLink} unset`}>
+          <img
+            src={user?.profile_picture || '/asset/default-pfp.png'}
+            alt="Profile"
+            className={styles.mobileUserPic}
+            width={40}
+            height={40}
+          />
+          <span className={styles.userName}>{user.name}</span>
+        </Link>
+      )}
+    </>
+  );
+}
+
+function MobileExecutiveButton() {
+  const { me: user } = useMe();
+  const [isExecutive, setIsExecutive] = useState(false);
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);
 
   if (!user || !isExecutive) return null;
   return (
-    <Link
-      href="/executive"
-      className={`${styles.executiveLink} unset`}
-      style={{ fontSize: '0.875rem' }}
-    >
+    <Link href="/executive" className={`${styles.mobileExecutiveLink} unset`}>
       운영진 페이지
     </Link>
   );
@@ -52,7 +71,7 @@ export default function MobileMenuList() {
         className={styles.hamburgerButton}
         onClick={() => setMobileMenuOpen((prev) => !prev)}
       >
-        <span className="material-icons" style={{ fontSize: 'inherit' }}>
+        <span className="material-icons" style={{ fontSize: '2rem' }}>
           menu
         </span>
       </button>
@@ -75,11 +94,18 @@ export default function MobileMenuList() {
                     type="button"
                     className={styles.mobileTrigger}
                     aria-expanded={openedMenuIndex === index ? 'true' : 'false'}
-                    onClick={() =>
-                      setOpenedMenuIndex((prev) => (prev === index ? null : index))
-                    }
+                    onClick={() => {
+                      setOpenedMenuIndex((prev) => (prev === index ? null : index));
+                    }}
                   >
-                    {menu.title}
+                    <span className={styles.menuTitle}>{menu.title}</span>
+                    <span className={styles.menuDropdownIcon}>
+                      <span className="material-icons" style={{ fontSize: '2rem' }}>
+                        {openedMenuIndex === index
+                          ? 'keyboard_arrow_up'
+                          : 'keyboard_arrow_down'}
+                      </span>
+                    </span>
                   </button>
                   <div className={subClass}>
                     <ul>
@@ -99,9 +125,13 @@ export default function MobileMenuList() {
                 </li>
               );
             })}
+            <li className={styles.mobileMenuItem}>
+              <MobileExecutiveButton />
+            </li>
+            <li className={styles.mobileMenuItem}>
+              <MobileProfileButton />
+            </li>
           </ul>
-
-          <MobileExecutiveButton />
         </div>
       </div>
     </div>

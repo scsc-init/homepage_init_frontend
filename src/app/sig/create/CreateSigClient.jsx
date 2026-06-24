@@ -1,44 +1,68 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import SigForm from '@/components/board/SigForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { directFetch } from '@/util/directFetch';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useMe } from '@/util/hooks/useMe';
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site, index) => {
+      const url = site?.url?.trim() ?? '';
+      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
+    })
+    .filter((site) => site.url);
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
-  const [user, setUser] = useState();
+  const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const saved = typeof window !== 'undefined' ? sessionStorage.getItem('sigForm') : null;
-  const parsed = saved ? JSON.parse(saved) : null;
+  const parsed = (() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = sessionStorage.getItem('sigForm');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
 
   const {
     register,
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { isDirty },
   } = useForm({
     defaultValues: parsed || {
       title: '',
       description: '',
       editor: '',
-      is_rolling_admission: scscGlobalStatus === 'active',
+      is_rolling_admission: scscGlobalStatus === 'active' ? 'always' : 'during_recruiting',
     },
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const res = await fetch(`/api/user/profile`);
-      if (res.ok) setUser(await res.json());
-      else pushLoginWithRedirect(router);
-    };
-    fetchProfile();
-  }, [router]);
+    const saved = sessionStorage.getItem('sigForm');
+    if (saved) {
+      try {
+        reset(JSON.parse(saved));
+      } catch {}
+    }
+  }, [reset]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (isUnauthenticated || !user) {
+      pushLoginWithRedirect(router);
+      return;
+    }
+  }, [isLoading, isUnauthenticated, router, user]);
 
   const watched = watch();
   useEffect(() => {
@@ -95,21 +119,23 @@ export default function CreateSigClient({ scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
-      const res = await directFetch('/api/sig/create', {
+      const res = await fetchBackendClient('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
+          tags: ['SIG'],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
         }),
       });
 
       if (res.status === 201) {
-        alert('SIG 생성 성공!');
         isFormSubmitted.current = true;
         sessionStorage.removeItem('sigForm');
+        alert('SIG 생성 성공!');
         router.push('/sig');
         router.refresh();
       } else if (res.status === 401) {
@@ -128,11 +154,11 @@ export default function CreateSigClient({ scscGlobalStatus }) {
 
   return (
     <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">SIG 생성</h1>
-        <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요.</p>
-      </div>
       <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+        <div className="CreateSigHeader">
+          <h1 className="CreateSigTitle">신규 SIG 개설</h1>
+          <p className="CreateSigSubtitle">새로운 SIG를 만들어 보세요</p>
+        </div>
         <SigForm
           register={register}
           control={control}

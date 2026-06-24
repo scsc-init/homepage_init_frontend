@@ -2,6 +2,8 @@ import crypto from 'crypto';
 import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import * as validator from '@/util/validator';
+import type { UserProfile } from '@/types/user';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -9,13 +11,28 @@ interface LoginResponseBody {
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID ?? '';
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
-const backendUrl = process.env.BACKEND_URL ?? '';
 const apiSecret = process.env.API_SECRET ?? '';
+const DEFAULT_JWT_VALID_SECONDS = 12 * 60 * 60;
+const parseJwtValidSeconds = (value?: string) => {
+  if (!value?.trim()) {
+    return DEFAULT_JWT_VALID_SECONDS;
+  }
+
+  const seconds = Number(value);
+
+  if (!Number.isInteger(seconds) || seconds <= 0) {
+    return DEFAULT_JWT_VALID_SECONDS;
+  }
+
+  return seconds;
+};
+
+const jwtValidSeconds = parseJwtValidSeconds(process.env.JWT_VALID_SECONDS);
 
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
-    maxAge: 10 * 24 * 60 * 60,
+    maxAge: jwtValidSeconds,
   },
   providers: [
     Google({
@@ -45,14 +62,13 @@ export const authOptions: NextAuthOptions = {
 
       let res: Response;
       try {
-        res = await fetch(`${backendUrl}/api/user/login`, {
-          method: 'POST',
+        res = await fetchBackendServer('POST', '/api/user/login', {
+          skipSession: true,
           headers: { 'Content-Type': 'application/json', 'x-api-secret': apiSecret },
-          body: JSON.stringify({
+          body: {
             hashToken: hash,
             email: user.email,
-          }),
-          cache: 'no-store',
+          },
         });
       } catch (err: unknown) {
         console.error('Backend login request failed:', err);
@@ -76,7 +92,22 @@ export const authOptions: NextAuthOptions = {
         user.backendJwt = data.jwt;
         user.registered = true;
         user.hashToken = hash;
+        try {
+          const profileRes = await fetchBackendServer('GET', '/api/user/profile', {
+            skipSession: true,
+            headers: {
+              'x-jwt': data.jwt,
+              'x-api-secret': apiSecret,
+            },
+          });
 
+          if (profileRes.ok) {
+            user.userProfile = (await profileRes.json()) as UserProfile;
+            user.userProfileCachedAt = Date.now();
+          }
+        } catch (error) {
+          console.error('Failed to fetch user profile:', error);
+        }
         return true;
       }
 
@@ -89,6 +120,13 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
+        if (user.userProfile) {
+          token.userProfile = user.userProfile;
+          token.userProfileCachedAt = user.userProfileCachedAt ?? Date.now();
+        } else {
+          delete token.userProfile;
+          delete token.userProfileCachedAt;
+        }
         if (user.backendJwt) {
           token.backendJwt = user.backendJwt;
         } else {
@@ -106,6 +144,11 @@ export const authOptions: NextAuthOptions = {
 
       if (trigger === 'update' && session?.backendJwt) {
         token.backendJwt = session.backendJwt;
+      }
+
+      if (trigger === 'update' && session?.userProfile) {
+        token.userProfile = session.userProfile;
+        token.userProfileCachedAt = Date.now();
       }
 
       return token;
@@ -126,6 +169,16 @@ export const authOptions: NextAuthOptions = {
         delete session.hashToken;
       }
 
+      if (token.userProfile) {
+        session.userProfile = token.userProfile;
+      } else {
+        delete session.userProfile;
+      }
+      if (token.userProfileCachedAt) {
+        session.userProfileCachedAt = token.userProfileCachedAt;
+      } else {
+        delete session.userProfileCachedAt;
+      }
       return session;
     },
   },

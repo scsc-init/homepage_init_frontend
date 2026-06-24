@@ -3,6 +3,7 @@
 @import '@radix-ui/colors/indigo.css';
 @import '@radix-ui/colors/slate.css';
 @import '@/styles/theme.css';
+@import 'material-icons/iconfont/material-icons.css';
 
 @media (max-width: 480px) {
   :root {
@@ -170,7 +171,7 @@ img {
 }
 
 .LoadingCodeWrapper {
-  background-color: var(--executive-card-bg);
+  background-color: var(--color-card-bg);
   color: var(--color-text-strong);
   padding: 2rem;
   border-radius: 1rem;
@@ -354,7 +355,7 @@ button {
   all: unset;
   width: 100%;
   padding: 0.4em 0;
-  border-bottom: 3px solid var(--executive-card-bg);
+  border-bottom: 3px solid var(--color-card-bg);
 }
 .C_Input:focus {
   border-bottom: 3px solid var(--executive-overlay-bg);
@@ -375,7 +376,7 @@ button {
 }
 
 .PigUrlInput {
-  border-bottom: 2px solid var(--executive-card-bg);
+  border-bottom: 2px solid var(--color-card-bg);
   padding-bottom: 0.2em;
 }
 
@@ -462,6 +463,62 @@ button {
   border: 1px solid rgba(0, 0, 0, 0.12);
   background: transparent;
   cursor: pointer;
+}
+
+.AttachmentPreviewList {
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.AttachmentPreviewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.AttachmentPreviewLink {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.AttachmentPreviewImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.AttachmentPreviewFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.AttachmentPreviewMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.AttachmentPreviewName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
 }
 .InquiryButton {
   position: fixed;

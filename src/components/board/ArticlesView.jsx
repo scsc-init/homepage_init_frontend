@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -25,9 +26,14 @@ export default function ArticlesView({ board, sortOrder }) {
 
     const fetchContents = async () => {
       try {
-        const res = await fetch(`/api/articles/${boardId}`);
+        setUnauthorized(false);
+        const res = await fetchBackendClient(`/api/articles/${boardId}`);
         if (res.status === 401) {
           pushLoginWithRedirect(router);
+          return;
+        }
+        if (res.status === 403) {
+          setUnauthorized(true);
           return;
         }
         if (!res.ok) {
@@ -70,12 +76,21 @@ export default function ArticlesView({ board, sortOrder }) {
               <span className={styles.sigTitle}>{article.title}</span>
               <span className={styles.sigUserCount}>{utc2kst(article.created_at)}</span>
             </div>
-            <div className={styles.sigDescription}>
-              {article.content.replace(/\s+/g, ' ').trim().slice(0, 80)}...
-            </div>
+            <div className={styles.sigDescription}>{toPreview(article.content, 80)}</div>
           </div>
         </Link>
       ))}
     </div>
   );
+}
+
+/**
+ *
+ * @param {string|null} str text
+ * @param {number} limit text length limit before ...(ellipsis)
+ * @returns
+ */
+function toPreview(str, limit) {
+  const preview = str?.replace(/\s+/g, ' ').trim() ?? '';
+  return preview ? `${preview.slice(0, limit)}${preview.length > limit ? '...' : ''}` : '';
 }

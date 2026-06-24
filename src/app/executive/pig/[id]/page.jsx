@@ -2,45 +2,39 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import PigEdit from './PigEdit';
 import IgMembersPanel from '../../IgMembersPanel';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
-import styles from '../../igpage.module.css';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import { fetchUserSummaries } from '@/util/fetch/server-util';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage({ params }) {
   const [pigMeta, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/pig/${(await params).id}`),
-    fetchUsers(),
+    fetchBackendServerJson('GET', `/api/sig/${(await params).id}`),
+    fetchUserSummaries(),
   ]);
   if (pigMeta.status !== 'fulfilled') {
     return null;
   }
 
-  const [pigMembers, pigArticle] = await Promise.all([
-    safeFetch('GET', `/api/pig/${pigMeta.value.id}/members`),
-    safeFetch('GET', `/api/article/${pigMeta.value.content_id}`),
-  ]);
-
-  const pig = {
-    ...pigMeta.value,
-    content: pigArticle?.content ?? '',
-    members: Array.isArray(pigMembers) ? pigMembers : [],
-  };
+  const raw = pigMeta.value;
+  const pigContent = raw?.content?.content ?? '';
+  const pig = { ...raw, content: pigContent };
 
   return (
     <WithAuthorization>
-      <div className={styles['admin-panel']}>
+      <AdminLayout.AdminPanel>
         <h2>PIG 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <PigEdit pig={pig} />
-        </div>
+        </AdminLayout.AdminSection>
         <h2>PIG 구성원 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <IgMembersPanel
             is_pig
             ig={pig}
             users={users.status === 'fulfilled' ? users.value : []}
           />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

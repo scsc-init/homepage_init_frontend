@@ -1,8 +1,10 @@
 'use client';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './KV.module.css';
 import { HIDDEN_KV_KEYS } from '@/util/constants';
+import { fetchBackendClient } from '@/util/fetch/client';
 
 const DEFAULT_PRESET_KEYS = ['footer-message'];
 
@@ -34,10 +36,14 @@ export default function KVEditor() {
 
   const loadPresetKeys = useCallback(async () => {
     try {
-      const res = await fetch('/api/kvs', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetchBackendClient(
+        '/api/kvs',
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        },
+        true,
+      );
 
       if (res.ok) {
         const data = await res.json();
@@ -63,7 +69,7 @@ export default function KVEditor() {
     if (!keyInput.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}`, {
+      const res = await fetchBackendClient(`/api/kv/${encodeURIComponent(keyInput.trim())}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -94,11 +100,15 @@ export default function KVEditor() {
     setSaving(true);
     try {
       const bodyValue = value;
-      const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: bodyValue }),
-      });
+      const res = await fetchBackendClient(
+        `/api/kv/${encodeURIComponent(keyInput.trim())}/update`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value: bodyValue }),
+        },
+        true,
+      );
       if (res.ok) {
         const data = await res.json();
         const raw = typeof data?.value === 'string' ? data.value : '';

@@ -4,8 +4,11 @@ import SortDropdown from '@/components/board/SortDropdown';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useMe } from '@/util/hooks/useMe';
 
-export default function PigListClient({ pigs, myId }) {
+export default function PigListClient({ pigs }) {
+  const { me } = useMe();
+  const myId = me?.id ? String(me.id) : '';
   const [sortOrder, setSortOrder] = useState('latest');
 
   const sortedPigs = [...pigs].sort((a, b) => {

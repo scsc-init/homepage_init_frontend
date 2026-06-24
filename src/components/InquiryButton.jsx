@@ -1,15 +1,21 @@
 'use client';
 
-import { DISCORD_INVITE_LINK } from '@/util/constants';
+import { useEffect, useState } from 'react';
+import { getKvClient } from '@/util/fetch/client-util';
 
 export default function InquiryButton({ label = '💬' }) {
+  const [href, setHref] = useState('');
+
+  useEffect(() => {
+    const fetchLink = async () => {
+      const value = await getKvClient('TEXT_DISCORD_INVITE_LINK');
+      if (value) setHref(value);
+    };
+    fetchLink();
+  }, []);
+
   return (
-    <a
-      href={DISCORD_INVITE_LINK}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="InquiryButton"
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer" className="InquiryButton">
       {label}
     </a>
   );

@@ -1,6 +1,9 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { utc2kst } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
@@ -8,7 +11,7 @@ export default function OldboyManagementPanel({ users }) {
 
   useEffect(() => {
     const fetchApplicants = async () => {
-      const res = await fetch(`/api/executive/user/oldboy/applicants`);
+      const res = await fetchBackendClient(`/api/executive/user/oldboy/applicants`);
       if (res.ok) setApplicants(await res.json());
     };
     fetchApplicants();
@@ -16,7 +19,7 @@ export default function OldboyManagementPanel({ users }) {
 
   const processOldboy = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
-    const res = await fetch(`/api/executive/user/oldboy/${user.id}/process`, {
+    const res = await fetchBackendClient(`/api/executive/user/oldboy/${user.id}/process`, {
       method: 'POST',
     });
     if (res.status === 204) alert(`${user.name} 졸업생 전환 승인 완료`);
@@ -30,15 +33,15 @@ export default function OldboyManagementPanel({ users }) {
   return (
     <div>
       <h2>졸업생 전환 신청자 목록</h2>
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+      <AdminLayout.AdminTableWrap>
+        <AdminLayout.AdminTable>
           <thead>
             <tr>
-              <th className="adm-th">이름</th>
-              <th className="adm-th">신청시각</th>
-              <th className="adm-th">처리시각</th>
-              <th className="adm-th">처리여부</th>
-              <th className="adm-th">승인버튼</th>
+              <th>이름</th>
+              <th>신청시각</th>
+              <th>처리시각</th>
+              <th>처리여부</th>
+              <th>승인버튼</th>
             </tr>
           </thead>
           <tbody>
@@ -47,25 +50,24 @@ export default function OldboyManagementPanel({ users }) {
               const displayName = user?.name ?? '(알 수 없음)';
               return (
                 <tr key={u.id}>
-                  <td className="adm-td">{displayName}</td>
-                  <td className="adm-td">{utc2kst(u.created_at)}</td>
-                  <td className="adm-td">{utc2kst(u.updated_at)}</td>
-                  <td className="adm-td">{u.processed ? '✅' : '❌'}</td>
-                  <td className="adm-td">
-                    <button
-                      className="adm-button"
+                  <td>{displayName}</td>
+                  <td>{utc2kst(u.created_at)}</td>
+                  <td>{utc2kst(u.updated_at)}</td>
+                  <td>{u.processed ? '✅' : '❌'}</td>
+                  <td>
+                    <AdminLayout.AdminButton
                       onClick={() => user && processOldboy(user)}
-                      disabled={saving[user.id] || u.processed || !user}
+                      disabled={!user || Boolean(saving[user.id]) || u.processed}
                     >
                       승인
-                    </button>
+                    </AdminLayout.AdminButton>
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </table>
-      </div>
+        </AdminLayout.AdminTable>
+      </AdminLayout.AdminTableWrap>
     </div>
   );
 }

@@ -1,11 +1,15 @@
 'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import { utc2kst } from '@/util/constants';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default function WList({ wMetas }) {
   const [isBusy, setIsBusy] = useState(false);
+  const [createName, setCreateName] = useState('');
   const router = useRouter();
 
   const handleCreate = async (e) => {
@@ -18,8 +22,11 @@ export default function WList({ wMetas }) {
     }
     const form = new FormData();
     form.append('file', file);
+    if (createName.trim()) {
+      form.append('name', createName.trim());
+    }
     try {
-      const res = await fetch(`/api/executive/w/create`, {
+      const res = await fetchBackendClient(`/api/executive/w/create`, {
         method: 'POST',
         body: form,
       });
@@ -28,6 +35,7 @@ export default function WList({ wMetas }) {
         alert('파일 처리 실패: ' + err.detail);
       } else {
         router.refresh();
+        setCreateName('');
         alert('파일 처리 성공');
       }
     } catch {
@@ -49,7 +57,7 @@ export default function WList({ wMetas }) {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/update`, {
+      const res = await fetchBackendClient(toBackendWPath(name, 'update'), {
         method: 'POST',
         body: form,
       });
@@ -72,7 +80,7 @@ export default function WList({ wMetas }) {
     if (isBusy) return;
     setIsBusy(true);
     try {
-      const res = await fetch(`/api/executive/w/${encodeURIComponent(name)}/delete`, {
+      const res = await fetchBackendClient(toBackendWPath(name, 'delete'), {
         method: 'POST',
       });
       if (res.status !== 204) {
@@ -89,34 +97,63 @@ export default function WList({ wMetas }) {
     }
   };
 
+  const onClickDownload = async (name) => {
+    if (isBusy) return;
+    setIsBusy(true);
+    try {
+      const res = await fetchBackendClient(toBackendWPath(name, 'download'));
+      if (!res.ok) throw new Error('download failed');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name.replaceAll('/', '__')}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      alert('다운로드 실패');
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return (
     <div className={isBusy ? 'is-busy' : undefined}>
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>HTML 페이지 목록</h3>
-        <div className="adm-table-wrap">
-          <table className="adm-table">
+        <AdminLayout.AdminTableWrap>
+          <AdminLayout.AdminTable>
             <thead>
               <tr>
-                <th className="adm-th">페이지명</th>
-                <th className="adm-th">최종수정자</th>
-                <th className="adm-th">파일크기(Bytes)</th>
-                <th className="adm-th">생성시각</th>
-                <th className="adm-th">수정시각</th>
-                <th className="adm-th">수정버튼</th>
-                <th className="adm-th">삭제버튼</th>
+                <th>페이지명</th>
+                <th>최종수정자</th>
+                <th>파일크기(Bytes)</th>
+                <th>생성시각</th>
+                <th>수정시각</th>
+                <th>조회수</th>
+                <th>수정버튼</th>
+                <th>다운로드버튼</th>
+                <th>삭제버튼</th>
               </tr>
             </thead>
             <tbody>
               {wMetas.map((w) => (
                 <tr key={w[0].name}>
-                  <td className="adm-td">
-                    <Link href={`/w/${encodeURIComponent(w[0].name)}`}>{w[0].name}</Link>
+                  <td>
+                    <Link href={toClientPath('/w', w[0].name)}>{w[0].name}</Link>
                   </td>
-                  <td className="adm-td">{w[1]}</td>
-                  <td className="adm-td">{w[0].size}</td>
-                  <td className="adm-td">{utc2kst(w[0].created_at)}</td>
-                  <td className="adm-td">{utc2kst(w[0].updated_at)}</td>
-                  <td className="adm-td">
+                  <td>{w[1]}</td>
+                  <td>{w[0].size}</td>
+                  <td>{utc2kst(w[0].created_at)}</td>
+                  <td>{utc2kst(w[0].updated_at)}</td>
+                  <td>{w[0].view_cnt}</td>
+                  <td>
                     <input
                       type="file"
                       title=" "
@@ -125,26 +162,43 @@ export default function WList({ wMetas }) {
                       disabled={isBusy}
                     />
                   </td>
-                  <td className="adm-td">
-                    <button
-                      className="adm-button"
+                  <td>
+                    <AdminLayout.AdminButton
+                      type="button"
+                      onClick={() => onClickDownload(w[0].name)}
+                      disabled={isBusy}
+                    >
+                      다운로드
+                    </AdminLayout.AdminButton>
+                  </td>
+
+                  <td>
+                    <AdminLayout.AdminButtonDanger
+                      type="button"
                       onClick={() => onClickDelete(w[0].name)}
                       disabled={isBusy}
                     >
                       페이지 삭제
-                    </button>
+                    </AdminLayout.AdminButtonDanger>
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-      </div>
+          </AdminLayout.AdminTable>
+        </AdminLayout.AdminTableWrap>
+      </AdminLayout.AdminSection>
 
-      <div className="adm-section">
+      <AdminLayout.AdminSection>
         <h3>HTML 파일 업로드</h3>
-        <p>파일명이 이름으로 지정됩니다</p>
-        <div className="adm-actions">
+        <p>페이지명을 아래에 작성하지 않으면 파일명이 페이지명으로 지정됩니다</p>
+        <AdminLayout.AdminActions>
+          <input
+            type="text"
+            placeholder="예: scpc2026/sponsors"
+            value={createName}
+            onChange={(e) => setCreateName(e.target.value)}
+            disabled={isBusy}
+          />
           <input
             type="file"
             title=" "
@@ -152,8 +206,20 @@ export default function WList({ wMetas }) {
             onChange={handleCreate}
             disabled={isBusy}
           />
-        </div>
-      </div>
+        </AdminLayout.AdminActions>
+      </AdminLayout.AdminSection>
     </div>
   );
+}
+
+function toClientPath(basePath, name) {
+  return `${basePath}/${encodePathValue(name)}`;
+}
+
+function toBackendWPath(name, action) {
+  return `/api/executive/w/${encodePathValue(name)}/${action}`;
+}
+
+function encodePathValue(value) {
+  return value.split('/').map(encodeURIComponent).join('/');
 }

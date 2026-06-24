@@ -1,6 +1,5 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/util/authOptions';
 import { NextResponse } from 'next/server';
+import { fetchBackendServer } from '@/util/fetch/server';
 
 function sanitizeId(value) {
   if (value === null || value === undefined) return '';
@@ -42,27 +41,13 @@ export async function POST(request) {
       { status: 400 },
     );
   }
-  const session = await getServerSession(authOptions);
-  const appJwt = session?.backendJwt || null;
-
   try {
-    const hdrs = {
-      'Content-Type': 'application/json',
-    };
-    if (appJwt) hdrs['x-jwt'] = appJwt;
-
     const [prezUpdate, viceUpdate] = await Promise.all([
-      fetch(`${process.env.BACKEND_URL || ''}/api/kv/main-president/update`, {
-        method: 'POST',
-        headers: hdrs,
-        body: JSON.stringify({ value: presidentId }),
-        cache: 'no-store',
+      fetchBackendServer('POST', '/api/kv/main-president/update', {
+        body: { value: presidentId },
       }),
-      fetch(`${process.env.BACKEND_URL || ''}/api/kv/vice-president/update`, {
-        method: 'POST',
-        headers: hdrs,
-        body: JSON.stringify({ value: vicePresidentId }),
-        cache: 'no-store',
+      fetchBackendServer('POST', '/api/kv/vice-president/update', {
+        body: { value: vicePresidentId },
       }),
     ]);
 

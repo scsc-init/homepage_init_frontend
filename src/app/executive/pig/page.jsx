@@ -1,29 +1,28 @@
 // src/app/executive/pig/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
 import PigList from './PigList';
-import { safeFetch, fetchUsers } from '@/util/fetchAPIData';
-import styles from '../igpage.module.css';
+import { fetchBackendServerJson } from '@/util/fetch/server';
+import * as AdminLayout from '@/components/AdminLayout';
 
 export default async function ExecutivePigPage() {
   const [pigMetas, users] = await Promise.allSettled([
-    safeFetch('GET', `/api/pigs`),
-    fetchUsers(),
+    fetchBackendServerJson('GET', '/api/sigs', { query: { tag: 'PIG' } }),
   ]);
-  if (pigMetas.status !== 'fulfilled' || users.status !== 'fulfilled') return null;
+  if (pigMetas.status !== 'fulfilled') return null;
 
   const pigs = pigMetas.value.map((p) => ({
     ...p,
-    ownerName: users.value.find((u) => u.id === p.owner)?.name,
+    ownerName: p.owner_user.name,
   }));
 
   return (
     <WithAuthorization>
-      <div className={styles['admin-panel']}>
+      <AdminLayout.AdminPanel>
         <h2>PIG 관리</h2>
-        <div className={styles['adm-section']}>
+        <AdminLayout.AdminSection>
           <PigList pigs={pigs} />
-        </div>
-      </div>
+        </AdminLayout.AdminSection>
+      </AdminLayout.AdminPanel>
     </WithAuthorization>
   );
 }

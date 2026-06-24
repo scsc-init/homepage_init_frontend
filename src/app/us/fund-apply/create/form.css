@@ -1,0 +1,348 @@
+html,
+body {
+  background-color: var(--background-color);
+}
+
+.CreateSigContainer {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+.CreateSigHeader {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.CreateSigTitle {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+  margin-bottom: 0.5rem;
+}
+.CreateSigSubtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-subtle);
+}
+
+.CreateSigCard {
+  background-color: var(--color-card-bg);
+  padding: 2rem;
+  box-shadow: 0 3px 12px var(--color-card-shadow);
+  border-radius: 1rem;
+}
+.Step {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-in {
+  animation: fadeInUp 220ms ease-out;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.C_Label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-body);
+  margin-bottom: 0.5rem;
+}
+.C_Input {
+  color: var(--color-text-body);
+  background-color: var(--color-surface-light);
+  border: 1px solid var(--color-button-border);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  outline: none;
+  margin-bottom: 0.75rem;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+  appearance: none;
+  box-sizing: border-box;
+}
+.C_Input:focus {
+  border-color: var(--color-button-bg);
+  box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.28);
+}
+select.C_Input option {
+  background-color: var(--color-card-bg);
+  color: var(--color-text-body);
+}
+.is-disabled,
+.C_Input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.C_CheckRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.C_Checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-button-bg);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+.C_CheckText {
+  font-size: 0.9rem;
+  color: var(--color-text-body);
+}
+
+.PayoutSection {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface-light);
+  border: 1px solid var(--color-button-border);
+  border-radius: 0.75rem;
+  margin-top: 0.5rem;
+}
+.PayoutHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.PayoutHelpText {
+  font-size: 0.875rem;
+  color: var(--color-text-subtle, #666);
+  margin: 0 0 0.75rem;
+}
+.PayoutField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+label[for='fund-amount-input'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--color-button-bg);
+}
+label[for='fund-amount-input']::after {
+  content: '필수';
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-button-bg);
+  background: rgba(75, 176, 201, 0.12);
+  border: 1px solid rgba(75, 176, 201, 0.3);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+}
+#fund-amount-input {
+  border-color: var(--color-button-bg);
+  background: rgba(75, 176, 201, 0.08);
+}
+#fund-amount-input,
+#fund-account-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+#fund-amount-input:focus {
+  box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.35);
+}
+#fund-amount-input::-webkit-outer-spin-button,
+#fund-amount-input::-webkit-inner-spin-button,
+#fund-account-input::-webkit-outer-spin-button,
+#fund-account-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.PayoutField .C_Input {
+  margin-bottom: 0;
+}
+.PayoutGrid {
+  margin-top: 1.35rem;
+}
+.PayoutCheck {
+  margin: 0.5rem 0 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--color-button-border);
+}
+.C_SubLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-subtle, #666);
+  margin-bottom: 0.2rem;
+}
+.DetailSection {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-button-border);
+}
+.C_Link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--color-text-subtle);
+}
+
+.EditorWrapper {
+  --editor-toolbar-h: 44px;
+  --editor-min-height: 12rem;
+  position: relative;
+  min-height: var(--editor-min-height);
+}
+.mdxeditor {
+  position: relative;
+  z-index: 1;
+  min-height: var(--editor-min-height);
+  background-color: var(--box-color);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-button-border);
+}
+.mdxeditor [contenteditable='true'] {
+  position: relative;
+  z-index: 1;
+  min-height: calc(var(--editor-min-height) - var(--editor-toolbar-h));
+  padding: 1rem;
+  background: var(--box-color);
+  color: #111;
+}
+
+.EditorPlaceholder {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: calc(1rem + var(--editor-toolbar-h));
+  bottom: 1rem;
+  z-index: 2;
+  pointer-events: none;
+  color: #4b5563;
+  opacity: 0.95;
+  overflow: auto;
+}
+.EditorPlaceholderText {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+.EditorWrapper.has-content .EditorPlaceholder {
+  display: none;
+}
+
+.SigCreateBtn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 700;
+  border: 1px solid var(--color-button-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease;
+  margin-top: 0.5rem;
+}
+.SigCreateBtn:hover:enabled {
+  filter: brightness(0.95);
+}
+.SigCreateBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .CreateSigContainer {
+    padding: 2rem 1rem;
+  }
+  .CreateSigTitle {
+    font-size: 1.75rem;
+  }
+}
+
+.TermToggleBox {
+  margin-top: 0.35rem;
+}
+.TermToggle {
+  margin-top: 0;
+}
+.TermToggleMeta {
+  font-size: 0.85em;
+  color: var(--color-text-subtle, #666);
+  font-weight: 600;
+}
+.TermToggleHelp {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-subtle, #666);
+}
+
+.SigPigSelectToggleRow {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.SigPigSelectBlock {
+  max-width: 28rem;
+}
+
+.PrevTermToggleCell {
+  display: flex;
+  justify-content: flex-start;
+  padding-bottom: 0.75rem;
+}
+
+.PrevTermToggleRow {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.PrevTermToggleText {
+  white-space: nowrap;
+}
+
+.SigPigControlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.SigPigControlRow > .C_Input {
+  flex: 1 1 auto;
+  margin-bottom: 0.2rem;
+}
+.C_Input[type='file'] {
+  appearance: auto;
+  -webkit-appearance: auto;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.PrevTermInlineCheck {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.PrevTermInlineCheck .C_Checkbox {
+  margin-top: 0;
+}
+
+@media (max-width: 520px) {
+  .SigPigControlRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .PrevTermInlineCheck {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}

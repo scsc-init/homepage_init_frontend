@@ -1,19 +1,12 @@
 import 'highlight.js/styles/github.css';
 import './page.css';
 import SigClient from './SigClient';
-import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchMe } from '@/util/fetchAPIData';
-import { redirect } from 'next/navigation';
+import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   try {
-    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/sig/${id}`, {
-      method: 'GET',
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error();
-    const sig = await res.json();
+    const sig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: sig.title,
       description: sig.description || 'SIG 상세 페이지',
@@ -49,32 +42,18 @@ export async function generateMetadata({ params }) {
 export default async function SigDetailPage({ params }) {
   const { id } = await params;
 
-  const [me] = await Promise.allSettled([fetchMe()]);
-
-  if (me.status === 'rejected') redirect('/us/login');
-
-  const sigRes = await handleApiRequest('GET', `/api/sig/${id}`);
+  const sigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
     return <div className="p-6 text-center text-red-600">존재하지 않는 SIG입니다.</div>;
   }
   const sig = await sigRes.json();
 
-  const membersRes = await handleApiRequest('GET', `/api/sig/${id}/members`);
-  const rawMembers = membersRes.ok ? await membersRes.json() : [];
+  const rawMembers = sig.members ?? [];
   const members = Array.isArray(rawMembers)
     ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
     : [];
 
-  const articleRes = await handleApiRequest('GET', `/api/article/${sig.content_id}`);
-  const article = articleRes.ok ? await articleRes.json() : { content: '' };
+  const article = sig.content ?? { content: '' };
 
-  return (
-    <SigClient
-      sig={sig}
-      members={members}
-      articleContent={article.content}
-      me={me.value}
-      sigId={id}
-    />
-  );
+  return <SigClient sig={sig} members={members} articleContent={article.content} sigId={id} />;
 }

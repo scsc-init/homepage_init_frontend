@@ -4,7 +4,7 @@ Next.js **14** App Router 기반으로 구축된 SCSC init의 FE 코드입니다
 
 > 작성일: 2025-05-12
 >
-> 최신개정일 : 2025-11-03
+> 최신개정일 : 2026-05-15
 >
 > 작성자 : 이한경 윤영우 [강명석](mailto: tomskang@naver.com) 박성현
 >
@@ -69,20 +69,18 @@ src/
 
 ## 환경 변수
 
-| Key Name                          | Description                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------- |
-| `BACKEND_URL`                     | 연결된 BE 서버의 외부 URL                                                                   |
-| `NEXT_PUBLIC_API_BASE_URL`        | FE에서 사용하는 BE 서버의 외부 URL                                                          |
-| `API_SECRET`                      | BE 서버에서 처리되는 API KEY                                                                |
-| `GOOGLE_CLIENT_ID`                | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
-| `GOOGLE_CLIENT_SECRET`            | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
-| `NEXTAUTH_SECRET`                 | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
-| `NEXTAUTH_URL`                    | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
-| `SNU_EMAIL_CHECK`                 | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
-| `NEXT_PUBLIC_DEPOSIT_ACC`         | 동비 입금 계좌와 입금자명                                                                   |
-| `NEXT_PUBLIC_DISCORD_INVITE_LINK` | 디스코드 초대 링크                                                                          |
-| `NEXT_PUBLIC_KAKAO_INVITE_LINK`   | 카카오톡 초대 링크                                                                          |
-| `ENABLE_TEST_UTILS`               | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
+| Key Name                   | Description                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| `BACKEND_URL`              | 연결된 BE 서버의 외부 URL                                                                   |
+| `NEXT_PUBLIC_API_BASE_URL` | FE에서 사용하는 BE 서버의 외부 URL                                                          |
+| `API_SECRET`               | BE 서버에서 처리되는 API KEY                                                                |
+| `GOOGLE_CLIENT_ID`         | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
+| `GOOGLE_CLIENT_SECRET`     | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
+| `NEXTAUTH_SECRET`          | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
+| `NEXTAUTH_URL`             | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
+| `JWT_VALID_SECONDS`        | 로그인 세션 유지 시간. 기본값은 43200초                                                     |
+| `SNU_EMAIL_CHECK`          | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
+| `ENABLE_TEST_UTILS`        | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
 
 ## Install & Execute
 
@@ -105,10 +103,8 @@ GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
 GOOGLE_CLIENT_SECRET=구글_콘솔에서_받은_클라이언트_SECRET
 NEXTAUTH_SECRET= openssl rand -base64 32 터미널에 입력해서 나온 값
 NEXTAUTH_URL=https://your-domain.com (로컬에서는 http://localhost:3000)
+JWT_VALID_SECONDS=43200
 SNU_EMAIL_CHECK=TRUE
-NEXT_PUBLIC_DEPOSIT_ACC=국민은행 942902-02-054136 (강명석)
-NEXT_PUBLIC_DISCORD_INVITE_LINK=https://discord.gg/SmXFDxA7XE
-NEXT_PUBLIC_KAKAO_INVITE_LINK=https://invite.kakao.com/tc/II2yiLsQhY
 ```
 
 Google OAuth, NextAuth 설정에 관한 자세한 설명은 다음 섹션을 참고하세요.
@@ -231,9 +227,6 @@ function doSomething(x, y) {
 | ------------------------- | ----------------------------------------- | ------------------------------------------- |
 | `minExecutiveLevel`       | 500                                       | 운영진 권한 기준값                          |
 | `oldboyLevel`             | 400                                       | 졸업생 권한                                 |
-| `DEPOSIT_ACC`             | 국민은행 942902-02-054136 (강명석)        | 입금 계좌                                   |
-| `DISCORD_INVITE_LINK`     | discord.gg/SmXFDxA7XE                     | 디스코드 초대 링크                          |
-| `KAKAO_INVITE_LINK`       | invite.kakao.com/tc/...                   | 카카오톡 초대 링크                          |
 | `hideFooterRoutes`        | `['/', '/us/login', '/about/my-page']`    | 푸터를 숨길 라우트                          |
 | `presidentEmails`         | `[sungjae0506@snu.ac.kr]`                 | 회장 이메일                                 |
 | `excludedExecutiveEmails` | `[bot@discord.com, deposit.app@scsc.dev]` | 임원 목록에서 제외할 이메일                 |
@@ -246,11 +239,14 @@ function doSomething(x, y) {
 본 레포지토리는 footer message 와 같은 런타임 환경 변수 관리를 위해, BE의 KV table 기능을 사용하고 있습니다.  
 사용하고 있는 Key 값들은 아래와 같습니다.
 
-| Key              | 예시 값                                                                 | 설명                          | 형식   |
-| ---------------- | ----------------------------------------------------------------------- | ----------------------------- | ------ |
-| `footer-message` | 서울대학교 컴퓨터 연구회\n회장 한성재 010-5583-1811\nscsc.snu@gmail.com | 푸터 메시지                   | 문자열 |
-| `main-president` | id1                                                                     | 회장 사용자 id                | 문자열 |
-| `vice-president` | id2;id3                                                                 | `;`로 연결된 부회장 사용자 id | 문자열 |
+| Key                        | 예시 값                                                                 | 설명                          | 형식   |
+| -------------------------- | ----------------------------------------------------------------------- | ----------------------------- | ------ |
+| `footer-message`           | 서울대학교 컴퓨터 연구회\n회장 한성재 010-5583-1811\nscsc.snu@gmail.com | 푸터 메시지                   | 문자열 |
+| `main-president`           | id1                                                                     | 회장 사용자 id                | 문자열 |
+| `vice-president`           | id2;id3                                                                 | `;`로 연결된 부회장 사용자 id | 문자열 |
+| `TEXT_DEPOSIT_ACC`         | 국민은행 942902-02-054136 (강명석)                                      | 회비 입금 계좌 안내 문구      | 문자열 |
+| `TEXT_DISCORD_INVITE_LINK` | https://discord.gg/SmXFDxA7XE                                           | 디스코드 초대 링크            | 문자열 |
+| `TEXT_KAKAO_INVITE_LINK`   | https://invite.kakao.com/tc/II2yiLsQhY                                  | 카카오톡 오픈채팅 초대 링크   | 문자열 |
 
 ## Cookie & Storage
 

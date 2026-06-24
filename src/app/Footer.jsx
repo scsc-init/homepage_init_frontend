@@ -4,30 +4,29 @@ import styles from './Footer.module.css';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { hideFooterRoutes, footerLogoData } from '@/util/constants';
+import Link from 'next/link';
+import { hideFooterRoutes, footerLogoData, footerMenuData } from '@/util/constants';
+import { getKvsClient } from '@/util/fetch/client-util';
 
 export default function Footer() {
   const pathname = usePathname();
   const [footerMessage, setFooterMessage] = useState('');
-  const key = 'footer-message';
+  const [kvHrefs, setKvHrefs] = useState({});
 
   useEffect(() => {
-    const getFooter = async () => {
-      const res = await fetch(`/api/kv/${key}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (res.ok) {
-        const footer = await res.json();
-        setFooterMessage(footer.value);
-      } else {
-        setFooterMessage('Footer 정보를 불러오지 못했습니다.');
-        return;
-      }
+    const fetchAllKvs = async () => {
+      const hrefKeys = footerLogoData
+        .map((item) => item.hrefKvKey)
+        .filter((k) => typeof k === 'string' && k.length > 0);
+      const allKeys = ['footer-message', ...hrefKeys];
+      const values = await getKvsClient(allKeys);
+
+      setFooterMessage(values[0] || 'Footer 정보를 불러오지 못했습니다.');
+
+      const hrefEntries = hrefKeys.map((key, i) => [key, values[i + 1]]);
+      setKvHrefs(Object.fromEntries(hrefEntries));
     };
-    getFooter();
+    fetchAllKvs();
   }, []);
 
   if (hideFooterRoutes.includes(pathname)) return null;
@@ -50,16 +49,37 @@ export default function Footer() {
                   ))}
               </p>
             </div>
+            <nav className={styles.footerNav} aria-label="People">
+              <span className={styles.footerNavTitle}>People</span>
+              <ul className={styles.footerNavList}>
+                {footerMenuData.map((item) => (
+                  <li key={item.url}>
+                    <Link href={item.url}>{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
         <div className={styles.logoList}>
-          {footerLogoData.map(({ href, src, alt }) => (
-            <div className={styles.logo} key={alt}>
-              <a href={href} target="_blank" rel="noopener noreferrer">
-                <Image src={src} alt={alt} width={24} height={24} className="logo" />
-              </a>
-            </div>
-          ))}
+          {footerLogoData.map(({ href, src, alt, hrefKvKey }) => {
+            const resolvedHref = hrefKvKey ? kvHrefs[hrefKvKey] || '' : href;
+            const isValidHref =
+              typeof resolvedHref === 'string' && /^(https?:\/\/|mailto:)/i.test(resolvedHref);
+            return (
+              <div className={styles.logo} key={alt}>
+                {isValidHref ? (
+                  <a href={resolvedHref} target="_blank" rel="noopener noreferrer">
+                    <Image src={src} alt={alt} width={24} height={24} className="logo" />
+                  </a>
+                ) : (
+                  <span aria-disabled="true">
+                    <Image src={src} alt={alt} width={24} height={24} className="logo" />
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,19 +1,12 @@
 import 'highlight.js/styles/github.css';
 import './page.css';
 import PigClient from './PigClient';
-import { handleApiRequest } from '@/app/api/apiWrapper';
-import { fetchMe } from '@/util/fetchAPIData';
-import { redirect } from 'next/navigation';
+import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   try {
-    const res = await fetch(`${process.env.BACKEND_URL || ''}/api/pig/${id}`, {
-      method: 'GET',
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error();
-    const pig = await res.json();
+    const pig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: pig.title,
       description: pig.description || 'PIG 상세 페이지',
@@ -49,32 +42,18 @@ export async function generateMetadata({ params }) {
 export default async function PigDetailPage({ params }) {
   const { id } = await params;
 
-  const [me] = await Promise.allSettled([fetchMe()]);
-
-  if (me.status === 'rejected') redirect('/us/login');
-
-  const pigRes = await handleApiRequest('GET', `/api/pig/${id}`);
+  const pigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!pigRes.ok) {
     return <div className="p-6 text-center text-red-600">존재하지 않는 PIG입니다.</div>;
   }
   const pig = await pigRes.json();
 
-  const membersRes = await handleApiRequest('GET', `/api/pig/${id}/members`);
-  const rawMembers = membersRes.ok ? await membersRes.json() : [];
+  const rawMembers = pig.members ?? [];
   const members = Array.isArray(rawMembers)
     ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
     : [];
 
-  const articleRes = await handleApiRequest('GET', `/api/article/${pig.content_id}`);
-  const article = articleRes.ok ? await articleRes.json() : { content: '' };
+  const article = pig.content ?? { content: '' };
 
-  return (
-    <PigClient
-      pig={pig}
-      members={members}
-      articleContent={article.content}
-      me={me.value}
-      pigId={id}
-    />
-  );
+  return <PigClient pig={pig} members={members} articleContent={article.content} pigId={id} />;
 }

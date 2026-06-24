@@ -1,15 +1,18 @@
 'use client';
 
+import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as validator from '@/util/validator';
 import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function EditUserInfoClient() {
   const router = useRouter();
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -23,27 +26,27 @@ function EditUserInfoClient() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const fetches = [];
-      fetches.push(fetch('/api/user/profile'));
-      fetches.push(fetch('/api/majors'));
-      fetches.push(fetch('/api/user/oldboy/applicant'));
-      const [resUser, resMajors, resOldboy] = await Promise.all(fetches);
+    if (isMeLoading) return;
+    if (isUnauthenticated || !me) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+      return;
+    }
 
-      if (!resUser.ok) {
-        alert('로그인이 필요합니다.');
-        pushLoginWithRedirect(router);
-        return;
-      }
-      const user = await resUser.json();
+    const fetchData = async () => {
+      const [resMajors, resOldboy] = await Promise.all([
+        fetchBackendClient('/api/majors'),
+        fetchBackendClient('/api/user/oldboy/applicant'),
+      ]);
+
       setForm({
-        name: user.name || '',
-        phone: user.phone || '',
-        student_id: user.student_id || '',
-        major_id: user.major_id?.toString() || '',
-        profile_picture: user.profile_picture || '',
+        name: me.name || '',
+        phone: me.phone || '',
+        student_id: me.student_id || '',
+        major_id: me.major_id?.toString() || '',
+        profile_picture: me.profile_picture || '',
       });
-      setUserRole(user.role);
+      setUserRole(me.role);
 
       const majorList = resMajors.ok ? await resMajors.json() : [];
       setMajors(majorList);
@@ -54,7 +57,7 @@ function EditUserInfoClient() {
       setLoading(false);
     };
     fetchData();
-  }, [router]);
+  }, [router, me, isMeLoading, isUnauthenticated]);
 
   const handleSubmit = async () => {
     const { name, phone, student_id, major_id } = form;
@@ -74,7 +77,7 @@ function EditUserInfoClient() {
     }
 
     setLoading(true);
-    const res = await fetch('/api/user/update', {
+    const res = await fetchBackendClient('/api/user/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -102,7 +105,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 휴회원 처리하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/delete', { method: 'POST' });
+    const res = await fetchBackendClient('/api/user/delete', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 204) {
@@ -119,16 +122,16 @@ function EditUserInfoClient() {
     const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/register', { method: 'POST' });
+    const res = await fetchBackendClient('/api/user/oldboy/register', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 201) {
       alert('졸업생 전환 신청이 완료되었습니다.');
       router.push('/about/my-page');
     } else if (res.status === 400) {
-      alert(`졸업생 전환 신청 자격이 없습니다.`);
+      alert('졸업생 전환 신청 자격이 없습니다.');
     } else if (res.status === 409) {
-      alert(`이미 졸업생 전환 신청을 완료했습니다.`);
+      alert('이미 졸업생 전환 신청을 완료했습니다.');
     } else {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
     }
@@ -138,7 +141,7 @@ function EditUserInfoClient() {
     const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/unregister', { method: 'POST' });
+    const res = await fetchBackendClient('/api/user/oldboy/unregister', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 204) {
@@ -146,10 +149,10 @@ function EditUserInfoClient() {
       router.push('/about/my-page');
     } else if (res.status === 400) {
       alert(
-        `이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.`,
+        '이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.',
       );
     } else if (res.status === 404) {
-      alert(`졸업생 전환 신청을 하지 않았습니다.`);
+      alert('졸업생 전환 신청을 하지 않았습니다.');
     } else {
       alert('신청 취소에 실패했습니다. 다시 시도해주세요.');
     }
@@ -161,14 +164,14 @@ function EditUserInfoClient() {
     );
     if (!ok) return;
     setLoading(true);
-    const res = await fetch('/api/user/oldboy/reactivate', { method: 'POST' });
+    const res = await fetchBackendClient('/api/user/oldboy/reactivate', { method: 'POST' });
     setLoading(false);
 
     if (res.status === 204) {
       alert('정회원 전환 신청이 완료되었습니다. 회비를 납부해야 정회원 전환이 완료됩니다.');
       router.push('/about/welcome');
     } else if (res.status === 400) {
-      alert(`졸업생이 아니어서 정회원으로 전환할 수 없습니다.`);
+      alert('졸업생이 아니어서 정회원으로 전환할 수 없습니다.');
     } else {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
     }

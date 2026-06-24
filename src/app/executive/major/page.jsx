@@ -1,10 +1,10 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import MajorList from './MajorList';
 import styles from './MajorList.module.css';
-import { fetchMajors } from '@/util/fetchAPIData';
+import { fetchBackendServerJson } from '@/util/fetch/server';
 
 export default async function MajorListPage() {
-  const [majors] = await Promise.allSettled([fetchMajors()]);
+  const [majors] = await Promise.allSettled([fetchBackendServerJson('GET', '/api/majors')]);
   return (
     <WithAuthorization>
       <div className={styles.panel}>

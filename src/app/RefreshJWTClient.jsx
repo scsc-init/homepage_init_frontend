@@ -2,14 +2,21 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect } from 'react';
-import { fetchMeClient } from '@/util/fetchClientData';
+import { useMe } from '@/util/hooks/useMe';
 import { useRouter } from 'next/navigation';
 
 export default function RefreshJWTClient() {
+  const { me } = useMe();
   const { data: session, status, update } = useSession();
   const router = useRouter();
 
   useEffect(() => {
+    const handleAuthFail = async () => {
+      await signOut({ redirect: false });
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.refresh();
+    };
+
     if (status === 'loading') return;
 
     if (status === 'unauthenticated') {
@@ -17,23 +24,20 @@ export default function RefreshJWTClient() {
       return;
     }
 
-    (async () => {
-      let me = null;
-      try {
-        me = await fetchMeClient();
-      } catch {
-        me = null;
+    if (me) {
+      if (!me.is_active) {
+        router.replace('/about/welcome');
       }
+      return;
+    }
 
-      if (me) {
-        if (!me.is_active) {
-          router.replace('/about/welcome');
+    (async () => {
+      try {
+        if (!session?.user?.email || !session?.hashToken) {
+          await handleAuthFail();
           return;
         }
-        return;
-      }
 
-      if (session?.user?.email && session?.hashToken) {
         const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -45,29 +49,28 @@ export default function RefreshJWTClient() {
         });
 
         if (!loginRes.ok) {
-          await signOut({ redirect: false });
-          await fetch('/api/auth/logout', { method: 'POST' });
-          router.refresh();
+          await handleAuthFail();
           return;
         }
 
         const data = await loginRes.json();
-        if (data.jwt) await update({ backendJwt: data.jwt });
 
-        try {
-          const me2 = await fetchMeClient();
-          if (me2 && !me2.is_active) {
-            router.replace('/about/welcome');
-            return;
-          }
-        } catch {
+        if (!data.jwt || !data.userProfile) {
+          await handleAuthFail();
           return;
         }
-      } else {
-        await signOut({ redirect: false });
-        await fetch('/api/auth/logout', { method: 'POST' });
-        router.refresh();
+
+        await update({
+          backendJwt: data.jwt,
+          userProfile: data.userProfile,
+        });
+
+        if (!data.userProfile.is_active) {
+          router.replace('/about/welcome');
+        }
+      } catch {
+        await handleAuthFail();
       }
     })();
-  }, [session, status, router, update]);
+  }, [me, session, status, router, update]);
 }
