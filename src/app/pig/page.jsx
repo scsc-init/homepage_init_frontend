@@ -11,8 +11,7 @@ export default async function PigListPage() {
   if (globalStatus.status === 'rejected') {
     return <div>피그 정보를 불러올 수 없습니다.</div>;
   }
-  const currTerm = getCurrentTerm(globalStatus);
-
+  const currTerm = getCurrentTerm(globalStatus.value);
   const [pigs] = await Promise.allSettled([
     fetchBackendServerJson('GET', '/api/sigs', {
       query: { tag: 'PIG', year: currTerm.year, semester: currTerm.semester },
