@@ -76,13 +76,16 @@ export default function ArticleList({ boards: boardsDefault }) {
   };
 
   const saveArticle = async (article) => {
-    if (!article.title || !article.content || !article.board_id) {
+    const title = article.title.trim();
+    const content = article.content.trim();
+
+    if (!title || !content || !article.board_id) {
       alert('제목, 내용, 게시판 ID는 필수입니다.');
       return;
     }
     const payload = {
-      title: article.title.trim(),
-      content: article.content.trim(),
+      title,
+      content,
       board_id: Number(article.board_id),
     };
     try {
