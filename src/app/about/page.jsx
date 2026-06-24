@@ -6,11 +6,13 @@ import FaqList from '@/components/about/FaqList';
 import Arrow from '@/components/about/Arrow';
 import styles from './about.module.css';
 import Sidebar from '@/components/about/Sidebar.jsx';
-import { getKVValue } from '@/util/fetchAPIData';
+import { getKVValues } from '@/util/fetchAPIData';
 
 export default async function AboutPage() {
   const DEFAULT_DISCORD_INVITE_LINK = 'https://discord.gg/SmXFDxA7XE';
-  const rawDiscordInviteLink = await getKVValue('TEXT_DISCORD_INVITE_LINK');
+  const kv = await getKVValues(['TEXT_DISCORD_INVITE_LINK']);
+  const inviteResult = kv['TEXT_DISCORD_INVITE_LINK'];
+  const rawDiscordInviteLink = inviteResult?.status === 'fulfilled' ? inviteResult.value : '';
   const discordInviteLink = /^https?:\/\/\S+$/i.test(rawDiscordInviteLink)
     ? rawDiscordInviteLink
     : DEFAULT_DISCORD_INVITE_LINK;
@@ -105,7 +107,7 @@ export default async function AboutPage() {
             </section>
           </ScrollEffectWrapper>
 
-          <ScrollEffectWrapper>
+          <ScrollEffectWrapper variant="fade">
             <section id="activities" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <h2>SCSC는 이러한 활동을 합니다</h2>
@@ -144,24 +146,23 @@ export default async function AboutPage() {
                       image: '/about/activities/mt.jpg',
                     },
                   ].map(({ title, description, image }) => (
-                    <ScrollEffectWrapper key={title}>
-                      <div
-                        className={`${styles.card} ${styles.cardHover} ${styles.facilityCard}`}
-                      >
-                        <div className={styles.imageWrapper} style={{ height: '200px' }}>
-                          <Image src={image} alt={title} fill className={styles.image} />
-                        </div>
-                        <h3>{title}</h3>
-                        <p>{description}</p>
+                    <div
+                      key={title}
+                      className={`${styles.card} ${styles.cardHover} ${styles.facilityCard}`}
+                    >
+                      <div className={styles.imageWrapper} style={{ height: '200px' }}>
+                        <Image src={image} alt={title} fill className={styles.image} />
                       </div>
-                    </ScrollEffectWrapper>
+                      <h3>{title}</h3>
+                      <p>{description}</p>
+                    </div>
                   ))}
                 </div>
               </div>
             </section>
           </ScrollEffectWrapper>
 
-          <ScrollEffectWrapper>
+          <ScrollEffectWrapper variant="fade">
             <section id="faq" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <FaqList />
@@ -169,7 +170,7 @@ export default async function AboutPage() {
             </section>
           </ScrollEffectWrapper>
 
-          <ScrollEffectWrapper>
+          <ScrollEffectWrapper variant="fade">
             <section id="clubroom" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <div className={styles.clubroomContainer}>
@@ -207,17 +208,16 @@ export default async function AboutPage() {
                         image: '/about/club-room/games.jpg',
                       },
                     ].map(({ title, description, image }) => (
-                      <ScrollEffectWrapper key={title}>
-                        <div
-                          className={`${styles.card} ${styles.cardHover} ${styles.facilityCard}`}
-                        >
-                          <div className={styles.imageWrapper} style={{ height: '200px' }}>
-                            <Image src={image} alt={title} fill className={styles.image} />
-                          </div>
-                          <h3>{title}</h3>
-                          <p>{description}</p>
+                      <div
+                        key={title}
+                        className={`${styles.card} ${styles.cardHover} ${styles.facilityCard}`}
+                      >
+                        <div className={styles.imageWrapper} style={{ height: '200px' }}>
+                          <Image src={image} alt={title} fill className={styles.image} />
                         </div>
-                      </ScrollEffectWrapper>
+                        <h3>{title}</h3>
+                        <p>{description}</p>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export default async function AboutPage() {
             </section>
           </ScrollEffectWrapper>
 
-          <ScrollEffectWrapper>
+          <ScrollEffectWrapper variant="fade">
             <section id="more" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <div className={styles.card}>

@@ -38,6 +38,11 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
+      ...(process.env.SNU_EMAIL_CHECK?.toUpperCase() === 'TRUE' && {
+        authorization: {
+          params: { hd: 'snu.ac.kr' },
+        },
+      }),
     }),
   ],
   callbacks: {
@@ -46,7 +51,10 @@ export const authOptions: NextAuthOptions = {
         return '/us/login?error=no_information';
       }
 
-      if (process.env.SNU_EMAIL_CHECK === 'TRUE' && !validator.email(user.email)) {
+      if (
+        process.env.SNU_EMAIL_CHECK?.toUpperCase() === 'TRUE' &&
+        !validator.email(user.email)
+      ) {
         return '/us/login?error=invalid_email';
       }
 

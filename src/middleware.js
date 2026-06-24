@@ -27,6 +27,13 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
+  // Static asset files (images, etc.) must bypass auth: Next's image optimizer
+  // fetches these server-side without the user's session cookie, so protecting
+  // them would redirect the fetch to login and break image optimization.
+  if (/\.(jpe?g|png|gif|svg|webp|avif|ico)$/i.test(pathname)) {
+    return NextResponse.next();
+  }
+
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
 
   const kakaotalk = ['kakao', 'kakaotalk'];
