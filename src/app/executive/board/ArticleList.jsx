@@ -51,156 +51,158 @@ export default function ArticleList({ boards: boardsDefault }) {
     } catch (err) {
       alert(`게시판 이름 수정 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
     }
-
-    const deleteBoard = async (id) => {
-      const ok = confirm('게시판을 삭제하시겠습니까?');
-      if (!ok) return;
-      try {
-        const res = await fetchBackendClient(`/api/executive/board/delete/${id}`, {
-          method: 'POST',
-        });
-        if (res.status === 204) {
-          alert('삭제 완료');
-          setBoards((prev) => prev.filter((b) => b.id !== id));
-          setArticles((prev) => {
-            const next = { ...prev };
-            delete next[id];
-            return next;
-          });
-        } else {
-          alert('삭제 실패: ' + res.status);
-        }
-      } catch (err) {
-        alert(`삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
-      }
-    };
-
-    const saveArticle = async (article) => {
-      if (!article.title || !article.content || !article.board_id) {
-        alert('제목, 내용, 게시판 ID는 필수입니다.');
-        return;
-      }
-      const payload = {
-        title: article.title.trim(),
-        content: article.content.trim(),
-        board_id: Number(article.board_id),
-      };
-      try {
-        setSaving((s) => ({ ...s, [article.id]: true }));
-        const res = await fetchBackendClient(`/api/executive/article/update/${article.id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (res.status === 204) alert('✅ 게시글 수정 완료');
-        else {
-          const error = await res.text();
-          alert('수정 실패: ' + (error || res.status));
-        }
-      } catch (err) {
-        alert('요청 실패: ' + err.message);
-      } finally {
-        setSaving((s) => ({ ...s, [article.id]: false }));
-      }
-    };
-
-    const deleteArticle = async (id, boardId) => {
-      const ok = confirm('정말 삭제하시겠습니까?');
-      if (!ok) return;
-      try {
-        const res = await fetchBackendClient(`/api/executive/article/delete/${id}`, {
-          method: 'POST',
-        });
-        if (res.status === 204) {
-          setArticles((prev) => ({
-            ...prev,
-            [boardId]: prev[boardId].filter((a) => a.id !== id),
-          }));
-        } else {
-          alert('삭제 실패: ' + res.status);
-        }
-      } catch (err) {
-        alert(`삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
-      }
-    };
-
-    return (
-      <div className={styles.articleSection}>
-        {boards.map((board) => (
-          <div key={board.id} className={styles.articleSection}>
-            <h3 className={styles.articleSection}>게시판 ID {board.id}</h3>
-
-            <div className={styles.actions}>
-              <input
-                className={styles.input}
-                value={board.name}
-                onChange={(e) => handleBoardChange(board.id, e.target.value)}
-              />
-              <button className={styles.button} onClick={() => saveBoard(board)}>
-                이름 저장
-              </button>
-              <button className={styles.buttonOutline} onClick={() => deleteBoard(board.id)}>
-                게시판 삭제
-              </button>
-            </div>
-
-            <div className={styles.wrap}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th style={{ width: '10%' }}>ID</th>
-                    <th style={{ width: '30%' }}>제목</th>
-                    <th style={{ width: '45%' }}>내용</th>
-                    <th style={{ width: '15%' }}>작업</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(articles[board.id] || []).map((article) => (
-                    <tr key={article.id}>
-                      <td>{article.id}</td>
-                      <td>
-                        <input
-                          className={styles.input}
-                          value={article.title}
-                          onChange={(e) =>
-                            handleArticleChange(board.id, article.id, 'title', e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className={styles.input}
-                          value={article.content}
-                          onChange={(e) =>
-                            handleArticleChange(board.id, article.id, 'content', e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <div>
-                          <button
-                            className={styles.button}
-                            onClick={() => saveArticle(article)}
-                            disabled={saving[article.id]}
-                          >
-                            저장
-                          </button>
-                          <button
-                            className={styles.buttonOutline}
-                            onClick={() => deleteArticle(article.id, board.id)}
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
   };
+  const deleteBoard = async (id) => {
+    const ok = confirm('게시판을 삭제하시겠습니까?');
+    if (!ok) return;
+    try {
+      const res = await fetchBackendClient(`/api/executive/board/delete/${id}`, {
+        method: 'POST',
+      });
+      if (res.status === 204) {
+        alert('삭제 완료');
+        setBoards((prev) => prev.filter((b) => b.id !== id));
+        setArticles((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      } else {
+        alert('삭제 실패: ' + res.status);
+      }
+    } catch (err) {
+      alert(`삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+    }
+  };
+
+  const saveArticle = async (article) => {
+    const title = article.title.trim();
+    const content = article.content.trim();
+
+    if (!title || !content || !article.board_id) {
+      alert('제목, 내용, 게시판 ID는 필수입니다.');
+      return;
+    }
+    const payload = {
+      title,
+      content,
+      board_id: Number(article.board_id),
+    };
+    try {
+      setSaving((s) => ({ ...s, [article.id]: true }));
+      const res = await fetchBackendClient(`/api/executive/article/update/${article.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.status === 204) alert('✅ 게시글 수정 완료');
+      else {
+        const error = await res.text();
+        alert('수정 실패: ' + (error || res.status));
+      }
+    } catch (err) {
+      alert('요청 실패: ' + err.message);
+    } finally {
+      setSaving((s) => ({ ...s, [article.id]: false }));
+    }
+  };
+
+  const deleteArticle = async (id, boardId) => {
+    const ok = confirm('정말 삭제하시겠습니까?');
+    if (!ok) return;
+    try {
+      const res = await fetchBackendClient(`/api/executive/article/delete/${id}`, {
+        method: 'POST',
+      });
+      if (res.status === 204) {
+        setArticles((prev) => ({
+          ...prev,
+          [boardId]: prev[boardId].filter((a) => a.id !== id),
+        }));
+      } else {
+        alert('삭제 실패: ' + res.status);
+      }
+    } catch (err) {
+      alert(`삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+    }
+  };
+
+  return (
+    <div className={styles.articleSection}>
+      {boards.map((board) => (
+        <div key={board.id} className={styles.articleSection}>
+          <h3 className={styles.articleSection}>게시판 ID {board.id}</h3>
+
+          <div className={styles.actions}>
+            <input
+              className={styles.input}
+              value={board.name}
+              onChange={(e) => handleBoardChange(board.id, e.target.value)}
+            />
+            <button className={styles.button} onClick={() => saveBoard(board)}>
+              이름 저장
+            </button>
+            <button className={styles.buttonOutline} onClick={() => deleteBoard(board.id)}>
+              게시판 삭제
+            </button>
+          </div>
+
+          <div className={styles.wrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ width: '10%' }}>ID</th>
+                  <th style={{ width: '30%' }}>제목</th>
+                  <th style={{ width: '45%' }}>내용</th>
+                  <th style={{ width: '15%' }}>작업</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(articles[board.id] || []).map((article) => (
+                  <tr key={article.id}>
+                    <td>{article.id}</td>
+                    <td>
+                      <input
+                        className={styles.input}
+                        value={article.title}
+                        onChange={(e) =>
+                          handleArticleChange(board.id, article.id, 'title', e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        className={styles.input}
+                        value={article.content}
+                        onChange={(e) =>
+                          handleArticleChange(board.id, article.id, 'content', e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <div>
+                        <button
+                          className={styles.button}
+                          onClick={() => saveArticle(article)}
+                          disabled={saving[article.id]}
+                        >
+                          저장
+                        </button>
+                        <button
+                          className={styles.buttonOutline}
+                          onClick={() => deleteArticle(article.id, board.id)}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
