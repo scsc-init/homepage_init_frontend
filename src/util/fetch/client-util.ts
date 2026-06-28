@@ -35,15 +35,11 @@ export async function getKvClient(key: string): Promise<string> {
 }
 
 export async function setKvClient(key: string, value: string | null): Promise<Response> {
-  return fetchBackendClient(
-    `/api/kv/${encodeURIComponent(key)}/update`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value }),
-    },
-    true,
-  );
+  return fetchBackendClient(`/api/kv/${encodeURIComponent(key)}/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ value }),
+  });
 }
 
 export async function fetchMajors<T = unknown[]>(): Promise<T> {
