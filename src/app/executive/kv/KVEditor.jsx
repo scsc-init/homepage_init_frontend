@@ -134,11 +134,14 @@ export default function KVEditor() {
     if (!window.confirm('값을 비웁니다. 계속하시겠습니까?')) return;
     setSaving(true);
     try {
-      const res = await fetch(`/api/kv/${encodeURIComponent(keyInput.trim())}/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: '' }),
-      });
+      const res = await fetchBackendClient(
+        `/api/kv/${encodeURIComponent(keyInput.trim())}/update`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value: '' }),
+        },
+      );
       if (res.ok) {
         setOriginal('');
         setValue('');

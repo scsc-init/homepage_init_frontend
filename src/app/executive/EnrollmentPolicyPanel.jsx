@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SEMESTER_MAP } from '@/util/constants';
 import * as AdminLayout from '@/components/AdminLayout';
+import { fetchBackendClient } from '@/util/fetch/client';
 
 const ENROLLMENT_POLICY_KV_KEY = `enrollment_grant_until`;
 export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
@@ -11,7 +12,10 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const [semester, setSemester] = useState();
   useEffect(() => {
     const getGrantPolicy = async () => {
-      const res = await fetch(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}`);
+      const res = await fetchBackendClient(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
       if (!res.ok) return;
       const data = await res.json();
       const [y, s] = data.value.split('-').map((v) => Number(v));
@@ -26,7 +30,7 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const sendData = async () => {
     setIsFetching(true);
     try {
-      const res = await fetch(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}/update`, {
+      const res = await fetchBackendClient(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: `${year}-${semester}` }),
