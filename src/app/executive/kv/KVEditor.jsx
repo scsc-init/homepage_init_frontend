@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './KV.module.css';
 import { HIDDEN_KV_KEYS } from '@/util/constants';
-import { fetchBackendClient } from '@/util/fetch/client';
+import { getKvClient, getKvsClient, setKvClient } from '@/util/fetch/client-util';
 
 const DEFAULT_PRESET_KEYS = ['footer-message'];
 
@@ -36,57 +36,26 @@ export default function KVEditor() {
 
   const loadPresetKeys = useCallback(async () => {
     try {
-      const res = await fetchBackendClient(
-        '/api/kvs',
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        true,
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const keys = data
-            .map((item) => (typeof item?.key === 'string' ? item.key.trim() : ''))
-            .filter(Boolean);
-          const uniqueKeys = Array.from(new Set([...DEFAULT_PRESET_KEYS, ...keys]));
-          setPresetKeys(uniqueKeys);
-        }
-      } else if (res.status === 401 || res.status === 403) {
-        alert('권한이 없습니다.');
-        router.refresh();
-      } else {
-        console.warn('Failed to load KV presets.');
+      const data = await getKvsClient(undefined);
+      if (Array.isArray(data)) {
+        const keys = data
+          .map((item) => (typeof item?.key === 'string' ? item.key.trim() : ''))
+          .filter(Boolean);
+        const uniqueKeys = Array.from(new Set([...DEFAULT_PRESET_KEYS, ...keys]));
+        setPresetKeys(uniqueKeys);
       }
     } catch (e) {
       console.warn('KV preset fetch failed:', e);
     }
-  }, [router]);
+  }, []);
 
   const loadKV = async () => {
     if (!keyInput.trim()) return;
     setLoading(true);
     try {
-      const res = await fetchBackendClient(`/api/kv/${encodeURIComponent(keyInput.trim())}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const raw = typeof data?.value === 'string' ? data.value : '';
-        setOriginal(raw);
-        setValue(raw);
-      } else if (res.status === 404) {
-        setOriginal('');
-        setValue('');
-      } else if (res.status === 401 || res.status === 403) {
-        alert('권한이 없습니다.');
-        router.refresh();
-      } else {
-        alert('값을 불러오지 못했습니다.');
-      }
+      const raw = await getKvClient(keyInput.trim());
+      setOriginal(raw);
+      setValue(raw);
     } catch (e) {
       alert('불러오기 실패: ' + (e?.message || '네트워크 오류'));
     } finally {
@@ -100,15 +69,7 @@ export default function KVEditor() {
     setSaving(true);
     try {
       const bodyValue = value;
-      const res = await fetchBackendClient(
-        `/api/kv/${encodeURIComponent(keyInput.trim())}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ value: bodyValue }),
-        },
-        true,
-      );
+      const res = await setKvClient(keyInput.trim(), bodyValue);
       if (res.ok) {
         const data = await res.json();
         const raw = typeof data?.value === 'string' ? data.value : '';
@@ -134,14 +95,7 @@ export default function KVEditor() {
     if (!window.confirm('값을 비웁니다. 계속하시겠습니까?')) return;
     setSaving(true);
     try {
-      const res = await fetchBackendClient(
-        `/api/kv/${encodeURIComponent(keyInput.trim())}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ value: '' }),
-        },
-      );
+      const res = await setKvClient(keyInput.trim(), '');
       if (res.ok) {
         setOriginal('');
         setValue('');
