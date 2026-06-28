@@ -12,7 +12,8 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const [semester, setSemester] = useState();
   useEffect(() => {
     const getGrantPolicy = async () => {
-      const value = await getKvClient(ENROLLMENT_POLICY_KV_KEY);
+      const value = await getKvClient(ENROLLMENT_POLICY_KV_KEY).catch(() => '');
+      if (!value) return;
       const [y, s] = value.split('-').map((v) => Number(v));
       if (!Number.isInteger(y) || !Number.isInteger(s)) return;
       setYear(y);

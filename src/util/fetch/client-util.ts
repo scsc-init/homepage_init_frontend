@@ -21,9 +21,7 @@ export async function getKvsClient(
 ): Promise<string[] | KvResponse[]> {
   if (keys !== undefined && keys.length === 0) return [];
 
-  const kvs = await fetchBackendClientJson<KvResponse[]>(buildKvsPath(keys), {}, true).catch(
-    () => [],
-  );
+  const kvs = await fetchBackendClientJson<KvResponse[]>(buildKvsPath(keys), {}, true);
 
   if (keys === undefined) return kvs;
 
