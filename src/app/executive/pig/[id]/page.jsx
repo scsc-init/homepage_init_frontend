@@ -1,6 +1,6 @@
 // src/app/executive/pig/[id]/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
-import PigEdit from './PigEdit';
+import IgEdit from '../../IgEdit';
 import IgMembersPanel from '../../IgMembersPanel';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchUserSummaries } from '@/util/fetch/server-util';
@@ -24,7 +24,7 @@ export default async function ExecutivePigPage({ params }) {
       <AdminLayout.AdminPanel>
         <h2>PIG 관리</h2>
         <AdminLayout.AdminSection>
-          <PigEdit pig={pig} />
+          <IgEdit ig={pig} is_pig />
         </AdminLayout.AdminSection>
         <h2>PIG 구성원 관리</h2>
         <AdminLayout.AdminSection>

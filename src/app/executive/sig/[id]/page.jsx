@@ -1,6 +1,6 @@
 // src/app/executive/sig/[id]/page.jsx
 import WithAuthorization from '@/components/WithAuthorization';
-import SigEdit from './SigEdit';
+import IgEdit from '../../IgEdit';
 import IgMembersPanel from '../../IgMembersPanel';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchUserSummaries } from '@/util/fetch/server-util';
@@ -24,7 +24,7 @@ export default async function ExecutiveSigPage({ params }) {
       <AdminLayout.AdminPanel>
         <h2>SIG 관리</h2>
         <AdminLayout.AdminSection>
-          <SigEdit sig={sig} />
+          <IgEdit ig={sig} is_sig />
         </AdminLayout.AdminSection>
         <h2>SIG 구성원 관리</h2>
         <AdminLayout.AdminSection>
