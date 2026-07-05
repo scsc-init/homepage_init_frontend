@@ -43,5 +43,5 @@ export async function setKvClient(key: string, value: string | null): Promise<Re
 }
 
 export async function fetchMajors<T = unknown[]>(): Promise<T> {
-  return fetchBackendClientJson<T>('/api/majors', {}, true);
+  return fetchBackendClientJson<T>('/api/majors');
 }
