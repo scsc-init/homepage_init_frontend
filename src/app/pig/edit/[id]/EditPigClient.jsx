@@ -10,25 +10,13 @@ import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
+import { mapWebsitesForForm, sanitizeWebsites } from '@/util/websites';
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   return mounted;
 }
-
-const mapWebsitesForForm = (websites = []) =>
-  (Array.isArray(websites) ? websites : []).map((site) => ({
-    url: site?.url ?? '',
-  }));
-
-const sanitizeWebsites = (websites = []) =>
-  (Array.isArray(websites) ? websites : [])
-    .map((site, index) => {
-      const url = site?.url?.trim() ?? '';
-      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
-    })
-    .filter((site) => site.url);
 
 function generateDefaultForms(pig, article) {
   return {

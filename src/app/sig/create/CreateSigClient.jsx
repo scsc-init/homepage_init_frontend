@@ -7,14 +7,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
-
-const sanitizeWebsites = (websites = []) =>
-  (Array.isArray(websites) ? websites : [])
-    .map((site, index) => {
-      const url = site?.url?.trim() ?? '';
-      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
-    })
-    .filter((site) => site.url);
+import { sanitizeWebsites } from '@/util/websites';
 
 export default function CreateSigClient({ scscGlobalStatus }) {
   const router = useRouter();
