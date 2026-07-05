@@ -72,6 +72,26 @@
   white-space: pre-wrap;
 }
 
+.pigTagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.7rem;
+  margin-top: 0.1rem;
+}
+
+.pigTagText {
+  display: inline;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--color-text-subtle);
+  font-weight: 500;
+}
+
+.pigTagText.major {
+  color: var(--color-text-body);
+  font-weight: 700;
+}
+
 #PigCreateButton {
   all: unset;
 }
@@ -117,4 +137,78 @@ body {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+.PigFilterSection {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--color-text-subtle);
+  border-radius: 0.75rem;
+  background-color: var(--color-card-bg);
+}
+
+.PigFilterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+  gap: 0.75rem;
+}
+
+.PigFilterTitle {
+  font-size: 0.94rem;
+  font-weight: 650;
+  color: var(--color-text-body);
+}
+
+.PigFilterClearButton {
+  border: none;
+  background: transparent;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  font-size: 0.88rem;
+  padding: 0;
+}
+
+.PigTagFilterList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.6rem;
+}
+
+.PigTagFilterChip {
+  border: none;
+  background: transparent;
+  color: var(--color-text-subtle);
+  padding: 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.PigTagFilterChip:hover {
+  color: var(--color-text-body);
+}
+
+.PigTagFilterChip.major {
+  font-weight: 700;
+  color: var(--color-text-body);
+}
+
+.PigTagFilterChip.active {
+  color: var(--color-text-body);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.15rem;
+}
+
+.PigListSummary {
+  width: 100%;
+  margin-bottom: 0.9rem;
+  color: var(--color-text-subtle);
+  font-size: 0.93rem;
 }

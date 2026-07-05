@@ -6,6 +6,7 @@ import PigDeleteButton from './PigDeleteButton';
 import PigMembers from './PigMembers';
 import PigOwnerHandoverButton from './PigOwnerHandoverButton';
 import PigContents from './PigContents';
+import { sortSigPigTags } from '@/components/board/SigPigTags';
 import { is_pig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 
@@ -21,6 +22,9 @@ export default function PigClient({ pig, members, articleContent, pigId }) {
     SEMESTER_MAP[Number(pig?.created_semester)] ?? `${pig?.created_semester}`;
   const hasCreated = pig?.created_year != null && pig?.created_semester != null;
   const websites = Array.isArray(pig?.websites) ? pig.websites : [];
+  const normalizedTagText = sortSigPigTags(pig?.tags)
+    .map((tag) => String(tag?.text ?? '').trim())
+    .filter(Boolean);
 
   return (
     <div className="PigDetailContainer">
@@ -32,6 +36,11 @@ export default function PigClient({ pig, members, articleContent, pigId }) {
         {pig.year}학년도 {semesterLabel}학기 · 상태: {pig.status}
       </p>
       <p className="PigDescription">{pig.description}</p>
+      {normalizedTagText.length > 0 && (
+        <div className="PigTagInline">
+          {normalizedTagText.map((text) => `#${text}`).join(' ')}
+        </div>
+      )}
       {!isLoading && me ? (
         <div className="PigActionRow">
           {is_pig_join_available(pig.status, pig.is_rolling_admission) && (

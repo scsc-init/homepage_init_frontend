@@ -3,6 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import PigForm from '@/components/board/PigForm';
+import SigTagManager from '@/components/board/SigTagManager';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -50,6 +51,7 @@ export default function EditPigClient({ pigId, pig, article }) {
   const { me, isLoading, isUnauthenticated } = useMe();
   const router = useRouter();
   const isFormSubmitted = useRef(false);
+  const tagManagerRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const mounted = useMounted();
   const [editorKey, setEditorKey] = useState(0);
@@ -134,6 +136,7 @@ export default function EditPigClient({ pigId, pig, article }) {
       });
 
       if (res.status === 204) {
+        await tagManagerRef.current?.syncTags();
         isFormSubmitted.current = true;
         alert('PIG 수정 성공!');
         router.push(`/pig/${pigId}`);
@@ -168,6 +171,16 @@ export default function EditPigClient({ pigId, pig, article }) {
           Editor={Editor}
           editorKey={editorKey}
           isCreate={false}
+        />
+      </div>
+      <div className={`CreatePigCard ${submitting ? 'is-busy' : ''}`}>
+        <SigTagManager
+          ref={tagManagerRef}
+          sigId={pigId}
+          initialTags={pig?.tags}
+          isExecutive={Boolean(me?.role >= minExecutiveLevel)}
+          disabled={submitting}
+          targetLabel="PIG"
         />
       </div>
     </div>

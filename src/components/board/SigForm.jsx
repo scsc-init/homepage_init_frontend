@@ -3,6 +3,7 @@ import EditorInput from '../form-control/EditorInput';
 import DropdownInput from '../form-control/DropdownInput';
 import ToggleInput from '../form-control/ToggleInput';
 import ButtonInput from '../form-control/ButtonInput';
+import TextListInput from '../form-control/TextListInput';
 import { SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
 
 export default function SigForm({
@@ -30,6 +31,13 @@ export default function SigForm({
         name="description"
       />
       <EditorInput label="SIG 소개" control={control} name="editor" editorKey={editorKey} />
+      <TextListInput
+        label="웹사이트"
+        name="websites"
+        register={register}
+        control={control}
+        inputKey="url"
+      />
       <DropdownInput
         label="가입 기간"
         name="is_rolling_admission"

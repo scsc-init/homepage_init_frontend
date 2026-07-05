@@ -47,6 +47,14 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.PigTagInline {
+  color: var(--color-text-subtle);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  word-break: keep-all;
+}
+
 /* 구분선 */
 .PigDivider {
   border: none;

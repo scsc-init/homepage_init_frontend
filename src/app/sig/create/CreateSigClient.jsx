@@ -44,6 +44,7 @@ export default function CreateSigClient({ scscGlobalStatus }) {
       description: '',
       editor: '',
       is_rolling_admission: scscGlobalStatus === 'active' ? 'always' : 'during_recruiting',
+      websites: [{ url: '' }],
     },
   });
 

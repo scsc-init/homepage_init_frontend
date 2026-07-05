@@ -1,6 +1,11 @@
 'use client';
 
 import SortDropdown from '@/components/board/SortDropdown';
+import {
+  filterSigPigItemsByTags,
+  SigPigTagFilter,
+  SigPigTagList,
+} from '@/components/board/SigPigTags';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -21,35 +26,8 @@ export default function SigListClient({ sigs, initialFilterTags = [] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const availableTags = useMemo(() => {
-    const map = new Map();
-
-    sigs.forEach((sig) => {
-      const tags = Array.isArray(sig?.tags) ? sig.tags : [];
-      tags.forEach((tag) => {
-        if (!tag?.text) return;
-        if (!map.has(tag.text)) {
-          map.set(tag.text, tag);
-        }
-      });
-    });
-
-    return [...map.values()].sort((a, b) => {
-      if (a.is_major !== b.is_major) return a.is_major ? -1 : 1;
-      return a.text.localeCompare(b.text);
-    });
-  }, [sigs]);
-
   const filteredSigs = useMemo(() => {
-    if (selectedTags.length === 0) return sigs;
-
-    return sigs.filter((sig) => {
-      const sigTagTexts = new Set(
-        (Array.isArray(sig?.tags) ? sig.tags : []).map((tag) => tag?.text).filter(Boolean),
-      );
-
-      return selectedTags.every((tagText) => sigTagTexts.has(tagText));
-    });
+    return filterSigPigItemsByTags(sigs, selectedTags);
   }, [sigs, selectedTags]);
 
   const sortedSigs = [...filteredSigs].sort((a, b) => {
@@ -71,19 +49,9 @@ export default function SigListClient({ sigs, initialFilterTags = [] }) {
     router.replace(next, { scroll: false });
   };
 
-  const toggleTagFilter = (tagText) => {
-    const exists = selectedTags.includes(tagText);
-    const nextTags = exists
-      ? selectedTags.filter((tag) => tag !== tagText)
-      : [...selectedTags, tagText];
-
+  const handleTagFilterChange = (nextTags) => {
     setSelectedTags(nextTags);
     updateUrlTags(nextTags);
-  };
-
-  const clearTagFilter = () => {
-    setSelectedTags([]);
-    updateUrlTags([]);
   };
 
   return (
@@ -105,42 +73,21 @@ export default function SigListClient({ sigs, initialFilterTags = [] }) {
         </div>
       </div>
 
-      <div className={styles.SigFilterSection}>
-        <div className={styles.SigFilterHeader}>
-          <span className={styles.SigFilterTitle}>태그 필터</span>
-          {selectedTags.length > 0 ? (
-            <button
-              type="button"
-              className={styles.SigFilterClearButton}
-              onClick={clearTagFilter}
-            >
-              초기화
-            </button>
-          ) : null}
-        </div>
-
-        <div className={styles.SigTagFilterList}>
-          <button
-            type="button"
-            className={`${styles.SigTagFilterChip} ${selectedTags.length === 0 ? styles.active : ''}`}
-            onClick={clearTagFilter}
-          >
-            #전체
-          </button>
-          {availableTags.map((tag) => (
-            <button
-              key={tag.id}
-              type="button"
-              className={`${styles.SigTagFilterChip} ${selectedTags.includes(tag.text) ? styles.active : ''} ${
-                tag.is_major ? styles.major : ''
-              }`}
-              onClick={() => toggleTagFilter(tag.text)}
-            >
-              #{tag.text}
-            </button>
-          ))}
-        </div>
-      </div>
+      <SigPigTagFilter
+        items={sigs}
+        selectedTags={selectedTags}
+        onChange={handleTagFilterChange}
+        classNames={{
+          section: styles.SigFilterSection,
+          header: styles.SigFilterHeader,
+          title: styles.SigFilterTitle,
+          clearButton: styles.SigFilterClearButton,
+          list: styles.SigTagFilterList,
+          chip: styles.SigTagFilterChip,
+          active: styles.active,
+          major: styles.major,
+        }}
+      />
 
       <div className={styles.SigListSummary}>
         {selectedTags.length > 0 ? (
@@ -159,7 +106,6 @@ export default function SigListClient({ sigs, initialFilterTags = [] }) {
         {sortedSigs.map((sig) => {
           const sid = String(sig.id);
           const isMine = myOwnedSigIds.has(sid);
-          const tags = Array.isArray(sig?.tags) ? sig.tags : [];
 
           return (
             <Link key={sig.id} href={`/sig/${sig.id}`} className={styles.sigLink}>
@@ -171,18 +117,13 @@ export default function SigListClient({ sigs, initialFilterTags = [] }) {
                   </span>
                 </div>
                 <div className={styles.sigDescription}>{sig.description}</div>
-                {tags.length > 0 ? (
-                  <div className={styles.sigTagList}>
-                    {tags.map((tag) => (
-                      <span
-                        key={`${sig.id}-${tag.id}`}
-                        className={`${styles.sigTagText} ${tag.is_major ? styles.major : ''}`}
-                      >
-                        #{tag.text}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
+                <SigPigTagList
+                  tags={sig?.tags}
+                  itemId={sig.id}
+                  listClassName={styles.sigTagList}
+                  tagClassName={styles.sigTagText}
+                  majorClassName={styles.major}
+                />
               </div>
             </Link>
           );

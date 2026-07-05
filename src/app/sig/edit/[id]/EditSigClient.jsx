@@ -17,6 +17,19 @@ function useMounted() {
   return mounted;
 }
 
+const mapWebsitesForForm = (websites = []) =>
+  (Array.isArray(websites) ? websites : []).map((site) => ({
+    url: site?.url ?? '',
+  }));
+
+const sanitizeWebsites = (websites = []) =>
+  (Array.isArray(websites) ? websites : [])
+    .map((site, index) => {
+      const url = site?.url?.trim() ?? '';
+      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
+    })
+    .filter((site) => site.url);
+
 function generateDefaultSigForms(sig, article) {
   return {
     title: sig.title ?? '',
@@ -27,6 +40,10 @@ function generateDefaultSigForms(sig, article) {
       typeof sig?.is_rolling_admission === 'string'
         ? sig.is_rolling_admission
         : 'during_recruiting',
+    websites:
+      sig && Array.isArray(sig.websites) && sig.websites.length > 0
+        ? mapWebsitesForForm(sig.websites)
+        : [{ url: '' }],
   };
 }
 
@@ -113,6 +130,7 @@ export default function EditSigClient({ sigId, sig, article }) {
             content: data.editor,
             should_extend: data.should_extend,
             is_rolling_admission: data.is_rolling_admission,
+            websites: sanitizeWebsites(data.websites),
           }),
         },
       );

@@ -20,6 +20,7 @@ export default function SigClient({ sig, members, articleContent, sigId }) {
   const createdSemesterLabel =
     SEMESTER_MAP[Number(sig?.created_semester)] ?? `${sig?.created_semester}`;
   const hasCreated = sig?.created_year != null && sig?.created_semester != null;
+  const websites = Array.isArray(sig?.websites) ? sig.websites : [];
 
   const normalizedTagText = Array.isArray(sig?.tags)
     ? [...sig.tags]
@@ -61,7 +62,33 @@ export default function SigClient({ sig, members, articleContent, sigId }) {
       <hr className="SigDivider" />
       <SigContents content={articleContent} />
       <hr className="SigDivider" />
+      <SigWebsites websites={websites} />
       <SigMembers owner={sig?.owner} members={members} />
     </div>
+  );
+}
+
+function SigWebsites({ websites }) {
+  if (!Array.isArray(websites) || websites.length === 0) return null;
+
+  return (
+    <section className="SigWebsitesSection" aria-labelledby="sig-websites-heading">
+      <h2 id="sig-websites-heading" className="SigWebsitesTitle">
+        관련 웹사이트
+      </h2>
+      <ul className="SigWebsitesList">
+        {websites.map((website, idx) => {
+          const label = website?.label?.trim() || website?.url;
+          const key = website?.id ?? `${website?.url}-${idx}`;
+          return (
+            <li key={key} className="SigWebsitesItem">
+              <a href={website?.url} target="_blank" rel="noreferrer noopener">
+                {label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
