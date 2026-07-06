@@ -2,6 +2,7 @@
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipPanel from './LeadershipPanel';
 import { ReadUserTable } from './UserList';
@@ -61,6 +62,23 @@ export default async function ExecutiveUserPage() {
         <AdminLayout.AdminSection>
           <ReadUserTable users={readUsersSorted} majors={majorsSafe} />
         </AdminLayout.AdminSection>
+
+        <div style={{ margin: '1rem 0 2rem' }}>
+          <Link
+            href="/executive/user/activity-logs"
+            style={{
+              display: 'inline-block',
+              padding: '0.65rem 1rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#4fc3df',
+              color: '#fff',
+              fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
+            유저 활동 기록 보기
+          </Link>
+        </div>
 
         <LeadershipPageLink />
 
