@@ -9,10 +9,10 @@ export async function generateMetadata({ params }) {
     const sig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: sig.title,
-      description: sig.description || 'SIG ìì¸ íì´ì§',
+      description: sig.description || 'SIG 상세 페이지',
       openGraph: {
         title: sig.title,
-        description: sig.description || 'SIG ìì¸ íì´ì§',
+        description: sig.description || 'SIG 상세 페이지',
         url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
       twitter: {
         card: 'summary_large_image',
         title: sig.title,
-        description: sig.description || 'SIG ìì¸ íì´ì§',
+        description: sig.description || 'SIG 상세 페이지',
         images: ['/opengraph.png'],
       },
     };
@@ -44,7 +44,7 @@ export default async function SigDetailPage({ params }) {
 
   const sigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
-    return <div className="p-6 text-center text-red-600">ì¡´ì¬íì§ ìë SIGìëë¤.</div>;
+    return <div className="p-6 text-center text-red-600">존재하지 않는 SIG입니다.</div>;
   }
   const sig = await sigRes.json();
 

@@ -9,10 +9,10 @@ export async function generateMetadata({ params }) {
     const pig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: pig.title,
-      description: pig.description || 'PIG ìì¸ íì´ì§',
+      description: pig.description || 'PIG 상세 페이지',
       openGraph: {
         title: pig.title,
-        description: pig.description || 'PIG ìì¸ íì´ì§',
+        description: pig.description || 'PIG 상세 페이지',
         url: `https://scsc.dev/pig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
       twitter: {
         card: 'summary_large_image',
         title: pig.title,
-        description: pig.description || 'PIG ìì¸ íì´ì§',
+        description: pig.description || 'PIG 상세 페이지',
         images: ['/opengraph.png'],
       },
     };
@@ -44,7 +44,7 @@ export default async function PigDetailPage({ params }) {
 
   const pigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!pigRes.ok) {
-    return <div className="p-6 text-center text-red-600">ì¡´ì¬íì§ ìë PIGìëë¤.</div>;
+    return <div className="p-6 text-center text-red-600">존재하지 않는 PIG입니다.</div>;
   }
   const pig = await pigRes.json();
 
