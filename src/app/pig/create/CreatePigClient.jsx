@@ -18,7 +18,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
     try {
-      const saved = sessionStorage.getItem('pigForm');
+      const saved = sessionStorage.getItem('sigForm');
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
