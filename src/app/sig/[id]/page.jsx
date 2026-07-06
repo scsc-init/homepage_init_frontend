@@ -1,6 +1,6 @@
 import 'highlight.js/styles/github.css';
 import './page.css';
-import SigClient from './SigClient';
+import IgClient from '@/components/ig/IgClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {
@@ -9,10 +9,10 @@ export async function generateMetadata({ params }) {
     const sig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: sig.title,
-      description: sig.description || 'SIG 상세 페이지',
+      description: sig.description || '\u0053\u0049\u0047 \uc0c1\uc138 \ud398\uc774\uc9c0',
       openGraph: {
         title: sig.title,
-        description: sig.description || 'SIG 상세 페이지',
+        description: sig.description || '\u0053\u0049\u0047 \uc0c1\uc138 \ud398\uc774\uc9c0',
         url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
       twitter: {
         card: 'summary_large_image',
         title: sig.title,
-        description: sig.description || 'SIG 상세 페이지',
+        description: sig.description || '\u0053\u0049\u0047 \uc0c1\uc138 \ud398\uc774\uc9c0',
         images: ['/opengraph.png'],
       },
     };
@@ -44,7 +44,11 @@ export default async function SigDetailPage({ params }) {
 
   const sigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
-    return <div className="p-6 text-center text-red-600">존재하지 않는 SIG입니다.</div>;
+    return (
+      <div className="p-6 text-center text-red-600">
+        {'\uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 SIG\uc785\ub2c8\ub2e4.'}
+      </div>
+    );
   }
   const sig = await sigRes.json();
 
@@ -55,5 +59,13 @@ export default async function SigDetailPage({ params }) {
 
   const article = sig.content ?? { content: '' };
 
-  return <SigClient sig={sig} members={members} articleContent={article.content} sigId={id} />;
+  return (
+    <IgClient
+      kind="sig"
+      item={sig}
+      members={members}
+      articleContent={article.content}
+      itemId={id}
+    />
+  );
 }

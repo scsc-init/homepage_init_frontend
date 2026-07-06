@@ -1,4 +1,4 @@
-import PigListClient from './PigListClient';
+import IgListClient from '@/components/ig/IgListClient';
 import './page.css';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
@@ -17,7 +17,7 @@ export default async function PigListPage({ searchParams }) {
 
   const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
   if (globalStatus.status === 'rejected') {
-    return <div>피그 정보를 불러올 수 없습니다.</div>;
+    return <div>{'피그 정보를 불러올 수 없습니다.'}</div>;
   }
   const currTerm = getCurrentTerm(globalStatus.value);
   const [pigs] = await Promise.allSettled([
@@ -27,7 +27,7 @@ export default async function PigListPage({ searchParams }) {
   ]);
 
   if (pigs.status === 'rejected') {
-    return <div>피그 정보를 불러올 수 없습니다.</div>;
+    return <div>{'피그 정보를 불러올 수 없습니다.'}</div>;
   }
 
   const allowed = new Set(['recruiting', 'active']);
@@ -38,7 +38,37 @@ export default async function PigListPage({ searchParams }) {
 
   return (
     <div id="PigListContainer">
-      <PigListClient pigs={visiblePigs} initialFilterTags={initialTags} />
+      <IgListClient
+        items={visiblePigs}
+        initialFilterTags={initialTags}
+        kindLabel="PIG"
+        basePath="/pig"
+        createHref="/pig/create"
+        classNames={{
+          header: 'PigHeader',
+          headerActions: 'PigHeaderActions',
+          createButton: 'PigCreateBtn',
+          filterSection: 'PigFilterSection',
+          filterHeader: 'PigFilterHeader',
+          filterTitle: 'PigFilterTitle',
+          filterClearButton: 'PigFilterClearButton',
+          tagFilterList: 'PigTagFilterList',
+          tagFilterChip: 'PigTagFilterChip',
+          active: 'active',
+          major: 'major',
+          listSummary: 'PigListSummary',
+          listId: 'PigList',
+          link: 'pigLink',
+          card: 'pigCard',
+          isMine: 'isMine',
+          topbar: 'pigTopbar',
+          title: 'pigTitle',
+          userCount: 'pigUserCount',
+          description: 'pigDescription',
+          tagList: 'pigTagList',
+          tagText: 'pigTagText',
+        }}
+      />
     </div>
   );
 }
