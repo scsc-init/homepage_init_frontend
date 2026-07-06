@@ -81,14 +81,8 @@ export default function IgClient({ kind, item, members, articleContent, itemId }
     <div className={config.containerClass}>
       <h1 className={config.titleClass}>{item.title}</h1>
       <p className={config.infoClass}>
-        {hasCreated
-          ? `${'\ucd5c\ucd08 \uc0dd\uc131: '}${item.created_year}${'\ud559\ub144\ub3c4 '}${createdSemesterLabel}${'\ud559\uae30 \u00b7 '}`
-          : ''}
-        {item.year}
-        {'\ud559\ub144\ub3c4 '}
-        {semesterLabel}
-        {'\ud559\uae30 \u00b7 \uc0c1\ud0dc: '}
-        {item.status}
+        {hasCreated ? `ìµì´ ìì±: ${item.created_year}íëë ${createdSemesterLabel}íê¸° Â· ` : ''}
+        {item.year}íëë {semesterLabel}íê¸° Â· ìí: {item.status}
       </p>
       <p className={config.descriptionClass}>{item.description}</p>
       {normalizedTagText.length > 0 ? (
@@ -168,7 +162,7 @@ function IgWebsites({ kind, websites }) {
   return (
     <section className={config.websitesSectionClass} aria-labelledby={headingId}>
       <h2 id={headingId} className={config.websitesTitleClass}>
-        {'\uad00\ub828 \uc6f9\uc0ac\uc774\ud2b8'}
+        ê´ë ¨ ì¹ì¬ì´í¸
       </h2>
       <ul className={config.websitesListClass}>
         {websites.map((website, idx) => {

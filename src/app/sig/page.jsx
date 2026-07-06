@@ -10,7 +10,7 @@ export default async function SigListPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
   if (globalStatus.status === 'rejected') {
-    return <div>{'시그 정보를 불러올 수 없습니다.'}</div>;
+    return <div>시그 정보를 불러올 수 없습니다.</div>;
   }
   const currTerm = getCurrentTerm(globalStatus.value);
 
@@ -28,7 +28,7 @@ export default async function SigListPage({ searchParams }) {
   ]);
 
   if (sigs.status === 'rejected') {
-    return <div>{'시그 정보를 불러올 수 없습니다.'}</div>;
+    return <div>시그 정보를 불러올 수 없습니다.</div>;
   }
 
   const allowed = new Set(['recruiting', 'active']);

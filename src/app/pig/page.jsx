@@ -17,7 +17,7 @@ export default async function PigListPage({ searchParams }) {
 
   const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
   if (globalStatus.status === 'rejected') {
-    return <div>{'피그 정보를 불러올 수 없습니다.'}</div>;
+    return <div>피그 정보를 불러올 수 없습니다.</div>;
   }
   const currTerm = getCurrentTerm(globalStatus.value);
   const [pigs] = await Promise.allSettled([
@@ -27,7 +27,7 @@ export default async function PigListPage({ searchParams }) {
   ]);
 
   if (pigs.status === 'rejected') {
-    return <div>{'피그 정보를 불러올 수 없습니다.'}</div>;
+    return <div>피그 정보를 불러올 수 없습니다.</div>;
   }
 
   const allowed = new Set(['recruiting', 'active']);

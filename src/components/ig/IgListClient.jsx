@@ -70,10 +70,7 @@ export default function IgListClient({
   return (
     <>
       <div className={classNames.header}>
-        <h1 className="text-3xl font-bold">
-          {kindLabel}
-          {'\u0020\uac8c\uc2dc\ud310'}
-        </h1>
+        <h1 className="text-3xl font-bold">{kindLabel} ê²ìí</h1>
         <div className={classNames.headerActions}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
           <button
@@ -85,8 +82,7 @@ export default function IgListClient({
             }}
             disabled={isLoading}
           >
-            {kindLabel}
-            {'\u0020\ub9cc\ub4e4\uae30'}
+            {kindLabel} ë§ë¤ê¸°
           </button>
         </div>
       </div>
@@ -110,17 +106,12 @@ export default function IgListClient({
       <div className={classNames.listSummary}>
         {selectedTags.length > 0 ? (
           <>
-            {'\uc120\ud0dd\ub41c \ud0dc\uadf8 '}
-            <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong>
-            {' \ub97c \ubaa8\ub450 \uac00\uc9c4 '} {kindLabel}{' '}
-            <strong>{sortedItems.length}</strong>
-            {'\uac1c'}
+            ì íë íê·¸ <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong> ë¥¼
+            ëª¨ë ê°ì§ {kindLabel} <strong>{sortedItems.length}</strong>ê°
           </>
         ) : (
           <>
-            {'\uc804\uccb4 '}
-            {kindLabel} <strong>{sortedItems.length}</strong>
-            {'\uac1c'}
+            ì ì²´ {kindLabel} <strong>{sortedItems.length}</strong>ê°
           </>
         )}
       </div>
@@ -135,10 +126,7 @@ export default function IgListClient({
                 <div className={classNames.topbar}>
                   <span className={classNames.title}>{item.title}</span>
                   <span className={classNames.userCount}>
-                    {item.year}
-                    {'\ub144 '}
-                    {SEMESTER_MAP[item.semester]}
-                    {'\ud559\uae30'}
+                    {item.year}ë {SEMESTER_MAP[item.semester]}íê¸°
                   </span>
                 </div>
                 <div className={classNames.description}>{item.description}</div>

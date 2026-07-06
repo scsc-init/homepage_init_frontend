@@ -9,10 +9,10 @@ export async function generateMetadata({ params }) {
     const sig = await fetchBackendServerJson('GET', `/api/sig/${id}`);
     return {
       title: sig.title,
-      description: sig.description || '\u0053\u0049\u0047 \uc0c1\uc138 \ud398\uc774\uc9c0',
+      description: sig.description || 'SIG ìì¸ íì´ì§',
       openGraph: {
         title: sig.title,
-        description: sig.description || '\u0053\u0049\u0047 \uc0c1\uc138 \ud398\uc774\uc9c0',
+        description: sig.description || 'SIG ìì¸ íì´ì§',
         url: `https://scsc.dev/sig/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
       twitter: {
         card: 'summary_large_image',
         title: sig.title,
-        description: sig.description || '\u0053\u0049\u0047 \uc0c1\uc138 \ud398\uc774\uc9c0',
+        description: sig.description || 'SIG ìì¸ íì´ì§',
         images: ['/opengraph.png'],
       },
     };
@@ -44,11 +44,7 @@ export default async function SigDetailPage({ params }) {
 
   const sigRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!sigRes.ok) {
-    return (
-      <div className="p-6 text-center text-red-600">
-        {'\uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 SIG\uc785\ub2c8\ub2e4.'}
-      </div>
-    );
+    return <div className="p-6 text-center text-red-600">ì¡´ì¬íì§ ìë SIGìëë¤.</div>;
   }
   const sig = await sigRes.json();
 
