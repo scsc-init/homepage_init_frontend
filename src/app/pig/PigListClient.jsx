@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import SortDropdown from '@/components/board/SortDropdown';
 import {

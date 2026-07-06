@@ -6,6 +6,7 @@ import SigDeleteButton from './SigDeleteButton';
 import SigMembers from './SigMembers';
 import SigOwnerHandoverButton from './SigOwnerHandoverButton';
 import SigContents from './SigContents';
+import { sortSigPigTags } from '@/components/board/SigPigTags';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 
@@ -22,15 +23,9 @@ export default function SigClient({ sig, members, articleContent, sigId }) {
   const hasCreated = sig?.created_year != null && sig?.created_semester != null;
   const websites = Array.isArray(sig?.websites) ? sig.websites : [];
 
-  const normalizedTagText = Array.isArray(sig?.tags)
-    ? [...sig.tags]
-        .sort((a, b) => {
-          if (!!a?.is_major !== !!b?.is_major) return a?.is_major ? -1 : 1;
-          return String(a?.text ?? '').localeCompare(String(b?.text ?? ''), 'ko');
-        })
-        .map((tag) => String(tag?.text ?? '').trim())
-        .filter(Boolean)
-    : [];
+  const normalizedTagText = sortSigPigTags(sig?.tags)
+    .map((tag) => String(tag?.text ?? '').trim())
+    .filter(Boolean);
 
   return (
     <div className="SigDetailContainer">

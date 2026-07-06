@@ -1,10 +1,9 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STATUS_MAP, SEMESTER_MAP, PIG_ADMISSION_LABEL_MAP } from '@/util/constants';
-import SigTagManager from '@/components/board/SigTagManager';
 import * as AdminLayout from '@/components/AdminLayout';
 
 const getLeaderUserId = (pig) => {
@@ -150,7 +149,6 @@ export default function PigExecutiveEdit({ pig: _pig }) {
   const [saving, setSaving] = useState(false);
   const [pig, setPig] = useState(_pig);
   const [selectedMember, setSelectedMember] = useState(getLeaderUserId(pig));
-  const tagManagerRef = useRef(null);
   const router = useRouter();
 
   const handleSave = async () => {
@@ -176,8 +174,6 @@ export default function PigExecutiveEdit({ pig: _pig }) {
         setSaving(false);
         return;
       }
-
-      await tagManagerRef.current?.syncTags();
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(pig)) {
@@ -247,16 +243,6 @@ export default function PigExecutiveEdit({ pig: _pig }) {
         </thead>
         <tbody>{renderPigEdit(pig, rowCtx)}</tbody>
       </AdminLayout.AdminTable>
-      <div style={{ marginTop: '16px', marginBottom: '16px' }}>
-        <SigTagManager
-          ref={tagManagerRef}
-          sigId={pig.id}
-          initialTags={_pig?.tags}
-          isExecutive
-          disabled={saving}
-          targetLabel="PIG"
-        />
-      </div>
       <div>
         <AdminLayout.AdminButton onClick={handleSave} disabled={saving}>
           저장

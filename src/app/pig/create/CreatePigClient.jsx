@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import PigForm from '@/components/board/PigForm';
@@ -7,14 +7,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
-
-const sanitizeWebsites = (websites = []) =>
-  (Array.isArray(websites) ? websites : [])
-    .map((site, index) => {
-      const url = site?.url?.trim() ?? '';
-      return { label: url || `링크 ${index + 1}`, url, sort_order: index };
-    })
-    .filter((site) => site.url);
+import { sanitizeWebsites } from '@/util/websites';
 
 export default function CreatePigClient({ scscGlobalStatus }) {
   const router = useRouter();
@@ -25,7 +18,7 @@ export default function CreatePigClient({ scscGlobalStatus }) {
   const parsed = (() => {
     if (typeof window === 'undefined') return null;
     try {
-      const saved = sessionStorage.getItem('sigForm');
+      const saved = sessionStorage.getItem('pigForm');
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
