@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import './page.css';
 import JoinButton from './JoinButton.jsx';
-import { getKVValues } from '@/util/fetchAPIData';
+import { getKVValues } from '@/util/fetch/server-util';
 
 export default async function Contact() {
   const kvMap = await getKVValues([
