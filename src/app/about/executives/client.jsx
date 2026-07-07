@@ -1,6 +1,7 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { getKvsClient } from '@/util/fetch/client-util';
 import { useEffect, useRef, useState } from 'react';
 import {
   minExecutiveLevel,
@@ -41,27 +42,19 @@ export default function ExecutivesClient() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [execRes, leadersRes] = await Promise.all([
+        const [execRes, kvValues] = await Promise.all([
           fetchBackendClient('/api/user/executives', { cache: 'no-store' }),
-          fetchBackendClient('/api/leadership', { cache: 'no-store' }),
+          getKvsClient(['main-president', 'vice-president']).catch(() => []),
         ]);
 
         if (!execRes.ok) throw new Error('failed');
 
-        const [execJson, leadersJson] = await Promise.all([
-          execRes.json(),
-          leadersRes.ok ? leadersRes.json() : null,
-        ]);
+        const execJson = await execRes.json();
 
+        const [presidentValue, vicePresidentValue] = Array.isArray(kvValues) ? kvValues : [];
         const leadership = {
-          presidentId:
-            leadersJson && typeof leadersJson.president_id === 'string'
-              ? leadersJson.president_id
-              : null,
-          vicePresidentIds:
-            leadersJson && typeof leadersJson.vice_president_id === 'string'
-              ? leadersJson.vice_president_id
-              : null,
+          presidentId: presidentValue || null,
+          vicePresidentIds: vicePresidentValue || null,
         };
 
         const raw = Array.isArray(execJson) ? execJson : [];
