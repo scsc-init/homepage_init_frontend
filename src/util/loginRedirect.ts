@@ -194,8 +194,18 @@ export function pushLoginWithRedirect(
   options: { redirectTo?: string } = {},
 ): void {
   const { redirectTo } = options;
-  debugLog('push_login_with_redirect', { redirectTo, current: getCurrentPath() });
-  setRedirectAfterLogin(redirectTo);
+  const target = redirectTo ?? getCurrentPath();
+
+  debugLog('push_login_with_redirect', { redirectTo, current: getCurrentPath(), target });
+
+  clearRedirectAfterLogin();
+
+  if (target && isAllowedRedirectPath(target)) {
+    setRedirectAfterLogin(target);
+    router.push(`/us/login?redirect=${encodeURIComponent(target)}`);
+    return;
+  }
+
   router.push('/us/login');
 }
 
@@ -211,7 +221,17 @@ export function replaceLoginWithRedirect(
   options: { redirectTo?: string } = {},
 ): void {
   const { redirectTo } = options;
-  debugLog('replace_login_with_redirect', { redirectTo, current: getCurrentPath() });
-  setRedirectAfterLogin(redirectTo);
+  const target = redirectTo ?? getCurrentPath();
+
+  debugLog('replace_login_with_redirect', { redirectTo, current: getCurrentPath(), target });
+
+  clearRedirectAfterLogin();
+
+  if (target && isAllowedRedirectPath(target)) {
+    setRedirectAfterLogin(target);
+    router.replace(`/us/login?redirect=${encodeURIComponent(target)}`);
+    return;
+  }
+
   router.replace('/us/login');
 }
