@@ -39,7 +39,7 @@ export default function PigListClient({ pigs }) {
           const pid = String(pig.id);
           const isMine = myOwnedPigIds.has(pid);
           return (
-            <Link key={pig.id} href={`/pig/${pig.id}`} className="pigLink">
+            <Link key={pig.id} href={`/pig/${pig.id}`} prefetch={false} className="pigLink">
               <div className={`pigCard ${isMine ? 'isMine' : ''}`}>
                 <div className="pigTopbar">
                   <span className="pigTitle">{pig.title}</span>
