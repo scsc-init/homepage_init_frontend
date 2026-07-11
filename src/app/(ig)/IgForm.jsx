@@ -29,6 +29,7 @@ export default function IgForm({
   onSubmit,
   editorKey,
   isCreate,
+  afterFields,
 }) {
   const config = FORM_CONFIG[kind];
 
@@ -79,6 +80,7 @@ export default function IgForm({
       {!isCreate ? (
         <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
       ) : null}
+      {afterFields ? <div style={{ margin: '3rem 0' }}>{afterFields}</div> : null}
 
       <ButtonInput isSubmit={true}>
         {isCreate ? `${config.upperLabel} 생성` : `${config.upperLabel} 수정`}

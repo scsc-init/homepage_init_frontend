@@ -82,7 +82,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
 
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
+        const confirmed = confirm('작성중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
         if (!confirmed) {
           router.events.emit('routeChangeError');
           throw 'Route change aborted by user.';
@@ -176,16 +176,16 @@ export default function EditIgClient({ kind, itemId, item, article }) {
           onSubmit={onSubmit}
           editorKey={editorKey}
           isCreate={false}
-        />
-      </div>
-      <div className={styles.card}>
-        <SigTagManager
-          ref={tagManagerRef}
-          sigId={itemId}
-          initialTags={item?.tags}
-          isExecutive={Boolean(me?.role >= minExecutiveLevel)}
-          disabled={submitting}
-          targetLabel={config.targetLabel}
+          afterFields={
+            <SigTagManager
+              ref={tagManagerRef}
+              sigId={itemId}
+              initialTags={item?.tags}
+              isExecutive={Boolean(me?.role >= minExecutiveLevel)}
+              disabled={submitting}
+              targetLabel={config.targetLabel}
+            />
+          }
         />
       </div>
     </div>
