@@ -117,7 +117,12 @@ export default function IgListClient({
           const itemKey = String(item.id);
           const isMine = myOwnedIds.has(itemKey);
           return (
-            <Link key={item.id} href={`${basePath}/${item.id}`} className={styles.link}>
+            <Link
+              key={item.id}
+              href={`${basePath}/${item.id}`}
+              prefetch={false}
+              className={styles.link}
+            >
               <div className={`${styles.card} ${isMine ? styles.isMine : ''}`}>
                 <div className={styles.topbar}>
                   <span className={styles.title}>{item.title}</span>

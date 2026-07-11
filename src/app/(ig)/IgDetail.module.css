@@ -85,7 +85,7 @@
   line-height: 1.75;
   font-size: 1rem;
   color: var(--color-text-subtle);
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .actionButton {
@@ -314,7 +314,7 @@
   border-radius: 9999px;
   border: 3px solid var(--color-text-subtle);
   border-top-color: var(--color-primary);
-  animation: IgSpin 0.9s linear infinite;
+  animation: ig-spin 0.9s linear infinite;
 }
 
 .compillingOverlay {
@@ -341,16 +341,16 @@
   width: 1.5ch;
   overflow: hidden;
   vertical-align: bottom;
-  animation: CompillingDots 1.4s steps(4, end) infinite;
+  animation: compilling-dots 1.4s steps(4, end) infinite;
 }
 
-@keyframes IgSpin {
+@keyframes ig-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-@keyframes CompillingDots {
+@keyframes compilling-dots {
   0% {
     content: '';
   }

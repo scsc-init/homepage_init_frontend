@@ -1,4 +1,5 @@
 import styles from './IgDetail.module.css';
+import { getMemberIdentity } from './memberIdentity';
 
 const MEMBER_CONFIG = {
   sig: {
@@ -14,7 +15,7 @@ const MEMBER_CONFIG = {
 export default function IgMembers({ kind, owner, members }) {
   const config = MEMBER_CONFIG[kind];
   const rawList = Array.isArray(members) ? members : [];
-  const ownerIndex = !!owner ? rawList.findIndex((m) => m.id === owner) : -1;
+  const ownerIndex = !!owner ? rawList.findIndex((m) => getMemberIdentity(m) === owner) : -1;
   const list =
     ownerIndex === -1
       ? rawList
@@ -39,12 +40,12 @@ export default function IgMembers({ kind, owner, members }) {
       ) : (
         <ul className={styles.memberList}>
           {list.map((m) =>
-            m.id === owner ? (
-              <li key={m.id} className={styles.memberOwner}>
+            getMemberIdentity(m) === owner ? (
+              <li key={getMemberIdentity(m)} className={styles.memberOwner}>
                 {m.name}
               </li>
             ) : (
-              <li key={m.id} className={styles.memberChip}>
+              <li key={getMemberIdentity(m)} className={styles.memberChip}>
                 {m.name}
               </li>
             ),

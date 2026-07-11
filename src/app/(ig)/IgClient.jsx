@@ -13,6 +13,7 @@ import {
   minExecutiveLevel,
   SEMESTER_MAP,
 } from '@/util/constants';
+import { getMemberIdentity } from './memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
 import styles from './IgDetail.module.css';
 
@@ -30,7 +31,7 @@ export default function IgClient({ kind, item, members, articleContent, itemId }
     return null;
   }
 
-  const isMember = members.some((m) => (m?.id ?? m?.user_id) === me?.id);
+  const isMember = members.some((m) => getMemberIdentity(m) === me?.id);
   const canEdit =
     !!me &&
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || item?.owner === me?.id);

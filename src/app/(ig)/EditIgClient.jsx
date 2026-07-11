@@ -1,7 +1,6 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
-import Editor from '@/components/board/EditorWrapper.jsx';
 import IgForm from '@/app/(ig)/IgForm';
 import SigTagManager from '@/components/board/SigTagManager';
 import styles from '@/app/(ig)/IgEditorPage.module.css';
@@ -175,7 +174,6 @@ export default function EditIgClient({ kind, itemId, item, article }) {
           control={control}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          Editor={Editor}
           editorKey={editorKey}
           isCreate={false}
         />

@@ -2,14 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import styles from './IgDetail.module.css';
 
 export default function EditIgButton({ kind, itemId, canEdit }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   if (!canEdit) return null;
-
-  const prefix = kind === 'sig' ? 'Sig' : 'Pig';
 
   const handleEdit = () => {
     setIsLoading(true);
@@ -18,7 +17,7 @@ export default function EditIgButton({ kind, itemId, canEdit }) {
 
   return (
     <button
-      className={`${prefix}Button is-edit`}
+      className={styles.actionButton}
       onClick={handleEdit}
       type="button"
       disabled={isLoading}

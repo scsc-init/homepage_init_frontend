@@ -3,13 +3,18 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { STATUS_MAP, SEMESTER_MAP, SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+import {
+  STATUS_MAP,
+  SEMESTER_MAP,
+  SIG_ADMISSION_LABEL_MAP,
+  PIG_ADMISSION_LABEL_MAP,
+} from '@/util/constants';
 import SigTagManager from '@/components/board/SigTagManager';
 import * as AdminLayout from '@/components/AdminLayout';
 
-const getLeaderUserId = (sig) => {
-  if (sig?.owner == null) return '';
-  return String(sig.owner);
+const getLeaderUserId = (ig) => {
+  if (ig?.owner == null) return '';
+  return String(ig.owner);
 };
 
 const createWebsiteFormKey = (site, index) =>
@@ -36,29 +41,29 @@ const sanitizeWebsites = (websites = []) =>
       sort_order: index,
     }));
 
-const renderSigEdit = (sig, ctx) => {
-  const sigIdStr = String(sig.id);
-  const ownerIdStr = sig?.owner != null ? String(sig.owner) : '';
-  const members = Array.isArray(sig?.members) ? sig.members : [];
-  const leaderId = getLeaderUserId(sig);
+const renderIgEdit = (ig, ctx) => {
+  const igIdStr = String(ig.id);
+  const ownerIdStr = ig?.owner != null ? String(ig.owner) : '';
+  const members = Array.isArray(ig?.members) ? ig.members : [];
+  const leaderId = getLeaderUserId(ig);
   const selected = ctx.selectedMember ?? leaderId;
 
   return (
     <>
       <tr>
         <td>ID</td>
-        <td>{sig.id}</td>
+        <td>{ig.id}</td>
       </tr>
 
-      {renderSigRow(sig, ctx, 'title', '이름')}
-      {renderSigRow(sig, ctx, 'description', '설명')}
-      {renderSigRow(sig, ctx, 'content', '내용')}
+      {renderIgRow(ig, ctx, 'title', '이름')}
+      {renderIgRow(ig, ctx, 'description', '설명')}
+      {renderIgRow(ig, ctx, 'content', '내용')}
 
       <tr>
         <td>웹사이트</td>
         <td>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {(Array.isArray(sig.websites) ? sig.websites : []).map((website, index) => (
+            {(Array.isArray(ig.websites) ? ig.websites : []).map((website, index) => (
               <AdminLayout.AdminFlex key={website._key}>
                 <AdminLayout.AdminInput
                   value={website?.url ?? ''}
@@ -91,8 +96,8 @@ const renderSigEdit = (sig, ctx) => {
         <td>상태</td>
         <td>
           <AdminLayout.AdminSelect
-            value={sig.status ?? ''}
-            onChange={(e) => ctx.updateSigField('status', e.target.value)}
+            value={ig.status ?? ''}
+            onChange={(e) => ctx.updateIgField('status', e.target.value)}
           >
             {Object.keys(STATUS_MAP).map((key) => (
               <option key={key} value={key}>
@@ -103,14 +108,14 @@ const renderSigEdit = (sig, ctx) => {
         </td>
       </tr>
 
-      {renderSigRow(sig, ctx, 'year', '연도')}
+      {renderIgRow(ig, ctx, 'year', '연도')}
 
       <tr>
         <td>학기</td>
         <td>
           <AdminLayout.AdminSelect
-            value={sig.semester ?? ''}
-            onChange={(e) => ctx.updateSigField('semester', e.target.value)}
+            value={ig.semester ?? ''}
+            onChange={(e) => ctx.updateIgField('semester', e.target.value)}
           >
             {Object.keys(SEMESTER_MAP).map((key) => (
               <option key={key} value={key}>
@@ -123,14 +128,14 @@ const renderSigEdit = (sig, ctx) => {
 
       <tr>
         <td>최초 생성 연도</td>
-        <td>{sig.created_year ?? ''}</td>
+        <td>{ig.created_year ?? ''}</td>
       </tr>
 
       <tr>
         <td>최초 생성 학기</td>
         <td>
-          {sig.created_semester != null
-            ? `${SEMESTER_MAP[Number(sig.created_semester)] ?? sig.created_semester}학기`
+          {ig.created_semester != null
+            ? `${SEMESTER_MAP[Number(ig.created_semester)] ?? ig.created_semester}학기`
             : ''}
         </td>
       </tr>
@@ -139,8 +144,8 @@ const renderSigEdit = (sig, ctx) => {
         <td>연장 신청</td>
         <td>
           <AdminLayout.AdminSelectBool
-            value={String(Boolean(sig.should_extend))}
-            onChange={(e) => ctx.updateSigField('should_extend', e.target.value === 'true')}
+            value={String(Boolean(ig.should_extend))}
+            onChange={(e) => ctx.updateIgField('should_extend', e.target.value === 'true')}
           >
             <option value="true">예</option>
             <option value="false">아니오</option>
@@ -152,20 +157,27 @@ const renderSigEdit = (sig, ctx) => {
         <td>가입기간</td>
         <td>
           <AdminLayout.AdminSelectBoolWide
-            value={sig['is_rolling_admission'] ?? SIG_ADMISSION_LABEL_MAP.during_recruiting}
-            onChange={(e) => ctx.updateSigField('is_rolling_admission', e.target.value)}
+            value={ig['is_rolling_admission'] ?? 'during_recruiting'}
+            onChange={(e) => ctx.updateIgField('is_rolling_admission', e.target.value)}
           >
-            <option value="always">{SIG_ADMISSION_LABEL_MAP.always}</option>
-            <option value="never">{SIG_ADMISSION_LABEL_MAP.never}</option>
+            <option value="always">
+              {(ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP).always}
+            </option>
+            <option value="never">
+              {(ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP).never}
+            </option>
             <option value="during_recruiting">
-              {SIG_ADMISSION_LABEL_MAP.during_recruiting}
+              {
+                (ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP)
+                  .during_recruiting
+              }
             </option>
           </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
 
       <tr>
-        <td>SIG장</td>
+        <td>{ctx.is_sig ? 'SIG장' : 'PIG장'}</td>
         <td>
           <AdminLayout.AdminSelect
             value={selected || ''}
@@ -175,9 +187,12 @@ const renderSigEdit = (sig, ctx) => {
             {members.map((m, idx) => {
               const mid = m?.user_id != null ? String(m.user_id) : '';
               const name = m?.user?.name ?? '';
-              const label = mid && mid === ownerIdStr ? `[SIG장] ${name}` : name;
+              const label =
+                mid && mid === ownerIdStr
+                  ? `[${ctx.is_sig ? 'SIG장' : 'PIG장'}] ${name}`
+                  : name;
               return (
-                <option key={`${sigIdStr}-${mid || name}-${idx}`} value={mid}>
+                <option key={`${igIdStr}-${mid || name}-${idx}`} value={mid}>
                   {label}
                 </option>
               );
@@ -189,51 +204,58 @@ const renderSigEdit = (sig, ctx) => {
   );
 };
 
-function renderSigRow(sig, ctx, attrName, attrLabel) {
+function renderIgRow(ig, ctx, attrName, attrLabel) {
   return (
     <tr>
       <td>{attrLabel}</td>
       <td>
         <AdminLayout.AdminInput
-          value={sig[attrName] ?? ''}
-          onChange={(e) => ctx.updateSigField(attrName, e.target.value)}
+          value={ig[attrName] ?? ''}
+          onChange={(e) => ctx.updateIgField(attrName, e.target.value)}
         />
       </td>
     </tr>
   );
 }
 
-export default function SigExecutiveEdit({ sig: _sig }) {
+export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = false }) {
   const [saving, setSaving] = useState(false);
-  const [sig, setSig] = useState({
-    ..._sig,
-    websites: normalizeWebsitesForForm(_sig?.websites),
+  const [ig, setIg] = useState({
+    ..._ig,
+    websites: normalizeWebsitesForForm(_ig?.websites),
   });
-  const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_sig));
+  const [selectedMember, setSelectedMember] = useState(getLeaderUserId(_ig));
   const tagManagerRef = useRef(null);
   const router = useRouter();
+
+  if (is_sig === is_pig) {
+    console.error('IgExecutiveEdit: is_sig and is_pig must differ');
+    return null;
+  }
+
+  const igLabel = is_sig ? 'SIG' : 'PIG';
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await fetchBackendClient(`/api/executive/sig/${sig.id}/update`, {
+      const res1 = await fetchBackendClient(`/api/executive/sig/${ig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: sig.title,
-          description: sig.description,
-          content: sig.content,
-          status: sig.status,
-          year: sig.year,
-          semester: sig.semester,
-          should_extend: Boolean(sig.should_extend),
-          is_rolling_admission: String(sig.is_rolling_admission),
-          websites: sanitizeWebsites(sig.websites),
+          title: ig.title,
+          description: ig.description,
+          content: ig.content,
+          status: ig.status,
+          year: ig.year,
+          semester: ig.semester,
+          should_extend: Boolean(ig.should_extend),
+          is_rolling_admission: String(ig.is_rolling_admission),
+          websites: sanitizeWebsites(ig.websites),
         }),
       });
       if (!res1.ok) {
         const msg1 = await res1.json();
-        alert(`저장 실패. SIG 정보 수정: ${msg1?.detail ?? res1.status}`);
+        alert(`저장 실패. ${igLabel} 정보 수정: ${msg1?.detail ?? res1.status}`);
         setSaving(false);
         return;
       }
@@ -241,8 +263,8 @@ export default function SigExecutiveEdit({ sig: _sig }) {
       await tagManagerRef.current?.syncTags();
 
       let res2 = null;
-      if (selectedMember !== getLeaderUserId(sig)) {
-        res2 = await fetchBackendClient(`/api/executive/sig/${sig.id}/handover`, {
+      if (selectedMember !== getLeaderUserId(ig)) {
+        res2 = await fetchBackendClient(`/api/executive/sig/${ig.id}/handover`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
@@ -251,7 +273,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
       if (!res2 || res2.ok) alert('저장 완료');
       else {
         const msg2 = res2 ? await res2.json() : undefined;
-        alert(`저장 실패. SIG장 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
+        alert(`저장 실패. ${igLabel} 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
       }
       router.refresh();
     } catch (err) {
@@ -269,7 +291,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
         method: 'POST',
       });
       if (res.status === 204) {
-        router.replace('/executive/sig');
+        router.replace(is_sig ? '/executive/sig' : '/executive/pig');
       } else {
         const msg = await res.json();
         alert('삭제 실패: ' + (msg.detail ?? res.status));
@@ -281,12 +303,12 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     }
   };
 
-  const updateSigField = (field, value) => {
-    setSig((prev) => ({ ...prev, [field]: value }));
+  const updateIgField = (field, value) => {
+    setIg((prev) => ({ ...prev, [field]: value }));
   };
 
   const updateWebsiteUrl = (index, value) => {
-    setSig((prev) => ({
+    setIg((prev) => ({
       ...prev,
       websites: (Array.isArray(prev.websites) ? prev.websites : []).map((website, i) =>
         i === index ? { ...website, url: value } : website,
@@ -295,7 +317,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   };
 
   const addWebsite = () => {
-    setSig((prev) => ({
+    setIg((prev) => ({
       ...prev,
       websites: [
         ...(Array.isArray(prev.websites) ? prev.websites : []),
@@ -305,7 +327,7 @@ export default function SigExecutiveEdit({ sig: _sig }) {
   };
 
   const removeWebsite = (index) => {
-    setSig((prev) => ({
+    setIg((prev) => ({
       ...prev,
       websites: (Array.isArray(prev.websites) ? prev.websites : []).filter(
         (_, i) => i !== index,
@@ -317,12 +339,13 @@ export default function SigExecutiveEdit({ sig: _sig }) {
     saving,
     selectedMember,
     setSelectedMember,
-    updateSigField,
+    updateIgField,
     updateWebsiteUrl,
     addWebsite,
     removeWebsite,
     handleSave,
     handleDelete,
+    is_sig,
   };
 
   return (
@@ -337,22 +360,24 @@ export default function SigExecutiveEdit({ sig: _sig }) {
             <th>값</th>
           </tr>
         </thead>
-        <tbody>{renderSigEdit(sig, rowCtx)}</tbody>
+        <tbody>{renderIgEdit(ig, rowCtx)}</tbody>
       </AdminLayout.AdminTable>
-      <div style={{ marginTop: '16px', marginBottom: '16px' }}>
-        <SigTagManager
-          ref={tagManagerRef}
-          sigId={sig.id}
-          initialTags={_sig?.tags}
-          isExecutive
-          disabled={saving}
-        />
-      </div>
+      {is_sig ? (
+        <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+          <SigTagManager
+            ref={tagManagerRef}
+            sigId={ig.id}
+            initialTags={_ig?.tags}
+            isExecutive
+            disabled={saving}
+          />
+        </div>
+      ) : null}
       <div>
         <AdminLayout.AdminButton onClick={handleSave} disabled={saving}>
           저장
         </AdminLayout.AdminButton>
-        <AdminLayout.AdminButton onClick={() => handleDelete(sig.id)} disabled={saving}>
+        <AdminLayout.AdminButton onClick={() => handleDelete(ig.id)} disabled={saving}>
           삭제
         </AdminLayout.AdminButton>
       </div>

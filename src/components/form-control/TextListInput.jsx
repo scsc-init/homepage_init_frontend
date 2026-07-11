@@ -34,7 +34,7 @@ export default function TextListInput({ label, name, register, control, inputKey
       />
       <div className={styles.currentTextList}>
         {fields.map((field, index) => {
-          if (field[inputKey] === '') return <></>;
+          if (field[inputKey] === '') return null;
 
           return (
             <Fragment key={field.id}>

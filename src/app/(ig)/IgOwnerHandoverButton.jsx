@@ -5,6 +5,7 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import styles from './IgDetail.module.css';
+import { getMemberIdentity } from './memberIdentity';
 
 const LABELS = {
   sig: {
@@ -64,7 +65,7 @@ export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
       const res = await fetchBackendClient(`/api/sig/${igId}/handover`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ new_owner: nextOwner.id }),
+        body: JSON.stringify({ new_owner: getMemberIdentity(nextOwner) }),
       });
 
       if (res.ok) {
@@ -83,7 +84,7 @@ export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
     }
   };
 
-  const candidates = memberData.filter((member) => member.id !== owner);
+  const candidates = memberData.filter((member) => getMemberIdentity(member) !== owner);
 
   return (
     <div className={styles.memberDropdown} ref={dropdownRef}>
@@ -103,7 +104,7 @@ export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
           ) : (
             <ul className={styles.memberMenuList}>
               {candidates.map((member) => (
-                <li key={member.id}>
+                <li key={getMemberIdentity(member)}>
                   <button
                     type="button"
                     disabled={pending}
