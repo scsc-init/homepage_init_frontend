@@ -1,6 +1,5 @@
 import 'highlight.js/styles/github.css';
-import './page.css';
-import SigClient from './SigClient';
+import IgClient from '@/app/(ig)/IgClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {
@@ -55,5 +54,13 @@ export default async function SigDetailPage({ params }) {
 
   const article = sig.content ?? { content: '' };
 
-  return <SigClient sig={sig} members={members} articleContent={article.content} sigId={id} />;
+  return (
+    <IgClient
+      kind="sig"
+      item={sig}
+      members={members}
+      articleContent={article.content}
+      itemId={id}
+    />
+  );
 }

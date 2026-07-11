@@ -1,14 +1,15 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import styles from './IgDetail.module.css';
 
-export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
-  const router = useRouter();
-  const [isMember, setIsMember] = useState(!!initialIsMember);
+export default function IgDeleteButton({ kind, itemId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
+  const router = useRouter();
+  const upperLabel = kind.toUpperCase();
 
   const readError = async (res) => {
     const base = `HTTP ${res.status}`;
@@ -26,59 +27,61 @@ export default function SigJoinLeaveButton({ sigId, initialIsMember = false }) {
     }
   };
 
-  const join = async () => {
+  const deleteBySelf = async () => {
     try {
       setPending(true);
-      const res = await fetchBackendClient(`/api/sig/${sigId}/member/join`, { method: 'POST' });
-      if (res.ok) {
-        alert('SIG 가입 성공!');
-        setIsMember(true);
-        router.refresh();
-      } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
-        replaceLoginWithRedirect(router);
-      } else {
-        alert('SIG 가입 실패: ' + (await readError(res)));
-      }
-    } catch (e) {
-      alert('SIG 가입 실패: ' + (e?.message || '네트워크 오류'));
-    } finally {
-      setPending(false);
-    }
-  };
-
-  const leave = async () => {
-    try {
-      setPending(true);
-      const res = await fetchBackendClient(`/api/sig/${sigId}/member/leave`, {
+      const res = await fetchBackendClient(`/api/sig/${itemId}/delete`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
-        alert('SIG 탈퇴 성공!');
-        setIsMember(false);
+        alert(`${upperLabel} 비활성화 성공!`);
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
         replaceLoginWithRedirect(router);
       } else {
-        alert('SIG 탈퇴 실패: ' + (await readError(res)));
+        alert(`${upperLabel} 비활성화 실패: ` + (await readError(res)));
       }
     } catch (e) {
-      alert('SIG 탈퇴 실패: ' + (e?.message || '네트워크 오류'));
+      alert(`${upperLabel} 비활성화 실패: ` + (e?.message || '네트워크 오류'));
     } finally {
       setPending(false);
     }
   };
 
-  return (
+  const deleteByExec = async () => {
+    try {
+      setPending(true);
+      const res = await fetchBackendClient(`/api/sig/${itemId}/delete/executive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (res.ok) {
+        alert(`${upperLabel} 비활성화 성공!`);
+        router.refresh();
+      } else if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        replaceLoginWithRedirect(router);
+      } else {
+        alert(`${upperLabel} 비활성화 실패: ` + (await readError(res)));
+      }
+    } catch (e) {
+      alert(`${upperLabel} 비활성화 실패: ` + (e?.message || '네트워크 오류'));
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return canDelete ? (
     <button
       type="button"
-      className={`SigButton ${isMember ? 'is-leave' : 'is-join'}`}
-      onClick={isMember ? leave : join}
+      className={`${styles.actionButton} ${styles.deleteButton}`}
+      onClick={isOwner ? deleteBySelf : deleteByExec}
       disabled={pending}
       aria-busy={pending}
     >
-      {isMember ? '탈퇴하기' : '가입하기'}
+      비활성화
     </button>
-  );
+  ) : null;
 }

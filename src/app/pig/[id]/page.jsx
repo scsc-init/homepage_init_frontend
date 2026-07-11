@@ -1,6 +1,5 @@
 import 'highlight.js/styles/github.css';
-import './page.css';
-import PigClient from './PigClient';
+import IgClient from '@/app/(ig)/IgClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {
@@ -55,5 +54,13 @@ export default async function PigDetailPage({ params }) {
 
   const article = pig.content ?? { content: '' };
 
-  return <PigClient pig={pig} members={members} articleContent={article.content} pigId={id} />;
+  return (
+    <IgClient
+      kind="pig"
+      item={pig}
+      members={members}
+      articleContent={article.content}
+      itemId={id}
+    />
+  );
 }
