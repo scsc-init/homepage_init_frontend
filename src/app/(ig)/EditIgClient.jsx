@@ -2,8 +2,9 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import Editor from '@/components/board/EditorWrapper.jsx';
-import SigForm from '@/components/board/SigForm';
+import IgForm from '@/app/(ig)/IgForm';
 import SigTagManager from '@/components/board/SigTagManager';
+import styles from '@/app/(ig)/IgEditorPage.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -12,30 +13,44 @@ import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 import { mapWebsitesForForm, sanitizeWebsites } from '@/util/websites';
 
+const EDIT_CONFIG = {
+  sig: {
+    upperLabel: 'SIG',
+    routeBase: '/sig',
+    targetLabel: undefined,
+  },
+  pig: {
+    upperLabel: 'PIG',
+    routeBase: '/pig',
+    targetLabel: 'PIG',
+  },
+};
+
 function useMounted() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   return mounted;
 }
 
-function generateDefaultSigForms(sig, article) {
+function generateDefaultForms(item, article) {
   return {
-    title: sig.title ?? '',
-    description: sig.description ?? '',
-    editor: article.content ?? '',
-    should_extend: sig.should_extend ?? false,
+    title: item?.title ?? '',
+    description: item?.description ?? '',
+    editor: article?.content ?? '',
+    should_extend: item?.should_extend ?? false,
     is_rolling_admission:
-      typeof sig?.is_rolling_admission === 'string'
-        ? sig.is_rolling_admission
+      typeof item?.is_rolling_admission === 'string'
+        ? item.is_rolling_admission
         : 'during_recruiting',
     websites:
-      sig && Array.isArray(sig.websites) && sig.websites.length > 0
-        ? mapWebsitesForForm(sig.websites)
+      item && Array.isArray(item.websites) && item.websites.length > 0
+        ? mapWebsitesForForm(item.websites)
         : [{ url: '' }],
   };
 }
 
-export default function EditSigClient({ sigId, sig, article }) {
+export default function EditIgClient({ kind, itemId, item, article }) {
+  const config = EDIT_CONFIG[kind];
   const { me, isLoading, isUnauthenticated } = useMe();
   const router = useRouter();
   const isFormSubmitted = useRef(false);
@@ -55,7 +70,7 @@ export default function EditSigClient({ sigId, sig, article }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: generateDefaultSigForms(sig, article),
+    defaultValues: generateDefaultForms(item, article),
   });
 
   useEffect(() => {
@@ -86,11 +101,11 @@ export default function EditSigClient({ sigId, sig, article }) {
   }, [isDirty, router]);
 
   useEffect(() => {
-    if (sig && article && mounted && !isDirty) {
-      reset(generateDefaultSigForms(sig, article));
-      setEditorKey((k) => k + 1);
+    if (item && article && mounted && !isDirty) {
+      reset(generateDefaultForms(item, article));
+      setEditorKey((key) => key + 1);
     }
-  }, [sig, article, mounted, isDirty, reset]);
+  }, [item, article, mounted, isDirty, reset]);
 
   const onSubmit = async (data) => {
     if (submitting) return;
@@ -99,43 +114,45 @@ export default function EditSigClient({ sigId, sig, article }) {
       alert('잠시 뒤 다시 시도해주세요');
       return;
     } else if (!me.discord_id) {
-      if (!confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?'))
+      if (
+        !confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?')
+      ) {
         return;
+      }
     }
     setSubmitting(true);
 
     try {
-      const res = await fetchBackendClient(
+      const endpoint =
         me.role >= minExecutiveLevel
-          ? `/api/sig/${sigId}/update/executive`
-          : `/api/sig/${sigId}/update`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            content: data.editor,
-            should_extend: data.should_extend,
-            is_rolling_admission: data.is_rolling_admission,
-            websites: sanitizeWebsites(data.websites),
-          }),
-        },
-      );
+          ? `/api/sig/${itemId}/update/executive`
+          : `/api/sig/${itemId}/update`;
+
+      const res = await fetchBackendClient(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          content: data.editor,
+          should_extend: data.should_extend,
+          is_rolling_admission: data.is_rolling_admission,
+          websites: sanitizeWebsites(data.websites),
+        }),
+      });
 
       if (res.status === 204) {
         await tagManagerRef.current?.syncTags();
         isFormSubmitted.current = true;
-        alert('SIG 수정 성공!');
-        router.push(`/sig/${sigId}`);
+        alert(`${config.upperLabel} 수정 성공!`);
+        router.push(`${config.routeBase}/${itemId}`);
         router.refresh();
       } else if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
-
-        alert('SIG 수정 실패: ' + (err.detail ?? JSON.stringify(err)));
+        alert(`${config.upperLabel} 수정 실패: ` + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
       alert(err.message || '네트워크 오류');
@@ -147,12 +164,13 @@ export default function EditSigClient({ sigId, sig, article }) {
   if (isLoading || isUnauthenticated || !me) return null;
 
   return (
-    <div className="CreateSigContainer">
-      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
-        <div className="CreateSigHeader">
-          <h1 className="CreateSigTitle">SIG 수정</h1>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>{`${config.upperLabel} 수정`}</h1>
         </div>
-        <SigForm
+        <IgForm
+          kind={kind}
           register={register}
           control={control}
           handleSubmit={handleSubmit}
@@ -162,13 +180,14 @@ export default function EditSigClient({ sigId, sig, article }) {
           isCreate={false}
         />
       </div>
-      <div className={`CreateSigCard ${submitting ? 'is-busy' : ''}`}>
+      <div className={styles.card}>
         <SigTagManager
           ref={tagManagerRef}
-          sigId={sigId}
-          initialTags={sig?.tags}
+          sigId={itemId}
+          initialTags={item?.tags}
           isExecutive={Boolean(me?.role >= minExecutiveLevel)}
           disabled={submitting}
+          targetLabel={config.targetLabel}
         />
       </div>
     </div>

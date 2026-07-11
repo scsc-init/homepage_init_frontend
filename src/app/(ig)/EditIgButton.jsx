@@ -3,19 +3,22 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function EditSigButton({ sigId, canEdit }) {
+export default function EditIgButton({ kind, itemId, canEdit }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   if (!canEdit) return null;
 
+  const prefix = kind === 'sig' ? 'Sig' : 'Pig';
+
   const handleEdit = () => {
     setIsLoading(true);
-    router.push(`/sig/edit/${sigId}`);
+    router.push(`/${kind}/edit/${itemId}`);
   };
+
   return (
     <button
-      className="SigButton is-edit"
+      className={`${prefix}Button is-edit`}
       onClick={handleEdit}
       type="button"
       disabled={isLoading}

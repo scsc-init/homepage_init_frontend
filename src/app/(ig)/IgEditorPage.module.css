@@ -1,0 +1,70 @@
+.container {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.card {
+  background-color: var(--color-card-bg);
+  padding: 2rem;
+  box-shadow: 0 3px 12px var(--color-card-shadow);
+  border-radius: 1rem;
+}
+
+.card + .card {
+  margin-top: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-subtle);
+}
+
+.container :global(.C_InputLabel) {
+  color: var(--color-text-subtle);
+}
+
+.container :global(.C_Input) {
+  color: var(--color-text-subtle);
+  border-bottom: 3px solid var(--color-text-body);
+}
+
+.container :global(.C_InputRoot) {
+  color: var(--color-text-subtle);
+}
+
+.container :global(::placeholder) {
+  color: var(--color-text-subtle);
+}
+
+.container :global(input::placeholder) {
+  color: var(--color-text-subtle);
+}
+
+.container :global(.editorSection) {
+  margin-top: 0.5rem;
+  margin-bottom: 1em;
+  border-radius: 1rem;
+}
+
+.container :global(.mdxeditor) {
+  border-radius: 0.5rem;
+  min-height: 10rem;
+}
+
+.container :global(label) {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+}

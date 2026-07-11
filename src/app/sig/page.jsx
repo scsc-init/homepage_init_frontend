@@ -1,5 +1,4 @@
-import IgListClient from '@/components/ig/IgListClient';
-import styles from './sig.module.css';
+import IgListClient from '@/app/(ig)/IgListClient';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import { getCurrentTerm } from '@/util/helper/system';
@@ -37,38 +36,12 @@ export default async function SigListPage({ searchParams }) {
   );
 
   return (
-    <div className={styles.SigListContainer}>
-      <IgListClient
-        items={visibleSigs}
-        initialFilterTags={initialTags}
-        kindLabel="SIG"
-        basePath="/sig"
-        createHref="/sig/create"
-        classNames={{
-          header: styles.SigHeader,
-          headerActions: styles.SigHeaderActions,
-          createButton: styles.SigCreateBtn,
-          filterSection: styles.SigFilterSection,
-          filterHeader: styles.SigFilterHeader,
-          filterTitle: styles.SigFilterTitle,
-          filterClearButton: styles.SigFilterClearButton,
-          tagFilterList: styles.SigTagFilterList,
-          tagFilterChip: styles.SigTagFilterChip,
-          active: styles.active,
-          major: styles.major,
-          listSummary: styles.SigListSummary,
-          listClassName: styles.SigList,
-          link: styles.sigLink,
-          card: styles.sigCard,
-          isMine: styles.isMine,
-          topbar: styles.sigTopbar,
-          title: styles.sigTitle,
-          userCount: styles.sigUserCount,
-          description: styles.sigDescription,
-          tagList: styles.sigTagList,
-          tagText: styles.sigTagText,
-        }}
-      />
-    </div>
+    <IgListClient
+      items={visibleSigs}
+      initialFilterTags={initialTags}
+      kindLabel="SIG"
+      basePath="/sig"
+      createHref="/sig/create"
+    />
   );
 }

@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import styles from '@/app/(ig)/IgDetail.module.css';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();
@@ -20,8 +21,8 @@ export default function ClientAuthGate({ children }) {
   return (
     <>
       {checking ? (
-        <div className="AuthGateBackdrop">
-          <div className="AuthGateSpinner" />
+        <div className={styles.authGateBackdrop}>
+          <div className={styles.authGateSpinner} />
         </div>
       ) : (
         children

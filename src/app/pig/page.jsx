@@ -1,5 +1,4 @@
-import IgListClient from '@/components/ig/IgListClient';
-import './page.css';
+import IgListClient from '@/app/(ig)/IgListClient';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import { getCurrentTerm } from '@/util/helper/system';
@@ -37,38 +36,12 @@ export default async function PigListPage({ searchParams }) {
   );
 
   return (
-    <div id="PigListContainer">
-      <IgListClient
-        items={visiblePigs}
-        initialFilterTags={initialTags}
-        kindLabel="PIG"
-        basePath="/pig"
-        createHref="/pig/create"
-        classNames={{
-          header: 'PigHeader',
-          headerActions: 'PigHeaderActions',
-          createButton: 'PigCreateBtn',
-          filterSection: 'PigFilterSection',
-          filterHeader: 'PigFilterHeader',
-          filterTitle: 'PigFilterTitle',
-          filterClearButton: 'PigFilterClearButton',
-          tagFilterList: 'PigTagFilterList',
-          tagFilterChip: 'PigTagFilterChip',
-          active: 'active',
-          major: 'major',
-          listSummary: 'PigListSummary',
-          listId: 'PigList',
-          link: 'pigLink',
-          card: 'pigCard',
-          isMine: 'isMine',
-          topbar: 'pigTopbar',
-          title: 'pigTitle',
-          userCount: 'pigUserCount',
-          description: 'pigDescription',
-          tagList: 'pigTagList',
-          tagText: 'pigTagText',
-        }}
-      />
-    </div>
+    <IgListClient
+      items={visiblePigs}
+      initialFilterTags={initialTags}
+      kindLabel="PIG"
+      basePath="/pig"
+      createHref="/pig/create"
+    />
   );
 }

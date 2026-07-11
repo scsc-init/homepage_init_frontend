@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useMe } from '@/util/hooks/useMe';
+import styles from './IgList.module.css';
 
 export default function IgListClient({
   items,
@@ -18,7 +19,6 @@ export default function IgListClient({
   kindLabel,
   basePath,
   createHref,
-  classNames,
 }) {
   const { me } = useMe();
   const myId = me?.id ? String(me.id) : '';
@@ -63,26 +63,22 @@ export default function IgListClient({
     updateUrlTags(nextTags);
   };
 
-  const listProps = {};
-  if (classNames.listId) listProps.id = classNames.listId;
-  if (classNames.listClassName) listProps.className = classNames.listClassName;
-
   return (
-    <>
-      <div className={classNames.header}>
-        <h1 className="text-3xl font-bold">{kindLabel} ê²ìí</h1>
-        <div className={classNames.headerActions}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className="text-3xl font-bold">{kindLabel} 게시판</h1>
+        <div className={styles.headerActions}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
           <button
             type="button"
-            className={classNames.createButton}
+            className={styles.createButton}
             onClick={() => {
               setIsLoading(true);
               router.push(createHref);
             }}
             disabled={isLoading}
           >
-            {kindLabel} ë§ë¤ê¸°
+            {kindLabel} 만들기
           </button>
         </div>
       </div>
@@ -92,56 +88,56 @@ export default function IgListClient({
         selectedTags={selectedTags}
         onChange={handleTagFilterChange}
         classNames={{
-          section: classNames.filterSection,
-          header: classNames.filterHeader,
-          title: classNames.filterTitle,
-          clearButton: classNames.filterClearButton,
-          list: classNames.tagFilterList,
-          chip: classNames.tagFilterChip,
-          active: classNames.active,
-          major: classNames.major,
+          section: styles.filterSection,
+          header: styles.filterHeader,
+          title: styles.filterTitle,
+          clearButton: styles.filterClearButton,
+          list: styles.tagFilterList,
+          chip: styles.tagFilterChip,
+          active: styles.active,
+          major: styles.major,
         }}
       />
 
-      <div className={classNames.listSummary}>
+      <div className={styles.listSummary}>
         {selectedTags.length > 0 ? (
           <>
-            ì íë íê·¸ <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong> ë¥¼
-            ëª¨ë ê°ì§ {kindLabel} <strong>{sortedItems.length}</strong>ê°
+            선택된 태그 <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong> 를
+            모두 가진 {kindLabel} <strong>{sortedItems.length}</strong>개
           </>
         ) : (
           <>
-            ì ì²´ {kindLabel} <strong>{sortedItems.length}</strong>ê°
+            전체 {kindLabel} <strong>{sortedItems.length}</strong>개
           </>
         )}
       </div>
 
-      <div {...listProps}>
+      <div className={styles.list}>
         {sortedItems.map((item) => {
           const itemKey = String(item.id);
           const isMine = myOwnedIds.has(itemKey);
           return (
-            <Link key={item.id} href={`${basePath}/${item.id}`} className={classNames.link}>
-              <div className={`${classNames.card} ${isMine ? classNames.isMine : ''}`}>
-                <div className={classNames.topbar}>
-                  <span className={classNames.title}>{item.title}</span>
-                  <span className={classNames.userCount}>
-                    {item.year}ë {SEMESTER_MAP[item.semester]}íê¸°
+            <Link key={item.id} href={`${basePath}/${item.id}`} className={styles.link}>
+              <div className={`${styles.card} ${isMine ? styles.isMine : ''}`}>
+                <div className={styles.topbar}>
+                  <span className={styles.title}>{item.title}</span>
+                  <span className={styles.userCount}>
+                    {item.year}년 {SEMESTER_MAP[item.semester]}학기
                   </span>
                 </div>
-                <div className={classNames.description}>{item.description}</div>
+                <div className={styles.description}>{item.description}</div>
                 <SigPigTagList
                   tags={item?.tags}
                   itemId={item.id}
-                  listClassName={classNames.tagList}
-                  tagClassName={classNames.tagText}
-                  majorClassName={classNames.major}
+                  listClassName={styles.tagList}
+                  tagClassName={styles.tagText}
+                  majorClassName={styles.major}
                 />
               </div>
             </Link>
           );
         })}
       </div>
-    </>
+    </div>
   );
 }

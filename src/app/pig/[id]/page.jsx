@@ -1,6 +1,5 @@
 import 'highlight.js/styles/github.css';
-import './page.css';
-import IgClient from '@/components/ig/IgClient';
+import IgClient from '@/app/(ig)/IgClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {

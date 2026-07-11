@@ -1,13 +1,15 @@
 import 'highlight.js/styles/github.css';
-import './page.css';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import styles from './IgDetail.module.css';
 
-export default function PigContents({ content }) {
+export default function IgContents({ kind, content }) {
+  const altPrefix = kind === 'sig' ? 'SIG' : 'PIG';
+
   return (
-    <div className="PigContent">
+    <div className={styles.content}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
@@ -19,7 +21,7 @@ export default function PigContents({ content }) {
           code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
           pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
           img: ({ _node, alt, ...props }) => (
-            <img className="mdx-img" {...props} alt={alt || 'Pig content image'} />
+            <img className="mdx-img" {...props} alt={alt || `${altPrefix} content image`} />
           ),
         }}
       >
