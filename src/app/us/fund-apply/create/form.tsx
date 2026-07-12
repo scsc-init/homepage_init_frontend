@@ -347,12 +347,12 @@ export default function FundApplyForm({
 
       try {
         const compressed = await compressImageFile(file);
-        if (compressed && compressed.size < file.size) {
-          uploadFile = compressed;
-        } else {
-          alert('이미지 용량이 너무 큽니다. (압축이 필요한 파일은 다시 시도해주세요)');
+        if (!compressed || compressed.size >= IMAGE_UPLOAD_VERCEL_BLOCK_BYTES) {
+          alert('이미지 용량을 줄일 수 없습니다. 다른 이미지를 사용해 주세요.');
           return null;
         }
+
+        uploadFile = compressed;
       } catch (e) {
         console.error('compress failed', e);
         alert(

@@ -48,12 +48,12 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
       }
       try {
         const compressed = await compressImageFile(file);
-        if (compressed && compressed.size < file.size) {
-          uploadFile = compressed;
-        } else {
-          alert('이미지 용량이 너무 큽니다. (용량을 줄인 뒤 다시 시도해 주세요.)');
+        if (!compressed || compressed.size >= IMAGE_UPLOAD_VERCEL_BLOCK_BYTES) {
+          alert('이미지 용량을 줄일 수 없습니다. 다른 이미지를 사용해 주세요.');
           return null;
         }
+
+        uploadFile = compressed;
       } catch {
         alert('이미지 용량 조절 중 오류가 발생했습니다. (용량을 줄인 뒤 다시 시도해 주세요.)');
         return null;
