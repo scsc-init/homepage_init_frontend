@@ -282,7 +282,7 @@ export default function FundApplyForm({
     } else if (form.applyType === 'pair') {
       headerLines.push(`- 유형: 짝후 지원`);
       headerLines.push(
-        `- 짝: ${extractFirstText(form.pairBefore)} ??${extractFirstText(form.pairAfter)}`,
+        `- 짝: ${extractFirstText(form.pairBefore)} → ${extractFirstText(form.pairAfter)}`,
       );
     } else {
       headerLines.push(
