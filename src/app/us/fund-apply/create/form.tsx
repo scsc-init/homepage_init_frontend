@@ -10,6 +10,11 @@ import { academicTerm2string } from '@/util/helper/tostring';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { useMe } from '@/util/hooks/useMe';
 import { getCurrentTerm, getPrevTerm } from '@/util/helper/system';
+import { compressImageFile, isCompressibleImage } from '@/util/imageCompression';
+import {
+  IMAGE_UPLOAD_MAX_ORIGINAL_BYTES,
+  IMAGE_UPLOAD_VERCEL_BLOCK_BYTES,
+} from '@/util/constants';
 
 import './form.css';
 import { GlobalStatus } from '@/types/system';
@@ -277,7 +282,7 @@ export default function FundApplyForm({
     } else if (form.applyType === 'pair') {
       headerLines.push(`- 유형: 짝후 지원`);
       headerLines.push(
-        `- 짝: ${extractFirstText(form.pairBefore)} → ${extractFirstText(form.pairAfter)}`,
+        `- 짝: ${extractFirstText(form.pairBefore)} ??${extractFirstText(form.pairAfter)}`,
       );
     } else {
       headerLines.push(
@@ -327,8 +332,38 @@ export default function FundApplyForm({
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
+    if (file.size > IMAGE_UPLOAD_MAX_ORIGINAL_BYTES) {
+      alert('이미지 용량이 너무 큽니다. (10MB 이하만 업로드할 수 있습니다.)');
+      return null;
+    }
+
+    let uploadFile = file;
+
+    if (file.size >= IMAGE_UPLOAD_VERCEL_BLOCK_BYTES) {
+      if (!isCompressibleImage(file)) {
+        alert('이미지 용량이 너무 큽니다. (SVG/GIF는 자동 용량 조절을 지원하지 않습니다.)');
+        return null;
+      }
+
+      try {
+        const compressed = await compressImageFile(file);
+        if (compressed && compressed.size < file.size) {
+          uploadFile = compressed;
+        } else {
+          alert('이미지 용량이 너무 큽니다. (압축이 필요한 파일은 다시 시도해주세요)');
+          return null;
+        }
+      } catch (e) {
+        console.error('compress failed', e);
+        alert(
+          '이미지 용량 조절 중 오류가 발생했습니다. (압축이 필요한 파일은 다시 시도해주세요)',
+        );
+        return null;
+      }
+    }
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', uploadFile);
 
     let res: Response;
     try {
@@ -395,9 +430,15 @@ export default function FundApplyForm({
     setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
   };
 
+  const MAX_ATTACHMENT_BYTES = 10_000_000;
+
   const uploadAttachment = async (
     file: File,
   ): Promise<{ id: string; original_filename: string } | null> => {
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      alert('파일 용량이 너무 큽니다. (10MB 이하만 업로드할 수 있습니다.)');
+      return null;
+    }
     const formData = new FormData();
     formData.append('file', file);
 
