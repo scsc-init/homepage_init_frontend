@@ -3,6 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmentDownloadUrl';
+import { uploadCompressedImage } from '@/util/fetch/imageUpload';
 
 export default function AttachmentSection({
   valueIds,
@@ -99,6 +100,19 @@ export default function AttachmentSection({
       const uploadedItems = [];
       try {
         for (const file of files) {
+          if (isImageUpload) {
+            const uploaded = await uploadCompressedImage(file, {
+              uploadPath: '/api/file/image/upload',
+            });
+            if (!uploaded?.id) continue;
+
+            uploadedItems.push({
+              id: String(uploaded.id),
+              original_filename: uploaded.original_filename || file.name,
+              mime_type: file.type,
+            });
+            continue;
+          }
           const formData = new FormData();
           formData.append('file', file);
 
