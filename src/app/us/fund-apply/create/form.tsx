@@ -328,7 +328,7 @@ export default function FundApplyForm({
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const uploaded = await uploadCompressedImage(file, '/api/file/image/upload', 'include');
+    const uploaded = await uploadCompressedImage(file);
 
     if (!uploaded?.id) return null;
 

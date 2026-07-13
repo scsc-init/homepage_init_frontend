@@ -2,16 +2,9 @@ import { IMAGE_UPLOAD_MAX_ORIGINAL_BYTES } from '@/util/constants';
 import { fetchBackendClient } from './client';
 import { compressImageFile, isCompressibleImage } from '@/util/imageCompression';
 
-export type UploadedImageResponse = {
-  id: string;
-  original_filename?: string;
-};
-
 export async function uploadCompressedImage(
   file: File,
-  uploadPath: string,
-  credentials?: RequestCredentials,
-): Promise<UploadedImageResponse | null> {
+): Promise<{ id: string; original_filename?: string } | null> {
   if (!file) return null;
 
   if (
@@ -49,10 +42,9 @@ export async function uploadCompressedImage(
 
   let res: Response;
   try {
-    res = await fetchBackendClient(uploadPath, {
+    res = await fetchBackendClient('/api/file/image/upload', {
       method: 'POST',
       body: formData,
-      ...(credentials ? { credentials } : {}),
     });
   } catch {
     alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
@@ -72,7 +64,7 @@ export async function uploadCompressedImage(
     } else if (res.status === 413 || res.status === 403) {
       alert('이미지 용량이 너무 큽니다(10MB 이하만 업로드할 수 있습니다.)');
     } else {
-      alert(data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`);
+      alert(data?.detail || data?.message || `이미지 업로드 실패(status ${res.status})`);
     }
     return null;
   }
