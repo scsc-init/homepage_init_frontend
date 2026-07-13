@@ -101,9 +101,7 @@ export default function AttachmentSection({
       try {
         for (const file of files) {
           if (isImageUpload) {
-            const uploaded = await uploadCompressedImage(file, {
-              uploadPath: '/api/file/image/upload',
-            });
+            const uploaded = await uploadCompressedImage(file, '/api/file/image/upload');
             if (!uploaded?.id) continue;
 
             uploadedItems.push({

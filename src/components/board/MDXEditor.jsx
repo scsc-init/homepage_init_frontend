@@ -29,9 +29,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
   const handleImageUpload = useCallback(async (file) => {
     if (!file) return null;
 
-    const uploaded = await uploadCompressedImage(file, {
-      uploadPath: '/api/file/image/upload',
-    });
+    const uploaded = await uploadCompressedImage(file, '/api/file/image/upload');
 
     if (!uploaded?.id) return null;
 
