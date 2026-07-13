@@ -10,6 +10,7 @@ import { academicTerm2string } from '@/util/helper/tostring';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { useMe } from '@/util/hooks/useMe';
 import { getCurrentTerm, getPrevTerm } from '@/util/helper/system';
+import { uploadCompressedImage } from '@/util/fetch/imageUpload';
 
 import './form.css';
 import { GlobalStatus } from '@/types/system';
@@ -327,46 +328,11 @@ export default function FundApplyForm({
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const formData = new FormData();
-    formData.append('file', file);
+    const uploaded = await uploadCompressedImage(file);
 
-    let res: Response;
-    try {
-      res = await fetchBackendClient('/api/file/image/upload', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-    } catch {
-      alert('이미지 업로드 중 네트워크 오류가 발생했습니다.');
-      return null;
-    }
+    if (!uploaded?.id) return null;
 
-    let data: any = null;
-    try {
-      data = await res.json();
-    } catch {
-      data = null;
-    }
-
-    if (!res.ok) {
-      if (res.status === 401) {
-        alert('로그인이 필요합니다. 다시 로그인한 후 이미지를 업로드해 주세요.');
-      } else if (res.status === 403 || res.status === 413) {
-        alert('이미지 용량이 너무 큽니다. (10MB 이하로 줄인 뒤 다시 시도해 주세요.)');
-      } else {
-        alert(data?.detail || data?.message || `이미지 업로드 실패 (status ${res.status})`);
-      }
-      return null;
-    }
-
-    const id = data?.id;
-    if (!id) {
-      alert('이미지 업로드 응답에 id가 없습니다.');
-      return null;
-    }
-
-    return String(id);
+    return String(uploaded.id);
   };
 
   const uploadImages = async (files: File[]) => {
@@ -395,9 +361,15 @@ export default function FundApplyForm({
     setValue('imageIds', next, { shouldValidate: true, shouldDirty: true });
   };
 
+  const MAX_ATTACHMENT_BYTES = 10_000_000;
+
   const uploadAttachment = async (
     file: File,
   ): Promise<{ id: string; original_filename: string } | null> => {
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      alert('파일 용량이 너무 큽니다. (10MB 이하만 업로드할 수 있습니다.)');
+      return null;
+    }
     const formData = new FormData();
     formData.append('file', file);
 
