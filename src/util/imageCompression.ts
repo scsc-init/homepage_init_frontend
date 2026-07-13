@@ -79,55 +79,56 @@ export async function compressImageFile(
   if (!isCompressibleImage(file)) return null;
 
   const bitmap = await fileToBitmap(file, () => {});
+  try {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return null;
 
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { alpha: true });
-  if (!ctx) return null;
+    const tryTypes = getTryTypes(file);
+    let best: { blob: Blob; type: string } | null = null;
 
-  const tryTypes = getTryTypes(file);
-  let best: { blob: Blob; type: string } | null = null;
+    let scale = getInitialScale(bitmap.width, bitmap.height, file.size, targetBytes);
+    let quality = file.type === 'image/png' ? 0.86 : 0.82;
 
-  let scale = getInitialScale(bitmap.width, bitmap.height, file.size, targetBytes);
-  let quality = file.type === 'image/png' ? 0.86 : 0.82;
+    for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
+      const sw = Math.max(1, Math.round(bitmap.width * scale));
+      const sh = Math.max(1, Math.round(bitmap.height * scale));
+      canvas.width = sw;
+      canvas.height = sh;
+      ctx.clearRect(0, 0, sw, sh);
+      ctx.drawImage(bitmap, 0, 0, sw, sh);
 
-  for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
-    const sw = Math.max(1, Math.round(bitmap.width * scale));
-    const sh = Math.max(1, Math.round(bitmap.height * scale));
-    canvas.width = sw;
-    canvas.height = sh;
-    ctx.clearRect(0, 0, sw, sh);
-    ctx.drawImage(bitmap, 0, 0, sw, sh);
+      for (const type of tryTypes) {
+        const blob = await canvasToBlob(canvas, type, quality);
+        if (!blob) continue;
 
-    for (const type of tryTypes) {
-      const blob = await canvasToBlob(canvas, type, quality);
-      if (!blob) continue;
-
-      if (!best || blob.size < best.blob.size) {
-        best = { blob, type };
+        if (!best || blob.size < best.blob.size) {
+          best = { blob, type };
+        }
+        if (blob.size <= targetBytes) {
+          best = { blob, type };
+          break;
+        }
       }
-      if (blob.size <= targetBytes) {
-        best = { blob, type };
-        break;
+
+      if (best && best.blob.size <= targetBytes) break;
+
+      if (quality > MIN_QUALITY) {
+        quality = Math.max(MIN_QUALITY, quality - 0.08);
+      } else {
+        scale *= 0.85;
+        if (scale < 0.35) break;
       }
     }
 
-    if (best && best.blob.size <= targetBytes) break;
+    if (!best) return null;
 
-    if (quality > MIN_QUALITY) {
-      quality = Math.max(MIN_QUALITY, quality - 0.08);
-    } else {
-      scale *= 0.85;
-      if (scale < 0.35) break;
+    const ext = best.type === 'image/webp' ? 'webp' : 'jpg';
+    const newName = withExt(file.name, ext);
+    return new File([best.blob], newName, { type: best.type });
+  } finally {
+    if ('close' in bitmap && typeof bitmap.close === 'function') {
+      bitmap.close();
     }
   }
-
-  if (bitmap instanceof ImageBitmap) {
-    bitmap.close();
-  }
-
-  if (!best) return null;
-
-  const ext = best.type === 'image/webp' ? 'webp' : 'jpg';
-  const newName = withExt(file.name, ext);
-  return new File([best.blob], newName, { type: best.type });
 }
