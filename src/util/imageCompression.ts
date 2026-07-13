@@ -121,7 +121,9 @@ export async function compressImageFile(
     }
   }
 
-  bitmap.close?.();
+  if (bitmap instanceof ImageBitmap) {
+    bitmap.close();
+  }
 
   if (!best) return null;
 

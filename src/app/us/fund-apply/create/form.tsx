@@ -16,7 +16,7 @@ import './form.css';
 import { GlobalStatus } from '@/types/system';
 
 import { FUND_APPLY_GUIDELINE_LINK } from '@/util/constants';
-const IMAGE_UPLOAD_CONCURRENCY = 1;
+const IMAGE_UPLOAD_CONCURRENCY = 3;
 
 const PLACEHOLDER = {
   contest: `아래 항목을 참고해 상세 내용을 작성해주세요.
