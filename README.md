@@ -134,7 +134,7 @@ npm run dev
 
 ### next auth 설정
 
-- 아래 내용을 `.env.local`에 추가하십시오.
+- 아래 내용을 `.env.local`에 추가하십시오. 배포 시에는 `.env.production`을 사용하십시오.
 
 ```env
 GOOGLE_CLIENT_ID=구글_콘솔에서_받은_클라이언트_ID
@@ -318,7 +318,7 @@ function doSomething(x, y) {
 
 ## 주요 기술 스택
 
-- **Next.js 14 (App Router)**
+- **Next.js 15 (App Router)**
 - **React 18**, TypeScript
 - **Zustand**: 상태 관리
 - **CSS Modules**
