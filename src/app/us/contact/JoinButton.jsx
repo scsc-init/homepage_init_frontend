@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useRef } from 'react';
 import { useMe } from '@/util/hooks/useMe';
-import './page.css';
+import styles from './page.module.css';
 
 export default function JoinButton() {
   const { me, isLoading } = useMe();
@@ -11,7 +11,7 @@ export default function JoinButton() {
   const handleMouseEnter = (e) => {
     const btn = ref.current;
     const ripple = document.createElement('span');
-    ripple.className = 'ripple';
+    ripple.className = styles.ripple;
     const rect = btn.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -25,12 +25,17 @@ export default function JoinButton() {
 
   if (!me) {
     return (
-      <div className="ActivityBlock FadeInBlock" id="JoinUsSection">
-        <div className="SectionHeader">JOIN US:</div>
-        <p className="JoinDescription">
+      <div className={`${styles.activityBlock} ${styles.fadeInBlock} ${styles.joinUsSection}`}>
+        <div className={styles.sectionHeader}>JOIN US:</div>
+        <p className={styles.joinDescription}>
           SCSC에 관심이 있으신가요? 아래 버튼을 눌러 가입 신청서를 작성해주세요.
         </p>
-        <a href="/us/login" className="JoinButton" ref={ref} onMouseEnter={handleMouseEnter}>
+        <a
+          href="/us/login"
+          className={styles.joinButton}
+          ref={ref}
+          onMouseEnter={handleMouseEnter}
+        >
           Join us!
         </a>
       </div>
@@ -38,12 +43,17 @@ export default function JoinButton() {
   }
 
   return (
-    <div className="ActivityBlock FadeInBlock" id="JoinUsSection">
-      <div className="SectionHeader">WELCOME:</div>
-      <p className="JoinDescription">
-        입금 안내와 카카오톡/디스코드 참여 링크는 환영 페이지에서 확인할 수 있습니다.
+    <div className={`${styles.activityBlock} ${styles.fadeInBlock} ${styles.joinUsSection}`}>
+      <div className={styles.sectionHeader}>WELCOME:</div>
+      <p className={styles.joinDescription}>
+        입금 안내, 카카오톡/디스코드 참여 링크는 환영 페이지에서 확인할 수 있습니다.
       </p>
-      <a href="/about/welcome" className="JoinButton" ref={ref} onMouseEnter={handleMouseEnter}>
+      <a
+        href="/about/welcome"
+        className={styles.joinButton}
+        ref={ref}
+        onMouseEnter={handleMouseEnter}
+      >
         환영 페이지로 이동
       </a>
     </div>
