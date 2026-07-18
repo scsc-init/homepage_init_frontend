@@ -1,6 +1,5 @@
 ﻿// @/app/us/contact/page.jsx
 
-import Image from 'next/image';
 import styles from './page.module.css';
 import JoinButton from './JoinButton.jsx';
 import { getKVValues } from '@/util/fetch/server-util';
@@ -109,7 +108,10 @@ export default async function Contact() {
                 </table>
 
                 <div className={styles.contactIconLink}>
-                  <Image src="/vectors/instagram.svg" alt="Instagram" width={28} height={28} />
+                  <span
+                    className={`${styles.socialIcon} ${styles.instagramIcon}`}
+                    aria-hidden="true"
+                  />
                   <a
                     href="https://www.instagram.com/scsc_snu/?hl=ko"
                     className={styles.contactLink}
@@ -121,7 +123,10 @@ export default async function Contact() {
                 </div>
 
                 <div className={styles.contactIconLink}>
-                  <Image src="/vectors/github.svg" alt="GitHub" width={28} height={28} />
+                  <span
+                    className={`${styles.socialIcon} ${styles.githubIcon}`}
+                    aria-hidden="true"
+                  />
                   <a
                     href="https://github.com/SNU-SCSC"
                     className={styles.contactLink}
@@ -133,7 +138,10 @@ export default async function Contact() {
                 </div>
 
                 <div className={styles.contactIconLink}>
-                  <Image src="/vectors/discord.svg" alt="Discord" width={28} height={28} />
+                  <span
+                    className={`${styles.socialIcon} ${styles.discordIcon}`}
+                    aria-hidden="true"
+                  />
                   <a
                     href={discordInviteLink}
                     className={styles.contactLink}

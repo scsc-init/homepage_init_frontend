@@ -163,6 +163,28 @@
   gap: 0.5rem;
   font-weight: 600;
 }
+.socialIcon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: inline-block;
+  background-color: var(--color-text-body);
+}
+
+.instagramIcon {
+  -webkit-mask: url('/vectors/instagram.svg') center / contain no-repeat;
+  mask: url('/vectors/instagram.svg') center / contain no-repeat;
+}
+
+.githubIcon {
+  -webkit-mask: url('/vectors/github.svg') center / contain no-repeat;
+  mask: url('/vectors/github.svg') center / contain no-repeat;
+}
+
+.discordIcon {
+  -webkit-mask: url('/vectors/discord.svg') center / contain no-repeat;
+  mask: url('/vectors/discord.svg') center / contain no-repeat;
+}
 
 .contactLink {
   all: unset;
