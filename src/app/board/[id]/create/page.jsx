@@ -7,7 +7,16 @@ export default async function CreateBoardPage({ params, searchParams }) {
   const resolvedSearchParams = await searchParams;
   const boardInfo = await fetchBoardInfo(resolvedParams.id);
   const rawBoardType = resolvedSearchParams?.t;
-  const boardType = rawBoardType === 'image' || rawBoardType === 'text' ? rawBoardType : 'text';
+  const fallbackBoardType =
+    boardInfo?.board_type === 'IMAGE'
+      ? 'image'
+      : boardInfo?.board_type === 'FILE'
+        ? 'file'
+        : 'text';
+  const boardType =
+    rawBoardType === 'image' || rawBoardType === 'text' || rawBoardType === 'file'
+      ? rawBoardType
+      : fallbackBoardType;
   return <CreateBoardArticleClient boardInfo={boardInfo} boardType={boardType} />;
 }
 

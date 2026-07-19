@@ -3,6 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useEffect, useState } from 'react';
 import styles from './ArticleList.module.css';
+const BOARD_TYPE_OPTIONS = ['TEXT', 'NONE', 'IMAGE', 'FILE'];
 
 export default function ArticleList({ boards: boardsDefault }) {
   const [boards, setBoards] = useState(boardsDefault ?? []);
@@ -28,8 +29,8 @@ export default function ArticleList({ boards: boardsDefault }) {
     });
   }, [boards]);
 
-  const handleBoardChange = (id, value) => {
-    setBoards((prev) => prev.map((b) => (b.id === id ? { ...b, name: value } : b)));
+  const handleBoardChange = (id, field, value) => {
+    setBoards((prev) => prev.map((b) => (b.id === id ? { ...b, [field]: value } : b)));
   };
 
   const handleArticleChange = (boardId, id, field, value) => {
@@ -44,7 +45,10 @@ export default function ArticleList({ boards: boardsDefault }) {
       const res = await fetchBackendClient(`/api/executive/board/update/${board.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: board.name }),
+        body: JSON.stringify({
+          name: board.name,
+          board_type: board.board_type,
+        }),
       });
       if (res.status === 204) alert('게시판 이름 수정 완료');
       else alert('게시판 이름 수정 실패: ' + res.status);
@@ -137,8 +141,19 @@ export default function ArticleList({ boards: boardsDefault }) {
             <input
               className={styles.input}
               value={board.name}
-              onChange={(e) => handleBoardChange(board.id, e.target.value)}
+              onChange={(e) => handleBoardChange(board.id, 'name', e.target.value)}
             />
+            <select
+              className={styles.input}
+              value={board.board_type ?? 'TEXT'}
+              onChange={(e) => handleBoardChange(board.id, 'board_type', e.target.value)}
+            >
+              {BOARD_TYPE_OPTIONS.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
             <button className={styles.button} onClick={() => saveBoard(board)}>
               이름 저장
             </button>
