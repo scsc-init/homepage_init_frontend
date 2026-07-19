@@ -22,13 +22,18 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
   }, [attachmentIds.length, isDirty, onDirtyChange]);
 
   const handleInternalSubmit = (data) => {
+    if (!data.title?.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+
     if (attachmentIds.length === 0) {
       alert('최소 하나의 파일을 첨부해주세요.');
       return;
     }
 
     onSubmit({
-      title: data.title,
+      title: data.title.trim(),
       editor: data.description || '',
       attachments: attachmentIds,
     });
@@ -47,7 +52,7 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
         </div>
 
         <TextInput
-          label=" 파일 게시글 제목"
+          label="파일 게시글 제목"
           placeholder="파일 게시글 제목을 입력하세요."
           register={register}
           name="title"

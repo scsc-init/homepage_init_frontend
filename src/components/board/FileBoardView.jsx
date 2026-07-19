@@ -8,6 +8,8 @@ import { utc2kst } from '@/util/constants';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import styles from './board.module.css';
 
+const METADATA_CHUNK_SIZE = 30;
+
 export default function FileBoardView({ board, sortOrder }) {
   const [articles, setArticles] = useState(null);
   const [metadataMap, setMetadataMap] = useState({});
@@ -68,17 +70,25 @@ export default function FileBoardView({ board, sortOrder }) {
 
     const fetchMetadata = async () => {
       try {
-        const params = new URLSearchParams();
-        attachmentIds.forEach((id) => params.append('ids', id));
-        const res = await fetchBackendClient(`/api/file/metadata?${params.toString()}`);
-        const data = await res.json().catch(() => []);
-        if (!res.ok || cancelled) return;
-
         const next = {};
-        (Array.isArray(data) ? data : []).forEach((item) => {
-          const key = item?.file_id ? String(item.file_id) : item?.id ? String(item.id) : '';
-          if (key) next[key] = item;
-        });
+
+        for (let i = 0; i < attachmentIds.length; i += METADATA_CHUNK_SIZE) {
+          const params = new URLSearchParams();
+          attachmentIds
+            .slice(i, i + METADATA_CHUNK_SIZE)
+            .forEach((id) => params.append('ids', id));
+
+          const res = await fetchBackendClient(`/api/file/metadata?${params.toString()}`);
+          const data = await res.json().catch(() => []);
+          if (!res.ok || cancelled) return;
+
+          (Array.isArray(data) ? data : []).forEach((item) => {
+            const key = item?.file_id ? String(item.file_id) : item?.id ? String(item.id) : '';
+            if (key) next[key] = item;
+          });
+        }
+
+        if (cancelled) return;
         setMetadataMap(next);
       } catch (_) {
         if (!cancelled) setMetadataMap({});

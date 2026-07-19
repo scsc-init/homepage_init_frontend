@@ -47,7 +47,7 @@ export default function ArticleList({ boards: boardsDefault }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: board.name,
-          board_type: board.board_type,
+          board_type: board.board_type ?? 'TEXT',
         }),
       });
       if (res.status === 204) alert('게시판 이름 수정 완료');
