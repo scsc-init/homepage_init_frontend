@@ -1,11 +1,4 @@
-@import '@/styles/theme.css';
-
-:root {
-  --btn-radius: 14px;
-  --btn-min-h: 44px;
-}
-
-.main-container {
+﻿.main-container {
   display: flex;
   min-height: 35vh;
   gap: 1rem;
@@ -161,11 +154,6 @@
   box-shadow: 0 1px 6px 3px rgba(0, 0, 0, 0.14);
 }
 
-.logout-button .material-icons {
-  font-size: 20px;
-  line-height: 1;
-}
-
 .main-logo__mypage {
   position: relative;
   width: 20vw;
@@ -275,9 +263,9 @@
   }
 }
 
-.dark .user-info-container,
-.dark .user-status-container,
-.dark .buttons-container {
+:global(.dark) .user-info-container,
+:global(.dark) .user-status-container,
+:global(.dark) .buttons-container {
   background-color: var(--color-card-bg);
   color: var(--color-text-body);
   box-shadow: 0 4px 20px var(--color-card-shadow);
