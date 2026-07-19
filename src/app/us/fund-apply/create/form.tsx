@@ -694,7 +694,7 @@ export default function FundApplyForm({
                           {...register('useKakaoPay')}
                           disabled={submitting}
                         />
-                        <span className="C_CheckText">카카오페이로 받기</span>
+                        <span className={styles.C_CheckText}>카카오페이로 받기</span>
                       </label>
                     </div>
 
