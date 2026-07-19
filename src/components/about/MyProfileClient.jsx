@@ -15,8 +15,8 @@ import { getKvsClient } from '@/util/fetch/client-util';
 const cx = (...classes) => classes.filter(Boolean).join(' ');
 
 const USER_ROLE_MAP = {
-  0: '최소권한',
-  100: '비회원',
+  0: '최저권한',
+  100: '휴회원',
   200: '준회원',
   300: '정회원',
   400: '졸업생',
@@ -137,7 +137,7 @@ export default function MyProfileClient() {
         />
         <div className={styles['user-name-container']}>
           <div className={styles['user-name']}>
-            {user ? `${user.name} [${USER_ROLE_MAP[user.role]}]` : ''}
+            {user ? `${user.name} [${USER_ROLE_MAP[user.role] || '알 수 없음'}]` : ''}
           </div>
         </div>
       </div>
@@ -216,7 +216,12 @@ export default function MyProfileClient() {
             <button
               onClick={handleLogout}
               className={styles['action-button']}
-              style={{ cursor: 'pointer', border: 'none' }}
+              style={{
+                cursor: 'pointer',
+                border: 'none',
+                background: 'transparent',
+                fontFamily: 'inherit',
+              }}
             >
               <span className={styles['btn-icon']}>
                 <MdLogout size="24" />

@@ -127,7 +127,7 @@
   color: var(--color-button-bg);
 }
 .FundAmountLabel::after {
-  content: '?꾩닔';
+  content: '필수';
   font-size: 0.68rem;
   font-weight: 700;
   color: var(--color-button-bg);
