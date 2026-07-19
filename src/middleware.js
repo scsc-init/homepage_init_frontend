@@ -94,6 +94,8 @@ const publicRoutes = [
   '/pig',
   '/us/contact',
   '/us/login',
+  '/us/login/callback',
+  '/us/register',
 ];
 
 /**
