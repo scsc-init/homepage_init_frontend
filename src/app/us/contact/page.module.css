@@ -1,14 +1,10 @@
-@import '@radix-ui/colors/indigo.css';
-@import '@radix-ui/colors/slate.css';
-
-html,
-body {
+﻿.pageRoot {
   overflow-x: hidden;
   background: var(--main-bg-gradient);
+  min-height: 100vh;
 }
 
-/* 레이아웃 */
-#Home {
+.home {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -16,14 +12,14 @@ body {
   padding: 4rem 1rem;
 }
 
-#HomeContent {
+.homeContent {
   width: 100%;
   max-width: 60rem;
   margin: 0 auto;
   z-index: 10;
 }
 
-#ContactWrapper {
+.contactWrapper {
   display: flex;
   justify-content: start;
   gap: 3rem;
@@ -31,7 +27,7 @@ body {
   flex-wrap: wrap;
 }
 
-#ContactColumnLeft {
+.contactColumnLeft {
   flex: none;
   width: 18rem;
   display: flex;
@@ -40,7 +36,7 @@ body {
   min-width: 0;
 }
 
-#ContactColumnRight {
+.contactColumnRight {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -48,12 +44,11 @@ body {
   justify-content: flex-end;
 }
 
-#JoinUsSection {
+.joinUsSection {
   margin-top: 3rem;
 }
 
-/* 박스 */
-.ActivityBlock {
+.activityBlock {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -67,12 +62,11 @@ body {
   transition: box-shadow 0.3s ease;
 }
 
-.ActivityBlock:hover {
+.activityBlock:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* 타이포그래피 */
-.SectionHeader {
+.sectionHeader {
   font-size: 3rem;
   font-weight: 900;
   color: transparent;
@@ -81,20 +75,19 @@ body {
   line-height: 1.1;
 }
 
-.ContactSubHeading {
+.contactSubHeading {
   font-size: 1.1rem;
   font-weight: 700;
   margin-top: -1rem;
   margin-bottom: 1rem;
 }
 
-.JoinDescription {
+.joinDescription {
   font-size: 1rem;
   font-weight: 500;
 }
 
-/* 버튼 */
-.JoinButton {
+.joinButton {
   position: relative;
   overflow: hidden;
   display: inline-block;
@@ -115,11 +108,11 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.JoinButton:hover {
+.joinButton:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-.JoinButton .ripple {
+.ripple {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -127,12 +120,11 @@ body {
   border-radius: 50%;
   pointer-events: none;
   transform: scale(0);
-  animation: ripple-expand 0.6s ease-out;
+  animation: rippleExpand 0.6s ease-out;
   opacity: 0.6;
 }
 
-/* 테이블 */
-.ContactTable {
+.contactTable {
   width: 100%;
   max-width: 100%;
   border-collapse: collapse;
@@ -140,48 +132,61 @@ body {
   table-layout: fixed;
 }
 
-.ContactTable td {
+.contactTableCell {
   padding: 0.4rem 0.5rem;
   white-space: nowrap;
   vertical-align: top;
 }
 
-.ContactTable td.label {
+.contactTableLabel {
   font-weight: 700;
   text-align: left;
   width: 6rem;
 }
 
-.ContactTable td.info {
+.contactTableInfo {
   font-weight: 500;
   text-align: left;
 }
 
-.ViceList {
+.viceList {
   white-space: nowrap;
 }
 
-.ViceItem {
+.viceItem {
   white-space: nowrap;
 }
 
-@media screen and (max-width: 768px) {
-  .ViceList {
-    display: flex;
-    flex-wrap: wrap;
-    white-space: normal;
-  }
-}
-
-/* SNS */
-.ContactIconLink {
+.contactIconLink {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
 }
+.socialIcon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: inline-block;
+  background-color: var(--color-text-body);
+}
 
-a.ContactLink {
+.instagramIcon {
+  -webkit-mask: url('/vectors/instagram.svg') center / contain no-repeat;
+  mask: url('/vectors/instagram.svg') center / contain no-repeat;
+}
+
+.githubIcon {
+  -webkit-mask: url('/vectors/github.svg') center / contain no-repeat;
+  mask: url('/vectors/github.svg') center / contain no-repeat;
+}
+
+.discordIcon {
+  -webkit-mask: url('/vectors/discord.svg') center / contain no-repeat;
+  mask: url('/vectors/discord.svg') center / contain no-repeat;
+}
+
+.contactLink {
   all: unset;
   color: var(--foreground-color);
   font-weight: 500;
@@ -192,29 +197,27 @@ a.ContactLink {
   text-decoration: none;
 }
 
-a.ContactLink:hover {
+.contactLink:hover {
   color: var(--color-text-body);
   text-decoration: underline;
 }
 
-/* 로고 */
-.ContactLogo {
+.contactLogo {
   font-size: 2rem;
   font-weight: 900;
 }
 
-.ContactSubLogo {
+.contactSubLogo {
   font-size: 1rem;
   color: var(--color-text-body);
   text-align: right;
 }
 
-.ContactSubLogo strong {
+.contactSubLogoStrong {
   font-weight: 800;
 }
 
-/* Divider */
-.ContactDivider {
+.contactDivider {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -223,9 +226,8 @@ a.ContactLink:hover {
   background-color: var(--color-button-border);
 }
 
-/* 배경 로고 */
-.WallLogo,
-.WallLogo2 {
+.wallLogo,
+.wallLogo2 {
   position: fixed;
   background-image: url('/wall-logo.png');
   background-repeat: no-repeat;
@@ -235,7 +237,7 @@ a.ContactLink:hover {
   z-index: 0;
 }
 
-.WallLogo {
+.wallLogo {
   top: 80%;
   right: 2vw;
   width: 18vw;
@@ -244,7 +246,7 @@ a.ContactLink:hover {
   opacity: 0.8;
 }
 
-.WallLogo2 {
+.wallLogo2 {
   top: 20%;
   left: 5vw;
   width: 18vw;
@@ -253,87 +255,93 @@ a.ContactLink:hover {
   opacity: 1;
 }
 
-/* 애니메이션 */
 @keyframes pulse {
   0%,
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.03);
   }
 }
 
-@keyframes ripple-expand {
+@keyframes rippleExpand {
   to {
     transform: scale(30);
     opacity: 0;
   }
 }
 
-@keyframes fade-slide-up {
+@keyframes fadeSlideUp {
   0% {
     opacity: 0;
     transform: translateY(1rem);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.FadeInBlock {
-  animation: fade-slide-up 0.8s ease-out;
+.fadeInBlock {
+  animation: fadeSlideUp 0.8s ease-out;
 }
 
-/* 반응형 */
 @media screen and (max-width: 768px) {
-  #ContactWrapper {
+  .viceList {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .contactWrapper {
     flex-direction: column;
     gap: 2rem;
   }
 
-  .ContactDivider {
+  .contactDivider {
     display: none;
   }
 
-  #ContactColumnLeft {
+  .contactColumnLeft {
     width: 100%;
     margin-bottom: 1rem;
   }
 
-  #ContactColumnRight {
+  .contactColumnRight {
     align-items: flex-start;
     justify-content: flex-start;
     margin-top: 0;
   }
 
-  .ContactTable {
+  .contactTable {
     font-size: 0.9rem;
   }
 
-  .ContactTable td {
+  .contactTableCell {
     padding: 0.3rem 0.4rem;
   }
 
-  .ContactIconLink {
+  .contactIconLink {
     font-size: 0.9rem;
   }
 
-  .ContactLogo {
+  .contactLogo {
     font-size: 1.4rem;
   }
 
-  .ContactSubLogo {
+  .contactSubLogo {
     font-size: 0.9rem;
     text-align: left;
   }
 
-  .SectionHeader {
+  .sectionHeader {
     font-size: 2rem;
   }
 
-  .ContactSubHeading {
+  .contactSubHeading {
     font-size: 0.95rem;
   }
 }

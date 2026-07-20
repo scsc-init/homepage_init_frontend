@@ -1,9 +1,5 @@
-html,
-body {
+﻿.CreateSigContainer {
   background-color: var(--background-color);
-}
-
-.CreateSigContainer {
   max-width: 60rem;
   margin: 0 auto;
   padding: 3rem 1rem;
@@ -73,7 +69,7 @@ body {
   border-color: var(--color-button-bg);
   box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.28);
 }
-select.C_Input option {
+.C_InputOption {
   background-color: var(--color-card-bg);
   color: var(--color-text-body);
 }
@@ -123,14 +119,14 @@ select.C_Input option {
   flex-direction: column;
   gap: 0.25rem;
 }
-label[for='fund-amount-input'] {
+.FundAmountLabel {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   font-weight: 600;
   color: var(--color-button-bg);
 }
-label[for='fund-amount-input']::after {
+.FundAmountLabel::after {
   content: '필수';
   font-size: 0.68rem;
   font-weight: 700;
@@ -140,22 +136,22 @@ label[for='fund-amount-input']::after {
   border-radius: 999px;
   padding: 0.05rem 0.4rem;
 }
-#fund-amount-input {
+.FundAmountInput {
   border-color: var(--color-button-bg);
   background: rgba(75, 176, 201, 0.08);
 }
-#fund-amount-input,
-#fund-account-input {
+.FundAmountInput,
+.FundAccountInput {
   -moz-appearance: textfield;
   appearance: textfield;
 }
-#fund-amount-input:focus {
+.FundAmountInput:focus {
   box-shadow: 0 0 0 2px rgba(75, 176, 201, 0.35);
 }
-#fund-amount-input::-webkit-outer-spin-button,
-#fund-amount-input::-webkit-inner-spin-button,
-#fund-account-input::-webkit-outer-spin-button,
-#fund-account-input::-webkit-inner-spin-button {
+.FundAmountInput::-webkit-outer-spin-button,
+.FundAmountInput::-webkit-inner-spin-button,
+.FundAccountInput::-webkit-outer-spin-button,
+.FundAccountInput::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -193,7 +189,7 @@ label[for='fund-amount-input']::after {
   position: relative;
   min-height: var(--editor-min-height);
 }
-.mdxeditor {
+.EditorWrapper :global(.mdxeditor) {
   position: relative;
   z-index: 1;
   min-height: var(--editor-min-height);
@@ -201,7 +197,7 @@ label[for='fund-amount-input']::after {
   border-radius: 0.5rem;
   border: 1px solid var(--color-button-border);
 }
-.mdxeditor [contenteditable='true'] {
+.EditorWrapper :global(.mdxeditor [contenteditable='true']) {
   position: relative;
   z-index: 1;
   min-height: calc(var(--editor-min-height) - var(--editor-toolbar-h));
@@ -256,6 +252,7 @@ label[for='fund-amount-input']::after {
 
 @media (max-width: 640px) {
   .CreateSigContainer {
+    background-color: var(--background-color);
     padding: 2rem 1rem;
   }
   .CreateSigTitle {
@@ -316,7 +313,7 @@ label[for='fund-amount-input']::after {
   flex: 1 1 auto;
   margin-bottom: 0.2rem;
 }
-.C_Input[type='file'] {
+.FileInput {
   appearance: auto;
   -webkit-appearance: auto;
   box-sizing: border-box;
@@ -344,5 +341,33 @@ label[for='fund-amount-input']::after {
   .PrevTermInlineCheck {
     justify-content: flex-start;
     width: 100%;
+  }
+}
+
+.space-y-10 > * + * {
+  margin-top: 2.5rem;
+}
+
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.twoColumnGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+@media (min-width: 640px) {
+  .twoColumnGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
