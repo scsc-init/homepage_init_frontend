@@ -16,16 +16,12 @@ export default function BoardClient({ board }) {
 
   return (
     <>
-      <div className={styles.boardActions}>
+      <div className={styles.actions}>
         <div className={styles.leftAction}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
         </div>
         <div className={styles.rightAction}>
-          <a
-            href={`/board/${board.id}/create?t=${createType}`}
-            id="BoardCreateButton"
-            className={styles.boardCreateBtn}
-          >
+          <a href={`/board/${board.id}/create?t=${createType}`} className={styles.createBtn}>
             글 작성
           </a>
         </div>

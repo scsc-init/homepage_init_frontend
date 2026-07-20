@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
-import './page.css';
+import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
 import { use, useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
@@ -115,7 +115,7 @@ export default function ArticleDetail({ params }) {
 
   if (isLoading) return <LoadingSpinner />;
   if (isError || !article) {
-    return <div className="p-6 text-center text-red-600">게시글을 찾을 수 없습니다.</div>;
+    return <div>게시글을 찾을 수 없습니다.</div>;
   }
 
   const markdown = article.content ?? '내용이 비어 있습니다.';
@@ -141,51 +141,82 @@ export default function ArticleDetail({ params }) {
   };
 
   return (
-    <div className="SigDetailContainer">
-      <h1 className="SigTitle">{article.title}</h1>
-      <p className="SigInfo">작성일 {utc2kst(article.created_at)}</p>
+    <div className={styles.DetailContainer}>
+      <h1 className={styles.Title}>{article.title}</h1>
+      <p className={styles.Info}>작성일 {utc2kst(article.created_at)}</p>
 
       {isAuthor && (
-        <div className={`SigActionRow ${isDeleting ? 'is-busy' : ''}`}>
-          <button
-            className="SigButton is-edit"
-            onClick={() => router.push(`/article/edit/${id}`)}
-          >
+        <div className={`${styles.ActionRow} ${isDeleting ? 'is-busy' : ''}`}>
+          <button className={styles.Button} onClick={() => router.push(`/article/edit/${id}`)}>
             수정
           </button>
-          <button className="SigButton is-delete" onClick={handleDelete} disabled={isDeleting}>
+          <button className={styles.Button} onClick={handleDelete} disabled={isDeleting}>
             {isDeleting ? '삭제 중...' : '삭제'}
           </button>
         </div>
       )}
 
-      <hr className="SigDivider" />
+      <hr className={styles.Divider} />
 
-      <div className="SigContent">
+      <div className={styles.Content}>
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw, rehypeHighlight]}
           components={{
-            h1: ({ _node, ...props }) => <h1 className="mdx-h1" {...props} />,
-            h2: ({ _node, ...props }) => <h2 className="mdx-h2" {...props} />,
-            p: ({ _node, ...props }) => <p className="mdx-p" {...props} />,
-            li: ({ _node, ...props }) => <li className="mdx-li" {...props} />,
-            code: ({ _node, ...props }) => <code className="mdx-inline-code" {...props} />,
-            pre: ({ _node, ...props }) => <pre className="mdx-pre" {...props} />,
-            img: ({ _node, alt, ...props }) => (
-              <img className="mdx-img" alt={alt ?? ''} {...props} />
+            h1: ({ _node, className, ...props }) => (
+              <h1 {...props} className={`${styles['mdx-h1']} ${className ?? ''}`.trim()} />
             ),
-            table: ({ _node, ...props }) => (
-              <div className="mdx-table-wrap">
-                <table {...props} />
+            h2: ({ _node, className, ...props }) => (
+              <h2 {...props} className={`${styles['mdx-h2']} ${className ?? ''}`.trim()} />
+            ),
+            p: ({ _node, className, ...props }) => (
+              <p {...props} className={`${styles['mdx-p']} ${className ?? ''}`.trim()} />
+            ),
+            li: ({ _node, className, ...props }) => (
+              <li {...props} className={`${styles['mdx-li']} ${className ?? ''}`.trim()} />
+            ),
+            code: ({ _node, className, ...props }) => (
+              <code
+                {...props}
+                className={`${styles['mdx-inline-code']} ${className ?? ''}`.trim()}
+              />
+            ),
+            pre: ({ _node, className, ...props }) => (
+              <pre {...props} className={`${styles['mdx-pre']} ${className ?? ''}`.trim()} />
+            ),
+            img: ({ _node, alt, className, ...props }) => (
+              <img
+                {...props}
+                className={`${styles['mdx-img']} ${className ?? ''}`.trim()}
+                alt={alt ?? ''}
+              />
+            ),
+            table: ({ _node, className, ...props }) => (
+              <div className={styles['mdx-table-wrap']}>
+                <table
+                  {...props}
+                  className={`${styles['mdx-table']} ${className ?? ''}`.trim()}
+                />
               </div>
+            ),
+            th: ({ _node, className, ...props }) => (
+              <th
+                {...props}
+                className={`${styles['mdx-table-cell']} ${className ?? ''}`.trim()}
+              />
+            ),
+            td: ({ _node, className, ...props }) => (
+              <td
+                {...props}
+                className={`${styles['mdx-table-cell']} ${className ?? ''}`.trim()}
+              />
             ),
           }}
         >
           {markdown}
         </ReactMarkdown>
 
-        <hr className="SigDivider" />
+        <hr className={styles.Divider} />
 
         {attachmentIds.length > 0 && (
           <div className="AttachmentSection">

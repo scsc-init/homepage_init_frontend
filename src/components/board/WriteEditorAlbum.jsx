@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
+import styles from '@/app/board/[id]/create/page.module.css';
 
 export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }) {
   const {
@@ -39,10 +40,10 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
   };
 
   return (
-    <div className="CreateSigCard">
-      <form onSubmit={handleSubmit(handleInternalSubmit)} className="albumWriteForm">
-        <div className="albumUploadPanel">
-          <p className="albumUploadTitle">앨범에 올릴 사진을 선택해주세요</p>
+    <div className={styles.CreateCard}>
+      <form onSubmit={handleSubmit(handleInternalSubmit)} className={styles.AlbumForm}>
+        <div className={styles.AlbumUploadPanel}>
+          <p className={styles.AlbumUploadTitle}>앨범에 올릴 사진을 선택해주세요</p>
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
@@ -55,10 +56,21 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
           placeholder="앨범 제목을 입력하세요 (예: 즐거운 워크샵 사진)"
           register={register}
           name="title"
+          className={styles.Input}
+          labelClassName={styles.InputLabel}
         />
-        <EditorInput label="앨범 설명 (선택)" control={control} name="description" />
+        <EditorInput
+          label="앨범 설명 (선택)"
+          control={control}
+          name="description"
+          className={styles.Editor}
+        />
 
-        <button type="submit" className="SigCreateBtn albumSubmitButton" disabled={submitting}>
+        <button
+          type="submit"
+          className={`${styles.CreateBtn} ${styles.AlbumSubmitButton}`}
+          disabled={submitting}
+        >
           {submitting ? '업로드 중...' : '앨범 등록하기'}
         </button>
       </form>

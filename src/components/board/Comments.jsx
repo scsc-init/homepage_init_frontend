@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import styles from './Comments.module.css';
 
 function buildTree(flat) {
   const idMap = {};
@@ -87,17 +88,23 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
   };
 
   return (
-    <div style={{ marginLeft: comment.parent_id ? 20 : 0, marginTop: 10 }}>
-      <div>{comment.content}</div>
-      <button onClick={() => setShowReply((v) => !v)}>
+    <div
+      className={styles.Comment}
+      style={{ marginLeft: comment.parent_id ? 20 : 0, marginTop: 10 }}
+    >
+      <div className={styles.CommentContent}>{comment.content}</div>
+      <button className={styles.Button} onClick={() => setShowReply((v) => !v)}>
         {showReply ? '취소' : '답글 달기'}
       </button>
       {(userId === comment.author_id || userRole >= minExecutiveLevel) && (
-        <button onClick={handleDeleteReply}>댓글 삭제</button>
+        <button className={styles.Button} onClick={handleDeleteReply}>
+          댓글 삭제
+        </button>
       )}
       {showReply && (
-        <div>
+        <div className={styles.ReplyEditor}>
           <textarea
+            className={styles.Textarea}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder="답글을 입력하세요"
@@ -105,8 +112,11 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleReply();
             }}
           />
-          <button onClick={handleReply}>작성</button>
+          <button className={styles.Button} onClick={handleReply}>
+            작성
+          </button>
           <button
+            className={styles.Button}
             onClick={() => {
               setShowReply(false);
               setReplyContent('');
@@ -195,16 +205,22 @@ export default function Comments({ articleId, initialComments, user }) {
     }
   };
 
-  if (isError) return <div>댓글 불러오기 실패</div>;
+  if (isError) return <div className={styles.Status}>댓글 불러오기 실패</div>;
 
   const commentsTree = buildTree(comments || []);
 
   return (
-    <div>
-      <button onClick={() => setShowNew((v) => !v)}>{showNew ? '취소' : '댓글 달기'}</button>
+    <div className={styles.Comments}>
+      <button
+        className={`${styles.Button} ${styles.ToggleButton}`}
+        onClick={() => setShowNew((v) => !v)}
+      >
+        {showNew ? '취소' : '댓글 달기'}
+      </button>
       {showNew && (
-        <div id="new-comment">
+        <div id="new-comment" className={styles.NewCommentEditor}>
           <textarea
+            className={styles.Textarea}
             ref={newRef}
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
@@ -213,8 +229,11 @@ export default function Comments({ articleId, initialComments, user }) {
               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitNew();
             }}
           />
-          <button onClick={submitNew}>작성</button>
+          <button className={styles.Button} onClick={submitNew}>
+            작성
+          </button>
           <button
+            className={styles.Button}
             onClick={() => {
               setShowNew(false);
               setNewContent('');
@@ -225,9 +244,9 @@ export default function Comments({ articleId, initialComments, user }) {
         </div>
       )}
       {comments?.length === 0 ? (
-        <div>댓글이 없습니다.</div>
+        <div className={styles.Status}>댓글이 없습니다.</div>
       ) : !user ? (
-        <div>유저 확인 중...</div>
+        <div className={styles.Status}>유저 확인 중...</div>
       ) : (
         commentsTree.map((comment) => (
           <Comment
