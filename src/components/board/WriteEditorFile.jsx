@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import AttachmentSection from '@/components/board/AttachmentSection';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
+import styles from '@/app/board/[id]/create/page.module.css';
 
 export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange }) {
   const {
@@ -40,10 +41,10 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
   };
 
   return (
-    <div className="CreateSigCard">
-      <form onSubmit={handleSubmit(handleInternalSubmit)} className="albumWriteForm">
-        <div className="albumUploadPanel">
-          <p className="albumUploadTitle">게시글에 포함할 파일을 첨부해주세요</p>
+    <div className={styles.CreateCard}>
+      <form onSubmit={handleSubmit(handleInternalSubmit)} className={styles.AlbumForm}>
+        <div className={styles.AlbumUploadPanel}>
+          <p className={styles.AlbumUploadTitle}>게시글에 포함할 파일을 첨부해주세요</p>
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
@@ -56,10 +57,21 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
           placeholder="파일 게시글 제목을 입력하세요."
           register={register}
           name="title"
+          className={styles.Input}
+          labelClassName={styles.InputLabel}
         />
-        <EditorInput label="설명 (선택)" control={control} name="description" />
+        <EditorInput
+          label="설명 (선택)"
+          control={control}
+          name="description"
+          className={styles.Editor}
+        />
 
-        <button type="submit" className="SigCreateBtn albumSubmitButton" disabled={submitting}>
+        <button
+          type="submit"
+          className={`${styles.CreateBtn} ${styles.AlbumSubmitButton}`}
+          disabled={submitting}
+        >
           {submitting ? '등록 중...' : '파일 게시글 등록'}
         </button>
       </form>
