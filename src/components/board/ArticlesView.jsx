@@ -51,11 +51,11 @@ export default function ArticlesView({ board, sortOrder }) {
   }, [router, boardId]);
 
   if (!board) {
-    return <div>게시판 정보가 없습니다.</div>;
+    return <div className={styles.galleryEmpty}>게시판 정보가 없습니다.</div>;
   }
 
   if (unauthorized) {
-    return <div>권한이 부족합니다.</div>;
+    return <div className={styles.galleryError}>권한이 부족합니다.</div>;
   }
 
   if (!Array.isArray(articles)) return <LoadingSpinner />;
