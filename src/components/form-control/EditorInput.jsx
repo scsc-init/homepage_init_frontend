@@ -6,7 +6,7 @@ import { Controller } from 'react-hook-form';
 import Editor from '@/components/board/EditorWrapper.jsx';
 import { useEffect, useState } from 'react';
 
-export default function EditorInput({ label, control, name, editorKey }) {
+export default function EditorInput({ label, control, name, editorKey, className }) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function EditorInput({ label, control, name, editorKey }) {
             id={name}
             markdown={typeof field.value === 'string' ? field.value : ''}
             onChange={field.onChange}
-            className={`${styles.editorInput} ${isDark ? 'dark-theme dark-editor' : ''}`}
+            className={`${styles.editorInput} ${className ?? ''} ${isDark ? 'dark-theme dark-editor' : ''}`.trim()}
           />
         )}
       />

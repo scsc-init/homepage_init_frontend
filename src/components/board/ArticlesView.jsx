@@ -51,11 +51,11 @@ export default function ArticlesView({ board, sortOrder }) {
   }, [router, boardId]);
 
   if (!board) {
-    return <div className="text-center text-red-600 mt-10">게시판 정보가 없습니다.</div>;
+    return <div>게시판 정보가 없습니다.</div>;
   }
 
   if (unauthorized) {
-    return <div className="text-center text-red-600 mt-10">권한이 부족합니다.</div>;
+    return <div>권한이 부족합니다.</div>;
   }
 
   if (!Array.isArray(articles)) return <LoadingSpinner />;
@@ -68,15 +68,17 @@ export default function ArticlesView({ board, sortOrder }) {
   });
   const displayArticles = sortedArticles.filter((a) => a?.is_deleted !== true);
   return (
-    <div id="SigList">
+    <div className={styles.list}>
       {displayArticles.map((article) => (
-        <Link key={article.id} href={`/article/${article.id}`} className={styles.sigLink}>
-          <div className={styles.sigCard}>
-            <div className={styles.sigTopbar}>
-              <span className={styles.sigTitle}>{article.title}</span>
-              <span className={styles.sigUserCount}>{utc2kst(article.created_at)}</span>
+        <Link key={article.id} href={`/article/${article.id}`} className={styles.link}>
+          <div className={styles.card}>
+            <div className={styles.topbar}>
+              <span className={`${styles.title} ${styles.topbarItem}`}>{article.title}</span>
+              <span className={`${styles.userCount} ${styles.topbarItem}`}>
+                {utc2kst(article.created_at)}
+              </span>
             </div>
-            <div className={styles.sigDescription}>{toPreview(article.content, 80)}</div>
+            <div className={styles.description}>{toPreview(article.content, 80)}</div>
           </div>
         </Link>
       ))}

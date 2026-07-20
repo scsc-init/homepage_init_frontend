@@ -1,0 +1,148 @@
+.DetailContainer {
+  max-width: 60vw;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px var(--color-card-shadow);
+  background-color: var(--color-card-bg);
+}
+
+.Title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-body);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+.Info {
+  color: var(--color-text-subtle);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.Divider {
+  border: none;
+  border-top: 1px solid var(--color-card-shadow);
+  margin: 2rem 0;
+}
+
+.Content {
+  line-height: 1.75;
+  font-size: 1rem;
+  color: var(--color-text-subtle);
+  word-break: break-word;
+}
+
+.mdx-h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1.8rem 0 1rem;
+}
+
+.mdx-h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.mdx-p {
+  margin-bottom: 1.1rem;
+}
+
+.mdx-li {
+  margin-left: 1.2rem;
+  list-style-type: disc;
+  margin-bottom: 0.4rem;
+}
+
+.mdx-inline-code {
+  background: var(--color-primary);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.mdx-pre {
+  background: var(--color-card-bg);
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.mdx-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.mdx-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.mdx-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mdx-table-cell {
+  padding: 0.5rem;
+  border: 1px solid var(--color-button-border);
+  vertical-align: top;
+}
+
+.ActionRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0 0.75rem;
+}
+
+.Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.625rem;
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  border: 1px solid var(--color-button-border);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  box-shadow: 0 2px 6px var(--color-card-shadow);
+  min-width: 0;
+}
+
+.Button:hover {
+  background: var(--color-button-hover-bg);
+  transform: translateY(-1px);
+}
+
+.Button:active {
+  transform: translateY(0);
+}
+
+.Button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .DetailContainer {
+    max-width: 92vw;
+    padding: 1.25rem;
+  }
+
+  .Title {
+    font-size: 1.75rem;
+  }
+}

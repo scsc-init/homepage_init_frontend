@@ -1,17 +1,17 @@
 /* board.module.css */
-#SigList {
+.list {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.sigLink {
+.link {
   text-decoration: none;
   color: inherit;
 }
 
-.sigCard {
+.card {
   border: 1px solid var(--executive-name-color);
   border-radius: 0.75rem;
   background-color: var(--color-card-bg);
@@ -23,22 +23,22 @@
   overflow: hidden;
 }
 
-.sigCard:hover {
+.card:hover {
   box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
-.sigTopbar {
+.topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
 }
 
-.sigTopbar > * {
+.topbarItem {
   min-width: 0;
 }
 
-.sigTitle {
+.title {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--color-text-body);
@@ -50,12 +50,12 @@
   min-width: 0;
 }
 
-.sigUserCount {
+.userCount {
   font-size: 0.9rem;
   color: var(--color-text-subtle);
 }
 
-.sigDescription {
+.description {
   font-size: 0.95rem;
   color: var(--color-text-subtle);
   line-height: 1.4;
@@ -68,11 +68,8 @@
   overflow-wrap: anywhere;
 }
 
-#BoardCreateButton {
+.createBtn {
   all: unset;
-}
-
-.boardCreateBtn {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   padding: 0.6rem 1.2rem;
@@ -83,15 +80,15 @@
   text-decoration: none;
 }
 
-.boardCreateBtn:hover {
+.createBtn:hover {
   background-color: var(--color-button-hover-bg);
 }
 
-.sigSortDropdown {
+.sortDropdown {
   position: relative;
 }
 
-.sigSortBtn {
+.sortBtn {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   padding: 0.6rem 0.8rem;
@@ -104,11 +101,11 @@
   text-align: center;
 }
 
-.sigSortBtn:hover {
+.sortBtn:hover {
   background-color: var(--color-button-hover-bg);
 }
 
-.sigSortMenu {
+.sortMenu {
   display: none;
   position: absolute;
   top: 110%;
@@ -120,12 +117,12 @@
   z-index: 10;
 }
 
-.sigSortMenuOpen {
+.sortMenuOpen {
   display: flex;
   flex-direction: column;
 }
 
-.sigSortMenu button {
+.sortOption {
   padding: 0.5rem 1rem;
   margin-bottom: 0.1rem;
   color: var(--color-button-text);
@@ -133,58 +130,7 @@
   transition: background-color 0.15s ease;
 }
 
-.sigSortMenu button:hover {
-  background-color: var(--color-button-hover-bg);
-}
-
-.pigAdmissionDropdown {
-  width: 100%;
-}
-
-.pigAdmissionBtn {
-  background-color: var(--color-button-bg);
-  color: var(--color-button-text);
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  font-weight: 400;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.2s ease;
-  width: 100%;
-  min-width: 12rem;
-  text-align: left;
-  white-space: normal;
-}
-
-.pigAdmissionBtn:hover {
-  background-color: var(--color-button-hover-bg);
-}
-
-.pigAdmissionMenu {
-  display: none;
-  margin-top: 0.4rem;
-  background-color: var(--background-color);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.pigAdmissionMenuOpen {
-  display: flex;
-  flex-direction: column;
-}
-
-.pigAdmissionMenu button {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: var(--color-button-text);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.pigAdmissionMenu button:hover {
+.sortOption:hover {
   background-color: var(--color-button-hover-bg);
 }
 
@@ -193,7 +139,7 @@
   text-align: left;
 }
 
-.boardActions {
+.actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -212,12 +158,13 @@
 }
 
 @media (max-width: 768px) {
-  .boardActions {
+  .actions {
     flex-direction: row;
     justify-content: space-between;
     gap: 0.5rem;
   }
-  .boardActions > * {
+  .leftAction,
+  .rightAction {
     width: auto;
   }
 }
@@ -302,17 +249,6 @@
   .galleryGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-
-.pigAdmissionSelect {
-  width: 100%;
-  min-width: 15rem;
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border);
-  background-color: var(--background-color);
-  color: var(--color-text-body);
-  font-size: 0.95rem;
 }
 
 /* 가입기간 / 연장신청 공통 레이아웃 */
