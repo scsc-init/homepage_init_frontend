@@ -66,6 +66,7 @@ export const headerMenuData: HeaderMenuSection[] = [
       { label: 'Project Archives', url: '/board/3' },
       { label: 'Album', url: '/board/4' },
       { label: 'Notice', url: '/board/5' },
+      { label: 'Files', url: '/board/7' },
     ],
   },
   {

@@ -4,7 +4,7 @@ import styles from './ArticleList.module.css';
 import { fetchBoards } from '@/util/fetch/server-util';
 
 export default async function ArticleListPage() {
-  const [boards] = await Promise.allSettled([fetchBoards([3, 4, 5, 6])]);
+  const [boards] = await Promise.allSettled([fetchBoards([3, 4, 5, 6, 7])]);
   return (
     <WithAuthorization>
       <div className={styles.panel}>
