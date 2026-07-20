@@ -7,6 +7,7 @@ import '@/app/board/[id]/create/page.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import WriteEditorStandard from '@/components/board/WriteEditorStandard';
 import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
+import WriteEditorFile from '@/components/board/WriteEditorFile';
 import { useMe } from '@/util/hooks/useMe';
 
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
@@ -85,6 +86,13 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
 
       {boardType === 'image' ? (
         <WriteEditorAlbum
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
+      ) : boardType === 'file' ? (
+        <WriteEditorFile
           boardInfo={boardInfo}
           onSubmit={onSubmit}
           submitting={submitting}
