@@ -64,6 +64,9 @@ export default function AuthClient({ initialRedirect = null }) {
       case 'invalid_email':
         alert('SNU 구글 계정(@snu.ac.kr)으로만 로그인할 수 있습니다.');
         break;
+      case 'snu_external_login':
+        alert('서울대학교 계정은 위의 SNU 로그인 버튼을 이용해주세요.');
+        break;
       case 'no_information':
         alert('구글 계정에 등록된 정보가 올바르지 않습니다.');
         break;
@@ -139,7 +142,9 @@ export default function AuthClient({ initialRedirect = null }) {
               if (authLoading) return;
               setAuthLoading(true);
               log('click_login_button', { provider: 'google' });
-              await signIn('google', { callbackUrl: '/us/login/callback' });
+              await signIn('google', {
+                callbackUrl: '/us/login/callback?mode=snu',
+              });
             }}
             disabled={inAppWarning || authLoading}
             aria-disabled={inAppWarning || authLoading}
@@ -153,6 +158,34 @@ export default function AuthClient({ initialRedirect = null }) {
               </svg>
             </span>
             <span className={styles['GoogleLoginText']}>Google 계정으로 로그인</span>
+          </button>
+        </div>
+
+        <p className={styles['login-description']}>외부회원 로그인/회원가입</p>
+        <div className={styles['google-signin-button-wrapper']}>
+          <button
+            type="button"
+            className={styles['GoogleLoginBtn']}
+            onClick={async () => {
+              if (authLoading) return;
+              setAuthLoading(true);
+              log('click_external_login_button', { provider: 'google' });
+              await signIn('google', {
+                callbackUrl: '/us/login/callback?mode=external',
+              });
+            }}
+            disabled={inAppWarning || authLoading}
+            aria-disabled={inAppWarning || authLoading}
+          >
+            <span className={styles['GoogleIcon']} aria-hidden="true">
+              <svg viewBox="0 0 48 48">
+                <path d="M24 9.5c3.7 0 7 1.3 9.6 3.8l6.4-6.4C36.3 3 30.6 1 24 1 14.7 1 6.7 6.3 2.9 14.1l7.9 6.1C12.4 14.9 17.7 9.5 24 9.5z" />
+                <path d="M46.5 24c0-1.6-.2-3.1-.5-4.5H24v9h12.6c-.5 2.7-2.1 5-4.5 6.5l7.1 5.5C43.9 36.9 46.5 30.9 46.5 24z" />
+                <path d="M10.8 28.2c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C1.1 15.6 0 19.6 0 23.5 0 27.4 1.1 31.4 2.9 34.3l7.9-6.1z" />
+                <path d="M24 47c6.5 0 12.1-2.1 16.1-5.8l-7.1-5.5c-2 1.3-4.6 2.1-9 2.1-6.3 0-11.6-5.4-13.2-10.2l-7.9 6.1C6.7 41.7 14.7 47 24 47z" />
+              </svg>
+            </span>
+            <span className={styles['GoogleLoginText']}>외부회원으로 로그인/회원가입</span>
           </button>
         </div>
       </div>

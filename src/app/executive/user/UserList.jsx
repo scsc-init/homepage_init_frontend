@@ -18,6 +18,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
       100: '휴회원',
       200: '준회원',
       300: '정회원',
+      350: '외부 회원',
       400: '졸업생',
       500: '운영진',
       1000: '회장',

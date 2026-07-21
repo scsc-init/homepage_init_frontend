@@ -8,6 +8,7 @@ import LeadershipPanel from './LeadershipPanel';
 import { ReadUserTable } from './UserList';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
+import ExternalMemberManagementPanel from './ExternalMemberManagementPanel';
 import LeadershipPageLink from './LeadershipPageLink';
 import { getKVValues, fetchUserSummaries } from '@/util/fetch/server-util';
 import { fetchBackendServerJson } from '@/util/fetch/server';
@@ -85,6 +86,10 @@ export default async function ExecutiveUserPage() {
         <AdminLayout.AdminSection>
           <EnrollManagementPanel />
         </AdminLayout.AdminSection>
+        <AdminLayout.AdminSection>
+          <ExternalMemberManagementPanel />
+        </AdminLayout.AdminSection>
+
         <AdminLayout.AdminSection>
           <OldboyManageMentPanel users={readUsers} />
         </AdminLayout.AdminSection>

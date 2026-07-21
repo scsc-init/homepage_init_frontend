@@ -96,6 +96,7 @@ const publicRoutes = [
   '/us/login',
   '/us/login/callback',
   '/us/register',
+  '/us/external-register',
 ];
 
 /**
