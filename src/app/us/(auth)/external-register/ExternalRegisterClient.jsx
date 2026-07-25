@@ -1,22 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import InquiryButton from '@/components/InquiryButton';
 import * as validator from '@/util/validator';
 import styles from '../auth.module.css';
 import '@/styles/theme.css';
-
-function cleanName(raw) {
-  if (!raw) return '';
-
-  return raw
-    .normalize('NFC')
-    .replace(/^[\s\-\u00AD\u2010-\u2015]+/u, '')
-    .split('/')[0]
-    .replace(/\s+/g, ' ')
-    .trim();
-}
 
 function validateWithCallback(validate, value) {
   return new Promise((resolve) => {
@@ -24,25 +12,14 @@ function validateWithCallback(validate, value) {
   });
 }
 
-export default function ExternalRegisterClient() {
-  const { data: session } = useSession();
+export default function ExternalRegisterClient({ email, name, submitApplication }) {
   const [form, setForm] = useState({
-    email: '',
-    name: '',
     phone: '',
     student_id: '',
     reason: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
-  useEffect(() => {
-    setForm((previous) => ({
-      ...previous,
-      email: session?.user?.email?.toLowerCase() ?? '',
-      name: cleanName(session?.user?.name ?? ''),
-    }));
-  }, [session]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,38 +47,23 @@ export default function ExternalRegisterClient() {
     setSubmitting(true);
 
     try {
-      const response = await fetch('/api/user/external/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: form.email,
-          name: form.name,
-          phone,
-          student_id: studentId || null,
-          reason: form.reason.trim() || null,
-          hashToken: session?.hashToken,
-        }),
+      const result = await submitApplication({
+        phone,
+        student_id: studentId || null,
+        reason: form.reason.trim() || null,
       });
 
-      if (response.status === 201) {
+      if (result.status === 201) {
         setSubmitted(true);
         return;
       }
 
-      let data = null;
-      try {
-        data = await response.json();
-      } catch {
-        data = null;
-      }
-
-      if (response.status === 409) {
+      if (result.status === 409) {
         alert('이미 외부회원 가입 신청이 접수된 이메일입니다.');
         return;
       }
 
-      alert(data?.detail || '가입 신청 중 오류가 발생했습니다.');
+      alert(result.detail || '가입 신청 중 오류가 발생했습니다.');
     } finally {
       setSubmitting(false);
     }
@@ -113,7 +75,8 @@ export default function ExternalRegisterClient() {
         {submitted ? (
           <div style={{ marginTop: '10vh', textAlign: 'center' }}>
             <h2>가입 신청이 접수되었습니다.</h2>
-            <p>임원진의 승인 후 외부회원으로 로그인할 수 있습니다.</p>
+            <p>가입 신청 후 임원진에게 별도로 연락해 주세요.</p>
+            <p>임원진의 확인 및 승인 후 외부회원으로 로그인할 수 있습니다.</p>
             <button type="button" onClick={() => (window.location.href = '/')}>
               홈으로 이동
             </button>
@@ -123,18 +86,10 @@ export default function ExternalRegisterClient() {
             <h2>외부회원 가입 신청</h2>
 
             <p>이메일</p>
-            <input
-              value={form.email}
-              disabled
-              style={{ width: '100%', boxSizing: 'border-box' }}
-            />
+            <input value={email} disabled style={{ width: '100%', boxSizing: 'border-box' }} />
 
             <p>이름</p>
-            <input
-              value={form.name}
-              disabled
-              style={{ width: '100%', boxSizing: 'border-box' }}
-            />
+            <input value={name} disabled style={{ width: '100%', boxSizing: 'border-box' }} />
 
             <p>전화번호</p>
             <input
@@ -176,17 +131,22 @@ export default function ExternalRegisterClient() {
               }
               placeholder="SCSC 외부회원으로 가입하려는 이유를 입력해주세요."
               rows={5}
-              style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical' }}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                resize: 'vertical',
+              }}
             />
 
             <p className={`${styles.PolicyLink} ${styles.agree}`}>
               신청 시 개인정보 처리방침에 동의합니다.
             </p>
+            <p>가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.</p>
 
             <button
               type="submit"
               className={`${styles.SignupBtn} ${submitting ? styles['is-disabled'] : ''}`}
-              disabled={submitting || !form.email || !form.name || !form.phone}
+              disabled={submitting || !email || !name || !form.phone}
             >
               {submitting ? '신청 중...' : '가입 신청하기'}
             </button>
