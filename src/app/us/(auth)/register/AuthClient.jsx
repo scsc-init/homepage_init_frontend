@@ -11,6 +11,7 @@ import * as validator from '@/util/validator';
 import InquiryButton from '@/components/InquiryButton';
 import { useSession } from 'next-auth/react';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
+import { createUser } from './actions';
 
 function cleanName(raw) {
   if (!raw) return '';
@@ -89,32 +90,22 @@ export default function AuthClient() {
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
 
-    const createRes = await fetch(
-      ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email,
-          name: form.name,
-          student_id,
-          phone,
-          major_id: Number(form.major_id),
-          profile_picture: form.profile_picture_url,
-          profile_picture_is_url: true,
-          hashToken: session.hashToken,
-        }),
-      },
-      true,
-    );
+    const createRes = await createUser({
+      email,
+      name: form.name,
+      student_id,
+      phone,
+      major_id: Number(form.major_id),
+      profile_picture: form.profile_picture_url,
+      profile_picture_is_url: true,
+      hashToken: session.hashToken,
+    });
+
     if (createRes.status !== 201) {
-      let createData;
-      try {
-        createData = await createRes.json();
-      } catch {
-        createData = { detail: '서버 응답을 처리할 수 없습니다.' };
-      }
+      const createData =
+        createRes.body && typeof createRes.body === 'object'
+          ? createRes.body
+          : { detail: createRes.body || '서버 응답을 처리할 수 없습니다.' };
       log('signup_create_failed', {
         status: createRes.status,
         detail: createData?.detail || null,

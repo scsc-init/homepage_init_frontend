@@ -45,12 +45,7 @@ function resolveBackendPath(path: string): string {
 /** Returns true when a frontend route must inject server-only credentials. */
 function requiresFrontendProxy(path: string): boolean {
   const [pathname] = path.split(/[?#]/, 1);
-  return (
-    pathname === '/api/user/login' ||
-    pathname === '/api/user/create' ||
-    pathname === '/api/user/profile' ||
-    pathname.startsWith('/api/test/')
-  );
+  return pathname === '/api/user/login' || pathname === '/api/user/profile';
 }
 
 /**
