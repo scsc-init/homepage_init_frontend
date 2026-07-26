@@ -207,7 +207,7 @@ function FormerDevelopersSection({ semesterGroups }) {
                 >
                   <div className={developerStyles.formerMemberImageWrap}>
                     <Image
-                      src={member.image || '/asset/default-pfp.png'}
+                      src={member.image || '/asset/default-pfp.webp'}
                       alt={member.name}
                       fill
                       className={styles.image}
@@ -288,7 +288,7 @@ export default function ExecutivesClient() {
             >
               <div className={styles.imageWrapper}>
                 <Image
-                  src={person.image || '/asset/default-pfp.png'}
+                  src={person.image || '/asset/default-pfp.webp'}
                   alt={person.name}
                   fill
                   className={styles.image}
@@ -314,7 +314,7 @@ export default function ExecutivesClient() {
           <div className={styles.masonryCard} key={i}>
             <div className={styles.imageWrapper}>
               <Image
-                src={person.image || '/asset/default-pfp.png'}
+                src={person.image || '/asset/default-pfp.webp'}
                 alt={person.name}
                 fill
                 className={styles.image}
