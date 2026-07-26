@@ -3,7 +3,13 @@
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { fetchBackendServer } from '@/util/fetch/server';
 
-export async function deleteTestUsers() {
+type DeleteTestUsersResponse = {
+  ok: boolean;
+  status: number;
+  body: string | null;
+};
+
+export async function deleteTestUsers(): Promise<DeleteTestUsersResponse> {
   if (!ENABLE_TEST_UTILS) {
     return {
       ok: false,
