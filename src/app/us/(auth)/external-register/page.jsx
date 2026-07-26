@@ -19,6 +19,12 @@ function cleanName(raw) {
     .trim();
 }
 
+function validateWithCallback(validate, value) {
+  return new Promise((resolve) => {
+    validate(value, resolve);
+  });
+}
+
 async function submitExternalMemberApplication(form) {
   'use server';
 
@@ -40,16 +46,51 @@ async function submitExternalMemberApplication(form) {
     };
   }
 
-  const response = await fetchBackendServer('POST', '/api/user/external/register', {
-    body: {
-      email,
-      name: cleanName(session.user.name),
-      phone: form.phone,
-      student_id: form.student_id || null,
-      reason: form.reason || null,
-      hashToken: session.hashToken,
-    },
-  });
+  const phone = String(form?.phone ?? '').replace(/\D/g, '');
+  const studentId = String(form?.student_id ?? '').replace(/\D/g, '');
+  const reason = typeof form?.reason === 'string' ? form.reason.trim().slice(0, 1000) : '';
+
+  const validPhone = await validateWithCallback(validator.phoneNumber, phone);
+
+  if (!validPhone) {
+    return {
+      status: 400,
+      detail: '전화번호 형식이 올바르지 않습니다.',
+    };
+  }
+
+  if (studentId) {
+    const validStudentId = await validateWithCallback(validator.studentID, studentId);
+
+    if (!validStudentId) {
+      return {
+        status: 400,
+        detail: '학번 형식이 올바르지 않습니다.',
+      };
+    }
+  }
+
+  let response;
+
+  try {
+    response = await fetchBackendServer('POST', '/api/user/external/register', {
+      body: {
+        email,
+        name: cleanName(session.user.name),
+        phone,
+        student_id: studentId || null,
+        reason: reason || null,
+        hashToken: session.hashToken,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return {
+      status: 503,
+      detail: '서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.',
+    };
+  }
 
   let data = null;
 

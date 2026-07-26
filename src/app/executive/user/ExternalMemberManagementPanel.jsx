@@ -8,6 +8,7 @@ import * as AdminLayout from '@/components/AdminLayout';
 export default function ExternalMemberManagementPanel() {
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [saving, setSaving] = useState({});
 
   useEffect(() => {
@@ -19,9 +20,16 @@ export default function ExternalMemberManagementPanel() {
           throw new Error(`신청 목록 조회 실패: ${response.status}`);
         }
 
-        setApplicants(await response.json());
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error('신청 목록 응답 형식이 올바르지 않습니다.');
+        }
+
+        setApplicants(data);
       } catch (error) {
         console.error(error);
+        setError(error instanceof Error ? error.message : '신청 목록을 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
@@ -70,6 +78,9 @@ export default function ExternalMemberManagementPanel() {
       setApplicants((previous) => previous.filter((item) => item.id !== application.id));
 
       alert(`${application.name}님 외부회원 가입 신청 ${actionLabel} 완료`);
+    } catch (error) {
+      console.error(error);
+      alert(`${application.name}님 ${actionLabel} 처리 중 네트워크 오류가 발생했습니다.`);
     } finally {
       setSaving((previous) => ({
         ...previous,
@@ -84,6 +95,8 @@ export default function ExternalMemberManagementPanel() {
 
       {loading ? (
         <p>신청 목록을 불러오는 중입니다.</p>
+      ) : error ? (
+        <p role="alert">{error}</p>
       ) : (
         <AdminLayout.AdminTableWrap>
           <AdminLayout.AdminTable>

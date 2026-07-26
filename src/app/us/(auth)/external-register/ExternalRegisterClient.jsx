@@ -20,6 +20,7 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [privacyAgreed, setPrivacyAgreed] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -138,15 +139,27 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
               }}
             />
 
-            <p className={`${styles.PolicyLink} ${styles.agree}`}>
-              신청 시 개인정보 처리방침에 동의합니다.
-            </p>
+            <label className={`${styles.PolicyLink} ${styles.agree}`}>
+              <input
+                type="checkbox"
+                checked={privacyAgreed}
+                onChange={(event) => setPrivacyAgreed(event.target.checked)}
+              />{' '}
+              <a
+                href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                개인정보 처리방침
+              </a>
+              에 동의합니다.
+            </label>
             <p>가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.</p>
 
             <button
               type="submit"
               className={`${styles.SignupBtn} ${submitting ? styles['is-disabled'] : ''}`}
-              disabled={submitting || !email || !name || !form.phone}
+              disabled={submitting || !email || !name || !form.phone || !privacyAgreed}
             >
               {submitting ? '신청 중...' : '가입 신청하기'}
             </button>
