@@ -8,13 +8,16 @@ import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
+import { useSession } from 'next-auth/react';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function EditUserInfoClient() {
   const router = useRouter();
   const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
+  const { data: session, update } = useSession();
   const [form, setForm] = useState({
     name: '',
+    kakao_name: '',
     phone: '',
     student_id: '',
     major_id: '',
@@ -41,6 +44,7 @@ function EditUserInfoClient() {
 
       setForm({
         name: me.name || '',
+        kakao_name: me.kakao_name || '',
         phone: me.phone || '',
         student_id: me.student_id || '',
         major_id: me.major_id?.toString() || '',
@@ -60,7 +64,7 @@ function EditUserInfoClient() {
   }, [router, me, isMeLoading, isUnauthenticated]);
 
   const handleSubmit = async () => {
-    const { name, phone, student_id, major_id } = form;
+    const { name, kakao_name, phone, student_id, major_id } = form;
     const errors = [];
     validator.name(name, (ok) => {
       if (!ok) errors.push('이름이 올바르지 않습니다.');
@@ -82,6 +86,7 @@ function EditUserInfoClient() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
+        kakao_name,
         phone,
         student_id,
         major_id: Number(major_id),
@@ -90,6 +95,33 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
+      // Refresh the cached session profile so re-entering this page shows the
+      // saved values (the form is populated from the NextAuth session, not a
+      // fresh fetch).
+      if (session?.user?.email && session?.hashToken) {
+        try {
+          const loginRes = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email: session.user.email,
+              hashToken: session.hashToken,
+            }),
+          });
+          if (loginRes.ok) {
+            const loginData = await loginRes.json();
+            if (loginData?.userProfile) {
+              await update({
+                ...(loginData.jwt ? { backendJwt: loginData.jwt } : {}),
+                userProfile: loginData.userProfile,
+              });
+            }
+          }
+        } catch {
+          // non-fatal: DB is already updated; session just stays stale
+        }
+      }
       alert('정보가 수정되었습니다.');
       router.push('/about/my-page');
     } else if (res.status === 409) {
@@ -191,6 +223,14 @@ function EditUserInfoClient() {
       <div className={styles.userData}>
         <label>이름</label>
         <input type="text" value={form.name} disabled />
+
+        <label>카톡 프로필 이름</label>
+        <input
+          type="text"
+          value={form.kakao_name}
+          onChange={(e) => setForm({ ...form, kakao_name: e.target.value })}
+          placeholder="본명과 같으면 비워두세요"
+        />
 
         <label>전화번호</label>
         <input

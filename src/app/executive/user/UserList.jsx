@@ -80,6 +80,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
           <thead>
             <tr>
               <th>이름</th>
+              <th>카톡 이름</th>
               <th>학과</th>
               <th>권한</th>
               <th>상태</th>
@@ -92,6 +93,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   onChange={(e) => updateFilter('name', e.target.value)}
                 />
               </td>
+              <td></td>
               <td>
                 <AdminLayout.AdminSelect
                   value={filter.major}
@@ -131,6 +133,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
               return (
                 <tr key={user.id}>
                   <td>{user.name}</td>
+                  <td>{user.kakao_name || '-'}</td>
                   <td>{majorsMap[user.major_id] || '-'}</td>
                   <td>{roleLabel(user.role)}</td>
                   <td>{status}</td>
@@ -259,6 +262,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
           <thead>
             <tr>
               <th>이름</th>
+              <th>카톡 이름</th>
               <th>학과</th>
               <th>전화번호</th>
               <th>학번</th>
@@ -274,6 +278,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   onChange={(e) => updateFilterCriteria('name', e.target.value)}
                 />
               </td>
+              <td></td>
               <td>
                 <AdminLayout.AdminSelect
                   value={filter.major}
@@ -328,6 +333,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     onChange={(e) => updateUserField(user.id, 'name', e.target.value)}
                   />
                 </td>
+                <td>{user.kakao_name || '-'}</td>
                 <td>
                   <AdminLayout.AdminSelect
                     value={user.major_id}
