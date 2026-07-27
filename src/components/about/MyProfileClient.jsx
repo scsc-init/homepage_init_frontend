@@ -129,7 +129,7 @@ export default function MyProfileClient() {
 
       <div className={styles['user-profile-wrapper']}>
         <img
-          src={user?.profile_picture || '/asset/default-pfp.png'}
+          src={user?.profile_picture || '/asset/default-pfp.webp'}
           alt="Profile"
           width={50}
           height={50}

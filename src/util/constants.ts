@@ -252,7 +252,7 @@ export const excludedExecutiveEmails: string[] = [
   '1n1tial@snu.ac.kr',
 ];
 
-export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.png';
+export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.webp';
 
 /**
  * 임원진 페이지의 KV 편집 페이지에서 제외할 key(별도의 관리 페이지가 있는 경우)
