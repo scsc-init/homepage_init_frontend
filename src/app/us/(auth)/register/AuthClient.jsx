@@ -47,6 +47,7 @@ export default function AuthClient() {
   const [form, setForm] = useState({
     email: '',
     name: '',
+    kakao_name: '',
     student_id_year: '',
     student_id_number: '',
     phone1: '',
@@ -57,6 +58,7 @@ export default function AuthClient() {
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState('');
+  const [kakaoNameDiffers, setKakaoNameDiffers] = useState(false);
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
@@ -93,6 +95,7 @@ export default function AuthClient() {
     const createRes = await createUser({
       email,
       name: form.name,
+      kakao_name: form.kakao_name.trim() || null,
       student_id,
       phone,
       major_id: Number(form.major_id),
@@ -153,10 +156,38 @@ export default function AuthClient() {
             <p>
               이름: <strong>{form.name}</strong>
             </p>
+            <label className={styles.KakaoCheckLabel}>
+              <input
+                type="checkbox"
+                className={styles.KakaoCheckInput}
+                checked={kakaoNameDiffers}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setKakaoNameDiffers(checked);
+                  if (!checked) setForm((p) => ({ ...p, kakao_name: '' }));
+                }}
+              />
+              <span className={styles.KakaoCheckBox} aria-hidden="true">
+                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span>카톡 프로필 이름이 본명과 다른가요?</span>
+            </label>
+            {kakaoNameDiffers && (
+              <input
+                value={form.kakao_name}
+                onChange={(e) => setForm({ ...form, kakao_name: e.target.value })}
+                placeholder="카톡 프로필 이름"
+                style={{ width: '100%', boxSizing: 'border-box', marginTop: '0.5rem' }}
+              />
+            )}
             <button
               onClick={() => setStage(2)}
               style={{ width: '100%', boxSizing: 'border-box' }}
-              disabled={!form.email || !form.name}
+              disabled={
+                !form.email || !form.name || (kakaoNameDiffers && !form.kakao_name.trim())
+              }
             >
               다음
             </button>

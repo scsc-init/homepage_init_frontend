@@ -6,6 +6,7 @@ export interface UserProfile {
   id: UserId;
   email: string;
   name: string;
+  kakao_name?: string | null;
   phone: string;
   student_id: string;
   role: UserRoleLevel;

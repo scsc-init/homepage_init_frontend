@@ -356,3 +356,81 @@
   width: auto;
   min-width: 180px;
 }
+
+.KakaoCheckLabel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.KakaoCheckLabel .KakaoCheckInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.KakaoCheckBox {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.12s ease;
+}
+
+.KakaoCheckIcon {
+  width: 0.85rem;
+  height: 0.85rem;
+  fill: none;
+  stroke: white;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24; /* check hidden until checked */
+  transition: stroke-dashoffset 0.3s ease 0.05s;
+}
+
+.KakaoCheckInput:checked + .KakaoCheckBox {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.KakaoCheckInput:checked + .KakaoCheckBox .KakaoCheckIcon {
+  stroke-dashoffset: 0; /* draw the check in; reverses out on uncheck */
+}
+
+.KakaoCheckLabel:active .KakaoCheckBox {
+  transform: scale(0.9);
+}
+
+.KakaoCheckInput:focus-visible + .KakaoCheckBox {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+:global(.dark) .KakaoCheckBox {
+  border-color: var(--color-button-border);
+}
+
+:global(.dark) .KakaoCheckInput:checked + .KakaoCheckBox {
+  background-color: var(--color-button-bg);
+  border-color: var(--color-button-bg);
+}
