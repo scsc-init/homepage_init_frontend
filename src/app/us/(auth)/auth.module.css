@@ -170,9 +170,13 @@
 }
 
 .login-description {
-  margin-bottom: 3vh;
+  margin-bottom: 0.5rem;
   text-align: center;
   font-weight: bold;
+}
+
+.google-signin-button-wrapper + .login-description {
+  margin-top: 2.5rem;
 }
 
 .google-signin-button-wrapper {
@@ -182,6 +186,10 @@
   text-align: center;
   z-index: 4;
   position: relative;
+}
+
+.google-signin-button-wrapper .GoogleLoginBtn {
+  margin-top: 0;
 }
 
 .GoogleLoginBtn {

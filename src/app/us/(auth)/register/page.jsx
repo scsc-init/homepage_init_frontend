@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import AuthClient from './AuthClient';
 import { authOptions } from '@/util/authOptions';
 import { fetchBackendServer } from '@/util/fetch/server';
+import * as validator from '@/util/validator';
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,10 @@ export default async function RegisterPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email || !session?.user?.name || !session?.hashToken) {
     redirect('/us/login');
+  }
+
+  if (!validator.email(session.user.email.toLowerCase())) {
+    redirect('/us/external-register');
   }
   const res = await fetchBackendServer('POST', '/api/user/login', {
     body: {
