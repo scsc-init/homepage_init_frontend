@@ -78,9 +78,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: var(--btn-min-h);
+  min-height: 44px;
   padding: 0 1rem;
-  border-radius: var(--btn-radius);
+  border-radius: 14px;
   border: 1px solid var(--color-button-border);
   background: var(--color-button-bg);
   color: var(--color-button-text);
@@ -127,7 +127,7 @@
 .buttons-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: minmax(var(--btn-min-h), auto);
+  grid-auto-rows: minmax(44px, auto);
   gap: 0.75rem;
   align-items: stretch;
   width: 100%;
@@ -159,6 +159,9 @@
   width: 20vw;
   max-width: 250px;
   height: auto;
+}
+:global(.dark) .main-logo__mypage {
+  filter: invert(1) hue-rotate(180deg);
 }
 .main-logo-wrapper__mypage {
   display: flex;

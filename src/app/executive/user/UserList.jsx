@@ -8,6 +8,7 @@ import * as AdminLayout from '@/components/AdminLayout';
 export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const [filter, setFilter] = useState({
     name: '',
+    kakao_name: '',
     role: '',
     status: '',
     major: '',
@@ -36,6 +37,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
       const statusValue = u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive';
       return (
         (!filter.name || lower(u.name).includes(lower(filter.name))) &&
+        (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.role ||
           roleValue.includes(filter.role) ||
           lower(roleLabel(u.role)).includes(lower(filter.role))) &&
@@ -81,6 +83,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
           <thead>
             <tr>
               <th>이름</th>
+              <th>카톡 이름</th>
               <th>학과</th>
               <th>권한</th>
               <th>상태</th>
@@ -91,6 +94,12 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                 <AdminLayout.AdminInput
                   value={filter.name}
                   onChange={(e) => updateFilter('name', e.target.value)}
+                />
+              </td>
+              <td>
+                <AdminLayout.AdminInput
+                  value={filter.kakao_name}
+                  onChange={(e) => updateFilter('kakao_name', e.target.value)}
                 />
               </td>
               <td>
@@ -132,6 +141,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
               return (
                 <tr key={user.id}>
                   <td>{user.name}</td>
+                  <td>{user.kakao_name || '-'}</td>
                   <td>{majorsMap[user.major_id] || '-'}</td>
                   <td>{roleLabel(user.role)}</td>
                   <td>{status}</td>
@@ -163,6 +173,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
     name: '',
+    kakao_name: '',
     phone: '',
     student_id: '',
     role: '',
@@ -175,6 +186,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       const status = u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive';
       return (
         (!filter.name || lower(u.name).includes(lower(filter.name))) &&
+        (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.phone || lower(u.phone).includes(lower(filter.phone))) &&
         (!filter.student_id || lower(u.student_id).includes(lower(filter.student_id))) &&
         (!filter.role || lower(u.role).includes(lower(filter.role))) &&
@@ -260,6 +272,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
           <thead>
             <tr>
               <th>이름</th>
+              <th>카톡 이름</th>
               <th>학과</th>
               <th>전화번호</th>
               <th>학번</th>
@@ -273,6 +286,12 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                 <AdminLayout.AdminInput
                   value={filter.name}
                   onChange={(e) => updateFilterCriteria('name', e.target.value)}
+                />
+              </td>
+              <td>
+                <AdminLayout.AdminInput
+                  value={filter.kakao_name}
+                  onChange={(e) => updateFilterCriteria('kakao_name', e.target.value)}
                 />
               </td>
               <td>
@@ -329,6 +348,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     onChange={(e) => updateUserField(user.id, 'name', e.target.value)}
                   />
                 </td>
+                <td>{user.kakao_name || '-'}</td>
                 <td>
                   <AdminLayout.AdminSelect
                     value={user.major_id}

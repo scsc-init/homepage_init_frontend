@@ -12,6 +12,7 @@ type ActionResponse = {
 type CreateUserPayload = {
   email: string;
   name: string;
+  kakao_name?: string | null;
   student_id: string;
   phone: string;
   major_id: number;
