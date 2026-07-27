@@ -8,6 +8,7 @@ import * as AdminLayout from '@/components/AdminLayout';
 export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const [filter, setFilter] = useState({
     name: '',
+    kakao_name: '',
     role: '',
     status: '',
     major: '',
@@ -35,6 +36,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
       const statusValue = u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive';
       return (
         (!filter.name || lower(u.name).includes(lower(filter.name))) &&
+        (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.role ||
           roleValue.includes(filter.role) ||
           lower(roleLabel(u.role)).includes(lower(filter.role))) &&
@@ -93,7 +95,12 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   onChange={(e) => updateFilter('name', e.target.value)}
                 />
               </td>
-              <td></td>
+              <td>
+                <AdminLayout.AdminInput
+                  value={filter.kakao_name}
+                  onChange={(e) => updateFilter('kakao_name', e.target.value)}
+                />
+              </td>
               <td>
                 <AdminLayout.AdminSelect
                   value={filter.major}
@@ -165,6 +172,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
   const [saving, setSaving] = useState({});
   const [filter, setFilter] = useState({
     name: '',
+    kakao_name: '',
     phone: '',
     student_id: '',
     role: '',
@@ -177,6 +185,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       const status = u.is_active ? 'active' : u.is_banned ? 'banned' : 'inactive';
       return (
         (!filter.name || lower(u.name).includes(lower(filter.name))) &&
+        (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.phone || lower(u.phone).includes(lower(filter.phone))) &&
         (!filter.student_id || lower(u.student_id).includes(lower(filter.student_id))) &&
         (!filter.role || lower(u.role).includes(lower(filter.role))) &&
@@ -278,7 +287,12 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   onChange={(e) => updateFilterCriteria('name', e.target.value)}
                 />
               </td>
-              <td></td>
+              <td>
+                <AdminLayout.AdminInput
+                  value={filter.kakao_name}
+                  onChange={(e) => updateFilterCriteria('kakao_name', e.target.value)}
+                />
+              </td>
               <td>
                 <AdminLayout.AdminSelect
                   value={filter.major}

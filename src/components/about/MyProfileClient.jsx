@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { useMe } from '@/util/hooks/useMe';
@@ -202,17 +203,12 @@ export default function MyProfileClient() {
               <span className={styles['btn-label']}>입금 안내</span>
             </a>
 
-            <a
-              href="/us/edit-user-info"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles['action-button']}
-            >
+            <Link href="/us/edit-user-info" className={styles['action-button']}>
               <span className={styles['btn-icon']}>
                 <MdArrowOutward size="24" />
               </span>
               <span className={styles['btn-label']}>정보 수정</span>
-            </a>
+            </Link>
             <button
               onClick={handleLogout}
               className={styles['action-button']}

@@ -36,21 +36,25 @@ function EditUserInfoClient() {
       return;
     }
 
+    // Populate own info and enable the form immediately from the session,
+    // so values show and buttons are clickable without waiting on the network.
+    setForm({
+      name: me.name || '',
+      kakao_name: me.kakao_name || '',
+      phone: me.phone || '',
+      student_id: me.student_id || '',
+      major_id: me.major_id?.toString() || '',
+      profile_picture: me.profile_picture || '',
+    });
+    setUserRole(me.role);
+    setLoading(false);
+
+    // Load majors (dropdown options) and oldboy state in the background.
     const fetchData = async () => {
       const [resMajors, resOldboy] = await Promise.all([
         fetchBackendClient('/api/majors'),
         fetchBackendClient('/api/user/oldboy/applicant'),
       ]);
-
-      setForm({
-        name: me.name || '',
-        kakao_name: me.kakao_name || '',
-        phone: me.phone || '',
-        student_id: me.student_id || '',
-        major_id: me.major_id?.toString() || '',
-        profile_picture: me.profile_picture || '',
-      });
-      setUserRole(me.role);
 
       const majorList = resMajors.ok ? await resMajors.json() : [];
       setMajors(majorList);
@@ -58,7 +62,6 @@ function EditUserInfoClient() {
       if (resOldboy.ok) {
         setOldboyApplicant(await resOldboy.json());
       }
-      setLoading(false);
     };
     fetchData();
   }, [router, me, isMeLoading, isUnauthenticated]);
