@@ -1,16 +1,19 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { fetchBackendClientJson } from '@/util/fetch/client';
+import { fetchBackendClient } from '@/util/fetch/client';
 
 const LIMIT = 50;
 
 const ACTIVITY_LABELS = {
-  SIGNED_UP: '가입했음',
-  REGISTERED: '등록했음',
-  SIG_JOINED: '시그 가입했음',
-  SIG_LEFT: '시그 탈퇴했음',
-  SIG_LEADER_APPOINTED: '시그장이 됨',
+  SIGNED_UP: '가입',
+  REGISTERED: '등록',
+  SIG_JOINED: 'SIG 가입',
+  SIG_LEFT: 'SIG 탈퇴',
+  SIG_LEADER_APPOINTED: 'SIG장 임명',
+  PIG_JOINED: 'PIG 가입',
+  PIG_LEFT: 'PIG 탈퇴',
+  PIG_LEADER_APPOINTED: 'PIG장 임명',
 };
 
 function formatDate(value) {
@@ -70,11 +73,24 @@ export default function ActivityLogList({ users = [] }) {
     }
 
     try {
-      const query = Object.fromEntries(params.entries());
+      const response = await fetchBackendClient(
+        `/api/executive/users/activity-logs?${params.toString()}`,
+        {
+          method: 'GET',
+        },
+      );
 
-      const data = await fetchBackendClientJson('GET', '/api/executive/users/activity-logs', {
-        query,
-      });
+      if (response.status === 404) {
+        hasMoreRef.current = false;
+        setHasMore(false);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`유저 활동 기록 조회 실패: ${response.status}`);
+      }
+
+      const data = await response.json();
 
       const nextLogs = Array.isArray(data) ? data : [];
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { fetchBackendClient } from '@/util/fetch/client';
@@ -16,6 +16,12 @@ export default function ExternalMemberManagementPanel() {
       try {
         const response = await fetchBackendClient('/api/executive/user/external/applicants');
 
+        if (response.status === 404) {
+          setApplicants([]);
+          setError('');
+          return;
+        }
+
         if (!response.ok) {
           throw new Error(`신청 목록 조회 실패: ${response.status}`);
         }
@@ -28,7 +34,6 @@ export default function ExternalMemberManagementPanel() {
 
         setApplicants(data);
       } catch (error) {
-        console.error(error);
         setError(error instanceof Error ? error.message : '신청 목록을 불러오지 못했습니다.');
       } finally {
         setLoading(false);
@@ -39,11 +44,11 @@ export default function ExternalMemberManagementPanel() {
   }, []);
 
   const processApplication = async (application, action) => {
-    const actionLabel = action === 'approve' ? '승인' : '거절';
+    const actionLabel = action === 'approve' ? '?뱀씤' : '嫄곗젅';
 
     if (
       !window.confirm(
-        `${application.name}님의 외부회원 가입 신청을 ${actionLabel}하시겠습니까?`,
+        `${application.name}?섏쓽 ?몃??뚯썝 媛???좎껌??${actionLabel}?섏떆寃좎뒿?덇퉴?`,
       )
     ) {
       return;
@@ -71,16 +76,18 @@ export default function ExternalMemberManagementPanel() {
           detail = null;
         }
 
-        alert(`${application.name}님 ${actionLabel} 실패: ${detail || response.status}`);
+        alert(`${application.name}??${actionLabel} ?ㅽ뙣: ${detail || response.status}`);
         return;
       }
 
       setApplicants((previous) => previous.filter((item) => item.id !== application.id));
 
-      alert(`${application.name}님 외부회원 가입 신청 ${actionLabel} 완료`);
+      alert(`${application.name}???몃??뚯썝 媛???좎껌 ${actionLabel} ?꾨즺`);
     } catch (error) {
       console.error(error);
-      alert(`${application.name}님 ${actionLabel} 처리 중 네트워크 오류가 발생했습니다.`);
+      alert(
+        `${application.name}??${actionLabel} 泥섎━ 以??ㅽ듃?뚰겕 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.`,
+      );
     } finally {
       setSaving((previous) => ({
         ...previous,
@@ -91,10 +98,10 @@ export default function ExternalMemberManagementPanel() {
 
   return (
     <div>
-      <h2>외부회원 가입 신청자 목록</h2>
+      <h2>?몃??뚯썝 媛???좎껌??紐⑸줉</h2>
 
       {loading ? (
-        <p>신청 목록을 불러오는 중입니다.</p>
+        <p>?좎껌 紐⑸줉??遺덈윭?ㅻ뒗 以묒엯?덈떎.</p>
       ) : error ? (
         <p role="alert">{error}</p>
       ) : (
@@ -115,7 +122,7 @@ export default function ExternalMemberManagementPanel() {
             <tbody>
               {applicants.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>대기 중인 외부회원 가입 신청이 없습니다.</td>
+                  <td colSpan={7}>?湲?以묒씤 ?몃??뚯썝 媛???좎껌???놁뒿?덈떎.</td>
                 </tr>
               ) : (
                 applicants.map((application) => {
@@ -142,7 +149,7 @@ export default function ExternalMemberManagementPanel() {
                             disabled={isSaving}
                             onClick={() => processApplication(application, 'approve')}
                           >
-                            승인
+                            ?뱀씤
                           </AdminLayout.AdminButton>
 
                           <AdminLayout.AdminButton
@@ -150,7 +157,7 @@ export default function ExternalMemberManagementPanel() {
                             disabled={isSaving}
                             onClick={() => processApplication(application, 'reject')}
                           >
-                            거절
+                            嫄곗젅
                           </AdminLayout.AdminButton>
                         </div>
                       </td>
