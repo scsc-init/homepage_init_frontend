@@ -109,24 +109,41 @@ export async function fetchDiscordBotStatus(): Promise<boolean> {
   return body.logged_in === true;
 }
 
-export async function getKVValues(keys: string[]): Promise<Record<string, KvValueResult>> {
+function buildKvsPath(keys: string[] | undefined): string {
+  if (keys === undefined) return '/api/kvs';
+
+  const params = new URLSearchParams();
+  keys.forEach((key) => params.append('q', key));
+  const query = params.toString();
+  return query ? `/api/kvs?${query}` : '/api/kvs';
+}
+
+export async function getKVValues(
+  keys: string[] | undefined,
+): Promise<Record<string, KvValueResult>> {
   const list = Array.isArray(keys) ? keys : [];
-  const results = await Promise.allSettled(
-    list.map((k) =>
-      fetchBackendServerJson<KvFetchResponse>('GET', `/api/kv/${encodeURIComponent(k)}`),
-    ),
-  );
 
   const out: Record<string, KvValueResult> = {};
-  for (let i = 0; i < list.length; i += 1) {
-    const key = list[i] ?? '';
-    const result = results[i];
-    if (result.status === 'fulfilled') {
-      out[key] = { status: 'fulfilled', value: result.value.value ?? '' };
-      continue;
-    }
-    out[key] = { status: 'rejected', reason: String(result.reason ?? '') };
+  if (keys !== undefined && list.length === 0) return out;
+
+  try {
+    const kvs = await fetchBackendServerJson<KvFetchResponse[]>('GET', buildKvsPath(keys));
+    const valueByKey = new Map(kvs.map((kv) => [kv.key, kv.value ?? '']));
+    const outputKeys = keys ?? kvs.map((kv) => kv.key);
+
+    outputKeys.forEach((key) => {
+      if (valueByKey.has(key)) {
+        out[key] = { status: 'fulfilled', value: valueByKey.get(key) ?? '' };
+      } else {
+        out[key] = { status: 'rejected', reason: 'unknown kv key' };
+      }
+    });
+  } catch (error) {
+    list.forEach((key) => {
+      out[key] = { status: 'rejected', reason: String(error ?? '') };
+    });
   }
+
   return out;
 }
 

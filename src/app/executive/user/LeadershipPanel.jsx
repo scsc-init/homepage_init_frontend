@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import * as AdminLayout from '@/components/AdminLayout';
+import { setKvClient } from '@/util/fetch/client-util';
 
 function renderUserSummary(user) {
   if (!user) return <span>미지정</span>;
@@ -76,18 +77,17 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
     }
     setPending(true);
     try {
-      const res = await fetch('/api/executive/leadership', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          president_id: presidentTrimmed || null,
-          vice_president_id: vicePresidentTrimmed || null,
-        }),
-      });
+      const [prezRes, viceRes] = await Promise.all([
+        setKvClient('main-president', presidentTrimmed),
+        setKvClient('vice-president', vicePresidentTrimmed),
+      ]);
 
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || `HTTP ${res.status}`);
+      if (!prezRes.ok || !viceRes.ok) {
+        const msg1 = prezRes.ok ? '' : await prezRes.text().catch(() => '');
+        const msg2 = viceRes.ok ? '' : await viceRes.text().catch(() => '');
+        throw new Error(
+          [msg1, msg2].filter(Boolean).join(' | ') || '임원진 정보를 갱신하지 못했습니다.',
+        );
       }
 
       alert('임원진 정보가 갱신되었습니다.');

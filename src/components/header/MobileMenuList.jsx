@@ -21,7 +21,7 @@ function MobileProfileButton() {
       {user && (
         <Link href="/about/my-page" className={`${styles.mobileProfileLink} unset`}>
           <img
-            src={user?.profile_picture || '/asset/default-pfp.png'}
+            src={user?.profile_picture || '/asset/default-pfp.webp'}
             alt="Profile"
             className={styles.mobileUserPic}
             width={40}

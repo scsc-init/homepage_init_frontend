@@ -19,6 +19,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     isExecutive = false,
     onChange,
     disabled = false,
+    targetLabel = 'SIG',
   } = props;
 
   const resolvedInitialIds = useMemo(() => {
@@ -224,7 +225,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       <div className={styles.SigTagManagerHeader}>
         <h3 className={styles.SigTagManagerTitle}>태그</h3>
         <p className={styles.SigTagManagerDescription}>
-          수정 후 반드시 SIG 수정 버튼을 눌러주세요.
+          수정 후 반드시 {targetLabel} 수정 버튼을 눌러주세요.
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>

@@ -1,12 +1,19 @@
-import PigListClient from './PigListClient';
-import './page.css';
+import IgListClient from '@/app/(ig)/IgListClient';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import { getCurrentTerm } from '@/util/helper/system';
 
 export const metadata = { title: 'PIG' };
 
-export default async function PigListPage() {
+export default async function PigListPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  let initialTags = [];
+  if (Array.isArray(resolvedSearchParams?.tag)) {
+    initialTags = resolvedSearchParams.tag.filter((tag) => typeof tag === 'string');
+  } else if (typeof resolvedSearchParams?.tag === 'string' && resolvedSearchParams.tag) {
+    initialTags = [resolvedSearchParams.tag];
+  }
+
   const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
   if (globalStatus.status === 'rejected') {
     return <div>피그 정보를 불러올 수 없습니다.</div>;
@@ -29,8 +36,12 @@ export default async function PigListPage() {
   );
 
   return (
-    <div id="PigListContainer">
-      <PigListClient pigs={visiblePigs} />
-    </div>
+    <IgListClient
+      items={visiblePigs}
+      initialFilterTags={initialTags}
+      kindLabel="PIG"
+      basePath="/pig"
+      createHref="/pig/create"
+    />
   );
 }

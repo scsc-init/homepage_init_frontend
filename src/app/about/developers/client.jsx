@@ -9,49 +9,129 @@ import developerStyles from './developers.module.css';
 const executives = [
   {
     name: '강명석',
-    image: '/devs/kms.jpg',
-    description: 'init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아',
+    image: '',
+    description: '',
   },
   {
-    name: '이한경',
-    image: '/devs/lhk.jpg',
-    description: '한경님의 백엔드 너무 좋아앗',
+    name: '김도현',
+    image: '/devs/2026-1/doheyn1008.webp',
+    description: '첨융 화이팅!',
+  },
+  {
+    name: '김지인',
+    image: '/devs/2026-1/winteruss.webp',
+    description: 'muyaho',
   },
   {
     name: '박성현',
-    image: '/devs/psh.jpg',
-    description: '아주아주 귀여운 여고생',
+    image: '/devs/2026-1/coshaman.webp',
+    description: '난 귀여워!',
   },
   {
-    name: '최정원',
+    name: '유정균',
+    image: '/devs/2026-1/jungk612.webp',
+    description: 'jungk612',
+  },
+  {
+    name: '이수민',
     image: '',
     description: '',
+  },
+  {
+    name: '이주원',
+    image: '/devs/2026-1/juwonlee718.webp',
+    description: '크롱크롱~',
   },
   {
     name: '이태윤',
     image: '',
     description: '',
   },
+  {
+    name: '이한경',
+    image: '/devs/2026-1/tteokgook1.webp',
+    description: '이제 갈 때가 됐다',
+  },
 ];
 
 const formerDevelopersBySemester = [
+  {
+    semester: '2026-1',
+    members: [
+      {
+        name: '강명석',
+        image: '',
+        description: '',
+      },
+      {
+        name: '김도현',
+        image: '/devs/2026-1/doheyn1008.webp',
+        description: '첨융 화이팅!',
+      },
+      {
+        name: '김지인',
+        image: '/devs/2026-1/winteruss.webp',
+        description: 'muyaho',
+      },
+      {
+        name: '박성현',
+        image: '/devs/2026-1/coshaman.webp',
+        description: '난 귀여워!',
+      },
+      {
+        name: '유정균',
+        image: '/devs/2026-1/jungk612.webp',
+        description: 'jungk612',
+      },
+      {
+        name: '이수민',
+        image: '',
+        description: '',
+      },
+      {
+        name: '이주원',
+        image: '/devs/2026-1/juwonlee718.webp',
+        description: '크롱크롱~',
+      },
+      {
+        name: '이태윤',
+        image: '',
+        description: '',
+      },
+      {
+        name: '이한경',
+        image: '/devs/2026-1/tteokgook1.webp',
+        description: '이제 갈 때가 됐다',
+      },
+      {
+        name: '임은후',
+        image: '',
+        description: '',
+      },
+      {
+        name: '차재민',
+        image: '',
+        description: '',
+      },
+    ],
+  },
   {
     semester: '2025-2',
     members: [
       {
         name: '강명석',
-        image: '/devs/kms.jpg',
-        description: 'init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아',
+        image: '',
+        description: '',
       },
       {
         name: '이한경',
-        image: '/devs/lhk.jpg',
-        description: '한경님의 백엔드 너무 좋아앗',
+        image: '',
+        description: '',
       },
       {
         name: '박성현',
-        image: '/devs/psh.jpg',
-        description: '아주아주 귀여운 여고생',
+        image: '',
+        description: '',
       },
       {
         name: '최정원',
@@ -65,13 +145,13 @@ const formerDevelopersBySemester = [
       },
       {
         name: '윤영우',
-        image: '/devs/yyw.jpg',
-        description: '고능',
+        image: '',
+        description: '',
       },
       {
         name: '박상혁(Ethan)',
-        image: '/devs/psh.jpg',
-        description: 'SCSC 막스 베르슈타펜',
+        image: '',
+        description: '',
       },
     ],
   },
@@ -80,28 +160,28 @@ const formerDevelopersBySemester = [
     members: [
       {
         name: '강명석',
-        image: '/devs/kms.jpg',
-        description: 'init 정상화해줬잖아 기능정의도해줬잖아 그냥 다해줬잖아',
+        image: '',
+        description: '',
       },
       {
         name: '이한경',
-        image: '/devs/lhk.jpg',
-        description: '한경님의 백엔드 너무 좋아앗',
+        image: '',
+        description: '',
       },
       {
         name: '박성현',
-        image: '/devs/psh.jpg',
-        description: '아주아주 귀여운 여고생',
+        image: '',
+        description: '',
       },
       {
         name: '황민기',
-        image: '/devs/hmk.jpg',
-        description: '커밋주작은뭐야',
+        image: '',
+        description: '',
       },
       {
         name: '윤영우',
-        image: '/devs/yyw.jpg',
-        description: '고능',
+        image: '',
+        description: '',
       },
     ],
   },
@@ -127,7 +207,7 @@ function FormerDevelopersSection({ semesterGroups }) {
                 >
                   <div className={developerStyles.formerMemberImageWrap}>
                     <Image
-                      src={member.image || '/asset/default-pfp.png'}
+                      src={member.image || '/asset/default-pfp.webp'}
                       alt={member.name}
                       fill
                       className={styles.image}
@@ -208,7 +288,7 @@ export default function ExecutivesClient() {
             >
               <div className={styles.imageWrapper}>
                 <Image
-                  src={person.image || '/asset/default-pfp.png'}
+                  src={person.image || '/asset/default-pfp.webp'}
                   alt={person.name}
                   fill
                   className={styles.image}
@@ -234,7 +314,7 @@ export default function ExecutivesClient() {
           <div className={styles.masonryCard} key={i}>
             <div className={styles.imageWrapper}>
               <Image
-                src={person.image || '/asset/default-pfp.png'}
+                src={person.image || '/asset/default-pfp.webp'}
                 alt={person.name}
                 fill
                 className={styles.image}

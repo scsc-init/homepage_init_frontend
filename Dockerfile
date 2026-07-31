@@ -19,6 +19,10 @@ COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
+# Next.js image optimizer needs write permission here
+RUN mkdir -p /app/.next/cache/images \
+    && chown -R node:node /app/.next
+
 USER node
 
 EXPOSE 3000

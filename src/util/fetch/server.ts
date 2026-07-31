@@ -34,6 +34,7 @@ function needApiSecret(path: string): boolean {
   return (
     path.startsWith('/api/user/login') ||
     path.startsWith('/api/user/create') ||
+    path.startsWith('/api/user/external/register') ||
     (ENABLE_TEST_UTILS && path.startsWith('/api/test'))
   );
 }

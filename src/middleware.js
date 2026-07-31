@@ -58,14 +58,19 @@ export async function middleware(req) {
   if (jwt) return NextResponse.next();
 
   const returnTo = buildReturnPath(req);
+  const shouldPreserveRedirect = returnTo && !isPrefetchRequest(req);
 
   const loginUrl = req.nextUrl.clone();
   loginUrl.pathname = '/us/login';
   loginUrl.search = '';
 
+  if (shouldPreserveRedirect) {
+    loginUrl.searchParams.set('redirect', returnTo);
+  }
+
   const res = NextResponse.redirect(loginUrl);
 
-  if (returnTo && !isPrefetchRequest(req)) {
+  if (shouldPreserveRedirect) {
     res.cookies.set(REDIRECT_COOKIE, returnTo, {
       path: '/',
       maxAge: 300,
@@ -89,6 +94,9 @@ const publicRoutes = [
   '/pig',
   '/us/contact',
   '/us/login',
+  '/us/login/callback',
+  '/us/register',
+  '/us/external-register',
 ];
 
 /**

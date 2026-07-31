@@ -162,7 +162,12 @@ export default function SigListClient({ sigs, initialFilterTags = [] }) {
           const tags = Array.isArray(sig?.tags) ? sig.tags : [];
 
           return (
-            <Link key={sig.id} href={`/sig/${sig.id}`} className={styles.sigLink}>
+            <Link
+              key={sig.id}
+              href={`/sig/${sig.id}`}
+              prefetch={false}
+              className={styles.sigLink}
+            >
               <div className={`${styles.sigCard} ${isMine ? styles.isMine : ''}`}>
                 <div className={styles.sigTopbar}>
                   <span className={styles.sigTitle}>{sig.title}</span>

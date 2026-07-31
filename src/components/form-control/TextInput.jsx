@@ -9,19 +9,21 @@ export default function TextInput({
   name,
   onEnter,
   required = true,
+  className,
+  labelClassName,
 }) {
   const ID = `textinput-${name.replaceAll('.', '-')}`;
 
   return (
     <div className={styles.textInputGroup} key={name}>
-      <label htmlFor={ID} className={styles.textInputLabel}>
+      <label htmlFor={ID} className={`${styles.textInputLabel} ${labelClassName ?? ''}`.trim()}>
         {label}
       </label>
       <input
         type="text"
         id={ID}
         placeholder={placeholder}
-        className={styles.textInput}
+        className={`${styles.textInput} ${className ?? ''}`.trim()}
         {...register(name, { required })}
         onKeyDown={(e) => {
           if (e.nativeEvent?.isComposing) return;

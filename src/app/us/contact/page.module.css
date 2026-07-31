@@ -1,0 +1,347 @@
+﻿.pageRoot {
+  overflow-x: hidden;
+  background: var(--main-bg-gradient);
+  min-height: 100vh;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  color: var(--color-text-body);
+  padding: 4rem 1rem;
+}
+
+.homeContent {
+  width: 100%;
+  max-width: 60rem;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.contactWrapper {
+  display: flex;
+  justify-content: start;
+  gap: 3rem;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.contactColumnLeft {
+  flex: none;
+  width: 18rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.contactColumnRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.joinUsSection {
+  margin-top: 3rem;
+}
+
+.activityBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 60rem;
+  margin: 0 auto 3rem auto;
+  padding: 2.5rem 2rem;
+  border: 2px solid var(--color-button-border);
+  border-radius: 1rem;
+  background-color: var(--color-card-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.activityBlock:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.sectionHeader {
+  font-size: 3rem;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--foreground-color);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.contactSubHeading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+}
+
+.joinDescription {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.joinButton {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.9rem 2rem;
+  background-color: transparent;
+  color: var(--color-text-body);
+  border: 2px solid var(--color-button-border);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  cursor: pointer;
+  animation: pulse 3s infinite;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.joinButton:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.ripple {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--executive-arrow-hover, rgba(0, 136, 255, 0.4));
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  animation: rippleExpand 0.6s ease-out;
+  opacity: 0.6;
+}
+
+.contactTable {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  table-layout: fixed;
+}
+
+.contactTableCell {
+  padding: 0.4rem 0.5rem;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.contactTableLabel {
+  font-weight: 700;
+  text-align: left;
+  width: 6rem;
+}
+
+.contactTableInfo {
+  font-weight: 500;
+  text-align: left;
+}
+
+.viceList {
+  white-space: nowrap;
+}
+
+.viceItem {
+  white-space: nowrap;
+}
+
+.contactIconLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+.socialIcon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: inline-block;
+  background-color: var(--color-text-body);
+}
+
+.instagramIcon {
+  -webkit-mask: url('/vectors/instagram.svg') center / contain no-repeat;
+  mask: url('/vectors/instagram.svg') center / contain no-repeat;
+}
+
+.githubIcon {
+  -webkit-mask: url('/vectors/github.svg') center / contain no-repeat;
+  mask: url('/vectors/github.svg') center / contain no-repeat;
+}
+
+.discordIcon {
+  -webkit-mask: url('/vectors/discord.svg') center / contain no-repeat;
+  mask: url('/vectors/discord.svg') center / contain no-repeat;
+}
+
+.contactLink {
+  all: unset;
+  color: var(--foreground-color);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.contactLink:hover {
+  color: var(--color-text-body);
+  text-decoration: underline;
+}
+
+.contactLogo {
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.contactSubLogo {
+  font-size: 1rem;
+  color: var(--color-text-body);
+  text-align: right;
+}
+
+.contactSubLogoStrong {
+  font-weight: 800;
+}
+
+.contactDivider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 68%;
+  width: 1px;
+  background-color: var(--color-button-border);
+}
+
+.wallLogo,
+.wallLogo2 {
+  position: fixed;
+  background-image: url('/wall-logo.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wallLogo {
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 0.8;
+}
+
+.wallLogo2 {
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  transform: translateY(-50%);
+  opacity: 1;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes rippleExpand {
+  to {
+    transform: scale(30);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeInBlock {
+  animation: fadeSlideUp 0.8s ease-out;
+}
+
+@media screen and (max-width: 768px) {
+  .viceList {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .contactWrapper {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .contactDivider {
+    display: none;
+  }
+
+  .contactColumnLeft {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .contactColumnRight {
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 0;
+  }
+
+  .contactTable {
+    font-size: 0.9rem;
+  }
+
+  .contactTableCell {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .contactIconLink {
+    font-size: 0.9rem;
+  }
+
+  .contactLogo {
+    font-size: 1.4rem;
+  }
+
+  .contactSubLogo {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .sectionHeader {
+    font-size: 2rem;
+  }
+
+  .contactSubHeading {
+    font-size: 0.95rem;
+  }
+}

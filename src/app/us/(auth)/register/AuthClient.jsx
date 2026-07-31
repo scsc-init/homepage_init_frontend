@@ -11,6 +11,7 @@ import * as validator from '@/util/validator';
 import InquiryButton from '@/components/InquiryButton';
 import { useSession } from 'next-auth/react';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
+import { createUser } from './actions';
 
 function cleanName(raw) {
   if (!raw) return '';
@@ -46,6 +47,7 @@ export default function AuthClient() {
   const [form, setForm] = useState({
     email: '',
     name: '',
+    kakao_name: '',
     student_id_year: '',
     student_id_number: '',
     phone1: '',
@@ -56,6 +58,7 @@ export default function AuthClient() {
   });
   const [majors, setMajors] = useState([]);
   const [college, setCollege] = useState('');
+  const [kakaoNameDiffers, setKakaoNameDiffers] = useState(false);
   const studentIdNumberRef = useRef(null);
   const phone2Ref = useRef(null);
   const phone3Ref = useRef(null);
@@ -89,32 +92,23 @@ export default function AuthClient() {
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
 
-    const createRes = await fetch(
-      ENABLE_TEST_UTILS ? '/api/test/users' : `/api/user/create`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email,
-          name: form.name,
-          student_id,
-          phone,
-          major_id: Number(form.major_id),
-          profile_picture: form.profile_picture_url,
-          profile_picture_is_url: true,
-          hashToken: session.hashToken,
-        }),
-      },
-      true,
-    );
+    const createRes = await createUser({
+      email,
+      name: form.name,
+      kakao_name: form.kakao_name.trim() || null,
+      student_id,
+      phone,
+      major_id: Number(form.major_id),
+      profile_picture: form.profile_picture_url,
+      profile_picture_is_url: true,
+      hashToken: session.hashToken,
+    });
+
     if (createRes.status !== 201) {
-      let createData;
-      try {
-        createData = await createRes.json();
-      } catch {
-        createData = { detail: '서버 응답을 처리할 수 없습니다.' };
-      }
+      const createData =
+        createRes.body && typeof createRes.body === 'object'
+          ? createRes.body
+          : { detail: createRes.body || '서버 응답을 처리할 수 없습니다.' };
       log('signup_create_failed', {
         status: createRes.status,
         detail: createData?.detail || null,
@@ -162,10 +156,38 @@ export default function AuthClient() {
             <p>
               이름: <strong>{form.name}</strong>
             </p>
+            <label className={styles.KakaoCheckLabel}>
+              <input
+                type="checkbox"
+                className={styles.KakaoCheckInput}
+                checked={kakaoNameDiffers}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setKakaoNameDiffers(checked);
+                  if (!checked) setForm((p) => ({ ...p, kakao_name: '' }));
+                }}
+              />
+              <span className={styles.KakaoCheckBox} aria-hidden="true">
+                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span>카톡 프로필 이름이 본명과 다른가요?</span>
+            </label>
+            {kakaoNameDiffers && (
+              <input
+                value={form.kakao_name}
+                onChange={(e) => setForm({ ...form, kakao_name: e.target.value })}
+                placeholder="카톡 프로필 이름"
+                style={{ width: '100%', boxSizing: 'border-box', marginTop: '0.5rem' }}
+              />
+            )}
             <button
               onClick={() => setStage(2)}
               style={{ width: '100%', boxSizing: 'border-box' }}
-              disabled={!form.email || !form.name}
+              disabled={
+                !form.email || !form.name || (kakaoNameDiffers && !form.kakao_name.trim())
+              }
             >
               다음
             </button>

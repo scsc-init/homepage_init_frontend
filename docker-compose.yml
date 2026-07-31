@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      dockerfile: Dockerfile
+    container_name: scsc-frontend
+    env_file:
+      - ./.env.production
+    ports:
+      - '127.0.0.1:3000:3000'
+    restart: unless-stopped

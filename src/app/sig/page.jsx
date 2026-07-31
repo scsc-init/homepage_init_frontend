@@ -1,5 +1,4 @@
-import SigListClient from './SigListClient';
-import styles from './sig.module.css';
+import IgListClient from '@/app/(ig)/IgListClient';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import { getCurrentTerm } from '@/util/helper/system';
@@ -37,8 +36,12 @@ export default async function SigListPage({ searchParams }) {
   );
 
   return (
-    <div className={styles.SigListContainer}>
-      <SigListClient sigs={visibleSigs} initialFilterTags={initialTags} />
-    </div>
+    <IgListClient
+      items={visibleSigs}
+      initialFilterTags={initialTags}
+      kindLabel="SIG"
+      basePath="/sig"
+      createHref="/sig/create"
+    />
   );
 }

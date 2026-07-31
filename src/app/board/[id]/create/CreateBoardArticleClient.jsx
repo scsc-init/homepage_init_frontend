@@ -3,10 +3,11 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import '@/app/board/[id]/create/page.css';
+import styles from './page.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import WriteEditorStandard from '@/components/board/WriteEditorStandard';
 import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
+import WriteEditorFile from '@/components/board/WriteEditorFile';
 import { useMe } from '@/util/hooks/useMe';
 
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {
@@ -73,18 +74,25 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   };
 
   return (
-    <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">
+    <div className={styles.CreateContainer}>
+      <div className={styles.CreateHeader}>
+        <h1 className={styles.CreateTitle}>
           {boardInfo ? `${boardInfo.name} 게시글 작성` : '게시글 작성'}
         </h1>
-        <p className="CreateSigSubtitle">
+        <p className={styles.CreateSubtitle}>
           {boardInfo?.description ?? '게시판 정보를 불러오는 중...'}
         </p>
       </div>
 
       {boardType === 'image' ? (
         <WriteEditorAlbum
+          boardInfo={boardInfo}
+          onSubmit={onSubmit}
+          submitting={submitting}
+          onDirtyChange={setIsDirty}
+        />
+      ) : boardType === 'file' ? (
+        <WriteEditorFile
           boardInfo={boardInfo}
           onSubmit={onSubmit}
           submitting={submitting}

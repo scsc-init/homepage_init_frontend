@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SEMESTER_MAP } from '@/util/constants';
 import * as AdminLayout from '@/components/AdminLayout';
+import { getKvClient, setKvClient } from '@/util/fetch/client-util';
 
 const ENROLLMENT_POLICY_KV_KEY = `enrollment_grant_until`;
 export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
@@ -11,10 +12,9 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const [semester, setSemester] = useState();
   useEffect(() => {
     const getGrantPolicy = async () => {
-      const res = await fetch(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      const [y, s] = data.value.split('-').map((v) => Number(v));
+      const value = await getKvClient(ENROLLMENT_POLICY_KV_KEY).catch(() => '');
+      if (!value) return;
+      const [y, s] = value.split('-').map((v) => Number(v));
       if (!Number.isInteger(y) || !Number.isInteger(s)) return;
       setYear(y);
       setSemester(s);
@@ -26,11 +26,7 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   const sendData = async () => {
     setIsFetching(true);
     try {
-      const res = await fetch(`/api/kv/${ENROLLMENT_POLICY_KV_KEY}/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: `${year}-${semester}` }),
-      });
+      const res = await setKvClient(ENROLLMENT_POLICY_KV_KEY, `${year}-${semester}`);
       if (res.ok) {
         alert('저장에 성공했습니다.');
       } else if (res.status === 401 || res.status === 403) {

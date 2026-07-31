@@ -31,8 +31,8 @@ html.theme-animating {
   --header-foreground-color: var(--slate-12);
   --header-border-color: var(--slate-6);
   --header-shadow-color: var(--slate-5);
-  --footer-background: #1f1f1f;
-  --footer-text-color: #f5f5f5;
+  --footer-background: var(--slate-1);
+  --footer-text-color: #2a2a2a;
   --footer-icon-bg: #3a3a3a;
   --footer-icon-hover: #555555;
   --primary-color: #d0d3d8;
@@ -102,7 +102,7 @@ html.theme-animating {
   --header-shadow-color: rgba(0, 0, 0, 0.4);
   --footer-background: #111111;
   --footer-text-color: #d0d0d0;
-  --footer-icon-bg: #222;
+  --footer-icon-bg: #1f1f1f;
   --footer-icon-hover: #444;
   --primary-color: #1a1a1a;
   --primary-neon: #667799;

@@ -24,13 +24,14 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
   };
 
   return (
-    <div className={`${styles.sigSortDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
-      <button className={styles.sigSortBtn} onClick={() => setOpen((prev) => !prev)}>
+    <div className={`${styles.sortDropdown} ${styles.fixedWidth}`} ref={dropdownRef}>
+      <button className={styles.sortBtn} onClick={() => setOpen((prev) => !prev)}>
         {labelMap[sortOrder]} ▼
       </button>
       {open && (
-        <div className={`${styles.sigSortMenu} ${styles.sigSortMenuOpen} ${styles.fixedWidth}`}>
+        <div className={`${styles.sortMenu} ${styles.sortMenuOpen} ${styles.fixedWidth}`}>
           <button
+            className={styles.sortOption}
             onClick={() => {
               setSortOrder('latest');
               setOpen(false);
@@ -39,6 +40,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
             최신순
           </button>
           <button
+            className={styles.sortOption}
             onClick={() => {
               setSortOrder('oldest');
               setOpen(false);
@@ -47,6 +49,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
             오래된 순
           </button>
           <button
+            className={styles.sortOption}
             onClick={() => {
               setSortOrder('title');
               setOpen(false);

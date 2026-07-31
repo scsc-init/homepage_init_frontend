@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import '@/app/board/[id]/create/page.css';
+import styles from '@/app/board/[id]/create/page.module.css';
 import AttachmentSection from '@/components/board/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
@@ -137,24 +137,28 @@ export default function EditClient({ articleId }) {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="CreateSigContainer">
-      <div className="CreateSigHeader">
-        <h1 className="CreateSigTitle">게시글 수정</h1>
+    <div className={styles.CreateContainer}>
+      <div className={styles.CreateHeader}>
+        <h1 className={styles.CreateTitle}>게시글 수정</h1>
       </div>
 
-      <div className="CreateSigCard space-y-4">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className={styles.CreateCard}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <input
             type="text"
             {...register('title', { required: true })}
             placeholder="제목을 입력하세요"
-            className="w-full border p-2 rounded"
+            className={styles.Input}
           />
 
-          <Editor markdown={content} onChange={(v) => setValue('editor', v)} />
+          <Editor
+            className={styles.Editor}
+            markdown={content}
+            onChange={(v) => setValue('editor', v)}
+          />
 
           <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
-          <button type="submit" className="SigCreateBtn" disabled={submitting}>
+          <button type="submit" className={styles.CreateBtn} disabled={submitting}>
             {submitting ? '수정 중...' : '수정 완료'}
           </button>
         </form>

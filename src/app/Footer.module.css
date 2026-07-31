@@ -38,7 +38,7 @@
 }
 
 .logo {
-  background-color: var(--color-card-bg);
+  background-color: var(--footer-icon-bg);
   padding: 0.75rem;
   border-radius: 50%;
   display: flex;
@@ -55,6 +55,7 @@
   height: 24px;
   object-fit: contain;
   overflow: visible;
+  filter: invert(1) hue-rotate(180deg);
 }
 
 @media (max-width: 768px) {

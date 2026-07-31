@@ -199,8 +199,6 @@
   padding: 4rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  user-select: none;
-  -webkit-user-drag: none;
   z-index: 2;
   position: relative;
 }
