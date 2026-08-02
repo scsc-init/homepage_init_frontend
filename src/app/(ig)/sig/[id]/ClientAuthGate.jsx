@@ -4,7 +4,7 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import styles from '@/app/(ig)/IgDetail.module.css';
+import styles from '@/app/(ig)/components/detail/IgDetail.module.css';
 
 export default function ClientAuthGate({ children }) {
   const router = useRouter();

@@ -1,9 +1,9 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
-import IgForm from '@/app/(ig)/IgForm';
+import IgForm from '@/app/(ig)/components/editor/IgForm';
 import SigTagManager from '@/components/board/SigTagManager';
-import styles from '@/app/(ig)/IgEditorPage.module.css';
+import styles from '@/app/(ig)/components/editor/IgEditorPage.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';

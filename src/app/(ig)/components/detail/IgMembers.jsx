@@ -1,5 +1,5 @@
 import styles from './IgDetail.module.css';
-import { getMemberIdentity } from './memberIdentity';
+import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 
 const MEMBER_CONFIG = {
   sig: {

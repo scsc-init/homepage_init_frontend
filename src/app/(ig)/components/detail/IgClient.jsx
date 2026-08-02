@@ -1,11 +1,11 @@
 'use client';
 
-import EditIgButton from '@/app/(ig)/EditIgButton';
-import IgContents from '@/app/(ig)/IgContents';
-import IgDeleteButton from '@/app/(ig)/IgDeleteButton';
-import IgJoinLeaveButton from '@/app/(ig)/IgJoinLeaveButton';
-import IgMembers from '@/app/(ig)/IgMembers';
-import IgOwnerHandoverButton from '@/app/(ig)/IgOwnerHandoverButton';
+import EditIgButton from '@/app/(ig)/components/detail/EditIgButton';
+import IgContents from '@/app/(ig)/components/detail/IgContents';
+import IgDeleteButton from '@/app/(ig)/components/detail/IgDeleteButton';
+import IgJoinLeaveButton from '@/app/(ig)/components/detail/IgJoinLeaveButton';
+import IgMembers from '@/app/(ig)/components/detail/IgMembers';
+import IgOwnerHandoverButton from '@/app/(ig)/components/detail/IgOwnerHandoverButton';
 import { sortSigPigTags } from '@/components/board/SigPigTags';
 import {
   is_sigpig_join_available,
@@ -13,7 +13,7 @@ import {
   minExecutiveLevel,
   SEMESTER_MAP,
 } from '@/util/constants';
-import { getMemberIdentity } from './memberIdentity';
+import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
 import styles from './IgDetail.module.css';
 

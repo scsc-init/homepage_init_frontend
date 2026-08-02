@@ -5,7 +5,7 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import styles from './IgDetail.module.css';
-import { getMemberIdentity } from './memberIdentity';
+import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 
 const LABELS = {
   sig: {
