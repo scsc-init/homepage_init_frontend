@@ -25,7 +25,8 @@ export interface KvFetchResponse {
 }
 
 export type KvValueResult =
-  { status: 'fulfilled'; value: string } | { status: 'rejected'; reason: string };
+  | { status: 'fulfilled'; value: string }
+  | { status: 'rejected'; reason: string };
 
 export interface ArticleContentResponse {
   id?: number;

@@ -164,16 +164,13 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetchBackendClient(
-        `/api/executive/${igSlug}/${ig.id}/member/join`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: u.id,
-          }),
-        },
-      );
+      const res = await fetchBackendClient(`/api/executive/${igSlug}/${ig.id}/member/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: u.id,
+        }),
+      });
       if (res.status === 204) {
         const newMember = { user_id: u.id, user: { id: u.id, email: u.email, name: u.name } };
         setMembers((prev) => [...prev, newMember]);
@@ -198,16 +195,13 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetchBackendClient(
-        `/api/executive/${igSlug}/${ig.id}/member/leave`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: member.user_id,
-          }),
-        },
-      );
+      const res = await fetchBackendClient(`/api/executive/${igSlug}/${ig.id}/member/leave`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: member.user_id,
+        }),
+      });
       if (res.status === 204) {
         setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
         setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
