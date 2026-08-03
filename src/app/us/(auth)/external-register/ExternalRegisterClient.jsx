@@ -150,8 +150,11 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
             {kakaoNameDiffers && (
               <input
                 value={form.kakao_name}
-                onChange={(event) => setForm({ ...form, kakao_name: event.target.value })}
+                onChange={(event) =>
+                  setForm({ ...form, kakao_name: event.target.value.slice(0, 64) })
+                }
                 placeholder="카톡 프로필 이름"
+                maxLength={64}
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
             )}
@@ -221,6 +224,7 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
               }
               placeholder="SCSC 외부회원으로 가입하려는 이유를 입력해주세요."
               className={styles.ReasonTextarea}
+              maxLength={1000}
             />
 
             <label className={styles.KakaoCheckLabel}>

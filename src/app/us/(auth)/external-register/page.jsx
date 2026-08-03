@@ -60,7 +60,8 @@ async function submitExternalMemberApplication(form) {
   const phone = String(form?.phone ?? '').replace(/\D/g, '');
   const studentId = String(form?.student_id ?? '').replace(/\D/g, '');
   const reason = typeof form?.reason === 'string' ? form.reason.trim().slice(0, 1000) : '';
-  const kakaoName = typeof form?.kakao_name === 'string' ? form.kakao_name.trim() : '';
+  const kakaoName =
+    typeof form?.kakao_name === 'string' ? form.kakao_name.trim().slice(0, 64) : '';
   const validPhone = await validateWithCallback(validator.phoneNumber, phone);
 
   if (!validPhone) {
