@@ -138,6 +138,8 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     return null;
   }
 
+  const igSlug = is_sig ? 'sig' : 'pig';
+
   const updateUserFilterCriteria = (field, value) => {
     const newFilter = { ...userFilter, [field]: value };
     setUserFilter(newFilter);
@@ -163,7 +165,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
       const res = await fetchBackendClient(
-        `/api/executive/sig/${ig.id}/member/join`,
+        `/api/executive/${igSlug}/${ig.id}/member/join`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -197,7 +199,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
       const res = await fetchBackendClient(
-        `/api/executive/sig/${ig.id}/member/leave`,
+        `/api/executive/${igSlug}/${ig.id}/member/leave`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
