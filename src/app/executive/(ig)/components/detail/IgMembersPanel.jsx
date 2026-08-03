@@ -164,7 +164,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleAddMember = async (u) => {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
-      const res = await fetchBackendClient(`/api/executive/${igSlug}/${ig.id}/member/join`, {
+      const res = await fetchBackendClient(`/api/executive/sig/${ig.id}/member/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -195,7 +195,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   const handleDeleteMember = async (member) => {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
-      const res = await fetchBackendClient(`/api/executive/${igSlug}/${ig.id}/member/leave`, {
+      const res = await fetchBackendClient(`/api/executive/sig/${ig.id}/member/leave`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
