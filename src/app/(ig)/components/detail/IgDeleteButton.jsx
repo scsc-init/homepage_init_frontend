@@ -1,6 +1,7 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { readError } from '@/app/(ig)/utils/readError';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -10,22 +11,6 @@ export default function IgDeleteButton({ kind, itemId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
   const upperLabel = kind.toUpperCase();
-
-  const readError = async (res) => {
-    const base = `HTTP ${res.status}`;
-    const ct = res.headers.get('content-type') || '';
-    try {
-      if (ct.includes('application/json')) {
-        const body = await res.json();
-        const detail = body?.detail ?? body?.message ?? body?.error;
-        return detail ? `${base} - ${detail}` : `${base} - ${JSON.stringify(body)}`;
-      }
-      const text = await res.text();
-      return text ? `${base} - ${text}` : base;
-    } catch {
-      return base;
-    }
-  };
 
   const deleteBySelf = async () => {
     try {

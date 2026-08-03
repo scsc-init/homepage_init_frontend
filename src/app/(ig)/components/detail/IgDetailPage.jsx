@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import 'highlight.js/styles/github.css';
 import IgClient from '@/app/(ig)/components/detail/IgClient';
 import { fetchBackendServer } from '@/util/fetch/server';
@@ -17,6 +18,7 @@ export default async function IgDetailPage({ kind, params }) {
 
   const itemRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!itemRes.ok) {
+    if (itemRes.status === 404) notFound();
     return <div className="p-6 text-center text-red-600">{config.missingMessage}</div>;
   }
   const item = await itemRes.json();

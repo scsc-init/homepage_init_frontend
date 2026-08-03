@@ -1,6 +1,7 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { readError } from '@/app/(ig)/utils/readError';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -31,22 +32,6 @@ export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
   const dropdownRef = useRef(null);
   const labels = LABELS[kind];
   const memberData = Array.isArray(members) ? members : [];
-
-  const readError = async (res) => {
-    const base = `HTTP ${res.status}`;
-    const ct = res.headers.get('content-type') || '';
-    try {
-      if (ct.includes('application/json')) {
-        const body = await res.json();
-        const detail = body?.detail ?? body?.message ?? body?.error;
-        return detail ? `${base} - ${detail}` : `${base} - ${JSON.stringify(body)}`;
-      }
-      const text = await res.text();
-      return text ? `${base} - ${text}` : base;
-    } catch {
-      return base;
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {

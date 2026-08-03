@@ -1,6 +1,7 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { readError } from '@/app/(ig)/utils/readError';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -26,22 +27,6 @@ export default function IgJoinLeaveButton({ kind, igId, initialIsMember = false 
   const [isMember, setIsMember] = useState(!!initialIsMember);
   const [pending, setPending] = useState(false);
   const labels = LABELS[kind];
-
-  const readError = async (res) => {
-    const base = `HTTP ${res.status}`;
-    const ct = res.headers.get('content-type') || '';
-    try {
-      if (ct.includes('application/json')) {
-        const body = await res.json();
-        const detail = body?.detail ?? body?.message ?? body?.error;
-        return detail ? `${base} - ${detail}` : `${base} - ${JSON.stringify(body)}`;
-      }
-      const text = await res.text();
-      return text ? `${base} - ${text}` : base;
-    } catch {
-      return base;
-    }
-  };
 
   const requestMembership = async (nextIsMember) => {
     const action = nextIsMember ? 'join' : 'leave';
