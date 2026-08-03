@@ -8,5 +8,6 @@ export default async function LoginPage(props) {
       ? searchParams.redirect
       : null;
 
-  return <AuthClient initialRedirect={redirectTo} />;
+  const snuEmailCheck = process.env.SNU_EMAIL_CHECK?.toUpperCase() === 'TRUE';
+  return <AuthClient initialRedirect={redirectTo} snuEmailCheck={snuEmailCheck} />;
 }

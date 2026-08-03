@@ -17,10 +17,12 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
     phone: '',
     student_id: '',
     reason: '',
+    kakao_name: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [kakaoNameDiffers, setKakaoNameDiffers] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,6 +54,7 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
         phone,
         student_id: studentId || null,
         reason: form.reason.trim() || null,
+        kakao_name: form.kakao_name.trim() || null,
       });
 
       if (result.status === 201) {
@@ -94,6 +97,33 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
 
             <p>이름</p>
             <input value={name} disabled style={{ width: '100%', boxSizing: 'border-box' }} />
+
+            <label className={styles.KakaoCheckLabel}>
+              <input
+                type="checkbox"
+                className={styles.KakaoCheckInput}
+                checked={kakaoNameDiffers}
+                onChange={(event) => {
+                  const checked = event.target.checked;
+                  setKakaoNameDiffers(checked);
+                  if (!checked) setForm((prev) => ({ ...prev, kakao_name: '' }));
+                }}
+              />
+              <span className={styles.KakaoCheckBox} aria-hidden="true">
+                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span>카톡 프로필 이름이 본명과 다른가요?</span>
+            </label>
+            {kakaoNameDiffers && (
+              <input
+                value={form.kakao_name}
+                onChange={(event) => setForm({ ...form, kakao_name: event.target.value })}
+                placeholder="카톡 프로필 이름"
+                style={{ width: '100%', boxSizing: 'border-box', marginTop: '0.5rem' }}
+              />
+            )}
 
             <p>전화번호</p>
             <input
@@ -162,7 +192,14 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
             <button
               type="submit"
               className={`${styles.SignupBtn} ${submitting ? styles['is-disabled'] : ''}`}
-              disabled={submitting || !email || !name || !form.phone || !privacyAgreed}
+              disabled={
+                submitting ||
+                !email ||
+                !name ||
+                !form.phone ||
+                !privacyAgreed ||
+                (kakaoNameDiffers && !form.kakao_name.trim())
+              }
             >
               {submitting ? '신청 중...' : '가입 신청하기'}
             </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import '@radix-ui/colors/red.css';
@@ -38,11 +38,12 @@ function log(event, data = {}) {
   } catch {}
 }
 
-export default function AuthClient({ initialRedirect = null }) {
+export default function AuthClient({ initialRedirect = null, snuEmailCheck = false }) {
   const { me } = useMe();
   const [inAppWarning, setInAppWarning] = useState(false);
-  const [authLoading, setAuthLoading] = useState(false);
+  const [pendingMode, setPendingMode] = useState(null);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
+  const handledErrorRef = useRef(null);
   const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
@@ -59,7 +60,12 @@ export default function AuthClient({ initialRedirect = null }) {
   }, [initialRedirect]);
 
   useEffect(() => {
-    if (!error) return;
+    if (!error) {
+      handledErrorRef.current = null;
+      return;
+    }
+    if (handledErrorRef.current === error) return;
+    handledErrorRef.current = error;
     switch (error) {
       case 'invalid_email':
         alert('SNU 구글 계정(@snu.ac.kr)으로만 로그인할 수 있습니다.');
@@ -139,15 +145,17 @@ export default function AuthClient({ initialRedirect = null }) {
             type="button"
             className={styles['GoogleLoginBtn']}
             onClick={async () => {
-              if (authLoading) return;
-              setAuthLoading(true);
+              if (pendingMode) return;
+              setPendingMode('snu');
               log('click_login_button', { provider: 'google' });
-              await signIn('google', {
-                callbackUrl: '/us/login/callback?mode=snu',
-              });
+              await signIn(
+                'google',
+                { callbackUrl: '/us/login/callback?mode=snu' },
+                snuEmailCheck ? { hd: 'snu.ac.kr' } : undefined,
+              );
             }}
-            disabled={inAppWarning || authLoading}
-            aria-disabled={inAppWarning || authLoading}
+            disabled={inAppWarning || pendingMode !== null}
+            aria-disabled={inAppWarning || pendingMode !== null}
           >
             <span className={styles['GoogleIcon']} aria-hidden="true">
               <svg viewBox="0 0 48 48">
@@ -167,15 +175,15 @@ export default function AuthClient({ initialRedirect = null }) {
             type="button"
             className={styles['GoogleLoginBtn']}
             onClick={async () => {
-              if (authLoading) return;
-              setAuthLoading(true);
+              if (pendingMode) return;
+              setPendingMode('external');
               log('click_external_login_button', { provider: 'google' });
               await signIn('google', {
                 callbackUrl: '/us/login/callback?mode=external',
               });
             }}
-            disabled={inAppWarning || authLoading}
-            aria-disabled={inAppWarning || authLoading}
+            disabled={inAppWarning || pendingMode !== null}
+            aria-disabled={inAppWarning || pendingMode !== null}
           >
             <span className={styles['GoogleIcon']} aria-hidden="true">
               <svg viewBox="0 0 48 48">

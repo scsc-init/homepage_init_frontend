@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
-import * as validator from '@/util/validator';
 import type { UserProfile } from '@/types/user';
 import { fetchBackendServer } from '@/util/fetch/server';
 
@@ -38,24 +37,12 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
-      ...(process.env.SNU_EMAIL_CHECK?.toUpperCase() === 'TRUE' && {
-        authorization: {
-          params: { hd: 'snu.ac.kr' },
-        },
-      }),
     }),
   ],
   callbacks: {
     async signIn({ user }) {
       if (!user.email || !user.name) {
         return '/us/login?error=no_information';
-      }
-
-      if (
-        process.env.SNU_EMAIL_CHECK?.toUpperCase() === 'TRUE' &&
-        !validator.email(user.email)
-      ) {
-        return '/us/login?error=invalid_email';
       }
 
       if (!apiSecret) {
