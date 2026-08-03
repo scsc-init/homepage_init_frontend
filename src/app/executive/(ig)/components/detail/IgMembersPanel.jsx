@@ -163,7 +163,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     setUserLoading((prev) => ({ ...prev, [u.id]: true }));
     try {
       const res = await fetchBackendClient(
-        `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/join`,
+        `/api/executive/sig/${ig.id}/member/join`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -197,7 +197,7 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
     setMemberLoading((prev) => ({ ...prev, [member.user_id]: true }));
     try {
       const res = await fetchBackendClient(
-        `/api/executive/${is_sig ? 'sig' : 'pig'}/${ig.id}/member/leave`,
+        `/api/executive/sig/${ig.id}/member/leave`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

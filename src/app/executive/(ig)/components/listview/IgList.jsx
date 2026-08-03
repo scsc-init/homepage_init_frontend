@@ -4,7 +4,9 @@ import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import * as AdminLayout from '@/components/AdminLayout';
 
-function SigFilterRow({ filter, updateFilterCriteria }) {
+const lower = (value) => value?.toString().toLowerCase() || '';
+
+function IgFilterRow({ filter, updateFilterCriteria }) {
   return (
     <tr>
       <td>
@@ -51,31 +53,29 @@ function SigFilterRow({ filter, updateFilterCriteria }) {
           onChange={(e) => updateFilterCriteria('ownerName', e.target.value)}
         />
       </td>
-      <td></td>
+      <td />
     </tr>
   );
 }
 
-const RenderSigRow = ({ sig }) => {
+function IgRow({ ig, igSlug }) {
   return (
     <tr>
-      <td>{sig.title ?? ''}</td>
-      <td>{STATUS_MAP[sig.status] ?? ''}</td>
-      <td>{sig.year ?? ''}</td>
-      <td>{SEMESTER_MAP[Number(sig.semester)] ?? ''}학기</td>
-      <td>{sig.ownerName ?? ''}</td>
+      <td>{ig.title ?? ''}</td>
+      <td>{STATUS_MAP[ig.status] ?? ''}</td>
+      <td>{ig.year ?? ''}</td>
+      <td>{SEMESTER_MAP[Number(ig.semester)] ?? ''}학기</td>
+      <td>{ig.ownerName ?? ''}</td>
       <td>
-        <a href={`/executive/sig/${sig.id}`} data-underline>
+        <a href={`/executive/${igSlug}/${ig.id}`} data-underline>
           상세보기
         </a>
       </td>
     </tr>
   );
-};
+}
 
-const lower = (v) => v?.toString().toLowerCase() || '';
-
-export default function SigList({ sigs }) {
+export default function IgList({ igs, igType }) {
   const [filter, setFilter] = useState({
     title: '',
     status: '',
@@ -84,15 +84,19 @@ export default function SigList({ sigs }) {
     ownerName: '',
   });
 
-  const filteredSigs = useMemo(() => {
-    const matches = (sig) =>
-      (!filter.title || lower(sig.title).includes(lower(filter.title))) &&
-      (!filter.status || sig.status?.toString() === filter.status.toString()) &&
-      (!filter.year || lower(sig.year).includes(lower(filter.year))) &&
-      (!filter.semester || lower(sig.semester).toString() === filter.semester) &&
-      (!filter.ownerName || lower(sig.ownerName).includes(lower(filter.ownerName)));
-    return sigs.filter(matches);
-  }, [sigs, filter]);
+  const safeIgs = Array.isArray(igs) ? igs : [];
+  const igSlug = igType.toLowerCase();
+
+  const filteredIgs = useMemo(() => {
+    const matches = (ig) =>
+      (!filter.title || lower(ig.title).includes(lower(filter.title))) &&
+      (!filter.status || ig.status?.toString() === filter.status.toString()) &&
+      (!filter.year || lower(ig.year).includes(lower(filter.year))) &&
+      (!filter.semester || ig.semester?.toString() === filter.semester) &&
+      (!filter.ownerName || lower(ig.ownerName).includes(lower(filter.ownerName)));
+
+    return safeIgs.filter(matches);
+  }, [igs, filter]);
 
   return (
     <AdminLayout.AdminTableWrap>
@@ -111,17 +115,19 @@ export default function SigList({ sigs }) {
             <th>상태</th>
             <th>연도</th>
             <th>학기</th>
-            <th>SIG장</th>
+            <th>{igType}장</th>
             <th>상세보기</th>
           </tr>
-          <SigFilterRow
+          <IgFilterRow
             filter={filter}
-            updateFilterCriteria={(field, value) => setFilter({ ...filter, [field]: value })}
+            updateFilterCriteria={(field, value) =>
+              setFilter((prev) => ({ ...prev, [field]: value }))
+            }
           />
         </thead>
         <tbody>
-          {filteredSigs.map((sig) => (
-            <RenderSigRow sig={sig} key={sig.id} />
+          {filteredIgs.map((ig) => (
+            <IgRow key={ig.id} ig={ig} igSlug={igSlug} />
           ))}
         </tbody>
       </AdminLayout.AdminTable>
