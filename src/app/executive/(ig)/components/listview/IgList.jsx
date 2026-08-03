@@ -84,10 +84,11 @@ export default function IgList({ igs, igType }) {
     ownerName: '',
   });
 
-  const safeIgs = Array.isArray(igs) ? igs : [];
   const igSlug = igType.toLowerCase();
 
   const filteredIgs = useMemo(() => {
+    const safeIgs = Array.isArray(igs) ? igs : [];
+
     const matches = (ig) =>
       (!filter.title || lower(ig.title).includes(lower(filter.title))) &&
       (!filter.status || ig.status?.toString() === filter.status.toString()) &&

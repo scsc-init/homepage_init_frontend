@@ -233,12 +233,13 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
     return null;
   }
 
-  const igLabel = is_sig ? 'SIG' : 'PIG';
+  const igSlug = is_sig ? 'sig' : 'pig';
+  const igLabel = igSlug.toUpperCase();
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res1 = await fetchBackendClient(`/api/executive/sig/${ig.id}/update`, {
+      const res1 = await fetchBackendClient(`/api/executive/${igSlug}/${ig.id}/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -264,7 +265,7 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
 
       let res2 = null;
       if (selectedMember !== getLeaderUserId(ig)) {
-        res2 = await fetchBackendClient(`/api/executive/sig/${ig.id}/handover`, {
+        res2 = await fetchBackendClient(`/api/executive/${igSlug}/${ig.id}/handover`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ new_owner: selectedMember }),
@@ -273,7 +274,7 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
       if (!res2 || res2.ok) alert('저장 완료');
       else {
         const msg2 = res2 ? await res2.json() : undefined;
-        alert(`저장 실패. ${igLabel} 변경: ${!res2 || (msg2.detail ?? res2.status)}`);
+        alert(`저장 실패. ${igLabel} 변경: ${msg2?.detail ?? res2.status}`);
       }
       router.refresh();
     } catch (err) {
@@ -287,11 +288,11 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
       setSaving(true);
-      const res = await fetchBackendClient(`/api/executive/sig/${id}/delete`, {
+      const res = await fetchBackendClient(`/api/executive/${igSlug}/${id}/delete`, {
         method: 'POST',
       });
       if (res.status === 204) {
-        router.replace(is_sig ? '/executive/sig' : '/executive/pig');
+        router.replace(`/executive/${igSlug}`);
       } else {
         const msg = await res.json();
         alert('삭제 실패: ' + (msg.detail ?? res.status));
