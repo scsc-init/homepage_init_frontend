@@ -46,6 +46,17 @@ async function submitExternalMemberApplication(form) {
     };
   }
 
+  const rawName = typeof form?.name === 'string' ? form.name.trim().slice(0, 64) : '';
+  const name = rawName || cleanName(session.user.name);
+  const validName = await validateWithCallback(validator.name, name);
+
+  if (!validName) {
+    return {
+      status: 400,
+      detail: '이름을 올바르게 입력해주세요.',
+    };
+  }
+
   const phone = String(form?.phone ?? '').replace(/\D/g, '');
   const studentId = String(form?.student_id ?? '').replace(/\D/g, '');
   const reason = typeof form?.reason === 'string' ? form.reason.trim().slice(0, 1000) : '';
@@ -76,7 +87,7 @@ async function submitExternalMemberApplication(form) {
     response = await fetchBackendServer('POST', '/api/user/external/register', {
       body: {
         email,
-        name: cleanName(session.user.name),
+        name,
         phone,
         student_id: studentId || null,
         reason: reason || null,

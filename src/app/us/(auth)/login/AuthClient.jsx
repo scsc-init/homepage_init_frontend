@@ -154,8 +154,9 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
                 snuEmailCheck ? { hd: 'snu.ac.kr' } : undefined,
               );
             }}
-            disabled={inAppWarning || pendingMode !== null}
-            aria-disabled={inAppWarning || pendingMode !== null}
+            disabled={inAppWarning}
+            aria-disabled={inAppWarning}
+            aria-busy={pendingMode === 'snu'}
           >
             <span className={styles['GoogleIcon']} aria-hidden="true">
               <svg viewBox="0 0 48 48">
@@ -182,8 +183,9 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
                 callbackUrl: '/us/login/callback?mode=external',
               });
             }}
-            disabled={inAppWarning || pendingMode !== null}
-            aria-disabled={inAppWarning || pendingMode !== null}
+            disabled={inAppWarning}
+            aria-disabled={inAppWarning}
+            aria-busy={pendingMode === 'external'}
           >
             <span className={styles['GoogleIcon']} aria-hidden="true">
               <svg viewBox="0 0 48 48">
