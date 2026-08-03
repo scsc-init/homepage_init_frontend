@@ -15,6 +15,27 @@ export const minExecutiveLevel = 500;
 /** 졸업생 권한 레벨 값입니다. 내 정보 수정 페이지에서 사용됩니다. */
 export const oldboyLevel = 400;
 
+export type RoleMap = Record<number, { english: string; korean: string }>;
+
+export const ROLE_MAP: RoleMap = {
+  0: { english: 'lowest', korean: '최저권한' },
+  100: { english: 'dormant', korean: '휴회원' },
+  200: { english: 'newcomer', korean: '준회원' },
+  300: { english: 'member', korean: '정회원' },
+  350: { english: 'external', korean: '외부회원' },
+  400: { english: 'oldboy', korean: '졸업생' },
+  500: { english: 'executive', korean: '운영진' },
+  1000: { english: 'president', korean: '회장' },
+};
+
+export const roleKorean = (role: number): string => ROLE_MAP[role]?.korean ?? String(role);
+export const roleEnglish = (role: number): string => ROLE_MAP[role]?.english ?? 'member';
+
+export const ROLE_OPTIONS: { level: number; english: string; korean: string }[] =
+  Object.entries(ROLE_MAP)
+    .map(([level, value]) => ({ level: Number(level), ...value }))
+    .sort((a, b) => b.level - a.level);
+
 /**
  * 학기 숫자에 대응되는 학기 표시값입니다.
  */

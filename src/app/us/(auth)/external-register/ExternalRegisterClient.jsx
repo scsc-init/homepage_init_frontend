@@ -223,20 +223,29 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
               className={styles.ReasonTextarea}
             />
 
-            <label className={`${styles.PolicyLink} ${styles.agree}`}>
+            <label className={styles.KakaoCheckLabel}>
               <input
                 type="checkbox"
+                className={styles.KakaoCheckInput}
                 checked={privacyAgreed}
                 onChange={(event) => setPrivacyAgreed(event.target.checked)}
-              />{' '}
-              <a
-                href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                개인정보 처리방침
-              </a>
-              에 동의합니다.
+              />
+              <span className={styles.KakaoCheckBox} aria-hidden="true">
+                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span>
+                <a
+                  href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.PolicyAnchor}
+                >
+                  개인정보 처리방침
+                </a>
+                에 동의합니다.
+              </span>
             </label>
             <p>가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.</p>
 

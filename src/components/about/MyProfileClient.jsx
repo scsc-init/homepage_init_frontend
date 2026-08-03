@@ -12,19 +12,9 @@ import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
 import { getKvsClient } from '@/util/fetch/client-util';
+import { ROLE_MAP } from '@/util/constants';
 
 const cx = (...classes) => classes.filter(Boolean).join(' ');
-
-const USER_ROLE_MAP = {
-  0: '최저권한',
-  100: '휴회원',
-  200: '준회원',
-  300: '정회원',
-  350: '외부회원',
-  400: '졸업생',
-  500: '운영진',
-  1000: '회장',
-};
 
 function getUserStatusText(user) {
   if (user.is_active === true) return '활동 중 (입금 확인 완료)';
@@ -139,7 +129,7 @@ export default function MyProfileClient() {
         />
         <div className={styles['user-name-container']}>
           <div className={styles['user-name']}>
-            {user ? `${user.name} [${USER_ROLE_MAP[user.role] || '알 수 없음'}]` : ''}
+            {user ? `${user.name} [${ROLE_MAP[user.role]?.korean ?? '알 수 없음'}]` : ''}
           </div>
         </div>
       </div>

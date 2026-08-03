@@ -336,6 +336,11 @@
   color: var(--color-surface-light);
 }
 
+.PolicyAnchor {
+  color: inherit;
+  text-decoration: underline;
+}
+
 .definitionRow {
   display: flex;
   gap: 1.25rem;
