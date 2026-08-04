@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import InquiryButton from '@/components/InquiryButton';
 import * as validator from '@/util/validator';
 import styles from '../auth.module.css';
 import '@/styles/theme.css';
+import { MainLogoImage } from '@/components/common/MainLogoImage';
 
 function validateWithCallback(validate, value) {
   return new Promise((resolve) => {
@@ -14,20 +15,33 @@ function validateWithCallback(validate, value) {
 
 export default function ExternalRegisterClient({ email, name, submitApplication }) {
   const [form, setForm] = useState({
-    phone: '',
+    name: name ?? '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
     student_id: '',
     reason: '',
+    kakao_name: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [kakaoNameDiffers, setKakaoNameDiffers] = useState(false);
+  const phone2Ref = useRef(null);
+  const phone3Ref = useRef(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (submitting) return;
 
-    const phone = form.phone.replace(/\D/g, '');
+    const trimmedName = form.name.trim();
+    const validName = await validateWithCallback(validator.name, trimmedName);
+    if (!validName) {
+      alert('이름 형식이 올바르지 않습니다(1~64자)');
+      return;
+    }
+    const phone = `${form.phone1}${form.phone2}${form.phone3}`.replace(/\D/g, '');
     const studentId = form.student_id.replace(/\D/g, '');
 
     const validPhone = await validateWithCallback(validator.phoneNumber, phone);
@@ -49,9 +63,11 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
 
     try {
       const result = await submitApplication({
+        name: trimmedName,
         phone,
         student_id: studentId || null,
         reason: form.reason.trim() || null,
+        kakao_name: form.kakao_name.trim() || null,
       });
 
       if (result.status === 201) {
@@ -75,9 +91,17 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
 
   return (
     <div id={styles.GoogleSignupContainer}>
-      <div className={styles.GoogleSignupCard}>
+      <div className={`${styles.GoogleSignupCard} ${styles.ExternalRegisterCard}`}>
         {submitted ? (
-          <div style={{ marginTop: '10vh', textAlign: 'center' }}>
+          <div style={{ marginTop: '4vh', textAlign: 'center' }}>
+            <div className={styles['main-logo-wrapper__login']}>
+              <MainLogoImage
+                className={`${styles['main-logo__login']} logo`}
+                width={1976}
+                height={670}
+                loading="eager"
+              />
+            </div>
             <h2>가입 신청이 접수되었습니다.</h2>
             <p>가입 신청 후 임원진에게 별도로 연락해 주세요.</p>
             <p>임원진의 확인 및 승인 후 외부회원으로 로그인할 수 있습니다.</p>
@@ -86,29 +110,94 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ marginTop: '4vh' }}>
+          <form
+            onSubmit={handleSubmit}
+            className={styles.ExternalRegisterForm}
+            style={{ marginTop: '2vh' }}
+          >
             <h2>외부회원 가입 신청</h2>
 
             <p>이메일</p>
             <input value={email} disabled style={{ width: '100%', boxSizing: 'border-box' }} />
 
             <p>이름</p>
-            <input value={name} disabled style={{ width: '100%', boxSizing: 'border-box' }} />
-
-            <p>전화번호</p>
             <input
-              value={form.phone}
-              onChange={(event) =>
-                setForm({
-                  ...form,
-                  phone: event.target.value.replace(/\D/g, '').slice(0, 11),
-                })
-              }
-              placeholder="01012345678"
-              inputMode="numeric"
-              required
+              value={form.name}
+              onChange={(event) => setForm({ ...form, name: event.target.value.slice(0, 64) })}
+              placeholder="이름"
+              maxLength={64}
               style={{ width: '100%', boxSizing: 'border-box' }}
             />
+
+            <label className={styles.KakaoCheckLabel}>
+              <input
+                type="checkbox"
+                className={styles.KakaoCheckInput}
+                checked={kakaoNameDiffers}
+                onChange={(event) => {
+                  const checked = event.target.checked;
+                  setKakaoNameDiffers(checked);
+                  if (!checked) setForm((prev) => ({ ...prev, kakao_name: '' }));
+                }}
+              />
+              <span className={styles.KakaoCheckBox} aria-hidden="true">
+                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span>카톡 프로필 이름이 본명과 다른가요?</span>
+            </label>
+            {kakaoNameDiffers && (
+              <input
+                value={form.kakao_name}
+                onChange={(event) =>
+                  setForm({ ...form, kakao_name: event.target.value.slice(0, 64) })
+                }
+                placeholder="카톡 프로필 이름"
+                maxLength={64}
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              />
+            )}
+
+            <p>전화번호</p>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                value={form.phone1}
+                onChange={(event) => {
+                  const val = event.target.value.replace(/\D/g, '').slice(0, 3);
+                  setForm({ ...form, phone1: val });
+                  if (val.length === 3) phone2Ref.current?.focus();
+                }}
+                maxLength={3}
+                placeholder="010"
+                inputMode="numeric"
+              />
+              <input
+                ref={phone2Ref}
+                value={form.phone2}
+                onChange={(event) => {
+                  const val = event.target.value.replace(/\D/g, '').slice(0, 4);
+                  setForm({ ...form, phone2: val });
+                  if (val.length === 4) phone3Ref.current?.focus();
+                }}
+                maxLength={4}
+                placeholder="1234"
+                inputMode="numeric"
+              />
+              <input
+                ref={phone3Ref}
+                value={form.phone3}
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+                    phone3: event.target.value.replace(/\D/g, '').slice(0, 4),
+                  })
+                }
+                maxLength={4}
+                placeholder="5678"
+                inputMode="numeric"
+              />
+            </div>
 
             <p>학번 (선택)</p>
             <input
@@ -134,35 +223,49 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
                 })
               }
               placeholder="SCSC 외부회원으로 가입하려는 이유를 입력해주세요."
-              rows={5}
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                resize: 'vertical',
-              }}
+              className={styles.ReasonTextarea}
+              maxLength={1000}
             />
 
-            <label className={`${styles.PolicyLink} ${styles.agree}`}>
+            <label className={styles.KakaoCheckLabel}>
               <input
                 type="checkbox"
+                className={styles.KakaoCheckInput}
                 checked={privacyAgreed}
                 onChange={(event) => setPrivacyAgreed(event.target.checked)}
-              />{' '}
-              <a
-                href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                개인정보 처리방침
-              </a>
-              에 동의합니다.
+              />
+              <span className={styles.KakaoCheckBox} aria-hidden="true">
+                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span>
+                <a
+                  href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.PolicyAnchor}
+                >
+                  개인정보 처리방침
+                </a>
+                에 동의합니다.
+              </span>
             </label>
             <p>가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.</p>
 
             <button
               type="submit"
               className={`${styles.SignupBtn} ${submitting ? styles['is-disabled'] : ''}`}
-              disabled={submitting || !email || !name || !form.phone || !privacyAgreed}
+              disabled={
+                submitting ||
+                !email ||
+                !form.name.trim() ||
+                !form.phone1 ||
+                !form.phone2 ||
+                !form.phone3 ||
+                !privacyAgreed ||
+                (kakaoNameDiffers && !form.kakao_name.trim())
+              }
             >
               {submitting ? '신청 중...' : '가입 신청하기'}
             </button>

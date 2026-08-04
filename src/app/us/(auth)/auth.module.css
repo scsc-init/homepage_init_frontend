@@ -103,13 +103,16 @@
 }
 
 .GoogleSignupCard input,
-.GoogleSignupCard select {
+.GoogleSignupCard select,
+.GoogleSignupCard textarea {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #cbd5e1;
   border-radius: 0.5rem;
   margin-top: 0.5rem;
   font-size: 1rem;
+  line-height: 1.5;
+  box-sizing: border-box;
   background-color: #f9fafb;
 }
 
@@ -271,7 +274,8 @@
 }
 
 :global(.dark) .GoogleSignupCard input,
-:global(.dark) .GoogleSignupCard select {
+:global(.dark) .GoogleSignupCard select,
+:global(.dark) .GoogleSignupCard textarea {
   background-color: var(--color-surface-light);
   color: var(--color-text-body);
   border: 1px solid var(--color-button-border);
@@ -330,6 +334,11 @@
 
 :global(.dark) .agree {
   color: var(--color-surface-light);
+}
+
+.PolicyAnchor {
+  color: inherit;
+  text-decoration: underline;
 }
 
 .definitionRow {
@@ -441,4 +450,37 @@
 :global(.dark) .KakaoCheckInput:checked + .KakaoCheckBox {
   background-color: var(--color-button-bg);
   border-color: var(--color-button-bg);
+}
+
+.ReasonTextarea {
+  resize: none;
+  height: 6rem;
+  overflow: auto;
+}
+
+@media (max-width: 640px) {
+  .ReasonTextarea {
+    height: 9rem;
+  }
+}
+
+.ExternalRegisterCard {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.ExternalRegisterForm h2 {
+  margin-bottom: 1rem;
+}
+
+.ExternalRegisterForm p,
+.ExternalRegisterForm .KakaoCheckLabel,
+.ExternalRegisterForm .PolicyLink {
+  margin-top: 0.8rem;
+}
+
+.ExternalRegisterForm input,
+.ExternalRegisterForm select,
+.ExternalRegisterForm textarea {
+  margin-top: 0.4rem;
 }

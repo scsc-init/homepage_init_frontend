@@ -41,10 +41,15 @@ async function toActionResponse(res: Response): Promise<ActionResponse> {
 }
 
 export async function createUser(payload: CreateUserPayload): Promise<ActionResponse> {
+  const body: CreateUserPayload = {
+    ...payload,
+    kakao_name: payload.kakao_name ? payload.kakao_name.trim().slice(0, 64) : null,
+  };
+
   const res = await fetchBackendServer(
     'POST',
     ENABLE_TEST_UTILS ? '/api/test/users' : '/api/user/create',
-    { body: payload },
+    { body },
   );
 
   return toActionResponse(res);

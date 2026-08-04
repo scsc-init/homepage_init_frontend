@@ -177,8 +177,9 @@ export default function AuthClient() {
             {kakaoNameDiffers && (
               <input
                 value={form.kakao_name}
-                onChange={(e) => setForm({ ...form, kakao_name: e.target.value })}
+                onChange={(e) => setForm({ ...form, kakao_name: e.target.value.slice(0, 64) })}
                 placeholder="카톡 프로필 이름"
+                maxLength={64}
                 style={{ width: '100%', boxSizing: 'border-box', marginTop: '0.5rem' }}
               />
             )}
