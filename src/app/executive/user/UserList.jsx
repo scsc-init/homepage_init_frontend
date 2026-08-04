@@ -4,7 +4,7 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useMemo, useState, useEffect } from 'react';
 import ExportUsersButton from './ExportUsersButton';
 import * as AdminLayout from '@/components/AdminLayout';
-
+import { roleKorean, roleEnglish, ROLE_OPTIONS } from '@/util/constants';
 export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const [filter, setFilter] = useState({
     name: '',
@@ -13,19 +13,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
     status: '',
     major: '',
   });
-  const roleLabel = (role) => {
-    const map = {
-      0: '최저권한',
-      100: '휴회원',
-      200: '준회원',
-      300: '정회원',
-      350: '외부 회원',
-      400: '졸업생',
-      500: '운영진',
-      1000: '회장',
-    };
-    return map[role] || role;
-  };
+  const roleLabel = (role) => roleKorean(role);
   const [users, setUsers] = useState(usersDefault);
   useEffect(() => {
     setUsers(usersDefault);
@@ -174,7 +162,9 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
   const [filter, setFilter] = useState({
     name: '',
     kakao_name: '',
-    phone: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
     student_id: '',
     role: '',
     status: '',
@@ -214,19 +204,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
     const newFilter = { ...filter, [field]: value };
     setFilter(newFilter);
   };
-
-  const roleNumberToString = (val) => {
-    const map = {
-      0: 'lowest',
-      100: 'dormant',
-      200: 'newcomer',
-      300: 'member',
-      400: 'oldboy',
-      500: 'executive',
-      1000: 'president',
-    };
-    return typeof val === 'string' ? val : (map[val] ?? 'member');
-  };
+  const roleNumberToString = (val) => (typeof val === 'string' ? val : roleEnglish(val));
 
   const sendUserData = async (user) => {
     setSaving((prev) => ({ ...prev, [user.id]: true }));
@@ -381,13 +359,11 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     value={roleNumberToString(user.role)}
                     onChange={(e) => updateUserField(user.id, 'role', e.target.value)}
                   >
-                    <option value="president">회장</option>
-                    <option value="executive">운영진</option>
-                    <option value="member">정회원</option>
-                    <option value="oldboy">졸업생</option>
-                    <option value="newcomer">준회원</option>
-                    <option value="dormant">휴회원</option>
-                    <option value="lowest">최저권한</option>
+                    {ROLE_OPTIONS.map((role) => (
+                      <option key={role.level} value={role.roleEnglish}>
+                        {roleKorean(role)}
+                      </option>
+                    ))}
                   </AdminLayout.AdminSelect>
                 </td>
                 <td>
