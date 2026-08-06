@@ -157,7 +157,11 @@ export default function EditClient({ articleId }) {
             onChange={(v) => setValue('editor', v)}
           />
 
-          <AttachmentSection valueIds={attachmentIds} onChangeIds={setAttachmentIds} />
+          <AttachmentSection
+            valueIds={attachmentIds}
+            onChangeIds={setAttachmentIds}
+            isFileUpload
+          />
           <button type="submit" className={styles.CreateBtn} disabled={submitting}>
             {submitting ? '수정 중...' : '수정 완료'}
           </button>

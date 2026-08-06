@@ -47,7 +47,7 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
-            uploadType="image"
+            isImageUpload
           />
         </div>
 
