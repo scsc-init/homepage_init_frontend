@@ -44,7 +44,7 @@ export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChang
         <AttachmentSection
           valueIds={attachmentIds}
           onChangeIds={setAttachmentIds}
-          uploadType="docs"
+          isFileUpload
         />
         <button type="submit" className={styles.CreateBtn} disabled={submitting}>
           {submitting ? '작성 중...' : '작성 완료'}

@@ -9,11 +9,11 @@ export default function AttachmentSection({
   valueIds,
   onChangeIds,
   label = '첨부파일',
-  uploadType = 'docs',
+  isImageUpload,
+  isFileUpload,
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState({});
-  const isImageUpload = uploadType === 'image';
 
   const ids = useMemo(() => {
     if (!Array.isArray(valueIds)) return [];
@@ -81,18 +81,16 @@ export default function AttachmentSection({
       if (pickedFiles.length === 0) return;
       if (isUploading) return;
 
-      const invalidFiles =
-        uploadType === 'image'
-          ? pickedFiles.filter((file) => !file.type.startsWith('image/'))
-          : [];
+      const invalidFiles = isImageUpload
+        ? pickedFiles.filter((file) => !file.type.startsWith('image/'))
+        : [];
       if (invalidFiles.length > 0) {
         alert('이미지 파일만 업로드할 수 있습니다.');
       }
 
-      const files =
-        uploadType === 'image'
-          ? pickedFiles.filter((file) => file.type.startsWith('image/'))
-          : pickedFiles;
+      const files = isImageUpload
+        ? pickedFiles.filter((file) => file.type.startsWith('image/'))
+        : pickedFiles;
       if (files.length === 0) return;
 
       setIsUploading(true);
@@ -116,10 +114,13 @@ export default function AttachmentSection({
 
           let res;
           try {
-            res = await fetchBackendClient(`/api/file/${uploadType}/upload`, {
-              method: 'POST',
-              body: formData,
-            });
+            res = await fetchBackendClient(
+              `/api/file/${isImageUpload ? 'image' : 'docs'}/upload`,
+              {
+                method: 'POST',
+                body: formData,
+              },
+            );
           } catch {
             alert('파일 업로드 중 네트워크 오류가 발생했습니다.');
             continue;
@@ -166,7 +167,7 @@ export default function AttachmentSection({
         registerMetadata(uploadedItems);
       }
     },
-    [ids, isUploading, onChangeIds, registerMetadata, uploadType],
+    [ids, isUploading, onChangeIds, registerMetadata, isImageUpload],
   );
 
   const removeId = useCallback(
@@ -177,6 +178,11 @@ export default function AttachmentSection({
     [ids, onChangeIds],
   );
 
+  if (isImageUpload === isFileUpload) {
+    console.error('AttachmentSection: isImageUpload and isFileUpload must differ');
+    return null;
+  }
+
   return (
     <section className="AttachmentSection">
       <div className="AttachmentHeader">
@@ -185,7 +191,7 @@ export default function AttachmentSection({
           <input
             type="file"
             multiple
-            accept={isImageUpload ? 'image/*' : undefined}
+            accept={isImageUpload ? 'image/*' : '.pdf, .docx, .pptx'}
             onChange={onPickFiles}
             disabled={isUploading}
             className="AttachmentInput"

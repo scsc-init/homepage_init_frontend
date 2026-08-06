@@ -48,7 +48,7 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
-            uploadType="docs"
+            isFileUpload
           />
         </div>
 
