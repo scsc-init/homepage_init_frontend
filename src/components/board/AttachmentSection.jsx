@@ -83,14 +83,24 @@ export default function AttachmentSection({
 
       const invalidFiles = isImageUpload
         ? pickedFiles.filter((file) => !file.type.startsWith('image/'))
-        : [];
+        : pickedFiles.filter((file) => {
+            const name = String(file.name || '').toLowerCase();
+            return !(name.endsWith('.pdf') || name.endsWith('.docx') || name.endsWith('.pptx'));
+          });
       if (invalidFiles.length > 0) {
-        alert('이미지 파일만 업로드할 수 있습니다.');
+        alert(
+          isImageUpload
+            ? '이미지 파일만 업로드할 수 있습니다.'
+            : '지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX 파일만 업로드할 수 있습니다.',
+        );
       }
 
       const files = isImageUpload
         ? pickedFiles.filter((file) => file.type.startsWith('image/'))
-        : pickedFiles;
+        : pickedFiles.filter((file) => {
+            const name = String(file.name || '').toLowerCase();
+            return name.endsWith('.pdf') || name.endsWith('.docx') || name.endsWith('.pptx');
+          });
       if (files.length === 0) return;
 
       setIsUploading(true);
@@ -178,7 +188,7 @@ export default function AttachmentSection({
     [ids, onChangeIds],
   );
 
-  if (isImageUpload === isFileUpload) {
+  if (Boolean(isImageUpload) === Boolean(isFileUpload)) {
     console.error('AttachmentSection: isImageUpload and isFileUpload must differ');
     return null;
   }
