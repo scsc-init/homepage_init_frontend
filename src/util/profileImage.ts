@@ -1,5 +1,7 @@
 import { DEFAULT_EXECUTIVE_PFP } from '@/util/constants';
 
+const PUBLIC_BACKEND_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/+$/, '');
+
 /**
  * @param url Source image URL
  * @returns URL with high-resolution parameters applied when applicable
@@ -23,13 +25,14 @@ export function upgradeGoogleAvatar(url: string): string {
 /**
  * @param raw Path stored in DB
  * @param fallback Fallback image when invalid
- * @returns Proxied image path or fallback
+ * @returns Backend image URL or fallback
  */
-export function toProxyStaticPath(raw: string, fallback = DEFAULT_EXECUTIVE_PFP): string {
+export function toBackendStaticPath(raw: string, fallback = DEFAULT_EXECUTIVE_PFP): string {
   const s = raw.replace(/^\/+/, '');
   if (!s) return fallback;
   if (!s.startsWith('static/image/')) return fallback;
-  return `/api/${s}`.replace(/^\/api\/static\/image\//, '/api/static/image/');
+  if (!PUBLIC_BACKEND_URL) return fallback;
+  return `${PUBLIC_BACKEND_URL}/${s}`;
 }
 
 export interface ProfileImageUser {
@@ -49,5 +52,5 @@ export function resolveProfileImage(
   const raw = user?.profile_picture;
   if (!raw) return fallback;
   if (user?.profile_picture_is_url) return upgradeGoogleAvatar(raw);
-  return toProxyStaticPath(raw, fallback);
+  return toBackendStaticPath(raw, fallback);
 }

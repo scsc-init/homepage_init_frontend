@@ -1,6 +1,7 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './page.module.css';
@@ -12,6 +13,31 @@ export default function PfpUpdate() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const router = useRouter();
+  const { data: session, update } = useSession();
+
+  const refreshProfileSession = async () => {
+    if (!session?.user?.email || !session?.hashToken) return;
+
+    const loginRes = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        email: session.user.email,
+        hashToken: session.hashToken,
+      }),
+    });
+
+    if (!loginRes.ok) return;
+
+    const loginData = await loginRes.json();
+    if (!loginData?.userProfile) return;
+
+    await update({
+      ...(loginData.jwt ? { backendJwt: loginData.jwt } : {}),
+      userProfile: loginData.userProfile,
+    });
+  };
 
   const handleFileChange = (e) => {
     const f = e.target.files?.[0] || null;
@@ -42,8 +68,13 @@ export default function PfpUpdate() {
         pushLoginWithRedirect(router);
         return;
       }
-      alert(res.status === 204 ? '변경 완료' : `변경 실패`);
-      router.push('/about/my-page');
+      if (res.status === 204) {
+        await refreshProfileSession();
+        alert('변경 완료');
+        router.push('/about/my-page');
+      } else {
+        alert('변경 실패');
+      }
     } else if (mode === 'file' && file) {
       const form = new FormData();
       form.append('file', file);
@@ -57,8 +88,13 @@ export default function PfpUpdate() {
         pushLoginWithRedirect(router);
         return;
       }
-      alert(res.status === 204 ? '변경 완료' : `변경 실패`);
-      router.push('/about/my-page');
+      if (res.status === 204) {
+        await refreshProfileSession();
+        alert('변경 완료');
+        router.push('/about/my-page');
+      } else {
+        alert('변경 실패');
+      }
     }
   };
 
