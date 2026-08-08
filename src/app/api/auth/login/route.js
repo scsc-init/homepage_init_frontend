@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { fetchBackendServer } from '@/util/fetch/server';
+import { resolveProfileImage } from '@/util/profileImage';
 
 export async function POST(request) {
-  const backendUrl = process.env.BACKEND_URL;
   const apiSecret = process.env.API_SECRET;
 
-  if (!backendUrl || !apiSecret) {
-    console.error('BACKEND_URL or API_SECRET is missing');
+  if (!apiSecret) {
+    console.error('API_SECRET is missing');
     return NextResponse.json({ error: 'server misconfigured' }, { status: 500 });
   }
 
@@ -49,15 +49,9 @@ export async function POST(request) {
     const userData = await profileRes.json();
 
     if (userData) {
-      const profilePictureSrc = userData.profile_picture_is_url
-        ? userData.profile_picture
-        : userData.profile_picture
-          ? `${backendUrl}/${userData.profile_picture}`
-          : null;
-
       userProfile = {
         ...userData,
-        profile_picture: profilePictureSrc,
+        profile_picture: resolveProfileImage(userData, ''),
       };
     }
   } catch (error) {

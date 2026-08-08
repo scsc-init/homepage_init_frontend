@@ -27,17 +27,26 @@ export function upgradeGoogleAvatar(url: string): string {
  * @param fallback Fallback image when invalid
  * @returns Backend image URL or fallback
  */
-export function toBackendStaticPath(raw: string, fallback = DEFAULT_EXECUTIVE_PFP): string {
+export function toBackendStaticPath(
+  raw: string,
+  fallback = DEFAULT_EXECUTIVE_PFP,
+  version?: string,
+): string {
   const s = raw.replace(/^\/+/, '');
   if (!s) return fallback;
   if (!s.startsWith('static/image/')) return fallback;
-  if (!PUBLIC_BACKEND_URL) return fallback;
-  return `${PUBLIC_BACKEND_URL}/${s}`;
+  if (!PUBLIC_BACKEND_URL) {
+    throw new Error('NEXT_PUBLIC_API_BASE_URL is not configured');
+  }
+
+  const imageUrl = `${PUBLIC_BACKEND_URL}/${s}`;
+  return version ? `${imageUrl}?v=${encodeURIComponent(version)}` : imageUrl;
 }
 
 export interface ProfileImageUser {
   profile_picture?: string;
   profile_picture_is_url?: boolean;
+  updated_at?: string;
 }
 
 /**
@@ -52,5 +61,5 @@ export function resolveProfileImage(
   const raw = user?.profile_picture;
   if (!raw) return fallback;
   if (user?.profile_picture_is_url) return upgradeGoogleAvatar(raw);
-  return toBackendStaticPath(raw, fallback);
+  return toBackendStaticPath(raw, fallback, user?.updated_at);
 }

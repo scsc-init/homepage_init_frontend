@@ -3,6 +3,7 @@ import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import type { UserProfile } from '@/types/user';
 import { fetchBackendServer } from '@/util/fetch/server';
+import { resolveProfileImage } from '@/util/profileImage';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -97,7 +98,11 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (profileRes.ok) {
-            user.userProfile = (await profileRes.json()) as UserProfile;
+            const userProfile = (await profileRes.json()) as UserProfile;
+            user.userProfile = {
+              ...userProfile,
+              profile_picture: resolveProfileImage(userProfile, ''),
+            };
             user.userProfileCachedAt = Date.now();
           }
         } catch (error) {
