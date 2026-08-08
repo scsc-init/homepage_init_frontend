@@ -251,7 +251,11 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
                 에 동의합니다.
               </span>
             </label>
-            <p>가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.</p>
+            <p>
+              가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.
+              <br />
+              가입 신청 후 임원진에게 별도로 연락해 주세요.
+            </p>
 
             <button
               type="submit"
