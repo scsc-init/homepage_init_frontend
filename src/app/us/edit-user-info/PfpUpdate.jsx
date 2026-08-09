@@ -16,27 +16,45 @@ export default function PfpUpdate() {
   const { data: session, update } = useSession();
 
   const refreshProfileSession = async () => {
-    if (!session?.user?.email || !session?.hashToken) return;
+    if (!session?.user?.email || !session?.hashToken) return false;
 
-    const loginRes = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        email: session.user.email,
-        hashToken: session.hashToken,
-      }),
-    });
+    try {
+      const loginRes = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: session.user.email,
+          hashToken: session.hashToken,
+        }),
+      });
 
-    if (!loginRes.ok) return;
+      if (!loginRes.ok) return false;
 
-    const loginData = await loginRes.json();
-    if (!loginData?.userProfile) return;
+      const loginData = await loginRes.json();
+      if (!loginData?.userProfile) return false;
 
-    await update({
-      ...(loginData.jwt ? { backendJwt: loginData.jwt } : {}),
-      userProfile: loginData.userProfile,
-    });
+      const updatedSession = await update({
+        ...(loginData.jwt ? { backendJwt: loginData.jwt } : {}),
+        userProfile: loginData.userProfile,
+      });
+      return Boolean(updatedSession);
+    } catch (error) {
+      console.error('Failed to refresh profile session:', error);
+      return false;
+    }
+  };
+
+  const handleProfileUpdateSuccess = async () => {
+    const sessionRefreshed = await refreshProfileSession();
+    if (sessionRefreshed) {
+      alert('변경 완료');
+    } else {
+      alert(
+        '프로필 사진은 변경되었지만 세션을 갱신하지 못했습니다. 페이지를 새로고침해주세요.',
+      );
+    }
+    router.push('/about/my-page');
   };
 
   const handleFileChange = (e) => {
@@ -69,9 +87,7 @@ export default function PfpUpdate() {
         return;
       }
       if (res.status === 204) {
-        await refreshProfileSession();
-        alert('변경 완료');
-        router.push('/about/my-page');
+        await handleProfileUpdateSuccess();
       } else {
         alert('변경 실패');
       }
@@ -89,9 +105,7 @@ export default function PfpUpdate() {
         return;
       }
       if (res.status === 204) {
-        await refreshProfileSession();
-        alert('변경 완료');
-        router.push('/about/my-page');
+        await handleProfileUpdateSuccess();
       } else {
         alert('변경 실패');
       }
