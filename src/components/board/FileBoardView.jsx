@@ -154,14 +154,17 @@ export default function FileBoardView({ board, sortOrder }) {
             <div className={styles.fileAttachmentRow}>
               <span className={styles.fileAttachmentBadge}>첨부 {ids.length}개</span>
               {primaryHref ? (
-                <a
-                  href={primaryHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.fileAttachmentLink}
-                >
-                  {primaryName}
-                </a>
+                <>
+                  <a
+                    href={primaryHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.fileAttachmentLink}
+                  >
+                    {primaryName}
+                  </a>
+                  {ids.length > 1 ? <span>...</span> : null}
+                </>
               ) : (
                 <span className={styles.fileEmpty}>첨부파일 정보 없음</span>
               )}
