@@ -4,9 +4,15 @@ import { resolveProfileImage } from '@/util/profileImage';
 
 export async function POST(request) {
   const apiSecret = process.env.API_SECRET;
+  const publicBackendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!apiSecret) {
     console.error('API_SECRET is missing');
+    return NextResponse.json({ error: 'server misconfigured' }, { status: 500 });
+  }
+
+  if (!publicBackendUrl) {
+    console.error('NEXT_PUBLIC_API_BASE_URL is missing');
     return NextResponse.json({ error: 'server misconfigured' }, { status: 500 });
   }
 

@@ -36,7 +36,7 @@ export function toBackendStaticPath(
   if (!s) return fallback;
   if (!s.startsWith('static/image/')) return fallback;
   if (!PUBLIC_BACKEND_URL) {
-    throw new Error('NEXT_PUBLIC_API_BASE_URL is not configured');
+    throw new Error('NEXT_PUBLIC_API_BASE_URL is required to resolve static profile images');
   }
 
   const imageUrl = `${PUBLIC_BACKEND_URL}/${s}`;
