@@ -3,6 +3,7 @@ import type { NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import type { UserProfile } from '@/types/user';
 import { fetchBackendServer } from '@/util/fetch/server';
+import { resolveProfileImage } from '@/util/profileImage';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -11,6 +12,7 @@ interface LoginResponseBody {
 const googleClientId = process.env.GOOGLE_CLIENT_ID ?? '';
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
 const apiSecret = process.env.API_SECRET ?? '';
+const publicBackendUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 const DEFAULT_JWT_VALID_SECONDS = 12 * 60 * 60;
 const parseJwtValidSeconds = (value?: string) => {
   if (!value?.trim()) {
@@ -47,6 +49,11 @@ export const authOptions: NextAuthOptions = {
 
       if (!apiSecret) {
         console.error('API_SECRET is missing');
+        return '/us/login?error=default';
+      }
+
+      if (!publicBackendUrl) {
+        console.error('NEXT_PUBLIC_API_BASE_URL is missing');
         return '/us/login?error=default';
       }
 
@@ -97,7 +104,11 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (profileRes.ok) {
-            user.userProfile = (await profileRes.json()) as UserProfile;
+            const userProfile = (await profileRes.json()) as UserProfile;
+            user.userProfile = {
+              ...userProfile,
+              profile_picture: resolveProfileImage(userProfile, ''),
+            };
             user.userProfileCachedAt = Date.now();
           }
         } catch (error) {

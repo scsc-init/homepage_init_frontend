@@ -1,16 +1,9 @@
-import { fetchBackendServer } from '@/util/fetch/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(_req, { params }) {
+export async function GET(request, { params }) {
   const resolvedParams = await params;
   const id = encodeURIComponent(resolvedParams.id);
+  const targetUrl = new URL(`/api/file/image/download/${id}`, request.url);
 
-  const res = await fetchBackendServer('GET', `/api/file/image/download/${id}`);
-
-  return new Response(res.body, {
-    status: res.status,
-    headers: {
-      'Content-Type': res.headers.get('Content-Type') || 'application/octet-stream',
-      'Cache-Control': 'public, max-age=60',
-    },
-  });
+  return NextResponse.redirect(targetUrl, 307);
 }
