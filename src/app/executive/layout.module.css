@@ -109,7 +109,7 @@
 
 .externalBadge {
   flex: 0 0 auto;
-  border: 1px solid currentColor;
+  border: 1px solid currentcolor;
   border-radius: 999px;
   padding: 0.05rem 0.35rem;
   font-size: 0.68rem;
@@ -155,4 +155,65 @@
     border-left: 1px solid var(--color-button-border);
     padding-left: 0.75rem;
   }
+}
+
+.sidebar,
+.nav {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-button-border) transparent;
+}
+
+.sidebar::-webkit-scrollbar,
+.nav::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.nav::-webkit-scrollbar-thumb {
+  background-color: var(--color-button-border);
+  border: 0.125rem solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.nav::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-subtle);
+}
+
+.sidebar::-webkit-scrollbar-corner,
+.nav::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Compact table controls inside executive content pages */
+.content table :is(input, select) {
+  box-sizing: border-box;
+  min-height: 2.1rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.content table select {
+  width: auto;
+  min-width: 7rem;
+  max-width: 10rem;
+  padding-right: 1.75rem;
+}
+
+.content table input {
+  width: auto;
+  min-width: 5.5rem;
+  max-width: 9rem;
+}
+
+.content table :is(button, a) {
+  white-space: nowrap;
 }
