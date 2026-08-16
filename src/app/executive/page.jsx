@@ -1,9 +1,8 @@
-﻿import ScscStatusPanel from './ScscStatusPanel';
+import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
 import { fetchGlobalStatus, fetchDiscordBotStatus } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/components/AdminLayout';
-import { EXECUTIVE_NAV_ITEMS } from './navigation';
 
 export default async function AdminPanel() {
   const [scscGlobalStatus, discordBotStatus] = await Promise.allSettled([
@@ -16,19 +15,6 @@ export default async function AdminPanel() {
 
   return (
     <AdminLayout.AdminPanel>
-      <AdminLayout.AdminPageList>
-        {EXECUTIVE_NAV_ITEMS.map(({ title, description, href }) => {
-          return (
-            <AdminLayout.AdminPageCard key={href} href={href} title={title}>
-              <AdminLayout.AdminPageCardContent>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </AdminLayout.AdminPageCardContent>
-            </AdminLayout.AdminPageCard>
-          );
-        })}
-      </AdminLayout.AdminPageList>
-
       <div
         style={{
           border: '1px solid var(--color-button-alert-bg)',

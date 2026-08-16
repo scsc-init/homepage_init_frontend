@@ -16,12 +16,6 @@ export default function ExternalMemberManagementPanel() {
       try {
         const response = await fetchBackendClient('/api/executive/user/external/applicants');
 
-        if (response.status === 404) {
-          setApplicants([]);
-          setError('');
-          return;
-        }
-
         if (!response.ok) {
           throw new Error(`신청 목록 조회 실패: ${response.status}`);
         }
@@ -34,6 +28,7 @@ export default function ExternalMemberManagementPanel() {
 
         setApplicants(data);
       } catch (error) {
+        console.error(error);
         setError(error instanceof Error ? error.message : '신청 목록을 불러오지 못했습니다.');
       } finally {
         setLoading(false);
