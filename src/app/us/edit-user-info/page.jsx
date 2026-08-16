@@ -8,13 +8,11 @@ import PfpUpdate from './PfpUpdate';
 import styles from './page.module.css';
 import { oldboyLevel } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
-import { useSession } from 'next-auth/react';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
 function EditUserInfoClient() {
   const router = useRouter();
   const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
-  const { data: session, update } = useSession();
   const [form, setForm] = useState({
     name: '',
     kakao_name: '',
@@ -98,33 +96,6 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
-      // Refresh the cached session profile so re-entering this page shows the
-      // saved values (the form is populated from the NextAuth session, not a
-      // fresh fetch).
-      if (session?.user?.email && session?.hashToken) {
-        try {
-          const loginRes = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-              email: session.user.email,
-              hashToken: session.hashToken,
-            }),
-          });
-          if (loginRes.ok) {
-            const loginData = await loginRes.json();
-            if (loginData?.userProfile) {
-              await update({
-                ...(loginData.jwt ? { backendJwt: loginData.jwt } : {}),
-                userProfile: loginData.userProfile,
-              });
-            }
-          }
-        } catch {
-          // non-fatal: DB is already updated; session just stays stale
-        }
-      }
       alert('정보가 수정되었습니다.');
       router.push('/about/my-page');
     } else if (res.status === 409) {

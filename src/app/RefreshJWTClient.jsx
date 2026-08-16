@@ -1,14 +1,27 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useMe } from '@/util/hooks/useMe';
 import { useRouter } from 'next/navigation';
+
+function isJwtExpired(jwt) {
+  try {
+    const encodedPayload = jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(
+      atob(encodedPayload.padEnd(Math.ceil(encodedPayload.length / 4) * 4, '=')),
+    );
+    return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now();
+  } catch {
+    return false;
+  }
+}
 
 export default function RefreshJWTClient() {
   const { me } = useMe();
   const { data: session, status, update } = useSession();
   const router = useRouter();
+  const refreshingRef = useRef(false);
 
   useEffect(() => {
     const handleAuthFail = async () => {
@@ -24,14 +37,19 @@ export default function RefreshJWTClient() {
       return;
     }
 
-    if (me) {
-      if (!me.is_active) {
-        router.replace('/about/welcome');
-      }
+    if (me && !me.is_active) {
+      router.replace('/about/welcome');
+    }
+
+    const backendJwt = session?.backendJwt;
+    const needsRefresh = !backendJwt || isJwtExpired(backendJwt);
+
+    if (!session?.registered || !needsRefresh || refreshingRef.current) {
       return;
     }
 
     (async () => {
+      refreshingRef.current = true;
       try {
         if (!session?.user?.email || !session?.hashToken) {
           await handleAuthFail();
@@ -70,6 +88,8 @@ export default function RefreshJWTClient() {
         }
       } catch {
         await handleAuthFail();
+      } finally {
+        refreshingRef.current = false;
       }
     })();
   }, [me, session, status, router, update]);
