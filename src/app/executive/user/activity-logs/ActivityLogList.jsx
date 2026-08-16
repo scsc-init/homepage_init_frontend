@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { fetchBackendClient } from '@/util/fetch/client';
+import { fetchBackendClientJson } from '@/util/fetch/client';
 
 const LIMIT = 50;
 
@@ -40,14 +40,6 @@ function getUserLabel(id, userNameById) {
   return `${name} (${getShortId(id)})`;
 }
 
-function isActivityLogUnavailableError(error) {
-  const message = error instanceof Error ? error.message : String(error ?? '');
-
-  return (
-    message.includes('/api/executive/users/activity-logs') &&
-    (message.includes('Network error while fetching') || message.includes('Failed to fetch'))
-  );
-}
 export default function ActivityLogList({ users = [] }) {
   const [logs, setLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -78,24 +70,12 @@ export default function ActivityLogList({ users = [] }) {
     }
 
     try {
-      const response = await fetchBackendClient(
-        `/api/executive/users/activity-logs?${params.toString()}`,
-        { method: 'GET' },
-      );
+      const query = Object.fromEntries(params.entries());
 
-      if (response.status === 404) {
-        setLogs([]);
-        setError('');
-        hasMoreRef.current = false;
-        setHasMore(false);
-        return;
-      }
+      const data = await fetchBackendClientJson('GET', '/api/executive/users/activity-logs', {
+        query,
+      });
 
-      if (!response.ok) {
-        throw new Error(`유저 활동 기록 조회 실패: ${response.status}`);
-      }
-
-      const data = await response.json();
       const nextLogs = Array.isArray(data) ? data : [];
 
       setLogs((prev) => {
@@ -113,14 +93,6 @@ export default function ActivityLogList({ users = [] }) {
         nextIdRef.current = nextLogs[nextLogs.length - 1].id;
       }
     } catch (err) {
-      if (isActivityLogUnavailableError(err)) {
-        setLogs([]);
-        setError('');
-        hasMoreRef.current = false;
-        setHasMore(false);
-        return;
-      }
-
       setError(err instanceof Error ? err.message : '활동 기록을 불러오지 못했습니다.');
       hasMoreRef.current = false;
       setHasMore(false);

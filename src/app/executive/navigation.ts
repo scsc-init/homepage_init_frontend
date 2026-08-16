@@ -1,4 +1,16 @@
-﻿export const EXECUTIVE_NAV_GROUPS = [
+export type ExecutiveNavItem = {
+  title: string;
+  description: string;
+  href: string;
+  external?: boolean;
+};
+
+export type ExecutiveNavGroup = {
+  title: string;
+  items: ExecutiveNavItem[];
+};
+
+export const EXECUTIVE_NAV_GROUPS: ExecutiveNavGroup[] = [
   {
     title: '대시보드',
     items: [
@@ -82,4 +94,6 @@
   },
 ];
 
-export const EXECUTIVE_NAV_ITEMS = EXECUTIVE_NAV_GROUPS.flatMap((group) => group.items);
+export const EXECUTIVE_NAV_ITEMS: ExecutiveNavItem[] = EXECUTIVE_NAV_GROUPS.flatMap(
+  (group) => group.items,
+);
