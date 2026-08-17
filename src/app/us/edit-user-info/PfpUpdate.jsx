@@ -1,7 +1,6 @@
 'use client';
 
 import { fetchBackendClient } from '@/util/fetch/client';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './page.module.css';
@@ -13,47 +12,9 @@ export default function PfpUpdate() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const router = useRouter();
-  const { data: session, update } = useSession();
-
-  const refreshProfileSession = async () => {
-    if (!session?.user?.email || !session?.hashToken) return false;
-
-    try {
-      const loginRes = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: session.user.email,
-          hashToken: session.hashToken,
-        }),
-      });
-
-      if (!loginRes.ok) return false;
-
-      const loginData = await loginRes.json();
-      if (!loginData?.userProfile) return false;
-
-      const updatedSession = await update({
-        ...(loginData.jwt ? { backendJwt: loginData.jwt } : {}),
-        userProfile: loginData.userProfile,
-      });
-      return Boolean(updatedSession);
-    } catch (error) {
-      console.error('Failed to refresh profile session:', error);
-      return false;
-    }
-  };
 
   const handleProfileUpdateSuccess = async () => {
-    const sessionRefreshed = await refreshProfileSession();
-    if (sessionRefreshed) {
-      alert('변경 완료');
-    } else {
-      alert(
-        '프로필 사진은 변경되었지만 세션을 갱신하지 못했습니다. 페이지를 새로고침해주세요.',
-      );
-    }
+    alert('변경 완료');
     router.push('/about/my-page');
   };
 
