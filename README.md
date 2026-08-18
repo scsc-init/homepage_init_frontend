@@ -1,6 +1,6 @@
 # InitFrontend
 
-Next.js **14** App Router 기반으로 구축된 SCSC init의 FE 코드입니다.
+Next.js **15** App Router 기반으로 구축된 SCSC init의 FE 코드입니다.
 
 > 작성일: 2025-05-12
 >
