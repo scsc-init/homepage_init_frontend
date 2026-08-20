@@ -1,5 +1,6 @@
 import styles from './IgDetail.module.css';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
+import MembersLoginPrompt from './MembersLoginPrompt';
 
 const MEMBER_CONFIG = {
   sig: {
@@ -12,8 +13,30 @@ const MEMBER_CONFIG = {
   },
 };
 
-export default function IgMembers({ kind, owner, members }) {
+export default function IgMembers({ kind, owner, members, visible = true }) {
   const config = MEMBER_CONFIG[kind];
+
+  if (!visible) {
+    return (
+      <section className={styles.membersSection} aria-labelledby={config.headingId}>
+        <div className={`${styles.membersHeader} ${styles.membersHeaderLocked}`}>
+          <h2 id={config.headingId} className={styles.membersTitle}>
+            {config.title}
+          </h2>
+          <MembersLoginPrompt />
+        </div>
+        <ul className={styles.memberList} aria-hidden="true">
+          <li className={`${styles.memberPlaceholderChip} ${styles.memberPlaceholderOwner}`}>
+            가나다
+          </li>
+          <li className={`${styles.memberPlaceholderChip} ${styles.memberPlaceholderFading}`}>
+            라마바
+          </li>
+        </ul>
+      </section>
+    );
+  }
+
   const rawList = Array.isArray(members) ? members : [];
   const ownerIndex = !!owner ? rawList.findIndex((m) => getMemberIdentity(m) === owner) : -1;
   const list =

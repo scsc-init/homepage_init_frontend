@@ -22,7 +22,14 @@ const JOIN_AVAILABILITY = {
   pig: is_pig_join_available,
 };
 
-export default function IgClient({ kind, item, members, articleContent, itemId }) {
+export default function IgClient({
+  kind,
+  item,
+  members,
+  membersVisible = true,
+  articleContent,
+  itemId,
+}) {
   const { me, isLoading } = useMe();
   const isJoinAvailable = JOIN_AVAILABILITY[kind];
 
@@ -81,7 +88,7 @@ export default function IgClient({ kind, item, members, articleContent, itemId }
       <IgContents kind={kind} content={articleContent} />
       <hr className={styles.divider} />
       <IgWebsites kind={kind} websites={websites} />
-      <IgMembers kind={kind} owner={item?.owner} members={members} />
+      <IgMembers kind={kind} owner={item?.owner} members={members} visible={membersVisible} />
     </div>
   );
 }

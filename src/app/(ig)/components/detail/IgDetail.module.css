@@ -297,24 +297,78 @@
   color: var(--color-text-subtle);
 }
 
-.authGateBackdrop {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--color-bg) 65%, transparent);
-  backdrop-filter: blur(1px);
-  z-index: 50;
+.membersHeaderLocked {
+  justify-content: flex-start;
+  align-items: baseline;
 }
 
-.authGateSpinner {
-  width: 2.25rem;
-  height: 2.25rem;
+.memberPlaceholderChip {
+  padding: 0.45rem 0.75rem;
   border-radius: 9999px;
-  border: 3px solid var(--color-text-subtle);
-  border-top-color: var(--color-primary);
-  animation: ig-spin 0.9s linear infinite;
+  border: 1px solid var(--color-button-border);
+  box-shadow: 0 1px 3px var(--color-card-shadow);
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.memberPlaceholderOwner {
+  background: var(--color-text-body);
+  color: var(--color-card-bg);
+  font-weight: bold;
+}
+
+.memberPlaceholderFading {
+  background: color-mix(in srgb, var(--color-text-body) 18%, transparent);
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--color-text-subtle);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.972) 10%,
+    rgba(0, 0, 0, 0.896) 20%,
+    rgba(0, 0, 0, 0.784) 30%,
+    rgba(0, 0, 0, 0.648) 40%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.352) 60%,
+    rgba(0, 0, 0, 0.216) 70%,
+    rgba(0, 0, 0, 0.104) 80%,
+    rgba(0, 0, 0, 0.028) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.972) 10%,
+    rgba(0, 0, 0, 0.896) 20%,
+    rgba(0, 0, 0, 0.784) 30%,
+    rgba(0, 0, 0, 0.648) 40%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.352) 60%,
+    rgba(0, 0, 0, 0.216) 70%,
+    rgba(0, 0, 0, 0.104) 80%,
+    rgba(0, 0, 0, 0.028) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.membersLoginButton {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-body);
+  font-size: 0.8rem;
+  opacity: 0.75;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.membersLoginButton:hover,
+.membersLoginButton:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  opacity: 1;
 }
 
 .compillingOverlay {
@@ -342,12 +396,6 @@
   overflow: hidden;
   vertical-align: bottom;
   animation: compilling-dots 1.4s steps(4, end) infinite;
-}
-
-@keyframes ig-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes compilling-dots {
