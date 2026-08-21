@@ -301,7 +301,6 @@
   margin: 0.25rem 0 0;
 }
 
-/* Footer의 Executives/Developers 링크와 같은 동작: 텍스트만, opacity + underline. */
 .membersLoginButton {
   padding: 0;
   border: none;
