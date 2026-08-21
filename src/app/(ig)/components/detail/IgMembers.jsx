@@ -19,20 +19,12 @@ export default function IgMembers({ kind, owner, members, visible = true }) {
   if (!visible) {
     return (
       <section className={styles.membersSection} aria-labelledby={config.headingId}>
-        <div className={`${styles.membersHeader} ${styles.membersHeaderLocked}`}>
+        <div className={styles.membersHeader}>
           <h2 id={config.headingId} className={styles.membersTitle}>
             {config.title}
           </h2>
-          <MembersLoginPrompt />
         </div>
-        <ul className={styles.memberList} aria-hidden="true">
-          <li className={`${styles.memberPlaceholderChip} ${styles.memberPlaceholderOwner}`}>
-            가나다
-          </li>
-          <li className={`${styles.memberPlaceholderChip} ${styles.memberPlaceholderFading}`}>
-            라마바
-          </li>
-        </ul>
+        <MembersLoginPrompt />
       </section>
     );
   }

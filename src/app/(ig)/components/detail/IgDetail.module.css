@@ -297,68 +297,17 @@
   color: var(--color-text-subtle);
 }
 
-.membersHeaderLocked {
-  justify-content: flex-start;
-  align-items: baseline;
+.membersLocked {
+  margin: 0.25rem 0 0;
 }
 
-.memberPlaceholderChip {
-  padding: 0.45rem 0.75rem;
-  border-radius: 9999px;
-  border: 1px solid var(--color-button-border);
-  box-shadow: 0 1px 3px var(--color-card-shadow);
-  filter: blur(6px);
-  user-select: none;
-  pointer-events: none;
-}
-
-.memberPlaceholderOwner {
-  background: var(--color-text-body);
-  color: var(--color-card-bg);
-  font-weight: bold;
-}
-
-.memberPlaceholderFading {
-  background: color-mix(in srgb, var(--color-text-body) 18%, transparent);
-  border-color: transparent;
-  box-shadow: none;
-  color: var(--color-text-subtle);
-  -webkit-mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.972) 10%,
-    rgba(0, 0, 0, 0.896) 20%,
-    rgba(0, 0, 0, 0.784) 30%,
-    rgba(0, 0, 0, 0.648) 40%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.352) 60%,
-    rgba(0, 0, 0, 0.216) 70%,
-    rgba(0, 0, 0, 0.104) 80%,
-    rgba(0, 0, 0, 0.028) 90%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.972) 10%,
-    rgba(0, 0, 0, 0.896) 20%,
-    rgba(0, 0, 0, 0.784) 30%,
-    rgba(0, 0, 0, 0.648) 40%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.352) 60%,
-    rgba(0, 0, 0, 0.216) 70%,
-    rgba(0, 0, 0, 0.104) 80%,
-    rgba(0, 0, 0, 0.028) 90%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-
+/* Footer의 Executives/Developers 링크와 같은 동작: 텍스트만, opacity + underline. */
 .membersLoginButton {
   padding: 0;
   border: none;
   background: none;
   color: var(--color-text-body);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   opacity: 0.75;
   cursor: pointer;
   transition: opacity 0.2s ease;
