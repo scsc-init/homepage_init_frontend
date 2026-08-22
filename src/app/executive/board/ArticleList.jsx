@@ -81,7 +81,7 @@ export default function ArticleList({ boards: boardsDefault }) {
 
   const saveArticle = async (article) => {
     const title = article.title.trim();
-    const content = article.content.trim();
+    const content = article.content?.trim() ?? '';
 
     if (!title || !content || !article.board_id) {
       alert('제목, 내용, 게시판 ID는 필수입니다.');
@@ -186,13 +186,17 @@ export default function ArticleList({ boards: boardsDefault }) {
                       />
                     </td>
                     <td>
-                      <input
-                        className={styles.input}
-                        value={article.content}
-                        onChange={(e) =>
-                          handleArticleChange(board.id, article.id, 'content', e.target.value)
-                        }
-                      />
+                      {article.content === null ? (
+                        <span>게시글을 불러오지 못했습니다.</span>
+                      ) : (
+                        <input
+                          className={styles.input}
+                          value={article.content}
+                          onChange={(e) =>
+                            handleArticleChange(board.id, article.id, 'content', e.target.value)
+                          }
+                        />
+                      )}
                     </td>
                     <td>
                       <div>
