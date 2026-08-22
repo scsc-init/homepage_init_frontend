@@ -33,7 +33,7 @@ async function onAuthFail() {
 }
 
 export default function MyProfileClient() {
-  const { data: session, status, update } = useSession();
+  const { status } = useSession();
   const { me } = useMe();
   const [user, setUser] = useState(null);
   const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
@@ -58,49 +58,10 @@ export default function MyProfileClient() {
         return;
       }
 
-      try {
-        let data;
-        if (me) {
-          data = me;
-        } else if (session?.user?.email && session?.hashToken) {
-          const loginRes = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ email: session.user.email, hashToken: session.hashToken }),
-          });
-          if (loginRes.ok) {
-            const loginData = await loginRes.json();
-
-            if (loginData.jwt && loginData.userProfile) {
-              data = loginData.userProfile;
-
-              await update({
-                backendJwt: loginData.jwt,
-                userProfile: data,
-              });
-            }
-          } else {
-            await onAuthFail();
-            replaceLoginWithRedirect(router);
-          }
-        } else {
-          await onAuthFail();
-          replaceLoginWithRedirect(router);
-        }
-        if (!data || !data.email) {
-          await onAuthFail();
-          replaceLoginWithRedirect(router);
-          return;
-        }
-        setUser(data);
-      } catch {
-        await onAuthFail();
-        replaceLoginWithRedirect(router);
-      }
+      if (me?.email) setUser(me);
     };
     load();
-  }, [router, session, status, update, me]);
+  }, [router, status, me]);
 
   const handleLogout = async () => {
     await onAuthFail();

@@ -967,6 +967,6 @@ export default function FundApplyForm({
 
 function buildImageUrl(id: string): string {
   const PUBLIC_FRONTEND_URL = window.location.origin;
-  const relative = `/api/image/download/${encodeURIComponent(id)}`;
+  const relative = `/api/file/image/download/${encodeURIComponent(id)}`;
   return `${PUBLIC_FRONTEND_URL}${relative}`;
 }

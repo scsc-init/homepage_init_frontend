@@ -7,8 +7,8 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import styles from './page.module.css';
-import { useRouter } from 'next/navigation';
-import { use, useEffect, useMemo, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
@@ -16,9 +16,8 @@ import { useMe } from '@/util/hooks/useMe';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
-export default function ArticleDetail({ params }) {
-  const resolvedParams = use(params);
-  const id = resolvedParams.id;
+export default function ArticleDetail() {
+  const { id } = useParams();
 
   const router = useRouter();
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();

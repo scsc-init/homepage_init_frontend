@@ -2,10 +2,10 @@ import { fetchBackendServer } from '@/util/fetch/server';
 
 export async function GET(_req, { params }) {
   const resolvedParams = await params;
-  const segments = Array.isArray(resolvedParams?.path) ? resolvedParams.path : [];
-  const targetPath = segments.map(encodeURIComponent).join('/');
+  const id = encodeURIComponent(resolvedParams.id);
 
-  const res = await fetchBackendServer('GET', `/static/image/${targetPath}`);
+  const res = await fetchBackendServer('GET', `/api/file/image/download/${id}`);
+
   return new Response(res.body, {
     status: res.status,
     headers: {

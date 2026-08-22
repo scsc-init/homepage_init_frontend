@@ -33,7 +33,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
 
     if (!uploaded?.id) return null;
 
-    return `/api/image/download/${encodeURIComponent(uploaded.id)}`;
+    return `/api/file/image/download/${encodeURIComponent(uploaded.id)}`;
   }, []);
 
   return (

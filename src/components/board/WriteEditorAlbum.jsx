@@ -26,7 +26,7 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
     const imageMarkdown = attachmentIds
       .map((id) => {
         const encoded = encodeURIComponent(id);
-        const url = `/api/image/download/${encoded}`;
+        const url = `/api/file/image/download/${encoded}`;
 
         return `![album_image](${url})`;
       })
@@ -47,7 +47,7 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
-            uploadType="image"
+            isImageUpload
           />
         </div>
 

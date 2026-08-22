@@ -13,6 +13,11 @@ export default function PfpUpdate() {
   const [preview, setPreview] = useState(null);
   const router = useRouter();
 
+  const handleProfileUpdateSuccess = async () => {
+    alert('변경 완료');
+    router.push('/about/my-page');
+  };
+
   const handleFileChange = (e) => {
     const f = e.target.files?.[0] || null;
     setFile(f);
@@ -42,8 +47,11 @@ export default function PfpUpdate() {
         pushLoginWithRedirect(router);
         return;
       }
-      alert(res.status === 204 ? '변경 완료' : `변경 실패`);
-      router.push('/about/my-page');
+      if (res.status === 204) {
+        await handleProfileUpdateSuccess();
+      } else {
+        alert('변경 실패');
+      }
     } else if (mode === 'file' && file) {
       const form = new FormData();
       form.append('file', file);
@@ -57,8 +65,11 @@ export default function PfpUpdate() {
         pushLoginWithRedirect(router);
         return;
       }
-      alert(res.status === 204 ? '변경 완료' : `변경 실패`);
-      router.push('/about/my-page');
+      if (res.status === 204) {
+        await handleProfileUpdateSuccess();
+      } else {
+        alert('변경 실패');
+      }
     }
   };
 
