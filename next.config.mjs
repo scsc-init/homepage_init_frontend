@@ -10,6 +10,14 @@ const nextConfig = {
     });
     return config;
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/image/download/:id',
+        destination: '/api/file/image/download/:id',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
