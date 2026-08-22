@@ -15,7 +15,10 @@ export default function BoardClient({ board }) {
   const isAlbum = useMemo(() => String(board?.id) === String(ALBUM_BOARD_ID), [board?.id]);
   const isFileBoard = useMemo(() => board?.board_type === 'FILE', [board?.board_type]);
   const createType = isAlbum ? 'image' : isFileBoard ? 'file' : 'text';
-  const canWrite = typeof me?.role === 'number' && me.role >= board.writing_permission_level;
+  const canWrite =
+    typeof me?.role === 'number' &&
+    typeof board?.writing_permission_level === 'number' &&
+    me.role >= board.writing_permission_level;
 
   return (
     <>
