@@ -15,13 +15,6 @@ export const minExecutiveLevel = 500;
 /** 졸업생 권한 레벨 값입니다. 내 정보 수정 페이지에서 사용됩니다. */
 export const oldboyLevel = 400;
 
-/** 로그인 없이 게시글을 열람할 수 있는 게시판 ID입니다. */
-export const PUBLIC_BOARD_IDS = new Set(['5']);
-
-export function isPublicBoardId(boardId: unknown): boolean {
-  return PUBLIC_BOARD_IDS.has(String(boardId));
-}
-
 export type RoleMap = Record<number, { english: string; korean: string }>;
 
 export const ROLE_MAP: RoleMap = {
@@ -323,3 +316,10 @@ export const ALLOWED_REDIRECT_PREFIXES: string[] = [
  * 테스트 유틸리티 페이지 활성화 여부입니다.
  */
 export const ENABLE_TEST_UTILS = process.env.NEXT_PUBLIC_ENABLE_TEST_UTILS === 'TRUE';
+
+/** 로그인 없이 게시글을 열람할 수 있는 게시판 ID입니다. */
+export const PUBLIC_BOARD_IDS = new Set<number>([5]);
+
+export function isPublicBoardId(boardId: number): boolean {
+  return PUBLIC_BOARD_IDS.has(boardId);
+}
