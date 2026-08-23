@@ -18,7 +18,7 @@ export default function IgMembers({ kind, owner, members, visible = true }) {
 
   if (!visible) {
     return (
-      <section className={styles.membersSection} aria-label={config.title}>
+      <section aria-label={config.title}>
         <MembersLoginPrompt />
       </section>
     );
