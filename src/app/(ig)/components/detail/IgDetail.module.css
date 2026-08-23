@@ -298,25 +298,24 @@
 }
 
 .membersLocked {
-  margin: 0.25rem 0 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
 }
 
 .membersLoginButton {
   padding: 0;
   border: none;
   background: none;
-  color: var(--color-text-body);
+  color: var(--color-button-bg);
   font-size: 0.9rem;
-  opacity: 0.75;
   cursor: pointer;
-  transition: opacity 0.2s ease;
 }
 
 .membersLoginButton:hover,
 .membersLoginButton:focus-visible {
   text-decoration: underline;
   text-underline-offset: 0.2em;
-  opacity: 1;
 }
 
 .compillingOverlay {
