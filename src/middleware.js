@@ -1,6 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
+import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
 
 function buildReturnPath(req) {
   const { pathname, search } = req.nextUrl;
@@ -18,6 +19,31 @@ function isPrefetchRequest(req) {
     purpose.toLowerCase() === 'prefetch' ||
     secPurpose.toLowerCase().includes('prefetch')
   );
+}
+
+async function isPublicArticle(pathname) {
+  const articleId = pathname.match(/^\/article\/([^/]+)$/)?.[1];
+  const backendUrl = process.env.BACKEND_URL?.replace(/\/+$/, '');
+
+  if (!articleId || !backendUrl) return false;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 3_000);
+
+  try {
+    const res = await fetch(`${backendUrl}/api/article/${encodeURIComponent(articleId)}`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    if (!res.ok) return false;
+
+    const article = await res.json();
+    return isPublicBoardId(article?.board_id);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export async function middleware(req) {
@@ -48,7 +74,7 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
   }
 
-  if (publicRoutes.includes(pathname)) {
+  if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
@@ -56,6 +82,8 @@ export async function middleware(req) {
   const jwt = token?.backendJwt || null;
 
   if (jwt) return NextResponse.next();
+
+  if (await isPublicArticle(pathname)) return NextResponse.next();
 
   const returnTo = buildReturnPath(req);
   const shouldPreserveRedirect = returnTo && !isPrefetchRequest(req);
@@ -86,6 +114,7 @@ const publicRoutes = [
   '/',
   '/board/1',
   '/board/2',
+  ...[...PUBLIC_BOARD_IDS].map((boardId) => `/board/${boardId}`),
   '/about',
   '/about/executives',
   '/about/developers',
@@ -98,6 +127,15 @@ const publicRoutes = [
   '/us/register',
   '/us/external-register',
 ];
+
+const publicRoutePatterns = [/^\/(sig|pig)\/\d+$/];
+
+function isPublicRoute(pathname) {
+  return (
+    publicRoutes.includes(pathname) ||
+    publicRoutePatterns.some((pattern) => pattern.test(pathname))
+  );
+}
 
 /**
  * middleware을 거치게 되는 라우트

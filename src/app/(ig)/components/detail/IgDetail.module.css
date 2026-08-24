@@ -297,26 +297,6 @@
   color: var(--color-text-subtle);
 }
 
-.authGateBackdrop {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--color-bg) 65%, transparent);
-  backdrop-filter: blur(1px);
-  z-index: 50;
-}
-
-.authGateSpinner {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 9999px;
-  border: 3px solid var(--color-text-subtle);
-  border-top-color: var(--color-primary);
-  animation: ig-spin 0.9s linear infinite;
-}
-
 .compillingOverlay {
   position: fixed;
   inset: 0;
@@ -342,12 +322,6 @@
   overflow: hidden;
   vertical-align: bottom;
   animation: compilling-dots 1.4s steps(4, end) infinite;
-}
-
-@keyframes ig-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes compilling-dots {

@@ -11,7 +11,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import Comments from '@/components/board/Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { utc2kst } from '@/util/constants';
+import { isPublicBoardId, utc2kst } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
@@ -30,29 +30,36 @@ export default function ArticleDetail() {
 
   useEffect(() => {
     if (!id || isMeLoading) return;
-    if (isUnauthenticated || !user) {
-      pushLoginWithRedirect(router);
-      return;
-    }
 
     const loadAll = async () => {
       try {
-        const [contentRes, commentsRes] = await Promise.all([
-          fetchBackendClient(`/api/article/${id}`),
-          fetchBackendClient(`/api/comments/${id}`),
-        ]);
+        const contentRes = await fetchBackendClient(`/api/article/${id}`);
 
-        if (!contentRes.ok || !commentsRes.ok) {
+        if (!contentRes.ok) {
+          if (contentRes.status === 401 && (isUnauthenticated || !user)) {
+            pushLoginWithRedirect(router);
+            return;
+          }
           setIsError(true);
           return;
         }
 
-        const [articleJson, commentsJson] = await Promise.all([
-          contentRes.json(),
-          commentsRes.json(),
-        ]);
+        const articleJson = await contentRes.json();
+        if (!user && !isPublicBoardId(articleJson?.board_id)) {
+          pushLoginWithRedirect(router);
+          return;
+        }
+
         setArticle(articleJson);
-        setComments(commentsJson);
+
+        if (user) {
+          const commentsRes = await fetchBackendClient(`/api/comments/${id}`);
+          if (!commentsRes.ok) {
+            setIsError(true);
+            return;
+          }
+          setComments(await commentsRes.json());
+        }
       } catch (_) {
         setIsError(true);
       } finally {
@@ -215,36 +222,37 @@ export default function ArticleDetail() {
           {markdown}
         </ReactMarkdown>
 
-        <hr className={styles.Divider} />
-
         {attachmentIds.length > 0 && (
-          <div className="AttachmentSection">
-            <div className="AttachmentHeader">
-              <div className="AttachmentLabel">첨부 파일</div>
-            </div>
-            <ul className="AttachmentList">
-              {attachmentIds.map((attachmentId) => {
-                const meta = attachmentMetaMap.get(attachmentId);
-                const displayName = meta?.original_filename || attachmentId;
+          <>
+            <hr className={styles.Divider} />
+            <div className="AttachmentSection">
+              <div className="AttachmentHeader">
+                <div className="AttachmentLabel">첨부 파일</div>
+              </div>
+              <ul className="AttachmentList">
+                {attachmentIds.map((attachmentId) => {
+                  const meta = attachmentMetaMap.get(attachmentId);
+                  const displayName = meta?.original_filename || attachmentId;
 
-                return (
-                  <li key={attachmentId} className="AttachmentItem">
-                    <a
-                      className="AttachmentLink"
-                      href={getAttachmentDownloadUrl(attachmentId, meta)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {displayName}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                  return (
+                    <li key={attachmentId} className="AttachmentItem">
+                      <a
+                        className="AttachmentLink"
+                        href={getAttachmentDownloadUrl(attachmentId, meta)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {displayName}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </>
         )}
       </div>
-      <Comments articleId={id} initialComments={comments} user={user} />
+      {user && <Comments articleId={id} initialComments={comments} user={user} />}
     </div>
   );
 }

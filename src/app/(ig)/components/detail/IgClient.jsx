@@ -22,7 +22,14 @@ const JOIN_AVAILABILITY = {
   pig: is_pig_join_available,
 };
 
-export default function IgClient({ kind, item, members, articleContent, itemId }) {
+export default function IgClient({
+  kind,
+  item,
+  members,
+  membersVisible = true,
+  articleContent,
+  itemId,
+}) {
   const { me, isLoading } = useMe();
   const isJoinAvailable = JOIN_AVAILABILITY[kind];
 
@@ -41,6 +48,7 @@ export default function IgClient({ kind, item, members, articleContent, itemId }
     SEMESTER_MAP[Number(item?.created_semester)] ?? `${item?.created_semester}`;
   const hasCreated = item?.created_year != null && item?.created_semester != null;
   const websites = Array.isArray(item?.websites) ? item.websites : [];
+  const hasSectionBelowDivider = websites.length > 0 || membersVisible;
   const normalizedTagText = sortSigPigTags(item?.tags)
     .map((tag) => String(tag?.text ?? '').trim())
     .filter(Boolean);
@@ -79,9 +87,9 @@ export default function IgClient({ kind, item, members, articleContent, itemId }
       ) : null}
       <hr className={styles.divider} />
       <IgContents kind={kind} content={articleContent} />
-      <hr className={styles.divider} />
+      {hasSectionBelowDivider ? <hr className={styles.divider} /> : null}
       <IgWebsites kind={kind} websites={websites} />
-      <IgMembers kind={kind} owner={item?.owner} members={members} />
+      <IgMembers kind={kind} owner={item?.owner} members={members} visible={membersVisible} />
     </div>
   );
 }

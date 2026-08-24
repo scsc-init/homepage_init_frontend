@@ -316,3 +316,10 @@ export const ALLOWED_REDIRECT_PREFIXES: string[] = [
  * 테스트 유틸리티 페이지 활성화 여부입니다.
  */
 export const ENABLE_TEST_UTILS = process.env.NEXT_PUBLIC_ENABLE_TEST_UTILS === 'TRUE';
+
+/** 로그인 없이 게시글을 열람할 수 있는 게시판 ID입니다. */
+export const PUBLIC_BOARD_IDS = new Set<number>([5]);
+
+export function isPublicBoardId(boardId: number): boolean {
+  return PUBLIC_BOARD_IDS.has(boardId);
+}
