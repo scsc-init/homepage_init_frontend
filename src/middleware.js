@@ -27,9 +27,13 @@ async function isPublicArticle(pathname) {
 
   if (!articleId || !backendUrl) return false;
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 3_000);
+
   try {
     const res = await fetch(`${backendUrl}/api/article/${encodeURIComponent(articleId)}`, {
       cache: 'no-store',
+      signal: controller.signal,
     });
     if (!res.ok) return false;
 
@@ -37,6 +41,8 @@ async function isPublicArticle(pathname) {
     return isPublicBoardId(article?.board_id);
   } catch {
     return false;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
