@@ -484,3 +484,52 @@
 .ExternalRegisterForm textarea {
   margin-top: 0.4rem;
 }
+
+.GoogleSignupCard .ExternalLoginLinkButton {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 1.75rem auto 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font: inherit !important;
+  font-size: inherit !important;
+  font-weight: 400 !important;
+  line-height: inherit !important;
+  text-decoration: underline !important;
+  text-underline-offset: 0.18em !important;
+  cursor: pointer;
+  transform: none !important;
+  appearance: none;
+}
+
+.GoogleSignupCard .ExternalLoginLinkButton:hover,
+.GoogleSignupCard .ExternalLoginLinkButton:focus-visible {
+  background: none !important;
+  background-color: transparent !important;
+  color: var(--color-button-bg) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  text-decoration: underline !important;
+}
+
+.GoogleSignupCard .ExternalLoginLinkButton *,
+.GoogleSignupCard .ExternalLoginLinkButton::before,
+.GoogleSignupCard .ExternalLoginLinkButton::after {
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.GoogleSignupCard .ExternalLoginLinkButton svg,
+.GoogleSignupCard .ExternalLoginLinkButton img {
+  display: none !important;
+}
