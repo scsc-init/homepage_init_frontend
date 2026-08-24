@@ -246,7 +246,18 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       <p>아래 버튼을 눌러 csv파일을 다운 받으세요.</p>
       <ExportUsersButton allUsers={users} filteredUsers={filteredUsers} />
       <AdminLayout.AdminTableWrap>
-        <AdminLayout.AdminTable>
+        <AdminLayout.AdminTable style={{ minWidth: '1440px' }}>
+          <colgroup>
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
+          </colgroup>
           <thead>
             <tr>
               <th>이름</th>
@@ -329,7 +340,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                 <td>{user.kakao_name || '-'}</td>
                 <td>
                   <AdminLayout.AdminSelect
-                    value={user.major_id}
+                    value={user.major_id ?? ''}
                     onChange={(e) =>
                       updateUserField(user.id, 'major_id', Number(e.target.value))
                     }
@@ -360,8 +371,8 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     onChange={(e) => updateUserField(user.id, 'role', e.target.value)}
                   >
                     {ROLE_OPTIONS.map((role) => (
-                      <option key={role.level} value={role.roleEnglish}>
-                        {roleKorean(role)}
+                      <option key={role.level} value={role.english}>
+                        {role.korean}
                       </option>
                     ))}
                   </AdminLayout.AdminSelect>

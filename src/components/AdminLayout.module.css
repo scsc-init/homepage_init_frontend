@@ -207,7 +207,9 @@
 }
 .adm-table td .adm-input,
 .adm-table td .adm-select {
-  min-width: 8rem;
+  min-width: min(8rem, 100%);
+  display: block;
+  width: 100%;
 }
 
 /* Long tables: constrain height + make each section independently scrollable */
