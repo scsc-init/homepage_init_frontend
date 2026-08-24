@@ -74,7 +74,7 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
   }
 
-  if (publicRoutes.includes(pathname)) {
+  if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
@@ -127,6 +127,15 @@ const publicRoutes = [
   '/us/register',
   '/us/external-register',
 ];
+
+const publicRoutePatterns = [/^\/(sig|pig)\/\d+$/];
+
+function isPublicRoute(pathname) {
+  return (
+    publicRoutes.includes(pathname) ||
+    publicRoutePatterns.some((pattern) => pattern.test(pathname))
+  );
+}
 
 /**
  * middleware을 거치게 되는 라우트

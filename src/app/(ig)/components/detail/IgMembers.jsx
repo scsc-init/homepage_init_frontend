@@ -1,5 +1,6 @@
 import styles from './IgDetail.module.css';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
+import MembersLoginPrompt from './MembersLoginPrompt';
 
 const MEMBER_CONFIG = {
   sig: {
@@ -12,8 +13,11 @@ const MEMBER_CONFIG = {
   },
 };
 
-export default function IgMembers({ kind, owner, members }) {
+export default function IgMembers({ kind, owner, members, visible = true }) {
   const config = MEMBER_CONFIG[kind];
+
+  if (!visible) return null;
+
   const rawList = Array.isArray(members) ? members : [];
   const ownerIndex = !!owner ? rawList.findIndex((m) => getMemberIdentity(m) === owner) : -1;
   const list =

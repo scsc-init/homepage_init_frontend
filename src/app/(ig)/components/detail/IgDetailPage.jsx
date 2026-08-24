@@ -23,8 +23,9 @@ export default async function IgDetailPage({ kind, params }) {
   }
   const item = await itemRes.json();
 
-  const rawMembers = item.members ?? [];
-  const members = Array.isArray(rawMembers)
+  const rawMembers = item.members;
+  const membersVisible = Array.isArray(rawMembers);
+  const members = membersVisible
     ? rawMembers.map((m) => m?.user ?? m).filter((user) => Boolean(user?.is_active))
     : [];
 
@@ -35,6 +36,7 @@ export default async function IgDetailPage({ kind, params }) {
       kind={kind}
       item={item}
       members={members}
+      membersVisible={membersVisible}
       articleContent={article.content}
       itemId={id}
     />
