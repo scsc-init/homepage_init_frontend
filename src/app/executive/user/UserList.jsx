@@ -360,8 +360,8 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     onChange={(e) => updateUserField(user.id, 'role', e.target.value)}
                   >
                     {ROLE_OPTIONS.map((role) => (
-                      <option key={role.level} value={role.roleEnglish}>
-                        {roleKorean(role)}
+                      <option key={role.level} value={role.english}>
+                        {role.korean}
                       </option>
                     ))}
                   </AdminLayout.AdminSelect>
