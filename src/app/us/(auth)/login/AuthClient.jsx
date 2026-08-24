@@ -170,11 +170,10 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
           </button>
         </div>
 
-        <p className={styles['login-description']}>외부회원 로그인/회원가입</p>
         <div className={styles['google-signin-button-wrapper']}>
           <button
             type="button"
-            className={styles['GoogleLoginBtn']}
+            className={`${styles.GoogleLoginBtn} ${styles.ExternalLoginLinkButton}`}
             onClick={async () => {
               if (pendingMode) return;
               setPendingMode('external');
