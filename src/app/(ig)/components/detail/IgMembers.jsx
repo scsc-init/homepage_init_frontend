@@ -16,13 +16,7 @@ const MEMBER_CONFIG = {
 export default function IgMembers({ kind, owner, members, visible = true }) {
   const config = MEMBER_CONFIG[kind];
 
-  if (!visible) {
-    return (
-      <section aria-label={config.title}>
-        <MembersLoginPrompt />
-      </section>
-    );
-  }
+  if (!visible) return null;
 
   const rawList = Array.isArray(members) ? members : [];
   const ownerIndex = !!owner ? rawList.findIndex((m) => getMemberIdentity(m) === owner) : -1;
