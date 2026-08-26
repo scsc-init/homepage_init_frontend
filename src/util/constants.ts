@@ -271,6 +271,8 @@ export const excludedExecutiveEmails: string[] = [
   'deposit.app@scsc.dev',
   'tteokgook1@snu.ac.kr',
   '1n1tial@snu.ac.kr',
+  'doheyn1008@snu.ac.kr',
+  'winteruss@snu.ac.kr',
 ];
 
 export const DEFAULT_EXECUTIVE_PFP = '/asset/default-pfp.webp';
