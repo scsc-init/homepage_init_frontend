@@ -2,6 +2,7 @@
 'use client';
 
 import * as AdminLayout from '@/components/AdminLayout';
+import { fetchBackendClient } from '@/util/fetch/client';
 
 export default function DiscordBotPanel({ is_logged_in }) {
   const discordLogin = async () => {
