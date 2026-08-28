@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import InquiryButton from '@/components/InquiryButton';
 import * as validator from '@/util/validator';
 import styles from '../auth.module.css';
 import '@/styles/theme.css';
@@ -276,8 +275,6 @@ export default function ExternalRegisterClient({ email, name, submitApplication 
           </form>
         )}
       </div>
-
-      <InquiryButton />
     </div>
   );
 }
