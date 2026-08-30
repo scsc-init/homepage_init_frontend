@@ -63,11 +63,12 @@ export async function middleware(req) {
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
 
   const kakaotalk = ['kakao', 'kakaotalk'];
+  const isKakaoScraper = userAgent.includes('kakaotalk-scrap');
   const everytime = ['everytime'];
   const redirectParam = buildReturnPath(req);
   const redirectQuery = redirectParam ? `?redirect=${encodeURIComponent(redirectParam)}` : '';
 
-  if (kakaotalk.some((keyword) => userAgent.includes(keyword))) {
+  if (!isKakaoScraper && kakaotalk.some((keyword) => userAgent.includes(keyword))) {
     return NextResponse.redirect(new URL(`/err/browser/kakaotalk${redirectQuery}`, req.url));
   }
   if (everytime.some((keyword) => userAgent.includes(keyword))) {
