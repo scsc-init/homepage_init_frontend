@@ -70,11 +70,13 @@ export default function ActivityLogList({ users = [] }) {
     }
 
     try {
-      const query = Object.fromEntries(params.entries());
+      const query = params.toString();
 
-      const data = await fetchBackendClientJson('GET', '/api/executive/users/activity-logs', {
-        query,
-      });
+      const data = await fetchBackendClientJson(
+        query
+          ? `/api/executive/users/activity-logs?${query}`
+          : '/api/executive/users/activity-logs',
+      );
 
       const nextLogs = Array.isArray(data) ? data : [];
 
