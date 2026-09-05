@@ -3,6 +3,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import styles from './LoadingSpinner.module.css';
 const codes = [
   `<span style="color:#569CD6;">#include</span> &lt;stdio.h&gt;
 <span style="color:#4EC9B0;">int</span> main(void){
@@ -55,14 +56,14 @@ export default function LoadingSpinner() {
   }, []);
 
   return (
-    <div className="LoadingCodeWrapper">
+    <div className={styles.LoadingCodeWrapper}>
       <pre
-        className="LoadingCodeBlock"
+        className={styles.LoadingCodeBlock}
         dangerouslySetInnerHTML={{
           __html: displayed + `<span class="Cursor">${showCursor ? '|' : ' '}</span>`,
         }}
       ></pre>
-      <p className="LoadingText">Compiling...</p>
+      <p className={styles.LoadingText}>Compiling...</p>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
 import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
+import styles from './layout.module.css';
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -60,9 +61,11 @@ export default async function RootLayout({ children }) {
       </head>
       <body className={noto_sans_kr.className} suppressHydrationWarning={true}>
         <Providers>
-          <div id="RootContainer">
+          <div id="RootContainer" className={styles.RootContainer}>
             <Header />
-            <main id="MainContent">{children}</main>
+            <main id="MainContent" className={styles.MainContent}>
+              {children}
+            </main>
             <ThemeToggle initialDark={initialDark} />
             <Footer />
           </div>

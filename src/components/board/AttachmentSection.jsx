@@ -4,6 +4,7 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmentDownloadUrl';
 import { uploadCompressedImage } from '@/util/fetch/imageUpload';
+import styles from './AttachmentSection.module.css';
 
 export default function AttachmentSection({
   valueIds,
@@ -197,34 +198,34 @@ export default function AttachmentSection({
     <section className="AttachmentSection">
       <div className="AttachmentHeader">
         <div className="AttachmentLabel">{label}</div>
-        <label className={`AttachmentPick ${isUploading ? 'is-busy' : ''}`}>
+        <label className={`${styles.AttachmentPick} ${isUploading ? 'is-busy' : ''}`}>
           <input
             type="file"
             multiple
             accept={isImageUpload ? 'image/*' : '.pdf, .docx, .pptx'}
             onChange={onPickFiles}
             disabled={isUploading}
-            className="AttachmentInput"
+            className={styles.AttachmentInput}
           />
           {isUploading ? '업로드 중...' : isImageUpload ? '이미지 추가' : '파일 추가'}
         </label>
       </div>
 
       {ids.length === 0 ? (
-        <div className="AttachmentEmpty">
+        <div className={styles.AttachmentEmpty}>
           {isImageUpload ? '첨부한 이미지가 없습니다.' : '첨부파일이 없습니다.'}
         </div>
       ) : (
         <>
           {isImageUpload ? (
-            <ul className="AttachmentPreviewList">
+            <ul className={styles.AttachmentPreviewList}>
               {ids.map((id) => {
                 const meta = metadataMap[id];
                 const href = getAttachmentDownloadUrl(id, meta);
                 return (
-                  <li key={id} className="AttachmentPreviewItem">
+                  <li key={id} className={styles.AttachmentPreviewItem}>
                     <a
-                      className="AttachmentPreviewLink"
+                      className={styles.AttachmentPreviewLink}
                       href={href}
                       target="_blank"
                       rel="noreferrer"
@@ -233,21 +234,21 @@ export default function AttachmentSection({
                         <img
                           src={href}
                           alt={meta?.original_filename || '업로드한 이미지'}
-                          className="AttachmentPreviewImage"
+                          className={styles.AttachmentPreviewImage}
                         />
                       ) : (
-                        <div className="AttachmentPreviewFallback">
+                        <div className={styles.AttachmentPreviewFallback}>
                           {meta?.original_filename || '이미지 로딩 중'}
                         </div>
                       )}
                     </a>
-                    <div className="AttachmentPreviewMeta">
-                      <span className="AttachmentPreviewName">
+                    <div className={styles.AttachmentPreviewMeta}>
+                      <span className={styles.AttachmentPreviewName}>
                         {meta?.original_filename || id}
                       </span>
                       <button
                         type="button"
-                        className="AttachmentRemove"
+                        className={styles.AttachmentRemove}
                         onClick={() => removeId(id)}
                         disabled={isUploading}
                         aria-label="remove attachment"
@@ -273,7 +274,7 @@ export default function AttachmentSection({
                   </a>
                   <button
                     type="button"
-                    className="AttachmentRemove"
+                    className={styles.AttachmentRemove}
                     onClick={() => removeId(id)}
                     disabled={isUploading}
                     aria-label="remove attachment"
