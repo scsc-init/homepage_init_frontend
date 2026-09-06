@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import '@/styles/theme.css';
+import styles from './ThemeToggle.module.css';
 
 function setCookie(name, value, days = 365) {
   if (typeof document === 'undefined') return;
@@ -37,7 +38,7 @@ export default function ThemeToggle({ initialDark }) {
   };
 
   return (
-    <button className="ThemeToggle" onClick={toggleTheme} aria-label="Toggle dark mode">
+    <button className={styles.ThemeToggle} onClick={toggleTheme} aria-label="Toggle dark mode">
       <span suppressHydrationWarning>{dark ? '🌙' : '☀️'}</span>
     </button>
   );
