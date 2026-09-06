@@ -5,9 +5,9 @@ import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
-import WriteEditorStandard from '@/components/board/WriteEditorStandard';
-import WriteEditorAlbum from '@/components/board/WriteEditorAlbum';
-import WriteEditorFile from '@/components/board/WriteEditorFile';
+import WriteEditorStandard from './WriteEditorStandard';
+import WriteEditorAlbum from './WriteEditorAlbum';
+import WriteEditorFile from './WriteEditorFile';
 import { useMe } from '@/util/hooks/useMe';
 
 export default function CreateBoardArticleClient({ boardInfo, boardType }) {

@@ -1,0 +1,49 @@
+.sortDropdown {
+  position: relative;
+}
+
+.sortBtn {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+  width: 7.5rem;
+  text-align: center;
+}
+
+.sortBtn:hover {
+  background-color: var(--color-button-hover-bg);
+}
+
+.sortMenu {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: var(--background-color);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.sortMenuOpen {
+  display: flex;
+  flex-direction: column;
+}
+
+.sortOption {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.1rem;
+  color: var(--color-button-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.sortOption:hover {
+  background-color: var(--color-button-hover-bg);
+}

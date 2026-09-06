@@ -9,7 +9,7 @@ import {
   SIG_ADMISSION_LABEL_MAP,
   PIG_ADMISSION_LABEL_MAP,
 } from '@/util/constants';
-import SigTagManager from '@/components/board/SigTagManager';
+import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
 import * as AdminLayout from '@/components/AdminLayout';
 
 const getLeaderUserId = (ig) => {

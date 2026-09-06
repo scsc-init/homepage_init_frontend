@@ -1,11 +1,11 @@
 'use client';
 
-import SortDropdown from '@/components/board/SortDropdown';
+import SortDropdown from '@/components/common/SortDropdown';
 import {
   filterSigPigItemsByTags,
   SigPigTagFilter,
   SigPigTagList,
-} from '@/components/board/SigPigTags';
+} from '@/app/(ig)/components/SigPigTags';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';

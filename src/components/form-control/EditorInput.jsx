@@ -3,7 +3,7 @@
 import styles from './EditorInput.module.css';
 
 import { Controller } from 'react-hook-form';
-import Editor from '@/components/board/EditorWrapper.jsx';
+import Editor from './EditorWrapper.jsx';
 import { useEffect, useState } from 'react';
 
 export default function EditorInput({ label, control, name, editorKey, className }) {
