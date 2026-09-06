@@ -1,7 +1,7 @@
 import styles from '../about.module.css';
 
 // 클라이언트 전용 컴포넌트 import
-import MyPageClient from '@/components/about/MyProfileClient';
+import MyPageClient from './MyProfileClient';
 
 export default function MyPage() {
   return (
