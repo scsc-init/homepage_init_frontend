@@ -8,7 +8,6 @@ import styles from '../auth.module.css';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import * as validator from '@/util/validator';
-import InquiryButton from '@/components/InquiryButton';
 import { useSession } from 'next-auth/react';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { createUser } from './actions';
@@ -346,7 +345,6 @@ export default function AuthClient() {
           </div>
         )}
       </div>
-      <InquiryButton />
     </div>
   );
 }

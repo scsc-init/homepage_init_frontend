@@ -1,0 +1,90 @@
+.AttachmentInput {
+  display: none;
+}
+
+.AttachmentPick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.AttachmentPick:global(.is-busy) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.AttachmentEmpty {
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.AttachmentRemove {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+  cursor: pointer;
+}
+
+.AttachmentPreviewList {
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.AttachmentPreviewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.AttachmentPreviewLink {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.AttachmentPreviewImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.AttachmentPreviewFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.AttachmentPreviewMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.AttachmentPreviewName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}

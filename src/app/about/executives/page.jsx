@@ -1,4 +1,4 @@
-import ScrollEffectWrapper from '@/components/about/ScrollEffectWrapper';
+import ScrollEffectWrapper from '../ScrollEffectWrapper';
 import styles from '../about.module.css';
 import ExecutivesClient from './client';
 
