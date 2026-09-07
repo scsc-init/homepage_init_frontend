@@ -160,7 +160,7 @@ export const footerLogoData: FooterLogoItem[] = [
 /**
  * 푸터가 표시되지 않는 라우트의 리스트입니다.
  */
-export const hideFooterRoutes: string[] = ['/', '/us/login', '/signup', '/about/my-page'];
+export const hideFooterRoutes: string[] = ['/us/login', '/signup', '/about/my-page'];
 
 /**
  * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
