@@ -1,5 +1,5 @@
 import styles from './page.module.css';
-import BoardClient from '@/components/board/BoardClient';
+import BoardClient from './BoardClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
 export async function generateMetadata({ params }) {

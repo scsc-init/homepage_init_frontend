@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import AttachmentSection from '@/components/board/AttachmentSection';
+import AttachmentSection from '@/components/form-control/AttachmentSection';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
-import styles from '@/app/board/[id]/create/page.module.css';
+import styles from './page.module.css';
 
 export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChange }) {
   const {

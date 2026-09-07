@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useMe } from '@/util/hooks/useMe';
-import SortDropdown from './SortDropdown';
+import SortDropdown from '@/components/common/SortDropdown';
 import ArticlesView from './ArticlesView';
 import GalleryView from './GalleryView';
 import FileBoardView from './FileBoardView';

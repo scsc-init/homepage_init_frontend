@@ -6,7 +6,7 @@ import IgDeleteButton from '@/app/(ig)/components/detail/IgDeleteButton';
 import IgJoinLeaveButton from '@/app/(ig)/components/detail/IgJoinLeaveButton';
 import IgMembers from '@/app/(ig)/components/detail/IgMembers';
 import IgOwnerHandoverButton from '@/app/(ig)/components/detail/IgOwnerHandoverButton';
-import { sortSigPigTags } from '@/components/board/SigPigTags';
+import { sortSigPigTags } from '@/app/(ig)/components/SigPigTags';
 import {
   is_sigpig_join_available,
   is_pig_join_available,

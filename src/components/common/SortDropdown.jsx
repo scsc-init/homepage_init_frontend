@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import styles from './board.module.css';
+import styles from './SortDropdown.module.css';
 
 export default function SortDropdown({ sortOrder, setSortOrder }) {
   const [open, setOpen] = useState(false);

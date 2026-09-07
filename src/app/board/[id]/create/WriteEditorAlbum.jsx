@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import AttachmentSection from '@/components/board/AttachmentSection';
+import AttachmentSection from '@/components/form-control/AttachmentSection';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
-import styles from '@/app/board/[id]/create/page.module.css';
+import styles from './page.module.css';
 
-export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange }) {
+export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }) {
   const {
     register,
     handleSubmit,
@@ -23,19 +23,18 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
   }, [attachmentIds.length, isDirty, onDirtyChange]);
 
   const handleInternalSubmit = (data) => {
-    if (!data.title?.trim()) {
-      alert('제목을 입력해주세요.');
-      return;
-    }
+    const imageMarkdown = attachmentIds
+      .map((id) => {
+        const encoded = encodeURIComponent(id);
+        const url = `/api/file/image/download/${encoded}`;
 
-    if (attachmentIds.length === 0) {
-      alert('최소 하나의 파일을 첨부해주세요.');
-      return;
-    }
+        return `![album_image](${url})`;
+      })
+      .join('\n\n');
 
     onSubmit({
-      title: data.title.trim(),
-      editor: data.description || '',
+      title: data.title,
+      editor: `${imageMarkdown}\n\n${data.description || ''}`,
       attachments: attachmentIds,
     });
   };
@@ -44,24 +43,24 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
     <div className={styles.CreateCard}>
       <form onSubmit={handleSubmit(handleInternalSubmit)} className={styles.AlbumForm}>
         <div className={styles.AlbumUploadPanel}>
-          <p className={styles.AlbumUploadTitle}>게시글에 포함할 파일을 첨부해주세요</p>
+          <p className={styles.AlbumUploadTitle}>앨범에 올릴 사진을 선택해주세요</p>
           <AttachmentSection
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
-            isFileUpload
+            isImageUpload
           />
         </div>
 
         <TextInput
-          label="파일 게시글 제목"
-          placeholder="파일 게시글 제목을 입력하세요."
+          label="앨범 제목"
+          placeholder="앨범 제목을 입력하세요 (예: 즐거운 워크샵 사진)"
           register={register}
           name="title"
           className={styles.Input}
           labelClassName={styles.InputLabel}
         />
         <EditorInput
-          label="설명 (선택)"
+          label="앨범 설명 (선택)"
           control={control}
           name="description"
           className={styles.Editor}
@@ -72,7 +71,7 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
           className={`${styles.CreateBtn} ${styles.AlbumSubmitButton}`}
           disabled={submitting}
         >
-          {submitting ? '등록 중...' : '파일 게시글 등록'}
+          {submitting ? '업로드 중...' : '앨범 등록하기'}
         </button>
       </form>
     </div>

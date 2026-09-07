@@ -9,7 +9,7 @@ import 'highlight.js/styles/github.css';
 import styles from './page.module.css';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import Comments from '@/components/board/Comments.jsx';
+import Comments from './Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { isPublicBoardId, utc2kst } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';

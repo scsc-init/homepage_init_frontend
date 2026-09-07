@@ -2,7 +2,7 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import IgForm from '@/app/(ig)/components/editor/IgForm';
-import SigTagManager from '@/components/board/SigTagManager';
+import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
 import styles from '@/app/(ig)/components/editor/IgEditorPage.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';

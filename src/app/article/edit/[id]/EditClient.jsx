@@ -7,11 +7,11 @@ import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from '@/app/board/[id]/create/page.module.css';
-import AttachmentSection from '@/components/board/AttachmentSection';
+import AttachmentSection from '@/components/form-control/AttachmentSection';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 
-const Editor = dynamic(() => import('@/components/board/EditorWrapper'), { ssr: false });
+const Editor = dynamic(() => import('@/components/form-control/EditorWrapper'), { ssr: false });
 
 export default function EditClient({ articleId }) {
   const router = useRouter();
