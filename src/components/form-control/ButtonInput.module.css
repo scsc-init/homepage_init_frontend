@@ -3,16 +3,3 @@
   display: flex;
   justify-content: center;
 }
-
-.buttonInput {
-  padding: 1rem 2rem;
-}
-
-.buttonInput[type='button'] {
-  background-color: var(--header-foreground-color);
-  color: var(--header-background-color);
-}
-
-.buttonInput[type='submit'] {
-  background-color: var(--color-button-bg);
-}

@@ -135,7 +135,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   <td>{status}</td>
                   <td>
                     <AdminLayout.AdminButton
-                      className="outline"
+                      variant="secondary"
                       onClick={() => manualEnroll(user)}
                       disabled={saving[user.id]}
                     >
@@ -396,7 +396,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   </AdminLayout.AdminButton>
                 </td>
                 <td>
-                  <AdminLayout.AdminButton className="outline" onClick={() => showDetail(user)}>
+                  <AdminLayout.AdminButton variant="secondary" onClick={() => showDetail(user)}>
                     상세 보기
                   </AdminLayout.AdminButton>
                 </td>

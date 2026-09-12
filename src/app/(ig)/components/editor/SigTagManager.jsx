@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 import styles from './SigTagManager.module.css';
+import Button from '@/components/common/Button';
 
 const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const {
@@ -280,14 +281,14 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
             </option>
           ))}
         </select>
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           className={styles.SigTagActionButton}
           onClick={addExistingTag}
           disabled={loading || disabled || !selectedTagId}
         >
           기존 태그 추가
-        </button>
+        </Button>
       </div>
 
       <div className={styles.SigTagControlGroup}>
@@ -313,14 +314,14 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
             <span>major</span>
           </label>
         ) : null}
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           className={styles.SigTagActionButton}
           onClick={createAndAddTag}
           disabled={loading || disabled || !newTagText.trim()}
         >
           새 태그 생성 후 추가
-        </button>
+        </Button>
       </div>
     </div>
   );

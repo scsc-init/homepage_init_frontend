@@ -2,6 +2,7 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useEffect, useState } from 'react';
+import Button from '@/components/common/Button';
 import styles from './ArticleList.module.css';
 const BOARD_TYPE_OPTIONS = ['TEXT', 'NONE', 'IMAGE', 'FILE'];
 
@@ -154,12 +155,16 @@ export default function ArticleList({ boards: boardsDefault }) {
                 </option>
               ))}
             </select>
-            <button className={styles.button} onClick={() => saveBoard(board)}>
+            <Button className={styles.button} onClick={() => saveBoard(board)}>
               이름 저장
-            </button>
-            <button className={styles.buttonOutline} onClick={() => deleteBoard(board.id)}>
+            </Button>
+            <Button
+              variant="secondary"
+              className={styles.button}
+              onClick={() => deleteBoard(board.id)}
+            >
               게시판 삭제
-            </button>
+            </Button>
           </div>
 
           <div className={styles.wrap}>
@@ -200,19 +205,20 @@ export default function ArticleList({ boards: boardsDefault }) {
                     </td>
                     <td>
                       <div>
-                        <button
+                        <Button
                           className={styles.button}
                           onClick={() => saveArticle(article)}
                           disabled={saving[article.id]}
                         >
                           저장
-                        </button>
-                        <button
-                          className={styles.buttonOutline}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          className={styles.button}
                           onClick={() => deleteArticle(article.id, board.id)}
                         >
                           삭제
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
