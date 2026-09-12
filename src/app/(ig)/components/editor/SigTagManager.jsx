@@ -282,7 +282,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           ))}
         </select>
         <Button
-          variant="outline"
+          variant="secondary"
           className={styles.SigTagActionButton}
           onClick={addExistingTag}
           disabled={loading || disabled || !selectedTagId}
@@ -315,7 +315,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           </label>
         ) : null}
         <Button
-          variant="outline"
+          variant="secondary"
           className={styles.SigTagActionButton}
           onClick={createAndAddTag}
           disabled={loading || disabled || !newTagText.trim()}

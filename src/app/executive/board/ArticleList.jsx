@@ -159,7 +159,7 @@ export default function ArticleList({ boards: boardsDefault }) {
               이름 저장
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               className={styles.button}
               onClick={() => deleteBoard(board.id)}
             >
@@ -213,7 +213,7 @@ export default function ArticleList({ boards: boardsDefault }) {
                           저장
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           className={styles.button}
                           onClick={() => deleteArticle(article.id, board.id)}
                         >

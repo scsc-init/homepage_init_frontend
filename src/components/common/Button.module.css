@@ -36,12 +36,12 @@
   background: var(--color-button-hover-bg);
 }
 
-.button[data-variant='outline'] {
+.button[data-variant='secondary'] {
   background: transparent;
   color: var(--color-text-body);
 }
 
-.button[data-variant='outline']:hover:not(:disabled) {
+.button[data-variant='secondary']:hover:not(:disabled) {
   background: var(--background-hover-color);
 }
 

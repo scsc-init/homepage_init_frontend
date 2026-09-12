@@ -88,7 +88,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               placeholder="확인 문구 입력"
             />
             <AdminLayout.AdminFlex style={{ justifyContent: 'flex-end' }}>
-              <AdminLayout.AdminButton variant="outline" onClick={() => setModalOpen(false)}>
+              <AdminLayout.AdminButton variant="secondary" onClick={() => setModalOpen(false)}>
                 취소
               </AdminLayout.AdminButton>
               <AdminLayout.AdminButton
@@ -119,7 +119,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               <span style={{ fontSize: '1.2rem' }}>→</span>
               <AdminLayout.AdminButton
                 key={nextStatus}
-                variant="outline"
+                variant="secondary"
                 onClick={() => saveToModal(nextStatus)}
                 disabled={saving}
               >

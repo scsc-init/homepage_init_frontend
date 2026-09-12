@@ -117,7 +117,7 @@ export default function MajorList({ majors: majorsDefault }) {
                       저장
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       className={styles.button}
                       onClick={() => deleteMajor(major.id)}
                     >

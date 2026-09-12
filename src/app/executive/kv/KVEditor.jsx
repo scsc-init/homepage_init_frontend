@@ -164,7 +164,7 @@ export default function KVEditor() {
           <Button onClick={saveKV} disabled={saving || !canSave}>
             {saving ? '저장 중...' : '저장'}
           </Button>
-          <Button variant="outline" onClick={() => setValue(original)} disabled={saving}>
+          <Button variant="secondary" onClick={() => setValue(original)} disabled={saving}>
             되돌리기
           </Button>
           <Button variant="danger" onClick={clearKV} disabled={saving || !canSave}>
