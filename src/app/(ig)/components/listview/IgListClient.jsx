@@ -1,6 +1,7 @@
 'use client';
 
 import SortDropdown from '@/components/common/SortDropdown';
+import Button from '@/components/common/Button';
 import {
   filterSigPigItemsByTags,
   SigPigTagFilter,
@@ -69,9 +70,7 @@ export default function IgListClient({
         <h1 className="text-3xl font-bold">{kindLabel} 게시판</h1>
         <div className={styles.headerActions}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
-          <button
-            type="button"
-            className={styles.createButton}
+          <Button
             onClick={() => {
               setIsLoading(true);
               router.push(createHref);
@@ -79,7 +78,7 @@ export default function IgListClient({
             disabled={isLoading}
           >
             {kindLabel} 만들기
-          </button>
+          </Button>
         </div>
       </div>
 

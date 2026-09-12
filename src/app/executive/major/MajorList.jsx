@@ -2,6 +2,7 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useState } from 'react';
+import Button from '@/components/common/Button';
 import styles from './MajorList.module.css';
 
 export default function MajorList({ majors: majorsDefault }) {
@@ -88,9 +89,9 @@ export default function MajorList({ majors: majorsDefault }) {
                 />
               </td>
               <td>
-                <button className={styles.button} onClick={createMajor}>
+                <Button className={styles.button} onClick={createMajor}>
                   추가
-                </button>
+                </Button>
               </td>
             </tr>
             {majors.map((major) => (
@@ -112,15 +113,16 @@ export default function MajorList({ majors: majorsDefault }) {
                 </td>
                 <td>
                   <div>
-                    <button className={styles.button} onClick={() => saveMajor(major)}>
+                    <Button className={styles.button} onClick={() => saveMajor(major)}>
                       저장
-                    </button>
-                    <button
-                      className={styles.buttonOutline}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={styles.button}
                       onClick={() => deleteMajor(major.id)}
                     >
                       삭제
-                    </button>
+                    </Button>
                   </div>
                 </td>
               </tr>

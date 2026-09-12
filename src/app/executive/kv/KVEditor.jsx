@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Button from '@/components/common/Button';
 import styles from './KV.module.css';
 import { HIDDEN_KV_KEYS } from '@/util/constants';
 import { getKvClient, getKvsClient, setKvClient } from '@/util/fetch/client-util';
@@ -142,13 +143,9 @@ export default function KVEditor() {
           value={keyInput}
           onChange={(e) => setKeyInput(e.target.value)}
         />
-        <button
-          className={styles.button}
-          onClick={loadKV}
-          disabled={loading || saving || !canSave}
-        >
+        <Button onClick={loadKV} disabled={loading || saving || !canSave}>
           {loading ? '불러오는 중...' : '불러오기'}
-        </button>
+        </Button>
       </div>
 
       <div className={styles.section}>
@@ -164,23 +161,15 @@ export default function KVEditor() {
           <span>저장됨: {original.length}자</span>
         </div>
         <div className={styles.actions}>
-          <button className={styles.button} onClick={saveKV} disabled={saving || !canSave}>
+          <Button onClick={saveKV} disabled={saving || !canSave}>
             {saving ? '저장 중...' : '저장'}
-          </button>
-          <button
-            className={`${styles.button} ${styles.outline}`}
-            onClick={() => setValue(original)}
-            disabled={saving}
-          >
+          </Button>
+          <Button variant="outline" onClick={() => setValue(original)} disabled={saving}>
             되돌리기
-          </button>
-          <button
-            className={`${styles.button} ${styles.danger}`}
-            onClick={clearKV}
-            disabled={saving || !canSave}
-          >
+          </Button>
+          <Button variant="danger" onClick={clearKV} disabled={saving || !canSave}>
             비우기
-          </button>
+          </Button>
         </div>
       </div>
     </div>
