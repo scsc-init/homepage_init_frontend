@@ -10,7 +10,7 @@ import styles from './IgDetail.module.css';
 export default function IgDeleteButton({ kind, itemId, canDelete, isOwner }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
-  const upperLabel = kind.toUpperCase();
+  const upperLabel = kind === 'small-group' ? '소모임' : kind.toUpperCase();
 
   const deleteBySelf = async () => {
     try {

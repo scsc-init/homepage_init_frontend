@@ -121,6 +121,7 @@ const publicRoutes = [
   '/about/developers',
   '/about/rules',
   '/sig',
+  '/small-group',
   '/pig',
   '/us/contact',
   '/us/login',
@@ -129,7 +130,7 @@ const publicRoutes = [
   '/us/external-register',
 ];
 
-const publicRoutePatterns = [/^\/(sig|pig)\/\d+$/];
+const publicRoutePatterns = [/^\/(sig|small-group|pig)\/\d+$/];
 
 function isPublicRoute(pathname) {
   return (

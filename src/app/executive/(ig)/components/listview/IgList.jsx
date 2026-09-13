@@ -84,7 +84,7 @@ export default function IgList({ igs, igType }) {
     ownerName: '',
   });
 
-  const igSlug = igType.toLowerCase();
+  const igSlug = igType === '소모임' ? 'small-group' : igType.toLowerCase();
 
   const filteredIgs = useMemo(() => {
     const safeIgs = Array.isArray(igs) ? igs : [];

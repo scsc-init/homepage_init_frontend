@@ -6,6 +6,11 @@ const METADATA_CONFIG = {
     fallbackTitle: 'SIG | SCSC',
     routeBase: '/sig',
   },
+  'small-group': {
+    fallbackDescription: '소모임 상세 페이지',
+    fallbackTitle: '소모임 | SCSC',
+    routeBase: '/small-group',
+  },
   pig: {
     fallbackDescription: 'PIG 상세 페이지',
     fallbackTitle: 'PIG | SCSC',

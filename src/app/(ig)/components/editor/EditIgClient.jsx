@@ -18,6 +18,11 @@ const EDIT_CONFIG = {
     routeBase: '/sig',
     targetLabel: undefined,
   },
+  'small-group': {
+    upperLabel: '소모임',
+    routeBase: '/small-group',
+    targetLabel: undefined,
+  },
   pig: {
     upperLabel: 'PIG',
     routeBase: '/pig',

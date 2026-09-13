@@ -23,7 +23,7 @@ export default async function IgDetailPage({ params, igType }) {
     content: raw?.content?.content ?? '',
   };
 
-  const isSig = igType === 'SIG';
+  const isSig = igType !== 'PIG';
   const isPig = igType === 'PIG';
 
   return (
@@ -31,7 +31,7 @@ export default async function IgDetailPage({ params, igType }) {
       <AdminLayout.AdminPanel>
         <h2>{igType} 관리</h2>
         <AdminLayout.AdminSection>
-          <IgEdit ig={ig} is_sig={isSig} is_pig={isPig} />
+          <IgEdit igType={igType} ig={ig} is_sig={isSig} is_pig={isPig} />
         </AdminLayout.AdminSection>
 
         <h2>{igType} 구성원 관리</h2>

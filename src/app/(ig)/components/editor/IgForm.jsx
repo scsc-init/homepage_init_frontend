@@ -13,6 +13,12 @@ const FORM_CONFIG = {
     descriptionPlaceholder: 'AI를 공부하는 SIG입니다',
     admissionLabelMap: SIG_ADMISSION_LABEL_MAP,
   },
+  'small-group': {
+    upperLabel: '소모임',
+    titlePlaceholder: 'AI 소모임',
+    descriptionPlaceholder: 'AI를 공부하는 소모임입니다',
+    admissionLabelMap: SIG_ADMISSION_LABEL_MAP,
+  },
   pig: {
     upperLabel: 'PIG',
     titlePlaceholder: 'INIT',

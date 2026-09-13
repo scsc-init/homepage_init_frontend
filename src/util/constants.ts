@@ -94,6 +94,7 @@ export const headerMenuData: HeaderMenuSection[] = [
     title: 'SIG/PIG',
     items: [
       { label: 'SIG', url: '/sig' },
+      { label: '소모임', url: '/small-group' },
       { label: 'PIG', url: '/pig' },
     ],
   },
@@ -308,6 +309,7 @@ export const ALLOWED_REDIRECT_PREFIXES: string[] = [
   '/board',
   '/article',
   '/sig',
+  '/small-group',
   '/pig',
   '/us/edit-user-info',
   '/about',

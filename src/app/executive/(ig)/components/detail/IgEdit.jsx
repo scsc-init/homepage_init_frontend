@@ -177,7 +177,7 @@ const renderIgEdit = (ig, ctx) => {
       </tr>
 
       <tr>
-        <td>{ctx.is_sig ? 'SIG장' : 'PIG장'}</td>
+        <td>{`${ctx.igLabel}장`}</td>
         <td>
           <AdminLayout.AdminSelect
             value={selected || ''}
@@ -187,10 +187,7 @@ const renderIgEdit = (ig, ctx) => {
             {members.map((m, idx) => {
               const mid = m?.user_id != null ? String(m.user_id) : '';
               const name = m?.user?.name ?? '';
-              const label =
-                mid && mid === ownerIdStr
-                  ? `[${ctx.is_sig ? 'SIG장' : 'PIG장'}] ${name}`
-                  : name;
+              const label = mid && mid === ownerIdStr ? `[${ctx.igLabel}장] ${name}` : name;
               return (
                 <option key={`${igIdStr}-${mid || name}-${idx}`} value={mid}>
                   {label}
@@ -218,7 +215,7 @@ function renderIgRow(ig, ctx, attrName, attrLabel) {
   );
 }
 
-export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = false }) {
+export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = false, igType }) {
   const [saving, setSaving] = useState(false);
   const [ig, setIg] = useState({
     ..._ig,
@@ -233,8 +230,8 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
     return null;
   }
 
-  const igSlug = is_sig ? 'sig' : 'pig';
-  const igLabel = igSlug.toUpperCase();
+  const igSlug = igType === '소모임' ? 'small-group' : is_sig ? 'sig' : 'pig';
+  const igLabel = igType ?? igSlug.toUpperCase();
 
   const handleSave = async () => {
     try {
@@ -347,6 +344,7 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
     handleSave,
     handleDelete,
     is_sig,
+    igLabel,
   };
 
   return (
@@ -367,6 +365,7 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
         <div style={{ marginTop: '16px', marginBottom: '16px' }}>
           <SigTagManager
             ref={tagManagerRef}
+            targetLabel={igLabel}
             sigId={ig.id}
             initialTags={_ig?.tags}
             isExecutive

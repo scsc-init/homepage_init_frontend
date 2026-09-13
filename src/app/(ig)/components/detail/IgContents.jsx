@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import styles from './IgDetail.module.css';
 
 export default function IgContents({ kind, content }) {
-  const altPrefix = kind === 'sig' ? 'SIG' : 'PIG';
+  const altPrefix = kind === 'small-group' ? '소모임' : kind.toUpperCase();
 
   return (
     <div className={styles.content}>
