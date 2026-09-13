@@ -179,7 +179,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
         (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.phone || lower(u.phone).includes(lower(filter.phone))) &&
         (!filter.student_id || lower(u.student_id).includes(lower(filter.student_id))) &&
-        (!filter.role || lower(u.role).includes(lower(filter.role))) &&
+        (!filter.role || String(u.role) === filter.role) &&
         (!filter.status || status === filter.status) &&
         (!filter.major || lower(u.major_id).toString() === filter.major)
       );
@@ -204,6 +204,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
     const newFilter = { ...filter, [field]: value };
     setFilter(newFilter);
   };
+
   const roleNumberToString = (val) => (typeof val === 'string' ? val : roleEnglish(val));
 
   const sendUserData = async (user) => {
@@ -309,10 +310,17 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                 />
               </td>
               <td>
-                <AdminLayout.AdminInput
+                <AdminLayout.AdminSelect
                   value={filter.role}
                   onChange={(e) => updateFilterCriteria('role', e.target.value)}
-                />
+                >
+                  <option value="">권한 전체</option>
+                  {ROLE_OPTIONS.map((role) => (
+                    <option key={role.level} value={String(role.level)}>
+                      {role.korean}
+                    </option>
+                  ))}
+                </AdminLayout.AdminSelect>
               </td>
               <td>
                 <AdminLayout.AdminSelect
