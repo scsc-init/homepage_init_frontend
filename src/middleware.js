@@ -151,6 +151,7 @@ export const config = {
     '/err/:path*',
     '/executive/:path*',
     '/sig/:path*',
+    '/small-group/:path*',
     '/pig/:path*',
     '/testutils/:path*',
     '/us/:path*',

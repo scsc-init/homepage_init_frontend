@@ -7,6 +7,7 @@ import {
   STATUS_MAP,
   SEMESTER_MAP,
   SIG_ADMISSION_LABEL_MAP,
+  SMALL_GROUP_ADMISSION_LABEL_MAP,
   PIG_ADMISSION_LABEL_MAP,
 } from '@/util/constants';
 import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
@@ -160,18 +161,9 @@ const renderIgEdit = (ig, ctx) => {
             value={ig['is_rolling_admission'] ?? 'during_recruiting'}
             onChange={(e) => ctx.updateIgField('is_rolling_admission', e.target.value)}
           >
-            <option value="always">
-              {(ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP).always}
-            </option>
-            <option value="never">
-              {(ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP).never}
-            </option>
-            <option value="during_recruiting">
-              {
-                (ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP)
-                  .during_recruiting
-              }
-            </option>
+            <option value="always">{ctx.admissionLabelMap.always}</option>
+            <option value="never">{ctx.admissionLabelMap.never}</option>
+            <option value="during_recruiting">{ctx.admissionLabelMap.during_recruiting}</option>
           </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
@@ -345,6 +337,12 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
     handleDelete,
     is_sig,
     igLabel,
+    admissionLabelMap:
+      igType === '소모임'
+        ? SMALL_GROUP_ADMISSION_LABEL_MAP
+        : is_sig
+          ? SIG_ADMISSION_LABEL_MAP
+          : PIG_ADMISSION_LABEL_MAP,
   };
 
   return (
