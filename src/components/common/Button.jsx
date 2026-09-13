@@ -20,15 +20,19 @@ const Button = forwardRef(function Button(
   );
 });
 
-export function ButtonLink({ variant = 'primary', size = 'md', className = '', ...props }) {
+export const ButtonLink = forwardRef(function ButtonLink(
+  { variant = 'primary', size = 'md', className = '', ...props },
+  ref,
+) {
   return (
     <Link
       {...props}
+      ref={ref}
       className={`${styles.button} ${className}`}
       data-variant={variant}
       data-size={size}
     />
   );
-}
+});
 
 export default Button;

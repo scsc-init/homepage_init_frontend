@@ -86,10 +86,12 @@ const AdminInput = ({ className, ...props }) => {
 };
 AdminInput.displayName = 'AdminLayout.AdminInput';
 
-const AdminButton = (props) => <Button {...props} />;
+const AdminButton = ({ type = 'submit', ...props }) => <Button type={type} {...props} />;
 AdminButton.displayName = 'AdminLayout.AdminButton';
 
-const AdminButtonDanger = (props) => <Button variant="danger" {...props} />;
+const AdminButtonDanger = ({ type = 'submit', ...props }) => (
+  <Button type={type} variant="danger" {...props} />
+);
 AdminButtonDanger.displayName = 'AdminLayout.AdminButtonDanger';
 
 const AdminLinkButton = (props) => <ButtonLink {...props} />;
