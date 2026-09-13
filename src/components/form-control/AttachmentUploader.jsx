@@ -4,9 +4,9 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmentDownloadUrl';
 import { uploadCompressedImage } from '@/util/fetch/imageUpload';
-import styles from './AttachmentSection.module.css';
+import styles from './Attachment.module.css';
 
-export default function AttachmentSection({
+export default function AttachmentUploader({
   valueIds,
   onChangeIds,
   label = '첨부파일',
@@ -190,14 +190,14 @@ export default function AttachmentSection({
   );
 
   if (Boolean(isImageUpload) === Boolean(isFileUpload)) {
-    console.error('AttachmentSection: isImageUpload and isFileUpload must differ');
+    console.error('AttachmentUploader: isImageUpload and isFileUpload must differ');
     return null;
   }
 
   return (
-    <section className="AttachmentSection">
-      <div className="AttachmentHeader">
-        <div className="AttachmentLabel">{label}</div>
+    <section className={styles.AttachmentSection}>
+      <div className={styles.AttachmentHeader}>
+        <div className={styles.AttachmentLabel}>{label}</div>
         <label className={`${styles.AttachmentPick} ${isUploading ? 'is-busy' : ''}`}>
           <input
             type="file"
@@ -261,11 +261,11 @@ export default function AttachmentSection({
               })}
             </ul>
           ) : (
-            <ul className="AttachmentList">
+            <ul className={styles.AttachmentList}>
               {ids.map((id) => (
-                <li key={id} className="AttachmentItem">
+                <li key={id} className={styles.AttachmentItem}>
                   <a
-                    className="AttachmentLink"
+                    className={styles.AttachmentLink}
                     href={getAttachmentDownloadUrl(id, metadataMap[id])}
                     target="_blank"
                     rel="noreferrer"
