@@ -1,49 +1,53 @@
 .sortDropdown {
   position: relative;
+  width: 8.5rem;
+  flex-shrink: 0;
 }
 
-.sortBtn {
-  background-color: var(--color-button-bg);
-  color: var(--color-button-text);
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.2s ease;
-  width: 7.5rem;
-  text-align: center;
-}
-
-.sortBtn:hover {
-  background-color: var(--color-button-hover-bg);
+.sortBtn.sortBtn {
+  width: 100%;
+  justify-content: space-between;
 }
 
 .sortMenu {
-  display: none;
   position: absolute;
-  top: 110%;
+  top: calc(100% + 0.375rem);
   left: 0;
-  background-color: var(--background-color);
-  border: 1px solid var(--color-border);
+  width: 100%;
+  padding: 0.25rem;
+  background: var(--header-background-color);
+  border: 1px solid var(--color-button-border);
   border-radius: 0.5rem;
-  overflow: hidden;
+  box-shadow: 0 4px 12px var(--executive-card-shadow);
   z-index: 10;
 }
 
-.sortMenuOpen {
-  display: flex;
-  flex-direction: column;
-}
-
 .sortOption {
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.1rem;
-  color: var(--color-button-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-text-body);
+  font: inherit;
+  line-height: 1.4;
+  text-align: left;
   cursor: pointer;
-  transition: background-color 0.15s ease;
 }
 
-.sortOption:hover {
-  background-color: var(--color-button-hover-bg);
+.sortOption[aria-checked='true'] {
+  font-weight: 600;
+}
+
+.sortOption:hover,
+.sortOption:focus-visible {
+  background: var(--background-hover-color);
+}
+
+.sortOption:focus-visible {
+  outline: 2px solid var(--color-button-bg);
+  outline-offset: -2px;
 }

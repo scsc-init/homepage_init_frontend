@@ -2,6 +2,7 @@
 
 import styles from './AdminLayout.module.css';
 import Link from 'next/link';
+import Button, { ButtonLink } from '@/components/common/Button';
 
 const AdminTableWrap = ({ children, className, ...props }) => {
   return (
@@ -85,31 +86,15 @@ const AdminInput = ({ className, ...props }) => {
 };
 AdminInput.displayName = 'AdminLayout.AdminInput';
 
-const AdminButton = ({ children, className, ...props }) => {
-  return (
-    <button className={`${styles['adm-button']} ${className || ''}`} {...props}>
-      {children}
-    </button>
-  );
-};
+const AdminButton = ({ type = 'submit', ...props }) => <Button type={type} {...props} />;
 AdminButton.displayName = 'AdminLayout.AdminButton';
 
-const AdminButtonDanger = ({ children, className, ...props }) => {
-  return (
-    <button className={`${styles['adm-button-danger']} ${className || ''}`} {...props}>
-      {children}
-    </button>
-  );
-};
+const AdminButtonDanger = ({ type = 'submit', ...props }) => (
+  <Button type={type} variant="danger" {...props} />
+);
 AdminButtonDanger.displayName = 'AdminLayout.AdminButtonDanger';
 
-const AdminLinkButton = ({ children, className, ...props }) => {
-  return (
-    <Link className={`${styles['adm-button']} ${className || ''}`} {...props}>
-      {children}
-    </Link>
-  );
-};
+const AdminLinkButton = (props) => <ButtonLink {...props} />;
 AdminLinkButton.displayName = 'AdminLayout.AdminLinkButton';
 
 const AdminTextarea = ({ children, className, ...props }) => {

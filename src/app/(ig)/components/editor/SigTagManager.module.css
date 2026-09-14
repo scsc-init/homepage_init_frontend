@@ -121,22 +121,6 @@
   font-size: 0.92rem;
 }
 
-.SigTagActionButton {
-  min-height: 2.6rem;
-  padding: 0.6rem 0.95rem;
-  border: 1px solid var(--color-text-subtle);
-  border-radius: 0.7rem;
-  background-color: var(--color-card-bg);
-  color: var(--color-text-body);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.SigTagActionButton:hover:not(:disabled) {
-  border-color: var(--color-text-body);
-}
-
-.SigTagActionButton:disabled,
 .SigAttachedTagRemove:disabled {
   opacity: 0.5;
   cursor: not-allowed;

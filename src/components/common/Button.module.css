@@ -1,0 +1,71 @@
+/* Explicit specificity keeps global button/disabled and panel link rules from
+   changing the shared geometry and colors. */
+.button.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-button-border);
+  border-radius: 0.5rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.button[data-size='sm'] {
+  min-height: 2rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.875rem;
+}
+
+.button[data-variant='primary'] {
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+}
+
+.button[data-variant='primary']:hover:not(:disabled) {
+  background: var(--color-button-hover-bg);
+}
+
+.button[data-variant='secondary'] {
+  background: transparent;
+  color: var(--color-text-body);
+}
+
+.button[data-variant='secondary']:hover:not(:disabled) {
+  background: var(--background-hover-color);
+}
+
+.button[data-variant='danger'] {
+  background: var(--color-button-alert-bg);
+  color: var(--color-button-text);
+}
+
+.button[data-variant='danger']:hover:not(:disabled) {
+  background: var(--color-button-alert-hover-bg);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-button-bg);
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button.button {
+    transition: none;
+  }
+}

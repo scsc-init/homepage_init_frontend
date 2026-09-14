@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useMe } from '@/util/hooks/useMe';
 import SortDropdown from '@/components/common/SortDropdown';
+import { ButtonLink } from '@/components/common/Button';
 import ArticlesView from './ArticlesView';
 import GalleryView from './GalleryView';
 import FileBoardView from './FileBoardView';
@@ -28,9 +29,7 @@ export default function BoardClient({ board }) {
         </div>
         {canWrite && (
           <div className={styles.rightAction}>
-            <a href={`/board/${board.id}/create?t=${createType}`} className={styles.createBtn}>
-              글 작성
-            </a>
+            <ButtonLink href={`/board/${board.id}/create?t=${createType}`}>글 작성</ButtonLink>
           </div>
         )}
       </div>

@@ -68,22 +68,6 @@
   overflow-wrap: anywhere;
 }
 
-.createBtn {
-  all: unset;
-  background-color: var(--color-button-bg);
-  color: var(--color-button-text);
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-decoration: none;
-}
-
-.createBtn:hover {
-  background-color: var(--color-button-hover-bg);
-}
-
 .fixedWidth {
   width: 9.5rem;
   text-align: left;
