@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from '@/app/board/[id]/create/page.module.css';
-import AttachmentSection from '@/components/form-control/AttachmentSection';
+import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 
@@ -157,7 +157,7 @@ export default function EditClient({ articleId }) {
             onChange={(v) => setValue('editor', v)}
           />
 
-          <AttachmentSection
+          <AttachmentUploader
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
             isFileUpload

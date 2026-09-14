@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import AttachmentSection from '@/components/form-control/AttachmentSection';
+import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import styles from './page.module.css';
@@ -45,7 +45,7 @@ export default function WriteEditorFile({ onSubmit, submitting, onDirtyChange })
       <form onSubmit={handleSubmit(handleInternalSubmit)} className={styles.AlbumForm}>
         <div className={styles.AlbumUploadPanel}>
           <p className={styles.AlbumUploadTitle}>게시글에 포함할 파일을 첨부해주세요</p>
-          <AttachmentSection
+          <AttachmentUploader
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
             isFileUpload

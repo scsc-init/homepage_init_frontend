@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import AttachmentSection from '@/components/form-control/AttachmentSection';
+import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import styles from './page.module.css';
@@ -41,7 +41,7 @@ export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChang
           labelClassName={styles.InputLabel}
         />
         <EditorInput label="내용" control={control} name="editor" className={styles.Editor} />
-        <AttachmentSection
+        <AttachmentUploader
           valueIds={attachmentIds}
           onChangeIds={setAttachmentIds}
           isFileUpload

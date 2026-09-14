@@ -13,8 +13,8 @@ import Comments from './Comments.jsx';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { isPublicBoardId, utc2kst } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
-import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import AttachmentList from '@/components/form-control/AttachmentList';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -225,30 +225,10 @@ export default function ArticleDetail() {
         {attachmentIds.length > 0 && (
           <>
             <hr className={styles.Divider} />
-            <div className="AttachmentSection">
-              <div className="AttachmentHeader">
-                <div className="AttachmentLabel">첨부 파일</div>
-              </div>
-              <ul className="AttachmentList">
-                {attachmentIds.map((attachmentId) => {
-                  const meta = attachmentMetaMap.get(attachmentId);
-                  const displayName = meta?.original_filename || attachmentId;
-
-                  return (
-                    <li key={attachmentId} className="AttachmentItem">
-                      <a
-                        className="AttachmentLink"
-                        href={getAttachmentDownloadUrl(attachmentId, meta)}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {displayName}
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+            <AttachmentList
+              attachmentIds={attachmentIds}
+              attachmentMetaMap={attachmentMetaMap}
+            />
           </>
         )}
       </div>

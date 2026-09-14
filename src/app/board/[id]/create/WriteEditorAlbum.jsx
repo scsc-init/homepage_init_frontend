@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import AttachmentSection from '@/components/form-control/AttachmentSection';
+import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import styles from './page.module.css';
@@ -44,7 +44,7 @@ export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }
       <form onSubmit={handleSubmit(handleInternalSubmit)} className={styles.AlbumForm}>
         <div className={styles.AlbumUploadPanel}>
           <p className={styles.AlbumUploadTitle}>앨범에 올릴 사진을 선택해주세요</p>
-          <AttachmentSection
+          <AttachmentUploader
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
             isImageUpload
