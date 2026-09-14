@@ -117,7 +117,7 @@ function IgMemberDelete({
   );
 }
 
-export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
+export default function IgMembersPanel({ ig, users }) {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [userFilter, setUserFilter] = useState({
     name: '',
@@ -132,13 +132,6 @@ export default function IgMembersPanel({ ig, users, is_sig, is_pig }) {
   });
   const [memberLoading, setMemberLoading] = useState({});
   const router = useRouter();
-
-  if (is_sig === is_pig) {
-    console.error('IgMembersPanel: is_sig and is_pig must differ');
-    return null;
-  }
-
-  const igSlug = is_sig ? 'sig' : 'pig';
 
   const updateUserFilterCriteria = (field, value) => {
     const newFilter = { ...userFilter, [field]: value };

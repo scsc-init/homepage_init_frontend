@@ -7,6 +7,9 @@ const DETAIL_CONFIG = {
   sig: {
     missingMessage: '존재하지 않는 SIG입니다.',
   },
+  'small-group': {
+    missingMessage: '존재하지 않는 소모임입니다.',
+  },
   pig: {
     missingMessage: '존재하지 않는 PIG입니다.',
   },

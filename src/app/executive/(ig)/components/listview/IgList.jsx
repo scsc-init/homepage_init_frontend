@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import * as AdminLayout from '@/components/AdminLayout';
 
+import { IG_LABELS } from '../igTypes';
+
 const lower = (value) => value?.toString().toLowerCase() || '';
 
 function IgFilterRow({ filter, updateFilterCriteria }) {
@@ -84,7 +86,7 @@ export default function IgList({ igs, igType }) {
     ownerName: '',
   });
 
-  const igSlug = igType.toLowerCase();
+  const igLabel = IG_LABELS[igType];
 
   const filteredIgs = useMemo(() => {
     const safeIgs = Array.isArray(igs) ? igs : [];
@@ -116,7 +118,7 @@ export default function IgList({ igs, igType }) {
             <th>상태</th>
             <th>연도</th>
             <th>학기</th>
-            <th>{igType}장</th>
+            <th>{igLabel}장</th>
             <th>상세보기</th>
           </tr>
           <IgFilterRow
@@ -128,7 +130,7 @@ export default function IgList({ igs, igType }) {
         </thead>
         <tbody>
           {filteredIgs.map((ig) => (
-            <IgRow key={ig.id} ig={ig} igSlug={igSlug} />
+            <IgRow key={ig.id} ig={ig} igSlug={igType} />
           ))}
         </tbody>
       </AdminLayout.AdminTable>

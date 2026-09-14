@@ -19,6 +19,7 @@ import styles from './IgDetail.module.css';
 
 const JOIN_AVAILABILITY = {
   sig: is_sigpig_join_available,
+  'small-group': is_sigpig_join_available,
   pig: is_pig_join_available,
 };
 

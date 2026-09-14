@@ -7,8 +7,10 @@ import {
   STATUS_MAP,
   SEMESTER_MAP,
   SIG_ADMISSION_LABEL_MAP,
+  SMALL_GROUP_ADMISSION_LABEL_MAP,
   PIG_ADMISSION_LABEL_MAP,
 } from '@/util/constants';
+import { IG_LABELS } from '../igTypes';
 import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
 import * as AdminLayout from '@/components/AdminLayout';
 
@@ -160,24 +162,15 @@ const renderIgEdit = (ig, ctx) => {
             value={ig['is_rolling_admission'] ?? 'during_recruiting'}
             onChange={(e) => ctx.updateIgField('is_rolling_admission', e.target.value)}
           >
-            <option value="always">
-              {(ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP).always}
-            </option>
-            <option value="never">
-              {(ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP).never}
-            </option>
-            <option value="during_recruiting">
-              {
-                (ctx.is_sig ? SIG_ADMISSION_LABEL_MAP : PIG_ADMISSION_LABEL_MAP)
-                  .during_recruiting
-              }
-            </option>
+            <option value="always">{ctx.admissionLabelMap.always}</option>
+            <option value="never">{ctx.admissionLabelMap.never}</option>
+            <option value="during_recruiting">{ctx.admissionLabelMap.during_recruiting}</option>
           </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
 
       <tr>
-        <td>{ctx.is_sig ? 'SIG장' : 'PIG장'}</td>
+        <td>{`${ctx.igLabel}장`}</td>
         <td>
           <AdminLayout.AdminSelect
             value={selected || ''}
@@ -187,10 +180,7 @@ const renderIgEdit = (ig, ctx) => {
             {members.map((m, idx) => {
               const mid = m?.user_id != null ? String(m.user_id) : '';
               const name = m?.user?.name ?? '';
-              const label =
-                mid && mid === ownerIdStr
-                  ? `[${ctx.is_sig ? 'SIG장' : 'PIG장'}] ${name}`
-                  : name;
+              const label = mid && mid === ownerIdStr ? `[${ctx.igLabel}장] ${name}` : name;
               return (
                 <option key={`${igIdStr}-${mid || name}-${idx}`} value={mid}>
                   {label}
@@ -218,7 +208,7 @@ function renderIgRow(ig, ctx, attrName, attrLabel) {
   );
 }
 
-export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = false }) {
+export default function IgExecutiveEdit({ ig: _ig, igType }) {
   const [saving, setSaving] = useState(false);
   const [ig, setIg] = useState({
     ..._ig,
@@ -228,13 +218,10 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
   const tagManagerRef = useRef(null);
   const router = useRouter();
 
-  if (is_sig === is_pig) {
-    console.error('IgExecutiveEdit: is_sig and is_pig must differ');
-    return null;
-  }
-
-  const igSlug = is_sig ? 'sig' : 'pig';
-  const igLabel = igSlug.toUpperCase();
+  const isSig = igType === 'sig';
+  const isSmallGroup = igType === 'small-group';
+  const canEditTags = isSig || isSmallGroup;
+  const igLabel = IG_LABELS[igType];
 
   const handleSave = async () => {
     try {
@@ -292,7 +279,7 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
         method: 'POST',
       });
       if (res.status === 204) {
-        router.replace(`/executive/${igSlug}`);
+        router.replace(`/executive/${igType}`);
       } else {
         const msg = await res.json();
         alert('삭제 실패: ' + (msg.detail ?? res.status));
@@ -346,7 +333,12 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
     removeWebsite,
     handleSave,
     handleDelete,
-    is_sig,
+    igLabel,
+    admissionLabelMap: isSmallGroup
+      ? SMALL_GROUP_ADMISSION_LABEL_MAP
+      : isSig
+        ? SIG_ADMISSION_LABEL_MAP
+        : PIG_ADMISSION_LABEL_MAP,
   };
 
   return (
@@ -363,10 +355,11 @@ export default function IgExecutiveEdit({ ig: _ig, is_sig = false, is_pig = fals
         </thead>
         <tbody>{renderIgEdit(ig, rowCtx)}</tbody>
       </AdminLayout.AdminTable>
-      {is_sig ? (
+      {canEditTags ? (
         <div style={{ marginTop: '16px', marginBottom: '16px' }}>
           <SigTagManager
             ref={tagManagerRef}
+            targetLabel={igLabel}
             sigId={ig.id}
             initialTags={_ig?.tags}
             isExecutive

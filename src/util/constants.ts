@@ -94,6 +94,7 @@ export const headerMenuData: HeaderMenuSection[] = [
     title: 'SIG/PIG',
     items: [
       { label: 'SIG', url: '/sig' },
+      { label: '소모임', url: '/small-group' },
       { label: 'PIG', url: '/pig' },
     ],
   },
@@ -232,6 +233,11 @@ export const SIG_ADMISSION_LABEL_MAP: Record<string, string> = {
   never: '항상 가입 받지 않기',
 };
 
+export const SMALL_GROUP_ADMISSION_LABEL_MAP: Record<string, string> = {
+  ...SIG_ADMISSION_LABEL_MAP,
+  during_recruiting: '소모임 가입 기간에만 가입 받기',
+};
+
 /*
  * 전체적인 색상 정의와 관련된 설정입니다.
  * 반드시 @/styles/theme.css와 함께 수정해야 합니다.
@@ -308,6 +314,7 @@ export const ALLOWED_REDIRECT_PREFIXES: string[] = [
   '/board',
   '/article',
   '/sig',
+  '/small-group',
   '/pig',
   '/us/edit-user-info',
   '/about',

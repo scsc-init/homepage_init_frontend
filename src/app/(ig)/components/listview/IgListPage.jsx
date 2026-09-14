@@ -11,6 +11,13 @@ const LIST_CONFIG = {
     errorMessage: '시그 정보를 불러올 수 없습니다.',
     kindLabel: 'SIG',
   },
+  'small-group': {
+    apiTag: '소모임',
+    basePath: '/small-group',
+    createHref: '/small-group/create',
+    errorMessage: '소모임 정보를 불러올 수 없습니다.',
+    kindLabel: '소모임',
+  },
   pig: {
     apiTag: 'PIG',
     basePath: '/pig',
