@@ -2,7 +2,7 @@ import { fetchBackendServer } from '@/util/fetch/server';
 import WithAuthorization from '@/components/WithAuthorization';
 import { redirect } from 'next/navigation';
 import WList from './WList';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default async function HTMLManagementPage() {
   const res = await fetchBackendServer('GET', '/api/executive/ws');

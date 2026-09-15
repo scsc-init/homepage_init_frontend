@@ -3,7 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 function IgMemberAdd({
   userFilter,

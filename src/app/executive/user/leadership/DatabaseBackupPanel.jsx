@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 import { useMe } from '@/util/hooks/useMe';
 import { fetchBackendClient } from '@/util/fetch/client';
 

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 import { IG_LABELS } from '../igTypes';
 

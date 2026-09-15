@@ -1,7 +1,7 @@
 'use client';
 
 import { useMe } from '@/util/hooks/useMe';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function LeadershipPageLink() {
   const { me } = useMe();

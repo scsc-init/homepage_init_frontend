@@ -5,14 +5,14 @@ export const revalidate = 0;
 import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipPanel from './LeadershipPanel';
-import { ReadUserTable } from './UserList';
+import { ReadUserTable } from './ReadUserTable';
 import EnrollManagementPanel from './EnrollManagementPanel';
 import OldboyManageMentPanel from './OldboyManagementPanel';
 import ExternalMemberManagementPanel from './ExternalMemberManagementPanel';
 import LeadershipPageLink from './LeadershipPageLink';
 import { getKVValues, fetchUserSummaries } from '@/util/fetch/server-util';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default async function ExecutiveUserPage() {
   const [kv, majors] = await Promise.all([
