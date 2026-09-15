@@ -8,17 +8,16 @@ const OVERLAYS = [
   { src: '/main/logo-overlay-right.png', width: 1454, height: 1094 },
 ];
 
-// 도트 추출이 실패하거나 지나치게 느릴 때도 인트로가 시작되도록 하는 한계 시간
 const START_TIMEOUT_MS = 1500;
 
 const HeroIntroContext = createContext(false);
 
-/** 히어로 인트로가 시작되었는지 알려줍니다. 자식 컴포넌트가 등장 시점을 맞출 때 씁니다. */
 export function useHeroIntroStarted() {
   return useContext(HeroIntroContext);
 }
 
 export default function HeroStage({
+  id,
   className,
   overlayContainerClassName,
   overlayClassName,
@@ -38,7 +37,7 @@ export default function HeroStage({
   }, []);
 
   return (
-    <section className={className} data-intro={started ? '' : undefined}>
+    <section id={id} className={className} data-intro={started ? '' : undefined}>
       <div className={overlayContainerClassName} aria-hidden="true">
         {OVERLAYS.map(({ src, width, height }) => (
           <ShimmerOverlay

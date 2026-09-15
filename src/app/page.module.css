@@ -1,4 +1,30 @@
-/* ===== 히어로 ===== */
+.rain {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  color: #000;
+  opacity: 0.42;
+  --rain-hero-gain: 1.6;
+}
+
+:global(html.dark) .rain {
+  color: #fff;
+  opacity: 0.55;
+  --rain-hero-gain: 1;
+}
+
+.rain canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.hero[data-intro] ~ .rain canvas {
+  animation: introFade 1.05s ease-out 0.55s forwards;
+}
+
 .hero {
   position: relative;
   width: 100%;
@@ -21,7 +47,7 @@
   bottom: 0;
   height: 38vh;
   background: linear-gradient(to bottom, transparent, var(--background-color) 92%);
-  z-index: 3;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -40,7 +66,6 @@
   -webkit-user-drag: none;
 }
 
-/* ===== 배경 디더 로고 (ShimmerOverlay) ===== */
 .overlayContainer {
   position: absolute;
   top: 45%;
@@ -50,7 +75,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
   padding: 0 2vw;
 }
@@ -59,26 +84,11 @@
   position: relative;
   width: 28vw;
   max-width: 320px;
-  color: #000;
-  opacity: 0.42;
 }
 
-:global(html.dark) .overlay {
-  color: #fff;
-  opacity: 0.55;
-}
-
-.overlay canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-}
-
-/* ===== 히어로 본문 ===== */
 .heroInner {
   position: relative;
-  z-index: 4;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,7 +108,6 @@
   height: auto;
 }
 
-/* ===== 터미널 태그라인 ===== */
 .tagline {
   opacity: 0;
   font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -126,17 +135,12 @@
   }
 }
 
-/* ===== 히어로 인트로 시퀀스 ===== */
 @keyframes introFade {
   to {
     opacity: 1;
   }
 }
 
-/*
- * 로고는 흐릿하게 번지듯 맺힙니다.
- * blur는 .logo의 다크모드 반전 필터를 덮어쓰지 않도록 래퍼에만 겁니다.
- */
 @keyframes introLogo {
   0% {
     opacity: 0;
@@ -164,26 +168,21 @@
 }
 
 .hero[data-intro] .mainLogoWrap {
-  animation: introLogo 1.9s cubic-bezier(0.33, 0, 0.18, 1) forwards;
-}
-
-.hero[data-intro] .overlay canvas {
-  animation: introFade 1.5s ease-out 0.9s forwards;
+  animation: introLogo 1.3s cubic-bezier(0.33, 0, 0.18, 1) forwards;
 }
 
 .hero[data-intro] .scrollCue {
   animation:
-    introFade 0.6s ease-out 2.6s forwards,
-    introBob 2.4s ease-in-out 2.6s infinite;
+    introFade 0.6s ease-out 2.2s forwards,
+    introBob 2.4s ease-in-out 2.2s infinite;
 }
 
-/* ===== 스크롤 유도 ===== */
 .scrollCue {
   position: absolute;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 4;
+  z-index: 3;
   width: 2.75rem;
   height: 2.75rem;
   display: flex;
@@ -201,7 +200,6 @@
   transform: translateY(-0.15rem) rotate(45deg);
 }
 
-/* ===== 스크롤 등장 효과 ===== */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -215,7 +213,6 @@
   transform: translateY(0);
 }
 
-/* ===== 공통 섹션 ===== */
 .sectionInner {
   max-width: 1040px;
   margin: 0 auto;
@@ -233,20 +230,9 @@
   word-break: keep-all;
 }
 
-.textLink {
-  display: block;
-  text-align: center;
-  color: var(--color-button-bg);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.textLink:hover {
-  text-decoration: underline;
-}
-
-/* ===== 인트로(후크) ===== */
 .intro {
+  position: relative;
+  z-index: 3;
   padding: 7rem 1.5rem;
   scroll-margin-top: 5rem;
 }
@@ -307,53 +293,27 @@
   font-weight: 700;
 }
 
-/* ===== 숫자 스트립 ===== */
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem 3rem;
-  margin: 0;
-  padding: 1.75rem 0 0;
-  border-top: 1px solid var(--header-border-color);
-  width: 100%;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.stat dt {
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-subtle);
-}
-
-.stat dd {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--color-text-strong);
-}
-
-/* ===== 활동 ===== */
 .activities {
+  position: relative;
+  z-index: 3;
   padding: 0 1.5rem 7rem;
   scroll-margin-top: 5rem;
 }
 
 .activityGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
   gap: 1.5rem;
   align-items: stretch;
 }
 
 .activityGrid > * {
   height: 100%;
+  grid-column: span 2;
+}
+
+.activityGrid > *:nth-child(4) {
+  grid-column: 2 / span 2;
 }
 
 .activityCard {
@@ -398,9 +358,10 @@
   word-break: keep-all;
 }
 
-/* ===== 합류하기 ===== */
 .join {
-  padding: 6rem 1.5rem;
+  position: relative;
+  z-index: 3;
+  padding: 7rem 1.5rem;
   scroll-margin-top: 5rem;
   background-color: var(--color-card-bg);
   border-top: 1px solid var(--header-border-color);
@@ -408,69 +369,291 @@
 }
 
 .joinInner {
-  max-width: 720px;
+  max-width: 1040px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 3rem;
   align-items: center;
-  gap: 1rem;
-  text-align: center;
 }
 
-.joinTitle {
+.joinLead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.joinKicker {
   margin: 0;
   font-size: 1.9rem;
   font-weight: 800;
+  line-height: 1.35;
   color: var(--color-text-strong);
   word-break: keep-all;
 }
 
-.joinSubtitle {
-  margin: 0 0 1.25rem;
-  font-size: 1.05rem;
+.joinHeadline {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.7;
   color: var(--color-text-subtle);
   word-break: keep-all;
 }
 
-.joinLinks {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-.joinLink {
+.joinCta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.7rem 2.2rem;
+  border: 2px solid var(--color-text-strong);
   border-radius: 999px;
-  border: 1px solid var(--color-button-border);
-  color: var(--foreground-color);
-  background-color: transparent;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 800;
   text-decoration: none;
+  color: var(--color-text-strong);
+  background-color: transparent;
   transition:
     background-color 200ms ease,
+    color 200ms ease,
     transform 160ms ease;
 }
 
-.joinLink:hover {
-  background-color: var(--background-hover-color);
+.joinCta:hover {
+  background-color: var(--color-text-strong);
+  color: var(--color-card-bg);
   transform: translateY(-2px);
 }
 
-.joinLinkPrimary {
-  background-color: var(--color-button-bg);
-  border-color: var(--color-button-bg);
-  color: var(--color-button-text);
+.joinRule {
+  width: 100%;
+  height: 0;
+  margin: 0.5rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--header-border-color);
 }
 
-.joinLinkPrimary:hover {
-  background-color: var(--color-button-hover-bg);
+.joinMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6rem;
+  width: 100%;
 }
 
-/* ===== 반응형 ===== */
+.joinMenuKicker {
+  margin: 0;
+  text-align: right;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-button-bg);
+}
+
+.joinMenuList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.joinMenuItem {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: var(--collapsed);
+  transition: padding-bottom 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.joinMenuItem[data-branch]:hover,
+.joinMenuItem[data-branch]:focus-within,
+.joinMenuItem[data-branch][data-open] {
+  padding-bottom: var(--expanded);
+}
+
+.joinSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.joinWordSolid,
+.joinWordDraw {
+  font-family: inherit;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  stroke: var(--color-text-strong);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.joinMenuItem[data-branch]:hover .joinWordSolid,
+.joinMenuItem[data-branch]:hover .joinWordDraw,
+.joinMenuItem[data-branch]:focus-within .joinWordSolid,
+.joinMenuItem[data-branch]:focus-within .joinWordDraw,
+.joinMenuItem[data-branch][data-open] .joinWordSolid,
+.joinMenuItem[data-branch][data-open] .joinWordDraw {
+  transform: translateX(-260px);
+}
+
+.joinWordSolid {
+  fill: var(--color-card-bg);
+  transition:
+    fill 220ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.joinWordDraw {
+  fill: none;
+}
+
+.joinMenuItem:hover .joinWordSolid,
+.joinMenuItem:focus-within .joinWordSolid,
+.joinMenuItem[data-open] .joinWordSolid {
+  fill: var(--color-text-strong);
+}
+
+@keyframes joinDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes joinSettle {
+  to {
+    opacity: 1;
+  }
+}
+
+.joinWordSolid {
+  opacity: 0;
+}
+
+.joinMenu[data-in] .joinWordDraw {
+  animation: joinDraw 1.15s cubic-bezier(0.33, 0, 0.18, 1) forwards;
+  animation-delay: calc(var(--order) * 180ms);
+}
+
+.joinMenu[data-in] .joinWordSolid {
+  animation: joinSettle 260ms ease-out forwards;
+  animation-delay: calc(var(--order) * 180ms + 0.86s);
+}
+
+.joinBranchLine {
+  fill: none;
+  stroke: var(--color-text-strong);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.joinBranchDot {
+  fill: var(--color-text-strong);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.joinMenuItem:hover .joinBranchLine,
+.joinMenuItem:focus-within .joinBranchLine,
+.joinMenuItem[data-open] .joinBranchLine {
+  stroke-dashoffset: 0;
+  transition-duration: 260ms;
+  transition-delay: calc(var(--seq) * 90ms);
+}
+
+.joinMenuItem:hover .joinBranchDot,
+.joinMenuItem:focus-within .joinBranchDot,
+.joinMenuItem[data-open] .joinBranchDot {
+  transform: scale(1);
+  transition-duration: 200ms;
+  transition-delay: 220ms;
+}
+
+.joinHit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 0;
+  padding: 0 0 var(--collapsed);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.joinSubList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.joinSubList > li {
+  position: absolute;
+  top: 0;
+  right: var(--row-right);
+  z-index: 2;
+  margin-top: var(--row-top);
+  transform: translateY(-50%);
+  text-align: right;
+}
+
+.joinSubLink {
+  display: inline-block;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 0.4rem 0 0.4rem 1rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  text-decoration: none;
+  color: var(--color-text-subtle);
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    color 140ms ease;
+  pointer-events: none;
+}
+
+.joinMenuItem:hover .joinSubLink,
+.joinMenuItem:focus-within .joinSubLink,
+.joinMenuItem[data-open] .joinSubLink {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  transition-duration: 200ms, 200ms, 140ms;
+  transition-delay: calc(var(--seq) * 70ms + 60ms), calc(var(--seq) * 70ms + 60ms), 0s;
+}
+
+.joinSubLink:hover {
+  color: var(--color-text-strong);
+}
+
 @media (max-width: 768px) {
   .hero {
     padding: 3rem 1.25rem 5rem;
@@ -491,7 +674,6 @@
   .overlay {
     width: 40vw;
     max-width: 240px;
-    opacity: 0.3;
   }
 
   .tagline {
@@ -515,10 +697,6 @@
     font-size: 1.2rem;
   }
 
-  .stats {
-    gap: 1.5rem;
-  }
-
   .sectionTitle {
     font-size: 1.25rem;
   }
@@ -527,29 +705,37 @@
     padding-bottom: 4.5rem;
   }
 
+  .activityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .activityGrid > *:nth-child(-n + 3),
+  .activityGrid > *:nth-child(n + 4) {
+    grid-column: auto;
+  }
+
   .join {
     padding: 4.5rem 1.25rem;
   }
 
-  .joinTitle {
-    font-size: 1.5rem;
+  .joinInner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
-  .joinLinks {
-    width: 100%;
-    flex-direction: column;
+  .joinMenuKicker {
+    text-align: left;
   }
 }
 
-/* ===== 모션 최소화 ===== */
 @media (prefers-reduced-motion: reduce) {
   .mainLogoWrap,
   .tagline,
   .scrollCue,
-  .overlay canvas,
+  .rain canvas,
   .hero[data-intro] .mainLogoWrap,
   .hero[data-intro] .scrollCue,
-  .hero[data-intro] .overlay canvas {
+  .hero[data-intro] ~ .rain canvas {
     animation: none;
     opacity: 1;
     transform: none;
@@ -570,7 +756,18 @@
     transition: none;
   }
 
-  .joinLink:hover {
+  .joinMenu[data-in] .joinWordDraw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .joinMenu[data-in] .joinWordSolid,
+  .joinWordSolid {
+    animation: none;
+    opacity: 1;
+  }
+
+  .joinCta:hover {
     transform: none;
   }
 }

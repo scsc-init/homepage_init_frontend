@@ -8,7 +8,14 @@ const DELETE_MS = 28;
 const HOLD_MS = 2200;
 const LINE_GAP_MS = TYPE_MS * 4;
 
-export default function TypedTagline({ lines, className, cursorClassName, startDelay = 1250 }) {
+const DEFAULT_START_DELAY_MS = 1600;
+
+export default function TypedTagline({
+  lines,
+  className,
+  cursorClassName,
+  startDelay = DEFAULT_START_DELAY_MS,
+}) {
   const started = useHeroIntroStarted();
   const [text, setText] = useState(lines[0]);
   const [revealed, setRevealed] = useState(false);
@@ -22,7 +29,6 @@ export default function TypedTagline({ lines, className, cursorClassName, startD
       return;
     }
 
-    // 등장 자체를 타이핑으로 처리하므로, 시작 전까지는 빈 문자열로 둡니다.
     setText('');
 
     let timer;
