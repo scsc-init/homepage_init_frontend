@@ -4,10 +4,10 @@ export const revalidate = 0;
 import WithAuthorization from '@/components/WithAuthorization';
 import LeadershipClient from './LeadershipClient';
 import LeadershipAuthorization from './LeadershipAuthorization';
-import DatabaseBackupPanel from '@/app/executive/DatabaseBackupPanel';
+import DatabaseBackupPanel from './DatabaseBackupPanel';
 import { fetchUsers } from '@/util/fetch/server-util';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default async function ExecutiveLeadershipPage() {
   const [majors, executiveUsers] = await Promise.all([

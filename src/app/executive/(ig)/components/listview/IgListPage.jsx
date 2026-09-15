@@ -1,6 +1,6 @@
 import WithAuthorization from '@/components/WithAuthorization';
 import { fetchBackendServerJson } from '@/util/fetch/server';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 import IgList from './IgList';
 import { IG_LABELS } from '../igTypes';
 

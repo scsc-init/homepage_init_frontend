@@ -12,7 +12,7 @@ import {
 } from '@/util/constants';
 import { IG_LABELS } from '../igTypes';
 import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 const getLeaderUserId = (ig) => {
   if (ig?.owner == null) return '';

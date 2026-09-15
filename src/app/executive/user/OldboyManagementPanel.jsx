@@ -3,7 +3,7 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { utc2kst } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function OldboyManagementPanel({ users }) {
   const [applicants, setApplicants] = useState([]);
