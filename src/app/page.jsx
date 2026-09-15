@@ -17,18 +17,18 @@ const TAGLINES = [
 
 const ACTIVITIES = [
   {
-    title: 'PS (SCPC)',
-    description: '알고리즘 문제 해결. 교내 대회 SCPC를 직접 개최합니다.',
+    title: 'SCPC',
+    description: '여러 기업들로부터 후원받는 PS대회 SCPC를 직접 개최합니다',
     image: '/about/activities/scpc.jpg',
   },
   {
     title: 'INIT',
-    description: '프로젝트 중심의 팀 활동입니다.',
+    description: 'SCSC의 동아리 사이트를 개발하는 프로젝트 팀 활동입니다',
     image: '/about/activities/init.jpg',
   },
   {
     title: 'SKYSH',
-    description: '타 동아리와 연합한 해커톤 대회입니다.',
+    description: '타 학교 동아리들과 연합한 해커톤 대회입니다',
     image: '/about/activities/skysh.jpg',
   },
 ];
