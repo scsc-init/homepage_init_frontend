@@ -122,17 +122,18 @@ img {
 }
 
 html.theme-animating,
-html.theme-animating *:not(svg *):not(.no-theme-anim):not(.no-theme-anim *) {
-  transition: background-color var(--theme-anim-duration) ease !important;
-}
-html.theme-animating *::before,
-html.theme-animating *::after {
-  transition: background-color var(--theme-anim-duration) ease !important;
-}
-html.theme-animating * {
-  transition-property: background-color !important;
-  transition-duration: var(--theme-anim-duration) !important;
-  transition-timing-function: ease !important;
+html.theme-animating *:not(.no-theme-anim):not(.no-theme-anim *),
+html.theme-animating *:not(.no-theme-anim):not(.no-theme-anim *)::before,
+html.theme-animating *:not(.no-theme-anim):not(.no-theme-anim *)::after {
+  transition:
+    background-color var(--theme-anim-duration) ease,
+    color var(--theme-anim-duration) ease,
+    border-color var(--theme-anim-duration) ease,
+    outline-color var(--theme-anim-duration) ease,
+    box-shadow var(--theme-anim-duration) ease,
+    filter var(--theme-anim-duration) ease,
+    fill var(--theme-anim-duration) ease,
+    stroke var(--theme-anim-duration) ease !important;
 }
 
 a {

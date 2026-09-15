@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '@/styles/theme.css';
 import styles from './ThemeToggle.module.css';
 
@@ -14,6 +14,7 @@ function setCookie(name, value, days = 365) {
 
 export default function ThemeToggle({ initialDark }) {
   const [dark, setDark] = useState(typeof initialDark === 'boolean' ? initialDark : true);
+  const animTimer = useRef(null);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -21,18 +22,23 @@ export default function ThemeToggle({ initialDark }) {
     }
   }, []);
 
+  useEffect(() => () => clearTimeout(animTimer.current), []);
+
   const toggleTheme = () => {
     const next = !dark;
     setCookie('theme', next ? 'dark' : 'light');
     const html = document.documentElement;
+    clearTimeout(animTimer.current);
     html.classList.add('theme-animating');
     requestAnimationFrame(() => {
       html.classList.toggle('dark', next);
       setDark(next);
-      const dur = getComputedStyle(html).getPropertyValue('--theme-anim-duration') || '180ms';
-      const ms = parseFloat(dur) || 180;
-      setTimeout(() => {
+      const raw = getComputedStyle(html).getPropertyValue('--theme-anim-duration').trim();
+      const value = parseFloat(raw) || 0;
+      const ms = raw.endsWith('ms') ? value : value * 1000;
+      animTimer.current = setTimeout(() => {
         html.classList.remove('theme-animating');
+        animTimer.current = null;
       }, ms + 50);
     });
   };
