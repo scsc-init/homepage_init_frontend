@@ -24,22 +24,12 @@ const ACTIVITIES = [
   {
     title: 'INIT',
     description: '프로젝트 중심의 팀 활동입니다.',
-    image: '/about/activities/pig.jpg',
+    image: '/about/activities/init.jpg',
   },
   {
-    title: '친목',
-    description: 'MT, 번개 등 다양한 친목 도모 활동이 있습니다.',
-    image: '/about/activities/mt.jpg',
-  },
-  {
-    title: 'SKYST',
+    title: 'SKYSH',
     description: '타 동아리와 연합한 해커톤 대회입니다.',
-    image: '/about/activities/skyst.jpg',
-  },
-  {
-    title: 'Etc.',
-    description: '세미나, SIG 등 그 밖의 활동들입니다.',
-    image: '/about/activities/seminar.jpg',
+    image: '/about/activities/skysh.jpg',
   },
 ];
 
@@ -126,7 +116,7 @@ export default function HomePage() {
 
           <Reveal>
             <p className={styles.introBody} data-jump-end="">
-              <b>SKYST</b> 해커톤 및 <b>SCPC</b> 알고리즘 대회를 개최하거나
+              <b>SKYSH</b> 해커톤 및 <b>SCPC</b> 알고리즘 대회를 개최하거나
               <br />
               현직 개발자분들을 초청해 세미나를 진행하는 등
               <br />
@@ -177,6 +167,14 @@ export default function HomePage() {
               </Reveal>
             ))}
           </div>
+
+          <Reveal>
+            <p className={styles.activityNote}>
+              이 밖에도 친목 모임을 비롯한 세미나와 외부 강연 및 행사,
+              <br />
+              그리고 다양한 분야의 SIG와 PIG, 크고 작은 소모임이 일 년 내내 이어집니다.
+            </p>
+          </Reveal>
         </div>
       </section>
 

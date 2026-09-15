@@ -312,10 +312,6 @@
   grid-column: span 2;
 }
 
-.activityGrid > *:nth-child(4) {
-  grid-column: 2 / span 2;
-}
-
 .activityCard {
   height: 100%;
   display: flex;
@@ -343,6 +339,16 @@
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.activityNote {
+  max-width: 44rem;
+  margin: 1.5rem auto 0;
+  text-align: center;
+  font-size: 1.15rem;
+  line-height: 2;
+  color: var(--color-text-subtle);
+  word-break: keep-all;
 }
 
 .activityCard h3 {
@@ -688,13 +694,15 @@
     font-size: 1.45rem;
   }
 
-  .introBody {
+  .introBody,
+  .activityNote {
     font-size: 1.02rem;
     line-height: 1.9;
   }
 
   .introLead br,
-  .introBody br {
+  .introBody br,
+  .activityNote br {
     display: none;
   }
 
@@ -714,8 +722,7 @@
     grid-template-columns: 1fr;
   }
 
-  .activityGrid > *:nth-child(-n + 3),
-  .activityGrid > *:nth-child(n + 4) {
+  .activityGrid > * {
     grid-column: auto;
   }
 
