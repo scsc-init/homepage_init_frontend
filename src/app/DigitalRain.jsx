@@ -44,6 +44,8 @@ const ALPHA_STEPS = 32;
 const SCROLL_DEADZONE_PX = 2;
 const SETTLE_EPSILON_PX = 0.3;
 
+const THEME_SAMPLE_MS = 700;
+
 const scrollOffset = () =>
   Math.max(
     window.scrollY || 0,
@@ -100,6 +102,7 @@ export default function DigitalRain({ className }) {
     let cssH = 0;
     let dotColor = 'rgb(120,120,120)';
     let heroGain = 1;
+    let themeSampleUntil = 0;
     let progress = 0;
     let targetScroll = 0;
     let smoothScroll = 0;
@@ -333,6 +336,9 @@ export default function DigitalRain({ className }) {
       const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 0;
       lastTime = time;
 
+      const themeSampling = time < themeSampleUntil;
+      if (themeSampling) readDotColor();
+
       readTarget();
       const changed = advanceProgress(dt, time);
 
@@ -357,8 +363,8 @@ export default function DigitalRain({ className }) {
       }
 
       const heroVisible = sources.some((s2) => s2.top + s2.height > 0 && s2.top < cssH);
-      if (!heroVisible && !falling && !isSettling()) return;
-      if (prefersReduced.matches && !changed && !falling) return;
+      if (!heroVisible && !falling && !isSettling() && !themeSampling) return;
+      if (prefersReduced.matches && !changed && !falling && !themeSampling) return;
       paint(time);
     };
 
@@ -412,6 +418,7 @@ export default function DigitalRain({ className }) {
     resizeObserver.observe(wrapper);
 
     const themeObserver = new MutationObserver(() => {
+      themeSampleUntil = performance.now() + THEME_SAMPLE_MS;
       readDotColor();
       if (prefersReduced.matches) paint(0);
     });
@@ -429,7 +436,7 @@ export default function DigitalRain({ className }) {
   }, []);
 
   return (
-    <div ref={wrapperRef} className={className} aria-hidden="true">
+    <div ref={wrapperRef} className={`${className} no-theme-anim`} aria-hidden="true">
       <canvas ref={canvasRef} />
     </div>
   );

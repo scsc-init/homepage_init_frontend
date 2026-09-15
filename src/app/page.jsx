@@ -58,6 +58,8 @@ export default function HomePage() {
         overlayContainerClassName={styles.overlayContainer}
         overlayClassName={styles.overlay}
       >
+        <span className={`${styles.heroGlow} no-theme-anim`} aria-hidden="true" />
+
         <div className={styles.heroInner}>
           <div className={styles.mainLogoWrap}>
             <MainLogoImage className={`${styles.mainLogo} logo`} loading="eager" />
@@ -83,7 +85,7 @@ export default function HomePage() {
       <section id="intro" className={styles.intro}>
         <div className={styles.introInner}>
           <Reveal>
-            <p className={styles.introLead}>
+            <p className={styles.introLead} data-jump-start="">
               <b>한글, 리니지, 아이온.</b>
               <br />
               이들의 공통점은 무엇일까요?
@@ -92,15 +94,23 @@ export default function HomePage() {
 
           <Reveal>
             <p className={styles.introBody}>
-              세계 최초의 한글 워드프로세서 <b>‘한글 1.0’</b>은 <b>제3회 SCSC 전시회</b>에서
-              처음 공개되었습니다. <b>이찬진, 김형집, 우원식, 김택진</b> 선배님들은 우리나라
-              소프트웨어 역사의 주역이셨습니다.
+              세계 최초의 한글 워드프로세서 <b>‘한글 1.0’</b>은
+              <br />
+              <b>제3회 SCSC 전시회</b>에서 처음 공개되었습니다.
+            </p>
+          </Reveal>
+
+          <Reveal>
+            <p className={styles.introBody}>
+              <b>이찬진, 김형집, 우원식, 김택진</b> 선배님들을 비롯한 수많은 SCSC 선배님들이
+              <br />
+              다양한 기업을 창업하고, 대한민국의 소프트웨어와 게임 산업을 이끌어 왔습니다.
             </p>
           </Reveal>
 
           <Reveal>
             <p className={styles.introPunch}>
-              이 모든 것은 <b>SCSC 없이는 불가능했을</b> 이야기입니다.
+              이 모든 이야기의 시작에는 <b>SCSC</b>가 있었습니다.
             </p>
           </Reveal>
 
@@ -109,24 +119,34 @@ export default function HomePage() {
           </Reveal>
 
           <Reveal>
-            <p className={styles.introSubhead}>지금의 SCSC는</p>
+            <p className={styles.introBody}>
+              <b>지금의 SCSC는</b>
+            </p>
           </Reveal>
 
           <Reveal>
-            <p className={styles.introBody}>
-              <b>1984년부터 이어져 온 서울대학교 컴퓨터 연구회</b>로, 100~200여 명의 다양한
-              전공을 가진 부원들이 <b>SIG</b>와 <b>PIG</b>로 모여 함께 공부하고 만듭니다. 현직
-              개발자를 초청한 세미나, <b>SCPC</b> 알고리즘 대회, <b>SKYST</b> 해커톤까지 직접
-              기획하고 운영합니다.
+            <p className={styles.introBody} data-jump-end="">
+              <b>SKYST</b> 해커톤 및 <b>SCPC</b> 알고리즘 대회를 개최하거나
+              <br />
+              현직 개발자분들을 초청해 세미나를 진행하는 등
+              <br />
+              다양한 행사를 기획 및 운영하고 있습니다.
             </p>
           </Reveal>
 
           <Reveal>
             <p className={styles.introBody}>
-              우리가 지향하는 것은 하나입니다. 앱 개발 및 웹 개발, 인공지능, 그리고 알고리즘까지
-              어느 분야든
+              <b>200여 명</b>의 다양한 전공을 가진 동아리원이 활동하고 있으며,
               <br />
-              <b>각자가 자신만의 전문성을 갖출 수 있도록 돕는 것.</b>
+              그런 만큼 SCSC는 <b>앱•웹•인공지능•알고리즘</b> 등 여러 분야에 걸쳐
+              <br />
+              자신만의 전문성을 가질 수 있도록 돕는 것을 주된 목표로 삼고 있습니다.
+            </p>
+          </Reveal>
+
+          <Reveal>
+            <p className={styles.introPunch}>
+              <b>SCSC는 계속해서 나아갑니다!</b>
             </p>
           </Reveal>
         </div>
@@ -135,7 +155,7 @@ export default function HomePage() {
       <section id="activities" className={styles.activities}>
         <div className={styles.sectionInner}>
           <Reveal>
-            <h2 className={styles.sectionTitle}>이런 활동을 합니다</h2>
+            <h2 className={styles.sectionTitle}>대표 활동</h2>
           </Reveal>
 
           <div className={styles.activityGrid}>

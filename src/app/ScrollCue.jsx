@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { beginButtonRun, cancelButtonRun } from './transitionPace';
+import { beginButtonRun, cancelButtonRun, easeInOutCubic } from './transitionPace';
 
 const DESCENT_SPEED = 580; // px/s
 const MIN_DURATION = 1000;
 const MAX_DURATION = 2100;
-
-const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 const setScrollTop = (value) => {
   document.documentElement.scrollTop = value;
@@ -20,6 +18,30 @@ const getScrollTop = () =>
     document.documentElement.scrollTop || 0,
     document.body.scrollTop || 0,
   );
+
+const maxScrollTop = () =>
+  Math.max(
+    0,
+    Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) -
+      window.innerHeight,
+  );
+
+const layoutTop = (el) => {
+  let y = 0;
+  for (let node = el; node; node = node.offsetParent) y += node.offsetTop;
+  return y;
+};
+
+const frameEnd = (target, start, margin) => {
+  const first = target.querySelector('[data-jump-start]');
+  const last = target.querySelector('[data-jump-end]');
+  if (!first || !last) return start + target.getBoundingClientRect().top - margin;
+
+  const top = layoutTop(first);
+  const bottom = layoutTop(last) + last.offsetHeight;
+  const slack = Math.max(0, window.innerHeight - margin - (bottom - top));
+  return top - margin - slack / 2;
+};
 
 export default function ScrollCue({
   targetId,
@@ -39,7 +61,7 @@ export default function ScrollCue({
 
     const start = getScrollTop();
     const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
-    const end = Math.max(0, start + target.getBoundingClientRect().top - margin);
+    const end = Math.max(0, Math.min(frameEnd(target, start, margin), maxScrollTop()));
     const distance = end - start;
 
     if (

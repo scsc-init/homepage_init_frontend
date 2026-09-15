@@ -6,6 +6,9 @@
   color: #000;
   opacity: 0.42;
   --rain-hero-gain: 1.6;
+  transition:
+    color var(--theme-anim-duration, 0s) ease,
+    opacity var(--theme-anim-duration, 0s) ease;
 }
 
 :global(html.dark) .rain {
@@ -30,7 +33,6 @@
   width: 100%;
   min-height: calc(100svh - 5rem);
   background-color: var(--background-color);
-  background-image: var(--main-bg-gradient);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -39,25 +41,23 @@
   padding: 4rem 1.5rem 6rem;
 }
 
-.hero::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 38vh;
-  background: linear-gradient(to bottom, transparent, var(--background-color) 92%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.hero::before {
-  content: '';
+.heroGlow {
   position: absolute;
   inset: 0;
-  background: var(--main-focus-gradient);
   z-index: 1;
   pointer-events: none;
+  background: radial-gradient(circle at center, #fff 0%, rgba(255, 255, 255, 0) 65%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 86%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 86%);
+  opacity: 0.5;
+}
+
+:global(html.dark) .heroGlow {
+  opacity: 0.09;
+}
+
+.hero .heroGlow {
+  transition: opacity var(--theme-anim-duration, 0s) ease !important;
 }
 
 .hero img,
@@ -691,6 +691,11 @@
   .introBody {
     font-size: 1.02rem;
     line-height: 1.9;
+  }
+
+  .introLead br,
+  .introBody br {
+    display: none;
   }
 
   .introPunch {
