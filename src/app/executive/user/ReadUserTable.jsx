@@ -52,6 +52,9 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
       });
       if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
       else alert(`${user.name} 입금 확인 실패: ${res.status}`);
+    } catch (error) {
+      console.error(error);
+      alert(`${user.name} 입금 확인 중 오류가 발생했습니다.`);
     } finally {
       setSaving((prev) => ({ ...prev, [user.id]: false }));
     }
