@@ -38,13 +38,17 @@
   border-color: var(--color-text-body);
 }
 
-.isMine {
+.isJoined {
   border-width: 1px;
   border-color: var(--color-text-subtle);
   border-left: 4px solid var(--selection-bg);
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease;
+}
+
+.isMine {
+  position: relative;
 }
 
 .header {
@@ -148,6 +152,21 @@
   font-size: 1.08rem;
   font-weight: 650;
   color: var(--color-text-body);
+}
+
+.titleGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.ownerCrown {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: #d99a00;
+  font-size: 1.15rem;
 }
 
 .userCount {
