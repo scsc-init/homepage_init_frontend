@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useId } from 'react';
+import { useState, useEffect, useRef, useId, type KeyboardEvent } from 'react';
 import Button from './Button';
 import styles from './SortDropdown.module.css';
 
@@ -8,13 +8,20 @@ const options = [
   { value: 'latest', label: '최신순' },
   { value: 'oldest', label: '오래된 순' },
   { value: 'title', label: '제목순' },
-];
+] as const;
 
-export default function SortDropdown({ sortOrder, setSortOrder }) {
+export type SortOrder = (typeof options)[number]['value'];
+
+type SortDropdownProps = {
+  sortOrder: SortOrder;
+  setSortOrder: (sortOrder: SortOrder) => void;
+};
+
+export default function SortDropdown({ sortOrder, setSortOrder }: SortDropdownProps) {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const triggerRef = useRef(null);
-  const optionRefs = useRef([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const menuId = useId();
   const selectedIndex = Math.max(
     0,
@@ -24,8 +31,9 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
   useEffect(() => {
     if (!open) return;
     optionRefs.current[selectedIndex]?.focus();
-    const handleClickOutside = (event) => {
-      if (!dropdownRef.current?.contains(event.target)) setOpen(false);
+    const handleClickOutside = (event: PointerEvent) => {
+      if (event.target instanceof Node && !dropdownRef.current?.contains(event.target))
+        setOpen(false);
     };
     document.addEventListener('pointerdown', handleClickOutside);
     return () => document.removeEventListener('pointerdown', handleClickOutside);
@@ -36,14 +44,16 @@ export default function SortDropdown({ sortOrder, setSortOrder }) {
     triggerRef.current?.focus();
   };
 
-  const handleMenuKeyDown = (event) => {
+  const handleMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Tab') {
       // Start native Tab navigation from the trigger before unmounting the menu.
       closeAndFocus();
       return;
     }
-    const index = optionRefs.current.indexOf(document.activeElement);
-    let nextIndex;
+    const index = optionRefs.current.indexOf(
+      document.activeElement instanceof HTMLButtonElement ? document.activeElement : null,
+    );
+    let nextIndex: number | undefined;
     if (event.key === 'ArrowDown') nextIndex = (index + 1) % options.length;
     if (event.key === 'ArrowUp') nextIndex = (index - 1 + options.length) % options.length;
     if (event.key === 'Home') nextIndex = 0;
