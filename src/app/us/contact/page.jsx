@@ -3,6 +3,7 @@
 import styles from './page.module.css';
 import JoinButton from './JoinButton.jsx';
 import { getKVValues } from '@/util/fetch/server-util';
+import Link from 'next/link';
 
 export default async function Contact() {
   const kvMap = await getKVValues([
@@ -161,6 +162,12 @@ export default async function Contact() {
                   <strong className={styles.contactSubLogoStrong}>Computer Study Club</strong>
                 </div>
               </div>
+            </div>
+
+            <div>
+              <Link href="/us/contact/developer" className={styles.joinButton}>
+                개발자 문의
+              </Link>
             </div>
           </div>
 
