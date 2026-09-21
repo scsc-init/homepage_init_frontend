@@ -1,5 +1,5 @@
-import DeveloperContactForm from '../DeveloperContactForm';
-import styles from '../page.module.css';
+import DeveloperContactForm from './DeveloperContactForm';
+import styles from './page.module.css';
 
 export default function DeveloperContactPage() {
   return (
