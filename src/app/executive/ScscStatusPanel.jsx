@@ -5,7 +5,7 @@ import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { STATUS_MAP } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 const TRANSITION_MAP_REGULAR = {
   recruiting: 'active',

@@ -1,7 +1,7 @@
 // src/app/executive/DiscordBotPanel.jsx (CLIENT)
 'use client';
 
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 import { fetchBackendClient } from '@/util/fetch/client';
 
 export default function DiscordBotPanel({ is_logged_in }) {
