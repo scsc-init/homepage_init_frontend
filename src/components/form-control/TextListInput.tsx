@@ -45,7 +45,7 @@ export default function TextListInput<
     ref.current.value = '';
   }, [append, inputKey]);
 
-  const removeValue = (_event: MouseEvent<HTMLSpanElement>, index: number) => {
+  const removeValue = (_event: MouseEvent<HTMLButtonElement>, index: number) => {
     remove(index);
   };
 
@@ -65,7 +65,11 @@ export default function TextListInput<
 
           return (
             <Fragment key={field.id}>
-              <span className={styles.textListData} onClick={(e) => removeValue(e, index)}>
+              <button
+                type="button"
+                className={styles.textListData}
+                onClick={(e) => removeValue(e, index)}
+              >
                 <span className={styles.textListDataLink}>
                   <IoIosLink />
                 </span>
@@ -73,7 +77,7 @@ export default function TextListInput<
                 <span className={styles.textListDataTrash}>
                   <FaRegTrashAlt color="white" />
                 </span>
-              </span>
+              </button>
               <input
                 type="hidden"
                 {...register(`${name}.${index}.${inputKey}` as Path<TFieldValues>)}
