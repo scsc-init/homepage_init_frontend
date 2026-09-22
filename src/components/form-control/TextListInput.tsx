@@ -37,8 +37,10 @@ export default function TextListInput<
 
   const handleAdd = useCallback(() => {
     if (!ref.current) return;
+    const value = ref.current.value;
+    if (value === '') return;
     const fieldValue: Record<string, string> = {};
-    fieldValue[inputKey] = ref.current.value;
+    fieldValue[inputKey] = value;
     append(fieldValue as FieldArray<TFieldValues, TName>);
     ref.current.value = '';
   }, [append, inputKey]);
