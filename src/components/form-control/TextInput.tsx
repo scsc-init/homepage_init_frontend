@@ -1,8 +1,21 @@
 'use client';
 
 import styles from './TextInput.module.css';
+import type { KeyboardEvent } from 'react';
+import type { FieldPathByValue, FieldValues, UseFormRegister } from 'react-hook-form';
 
-export default function TextInput({
+type TextInputProps<TFieldValues extends FieldValues> = {
+  label: string;
+  placeholder?: string;
+  register: UseFormRegister<TFieldValues>;
+  name: FieldPathByValue<TFieldValues, string>;
+  onEnter?: () => void;
+  required?: boolean;
+  className?: string;
+  labelClassName?: string;
+};
+
+export default function TextInput<TFieldValues extends FieldValues>({
   label,
   placeholder,
   register,
@@ -11,7 +24,7 @@ export default function TextInput({
   required = true,
   className,
   labelClassName,
-}) {
+}: TextInputProps<TFieldValues>) {
   const ID = `textinput-${name.replaceAll('.', '-')}`;
 
   return (
@@ -25,7 +38,7 @@ export default function TextInput({
         placeholder={placeholder}
         className={`${styles.textInput} ${className ?? ''}`.trim()}
         {...register(name, { required })}
-        onKeyDown={(e) => {
+        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
           if (e.nativeEvent?.isComposing) return;
           if (e.key === 'Enter') {
             onEnter?.();

@@ -3,11 +3,19 @@
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import styles from './Attachment.module.css';
 
+import type { AttachmentMeta } from '@/util/getAttachmentDownloadUrl';
+
+type AttachmentListProps = {
+  attachmentIds: string[];
+  attachmentMetaMap: Map<string, AttachmentMeta>;
+  label?: string;
+};
+
 export default function AttachmentList({
   attachmentIds,
   attachmentMetaMap,
   label = '첨부 파일',
-}) {
+}: AttachmentListProps) {
   return (
     <section className={styles.AttachmentSection}>
       <div className={styles.AttachmentHeader}>

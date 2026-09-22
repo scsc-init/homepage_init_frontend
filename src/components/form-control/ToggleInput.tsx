@@ -2,8 +2,21 @@ import styles from './ToggleInput.module.css';
 
 import { Controller } from 'react-hook-form';
 import { useId, useState } from 'react';
+import type { ChangeEvent, ComponentPropsWithoutRef } from 'react';
+import type { Control, FieldPathByValue, FieldValues } from 'react-hook-form';
 
-function ToggleSwitch({ checked, value: valueProp, focusDisabled, onChange, ...props }) {
+type ToggleSwitchProps = Omit<ComponentPropsWithoutRef<'input'>, 'onChange' | 'type'> & {
+  focusDisabled?: boolean;
+  onChange?: (checked: boolean) => void;
+};
+
+function ToggleSwitch({
+  checked,
+  value: valueProp,
+  focusDisabled,
+  onChange,
+  ...props
+}: ToggleSwitchProps) {
   const isControlled = typeof checked !== 'undefined' || typeof valueProp !== 'undefined';
   const isOn = isControlled ? !!(typeof checked !== 'undefined' ? checked : valueProp) : false;
   const [focus, setFocus] = useState(false);
@@ -19,7 +32,7 @@ function ToggleSwitch({ checked, value: valueProp, focusDisabled, onChange, ...p
         id={id}
         type="checkbox"
         checked={isOn}
-        onChange={(e) => onChange?.(e.target.checked)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked)}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         {...props}
@@ -37,7 +50,17 @@ function ToggleSwitch({ checked, value: valueProp, focusDisabled, onChange, ...p
   );
 }
 
-export default function ToggleInput({ label, name, control }) {
+type ToggleInputProps<TFieldValues extends FieldValues> = {
+  label: string;
+  name: FieldPathByValue<TFieldValues, boolean>;
+  control: Control<TFieldValues>;
+};
+
+export default function ToggleInput<TFieldValues extends FieldValues>({
+  label,
+  name,
+  control,
+}: ToggleInputProps<TFieldValues>) {
   const labelId = useId();
 
   return (
@@ -45,7 +68,7 @@ export default function ToggleInput({ label, name, control }) {
       <span id={labelId} className={styles.toggleInputLabel}>
         {label}
       </span>
-      <Controller
+      <Controller<TFieldValues, FieldPathByValue<TFieldValues, boolean>>
         name={name}
         control={control}
         render={({ field }) => (

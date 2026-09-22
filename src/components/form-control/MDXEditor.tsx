@@ -1,7 +1,8 @@
 'use client';
 
 import { uploadCompressedImage } from '@/util/fetch/imageUpload';
-import React, { forwardRef, useCallback } from 'react';
+import { useCallback } from 'react';
+import type { ForwardedRef } from 'react';
 import {
   MDXEditor,
   headingsPlugin,
@@ -17,21 +18,27 @@ import {
   CodeToggle,
   InsertImage,
   Separator,
+  type MDXEditorMethods,
+  type MDXEditorProps,
 } from '@mdxeditor/editor';
 import styles from './editor.module.css';
 
 import '@mdxeditor/editor/style.css';
 
-const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
-  { markdown = '', onChange = () => {}, className = '' },
-  ref,
-) {
-  const handleImageUpload = useCallback(async (file) => {
-    if (!file) return null;
+type InitializedMDXEditorProps = Pick<MDXEditorProps, 'markdown' | 'onChange' | 'className'> & {
+  editorRef: ForwardedRef<MDXEditorMethods> | null;
+};
 
+export default function InitializedMDXEditor({
+  editorRef,
+  markdown = '',
+  onChange = () => {},
+  className = '',
+}: InitializedMDXEditorProps) {
+  const handleImageUpload = useCallback(async (file: File): Promise<string> => {
     const uploaded = await uploadCompressedImage(file);
 
-    if (!uploaded?.id) return null;
+    if (!uploaded?.id) throw new Error('이미지 업로드에 실패했습니다.');
 
     return `/api/file/image/download/${encodeURIComponent(uploaded.id)}`;
   }, []);
@@ -39,7 +46,7 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
   return (
     <MDXEditor
       className={`${styles.mdxeditor} ${className}`}
-      ref={ref}
+      ref={editorRef}
       markdown={markdown}
       onChange={onChange}
       plugins={[
@@ -67,6 +74,4 @@ const InitializedMDXEditor = forwardRef(function InitializedMDXEditor(
       ]}
     />
   );
-});
-
-export default InitializedMDXEditor;
+}

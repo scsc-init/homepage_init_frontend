@@ -1,10 +1,23 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 import Link from 'next/link';
 import styles from './Button.module.css';
 
-const Button = forwardRef(function Button(
+type ButtonVariant = 'primary' | 'secondary' | 'danger';
+type ButtonSize = 'sm' | 'md';
+
+type ButtonProps = ComponentPropsWithoutRef<'button'> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+};
+
+type ButtonLinkProps = ComponentPropsWithoutRef<typeof Link> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+};
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = 'primary', size = 'md', type = 'button', className = '', ...props },
   ref,
 ) {
@@ -20,7 +33,7 @@ const Button = forwardRef(function Button(
   );
 });
 
-export const ButtonLink = forwardRef(function ButtonLink(
+export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
   { variant = 'primary', size = 'md', className = '', ...props },
   ref,
 ) {
