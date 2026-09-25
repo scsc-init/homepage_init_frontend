@@ -8,7 +8,22 @@ import * as validator from '@/util/validator';
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-function cleanName(raw) {
+type ValidatorFunction = (value?: string, then?: (isValid: boolean) => void) => void;
+
+type ExternalMemberApplicationForm = {
+  name?: string | null;
+  phone?: string | null;
+  student_id?: string | null;
+  reason?: string | null;
+  kakao_name?: string | null;
+};
+
+type ExternalMemberApplicationResult = {
+  status: number;
+  detail: string | null;
+};
+
+function cleanName(raw: string) {
   if (!raw) return '';
 
   return raw
@@ -19,13 +34,15 @@ function cleanName(raw) {
     .trim();
 }
 
-function validateWithCallback(validate, value) {
+function validateWithCallback(validate: ValidatorFunction, value: string): Promise<boolean> {
   return new Promise((resolve) => {
     validate(value, resolve);
   });
 }
 
-async function submitExternalMemberApplication(form) {
+async function submitExternalMemberApplication(
+  form: ExternalMemberApplicationForm,
+): Promise<ExternalMemberApplicationResult> {
   'use server';
 
   const session = await getServerSession(authOptions);
@@ -47,6 +64,7 @@ async function submitExternalMemberApplication(form) {
   }
 
   const rawName = typeof form?.name === 'string' ? form.name.trim().slice(0, 64) : '';
+
   const name = rawName || cleanName(session.user.name);
   const validName = await validateWithCallback(validator.name, name);
 
@@ -59,9 +77,12 @@ async function submitExternalMemberApplication(form) {
 
   const phone = String(form?.phone ?? '').replace(/\D/g, '');
   const studentId = String(form?.student_id ?? '').replace(/\D/g, '');
+
   const reason = typeof form?.reason === 'string' ? form.reason.trim().slice(0, 1000) : '';
+
   const kakaoName =
     typeof form?.kakao_name === 'string' ? form.kakao_name.trim().slice(0, 64) : '';
+
   const validPhone = await validateWithCallback(validator.phoneNumber, phone);
 
   if (!validPhone) {
@@ -82,7 +103,7 @@ async function submitExternalMemberApplication(form) {
     }
   }
 
-  let response;
+  let response: Response;
 
   try {
     response = await fetchBackendServer('POST', '/api/user/external/register', {
@@ -105,17 +126,26 @@ async function submitExternalMemberApplication(form) {
     };
   }
 
-  let data = null;
+  let detail: string | null = null;
 
   try {
-    data = await response.json();
+    const data: unknown = await response.json();
+
+    if (
+      data &&
+      typeof data === 'object' &&
+      'detail' in data &&
+      typeof data.detail === 'string'
+    ) {
+      detail = data.detail;
+    }
   } catch {
-    data = null;
+    detail = null;
   }
 
   return {
     status: response.status,
-    detail: data?.detail ?? null,
+    detail,
   };
 }
 
