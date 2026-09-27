@@ -1,4 +1,5 @@
 'use client';
+import type { AttachmentFormValues, WriteEditorProps } from '@/types/board';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentUploader from '@/components/form-control/AttachmentUploader';
@@ -6,23 +7,27 @@ import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import styles from './page.module.css';
 
-export default function WriteEditorAlbum({ onSubmit, submitting, onDirtyChange }) {
+export default function WriteEditorAlbum({
+  onSubmit,
+  submitting,
+  onDirtyChange,
+}: WriteEditorProps) {
   const {
     register,
     handleSubmit,
     control,
     formState: { isDirty },
-  } = useForm({
+  } = useForm<AttachmentFormValues>({
     defaultValues: { title: '', description: '' },
   });
 
-  const [attachmentIds, setAttachmentIds] = useState([]);
+  const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
 
   useEffect(() => {
     onDirtyChange?.(isDirty || attachmentIds.length > 0);
   }, [attachmentIds.length, isDirty, onDirtyChange]);
 
-  const handleInternalSubmit = (data) => {
+  const handleInternalSubmit = (data: AttachmentFormValues) => {
     const imageMarkdown = attachmentIds
       .map((id) => {
         const encoded = encodeURIComponent(id);

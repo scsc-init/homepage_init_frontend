@@ -1,5 +1,16 @@
 'use client';
 
+import type { ArticleComment } from '@/types/board';
+import type { UserProfile } from '@/types/user';
+type CommentNode = ArticleComment & { children: CommentNode[] };
+type CommentProps = {
+  comment: CommentNode;
+  onReplySubmit: () => void | Promise<void>;
+  userId: string;
+  userRole: number;
+  articleId: string;
+};
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -7,9 +18,11 @@ import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import styles from './Comments.module.css';
 
-function buildTree(flat) {
-  const idMap = {};
-  const root = [];
+function buildTree(comments: ArticleComment[]): CommentNode[] {
+  // The original routine adds children to each input comment before linking the tree.
+  const flat = comments as CommentNode[];
+  const idMap: Record<number, CommentNode> = {};
+  const root: CommentNode[] = [];
   flat.forEach((el) => {
     el.children = [];
     idMap[el.id] = el;
@@ -22,7 +35,7 @@ function buildTree(flat) {
   return root;
 }
 
-async function readErrorText(res) {
+async function readErrorText(res: Response) {
   const base = `HTTP ${res.status}`;
   const ct = res.headers.get('content-type') || '';
   try {
@@ -40,7 +53,7 @@ async function readErrorText(res) {
   }
 }
 
-function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
+function Comment({ comment, onReplySubmit, userId, userRole, articleId }: CommentProps) {
   const [showReply, setShowReply] = useState(false);
   const [replyContent, setReplyContent] = useState('');
 
@@ -141,13 +154,21 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }) {
   );
 }
 
-export default function Comments({ articleId, initialComments, user }) {
+export default function Comments({
+  articleId,
+  initialComments,
+  user,
+}: {
+  articleId: string;
+  initialComments: ArticleComment[] | null;
+  user: UserProfile | null;
+}) {
   const router = useRouter();
   const [comments, setComments] = useState(initialComments || []);
   const [isError, setIsError] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [newContent, setNewContent] = useState('');
-  const newRef = useRef(null);
+  const newRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!initialComments || !user) router.refresh();
@@ -171,7 +192,7 @@ export default function Comments({ articleId, initialComments, user }) {
         setIsError(true);
         return;
       }
-      const commentsData = await res.json();
+      const commentsData: ArticleComment[] = await res.json();
       setComments(commentsData);
     } catch {
       setIsError(true);
@@ -201,7 +222,9 @@ export default function Comments({ articleId, initialComments, user }) {
         alert('댓글 작성 실패: ' + (await readErrorText(res)));
       }
     } catch (e) {
-      alert('댓글 작성 실패: ' + (e?.message || '네트워크 오류'));
+      alert(
+        '댓글 작성 실패: ' + ((e as { message?: string } | null)?.message || '네트워크 오류'),
+      );
     }
   };
 

@@ -1,5 +1,7 @@
 'use client';
 
+import type { Board, ArticleSubmission, ArticleWriteRequest } from '@/types/board';
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +12,13 @@ import WriteEditorAlbum from './WriteEditorAlbum';
 import WriteEditorFile from './WriteEditorFile';
 import { useMe } from '@/util/hooks/useMe';
 
-export default function CreateBoardArticleClient({ boardInfo, boardType }) {
+export default function CreateBoardArticleClient({
+  boardInfo,
+  boardType,
+}: {
+  boardInfo: Board | undefined;
+  boardType: 'image' | 'file' | 'text';
+}) {
   const router = useRouter();
   const { me, isLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +34,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
   }, [isLoading, isUnauthenticated, me, router]);
 
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (!isFormSubmitted.current && isDirty) {
         e.preventDefault();
         e.returnValue = '';
@@ -40,7 +48,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
     };
   }, [isDirty]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: ArticleSubmission) => {
     if (submitting) return;
     setSubmitting(true);
 
@@ -51,14 +59,14 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
-          board_id: parseInt(boardInfo.id),
+          board_id: parseInt(String(boardInfo!.id)),
           attachments: Array.isArray(data.attachments) ? data.attachments : [],
-        }),
+        } satisfies ArticleWriteRequest),
       });
 
       if (res.status === 201) {
         alert('게시글 작성 완료!');
-        router.push(`/board/${boardInfo.id}`);
+        router.push(`/board/${boardInfo!.id}`);
       } else if (res.status === 401) {
         alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
@@ -67,7 +75,7 @@ export default function CreateBoardArticleClient({ boardInfo, boardType }) {
         throw new Error('작성 실패: ' + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err.message || '네트워크 오류');
+      alert((err as { message?: string }).message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }

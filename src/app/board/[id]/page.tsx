@@ -1,12 +1,16 @@
+import type { Board } from '@/types/board';
+import type { Metadata } from 'next';
+type PageProps = { params: Promise<{ id: string }> };
+
 import styles from './page.module.css';
 import BoardClient from './BoardClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
 
   try {
-    const board = await fetchBackendServerJson('GET', `/api/board/${id}`);
+    const board = await fetchBackendServerJson<Board>('GET', `/api/board/${id}`);
     const name = (board?.name || '').trim();
     return { title: name || '게시판' };
   } catch {
@@ -14,7 +18,7 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function BoardPage({ params }) {
+export default async function BoardPage({ params }: PageProps) {
   const { id } = await params;
   const boardId = id;
 
@@ -24,7 +28,7 @@ export default async function BoardPage({ params }) {
     return <div>게시판 정보를 불러올 수 없습니다.</div>;
   }
 
-  const board = await boardRes.json();
+  const board: Board = await boardRes.json();
 
   return (
     <div className={styles.ListContainer}>

@@ -2,7 +2,10 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fetchBackendServer } from '@/util/fetch/server';
 
-export async function GET(request, { params }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string[] }> },
+) {
   try {
     const resolvedParams = await params;
     const slug = normalizeSlug(resolvedParams?.slug);
@@ -53,11 +56,11 @@ async function notFoundPage() {
   });
 }
 
-function normalizeSlug(slug) {
+function normalizeSlug(slug: string | string[] | undefined) {
   if (Array.isArray(slug)) return slug.join('/');
   return slug || '';
 }
 
-function encodePathValue(value) {
+function encodePathValue(value: string) {
   return value.split('/').map(encodeURIComponent).join('/');
 }

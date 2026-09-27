@@ -1,8 +1,20 @@
 'use client';
 
+import type { Article, BoardViewProps } from '@/types/board';
+import type { SortOrder } from '@/components/common/SortDropdown';
+type GalleryArticle = Article & {
+  name?: string;
+  createdAt?: string;
+  body?: string;
+  html?: string;
+  preview?: string;
+  summary?: string;
+};
+type GalleryItem = { articleId: string; title: string; created_at: string; thumbSrc: string };
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import Image from 'next/image';
-import { cache, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
 
 const UUID_REGEX =
@@ -15,7 +27,7 @@ const API_IMG_ID_REGEX = new RegExp(
 const MD_IMG_REGEX = /!\[[^\]]*?\]\(([^)]+)\)/g;
 const HTML_IMG_REGEX = /<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i;
 
-function sortArticles(items, sortOrder) {
+function sortArticles(items: GalleryItem[], sortOrder: SortOrder) {
   const arr = items.slice();
   if (sortOrder === 'oldest') {
     arr.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
@@ -29,7 +41,7 @@ function sortArticles(items, sortOrder) {
   return arr;
 }
 
-function formatDate(iso) {
+function formatDate(iso: string) {
   try {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return '';
@@ -39,11 +51,11 @@ function formatDate(iso) {
   }
 }
 
-function pickArticleId(a) {
+function pickArticleId(a: GalleryArticle) {
   return a?.id == null ? '' : String(a.id);
 }
 
-function normalizeUrl(u) {
+function normalizeUrl(u: string | null | undefined) {
   let s = String(u || '').trim();
   if (!s) return '';
   if (
@@ -56,7 +68,7 @@ function normalizeUrl(u) {
   return s;
 }
 
-function extractFirstImageUrlFromText(text) {
+function extractFirstImageUrlFromText(text: string | null | undefined) {
   const s = String(text || '');
   const html = s.match(HTML_IMG_REGEX);
   if (html?.[1]) return normalizeUrl(html[1]);
@@ -71,7 +83,7 @@ function extractFirstImageUrlFromText(text) {
   return '';
 }
 
-function toThumbSrc(rawUrl) {
+function toThumbSrc(rawUrl: string) {
   let u = normalizeUrl(rawUrl);
   if (!u) return '';
 
@@ -88,15 +100,19 @@ function toThumbSrc(rawUrl) {
   return u;
 }
 
-function isLocalThumbSrc(src) {
+function isLocalThumbSrc(src: string) {
   const s = String(src || '');
   if (!s) return false;
   if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('//')) return false;
   return s.startsWith('/');
 }
 
-async function pLimitMap(items, limit, fn) {
-  const ret = new Array(items.length);
+async function pLimitMap<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const ret = new Array<R>(items.length);
   let i = 0;
 
   async function worker() {
@@ -111,11 +127,11 @@ async function pLimitMap(items, limit, fn) {
   return ret;
 }
 
-export default function GalleryView({ board, sortOrder }) {
+export default function GalleryView({ board, sortOrder }: BoardViewProps) {
   const boardId = board?.id;
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<GalleryItem[]>([]);
   const [state, setState] = useState({ loading: true, error: '' });
-  const fetchedDetailRef = useRef(new Set());
+  const fetchedDetailRef = useRef(new Set<string>());
 
   const listUrl = useMemo(() => `/api/articles/${boardId}`, [boardId]);
 
@@ -126,7 +142,7 @@ export default function GalleryView({ board, sortOrder }) {
       if (!boardId) return;
 
       setState({ loading: true, error: '' });
-      fetchedDetailRef.current = new Set();
+      fetchedDetailRef.current = new Set<string>();
 
       try {
         const res = await fetchBackendClient(listUrl, {
@@ -135,7 +151,7 @@ export default function GalleryView({ board, sortOrder }) {
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const data = await res.json();
+        const data: GalleryArticle[] = await res.json();
         const arr = Array.isArray(data) ? data : [];
 
         const mapped = arr
@@ -160,7 +176,12 @@ export default function GalleryView({ board, sortOrder }) {
       } catch (e) {
         if (!alive) return;
         setItems([]);
-        setState({ loading: false, error: e?.message ? String(e.message) : '불러오기 실패' });
+        setState({
+          loading: false,
+          error: (e as { message?: unknown } | null)?.message
+            ? String((e as { message: unknown }).message)
+            : '불러오기 실패',
+        });
       }
     }
 
@@ -192,7 +213,7 @@ export default function GalleryView({ board, sortOrder }) {
           );
           if (!res.ok) return { articleId: t.articleId, thumbSrc: '' };
 
-          const data = await res.json();
+          const data: GalleryArticle = await res.json();
           const raw = extractFirstImageUrlFromText(
             data?.content || data?.body || data?.html || '',
           );

@@ -1,8 +1,12 @@
-// app/board/[id]/create/page.jsx
+import type { Board } from '@/types/board';
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 import CreateBoardArticleClient from './CreateBoardArticleClient';
 import { fetchBackendServer } from '@/util/fetch/server';
 
-export default async function CreateBoardPage({ params, searchParams }) {
+export default async function CreateBoardPage({ params, searchParams }: PageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const boardInfo = await fetchBoardInfo(resolvedParams.id);
@@ -20,7 +24,7 @@ export default async function CreateBoardPage({ params, searchParams }) {
   return <CreateBoardArticleClient boardInfo={boardInfo} boardType={boardType} />;
 }
 
-async function fetchBoardInfo(boardId) {
+async function fetchBoardInfo(boardId: string): Promise<Board | undefined> {
   const res = await fetchBackendServer('GET', `/api/board/${boardId}`);
   if (res.ok) return res.json();
 }

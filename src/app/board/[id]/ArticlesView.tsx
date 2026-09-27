@@ -1,5 +1,7 @@
 'use client';
 
+import type { Article, BoardViewProps } from '@/types/board';
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -9,9 +11,9 @@ import { utc2kst } from '@/util/constants';
 import styles from './board.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
-export default function ArticlesView({ board, sortOrder }) {
+export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
   const router = useRouter();
-  const [articles, setArticles] = useState(null);
+  const [articles, setArticles] = useState<Article[] | null>(null);
   const [unauthorized, setUnauthorized] = useState(false);
 
   const boardId = board?.id;
@@ -40,7 +42,7 @@ export default function ArticlesView({ board, sortOrder }) {
           pushLoginWithRedirect(router);
           return;
         }
-        const data = await res.json();
+        const data: Article[] = await res.json();
         setArticles(data);
       } catch (_) {
         pushLoginWithRedirect(router);
@@ -61,8 +63,10 @@ export default function ArticlesView({ board, sortOrder }) {
   if (!Array.isArray(articles)) return <LoadingSpinner />;
 
   const sortedArticles = [...articles].sort((a, b) => {
-    if (sortOrder === 'latest') return new Date(b.created_at) - new Date(a.created_at);
-    if (sortOrder === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+    if (sortOrder === 'latest')
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    if (sortOrder === 'oldest')
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
@@ -92,7 +96,7 @@ export default function ArticlesView({ board, sortOrder }) {
  * @param {number} limit text length limit before ...(ellipsis)
  * @returns
  */
-function toPreview(str, limit) {
+function toPreview(str: string | null, limit: number) {
   const preview = str?.replace(/\s+/g, ' ').trim() ?? '';
   return preview ? `${preview.slice(0, limit)}${preview.length > limit ? '...' : ''}` : '';
 }

@@ -1,5 +1,8 @@
 'use client';
 
+import type { Board } from '@/types/board';
+import type { SortOrder } from '@/components/common/SortDropdown';
+
 import { useMemo, useState } from 'react';
 import { useMe } from '@/util/hooks/useMe';
 import SortDropdown from '@/components/common/SortDropdown';
@@ -10,9 +13,9 @@ import FileBoardView from './FileBoardView';
 import styles from './board.module.css';
 import { ALBUM_BOARD_ID } from '@/util/constants';
 
-export default function BoardClient({ board }) {
+export default function BoardClient({ board }: { board: Board }) {
   const { me } = useMe();
-  const [sortOrder, setSortOrder] = useState('latest');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('latest');
   const isAlbum = useMemo(() => String(board?.id) === String(ALBUM_BOARD_ID), [board?.id]);
   const isFileBoard = useMemo(() => board?.board_type === 'FILE', [board?.board_type]);
   const createType = isAlbum ? 'image' : isFileBoard ? 'file' : 'text';
