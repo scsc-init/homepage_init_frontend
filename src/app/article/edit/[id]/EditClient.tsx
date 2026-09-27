@@ -1,11 +1,12 @@
 'use client';
 
+type AttachmentRef = string | { file_id?: string; id?: string };
 type Article = {
   title: string;
   author_id: string;
   board_id: number;
   content: string | null;
-  attachments: unknown[];
+  attachments: AttachmentRef[];
 };
 type ArticleFormValues = { title: string; editor: string };
 

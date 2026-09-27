@@ -1,11 +1,12 @@
 'use client';
 
+type AttachmentRef = string | { file_id?: string; id?: string };
 type Article = {
   id: number;
   title: string;
   content: string | null;
   created_at: string;
-  attachments: unknown[];
+  attachments: AttachmentRef[];
   is_deleted?: boolean;
 };
 type FileMetadata = {
