@@ -22,7 +22,7 @@ export default function CreateBoardArticleClient({
   boardInfo,
   boardType,
 }: {
-  boardInfo: Board | undefined;
+  boardInfo: Board;
   boardType: 'image' | 'file' | 'text';
 }) {
   const router = useRouter();
@@ -65,14 +65,14 @@ export default function CreateBoardArticleClient({
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
-          board_id: parseInt(String(boardInfo!.id)),
+          board_id: boardInfo.id,
           attachments: Array.isArray(data.attachments) ? data.attachments : [],
         }),
       });
 
       if (res.status === 201) {
         alert('게시글 작성 완료!');
-        router.push(`/board/${boardInfo!.id}`);
+        router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
         alert('다시 로그인해 주세요.');
         pushLoginWithRedirect(router);
