@@ -13,10 +13,11 @@ import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
 import { getKvsClient } from '@/util/fetch/client-util';
 import { ROLE_MAP } from '@/util/constants';
+import type { UserProfile } from '@/types/user';
 
-const cx = (...classes) => classes.filter(Boolean).join(' ');
+const cx = (...classes: unknown[]) => classes.filter(Boolean).join(' ');
 
-function getUserStatusText(user) {
+function getUserStatusText(user: UserProfile) {
   if (user.is_active === true) return '활동 중 (입금 확인 완료)';
   if (user.is_banned === true) return '제명됨';
   if (user.is_active === false) return '회비 미납부';
@@ -35,7 +36,7 @@ async function onAuthFail() {
 export default function MyProfileClient() {
   const { status } = useSession();
   const { me } = useMe();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
   const router = useRouter();
   useEffect(() => {

@@ -1,11 +1,11 @@
-// /app/about/page.jsx
+// /app/about/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import ScrollEffectWrapper from './ScrollEffectWrapper';
 import FaqList from './FaqList';
 import Arrow from './Arrow';
 import styles from './about.module.css';
-import Sidebar from './Sidebar.jsx';
+import Sidebar from './Sidebar';
 import { getKVValues } from '@/util/fetch/server-util';
 
 export default async function AboutPage() {

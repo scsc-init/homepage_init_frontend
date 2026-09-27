@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import styles from '@/app/about/about.module.css';
 
-export default function ScrollEffectWrapper({ children, variant }) {
+type ScrollEffectWrapperProps = {
+  children: ReactNode;
+  variant?: 'fade';
+};
+
+export default function ScrollEffectWrapper({ children, variant }: ScrollEffectWrapperProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const domRef = useRef();
+  const domRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {

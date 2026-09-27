@@ -38,8 +38,8 @@ export default function FaqList() {
     },
   ];
 
-  const [openIdx, setOpenIdx] = useState(null);
-  const contentRefs = useRef([]);
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   return (
     <div className={styles.faqContainer}>
@@ -61,7 +61,9 @@ export default function FaqList() {
 
           <div
             className={styles.faqContent}
-            ref={(el) => (contentRefs.current[idx] = el)}
+            ref={(el) => {
+              contentRefs.current[idx] = el;
+            }}
             style={{
               height: openIdx === idx ? `${contentRefs.current[idx]?.scrollHeight}px` : '0px',
             }}
