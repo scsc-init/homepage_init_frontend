@@ -1,5 +1,15 @@
 'use client';
-import type { ArticleFormValues, WriteEditorProps } from '@/types/board';
+type ArticleFormValues = { title: string; editor: string };
+type WriteEditorProps = {
+  boardInfo?: unknown;
+  onSubmit: (data: {
+    title: string;
+    editor: string;
+    attachments: string[];
+  }) => void | Promise<void>;
+  submitting: boolean;
+  onDirtyChange?: (dirty: boolean) => void;
+};
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentUploader from '@/components/form-control/AttachmentUploader';

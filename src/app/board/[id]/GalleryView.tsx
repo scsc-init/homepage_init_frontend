@@ -1,6 +1,14 @@
 'use client';
 
-import type { Article, BoardViewProps } from '@/types/board';
+type Article = {
+  id: number;
+  title: string;
+  content: string | null;
+  created_at: string;
+  updated_at: string;
+  attachments: unknown[];
+};
+type BoardViewProps = { board: { id: number }; sortOrder: 'latest' | 'oldest' | 'title' };
 import type { SortOrder } from '@/components/common/SortDropdown';
 type GalleryArticle = Article & {
   name?: string;

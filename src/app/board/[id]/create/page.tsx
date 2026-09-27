@@ -1,4 +1,9 @@
-import type { Board } from '@/types/board';
+type Board = {
+  id: number;
+  name: string;
+  description: string;
+  board_type: 'TEXT' | 'NONE' | 'FILE' | 'IMAGE';
+};
 type PageProps = {
   params: Promise<{ id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;

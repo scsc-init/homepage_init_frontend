@@ -1,6 +1,16 @@
 'use client';
 
-import type { ArticleComment } from '@/types/board';
+type ArticleComment = {
+  id: number;
+  content: string;
+  author_id: string;
+  article_id: number;
+  parent_id: number | null;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+};
 import type { UserProfile } from '@/types/user';
 type CommentNode = ArticleComment & { children: CommentNode[] };
 type CommentProps = {

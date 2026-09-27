@@ -1,5 +1,14 @@
-import type { Board } from '@/types/board';
 import type { Metadata } from 'next';
+type Board = {
+  id: number;
+  name: string;
+  description: string;
+  writing_permission_level: number;
+  reading_permission_level: number;
+  board_type: 'TEXT' | 'NONE' | 'FILE' | 'IMAGE';
+  created_at: string;
+  updated_at: string;
+};
 type PageProps = { params: Promise<{ id: string }> };
 
 import styles from './page.module.css';

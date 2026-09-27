@@ -1,6 +1,15 @@
 'use client';
 
-import type { Board } from '@/types/board';
+type Board = {
+  id: number;
+  name: string;
+  description: string;
+  writing_permission_level: number;
+  reading_permission_level: number;
+  board_type: 'TEXT' | 'NONE' | 'FILE' | 'IMAGE';
+  created_at: string;
+  updated_at: string;
+};
 import type { SortOrder } from '@/components/common/SortDropdown';
 
 import { useMemo, useState } from 'react';

@@ -1,6 +1,31 @@
 'use client';
 
-import type { Article, ArticleComment, FileMetadata } from '@/types/board';
+type Article = {
+  id: number;
+  title: string;
+  author_id: string;
+  board_id: number;
+  created_at: string;
+  content: string | null;
+  attachments: { id: number; article_id: number; file_id: string }[];
+};
+type ArticleComment = {
+  id: number;
+  content: string;
+  author_id: string;
+  article_id: number;
+  parent_id: number | null;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+};
+type FileMetadata = {
+  id: string;
+  file_id?: string;
+  original_filename?: string;
+  mime_type?: string;
+};
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import ReactMarkdown, { type ExtraProps } from 'react-markdown';

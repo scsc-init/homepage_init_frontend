@@ -1,6 +1,12 @@
 'use client';
 
-import type { Board, ArticleSubmission, ArticleWriteRequest } from '@/types/board';
+type Board = {
+  id: number;
+  name: string;
+  description: string;
+  board_type: 'TEXT' | 'NONE' | 'FILE' | 'IMAGE';
+};
+type ArticleSubmission = { title: string; editor: string; attachments: string[] };
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState, useEffect } from 'react';
@@ -61,7 +67,7 @@ export default function CreateBoardArticleClient({
           content: data.editor,
           board_id: parseInt(String(boardInfo!.id)),
           attachments: Array.isArray(data.attachments) ? data.attachments : [],
-        } satisfies ArticleWriteRequest),
+        }),
       });
 
       if (res.status === 201) {

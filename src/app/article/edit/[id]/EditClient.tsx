@@ -1,6 +1,13 @@
 'use client';
 
-import type { Article, ArticleFormValues, ArticleWriteRequest } from '@/types/board';
+type Article = {
+  title: string;
+  author_id: string;
+  board_id: number;
+  content: string | null;
+  attachments: unknown[];
+};
+type ArticleFormValues = { title: string; editor: string };
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useRef, useState } from 'react';
@@ -121,7 +128,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
           content: data.editor,
           board_id: parseInt(String(boardId ?? 0)),
           attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
-        } satisfies ArticleWriteRequest),
+        }),
       });
 
       if (res.status === 204 || res.ok) {

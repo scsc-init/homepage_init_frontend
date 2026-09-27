@@ -1,6 +1,20 @@
 'use client';
 
-import type { Article, BoardViewProps, FileMetadata } from '@/types/board';
+type Article = {
+  id: number;
+  title: string;
+  content: string | null;
+  created_at: string;
+  attachments: unknown[];
+  is_deleted?: boolean;
+};
+type FileMetadata = {
+  id: string;
+  file_id?: string;
+  original_filename?: string;
+  mime_type?: string;
+};
+type BoardViewProps = { board: { id: number }; sortOrder: 'latest' | 'oldest' | 'title' };
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useMemo, useState } from 'react';

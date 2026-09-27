@@ -1,6 +1,13 @@
 'use client';
 
-import type { Article, BoardViewProps } from '@/types/board';
+type Article = {
+  id: number;
+  title: string;
+  content: string | null;
+  created_at: string;
+  is_deleted?: boolean;
+};
+type BoardViewProps = { board: { id: number }; sortOrder: 'latest' | 'oldest' | 'title' };
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
