@@ -10,9 +10,20 @@ import { oldboyLevel } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
+type Major = {
+  id: number;
+  college: string;
+  major_name: string;
+};
+
+type ErrorResponse = {
+  detail?: string;
+};
+
 function EditUserInfoClient() {
   const router = useRouter();
   const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
+
   const [form, setForm] = useState({
     name: '',
     kakao_name: '',
@@ -21,13 +32,15 @@ function EditUserInfoClient() {
     major_id: '',
     profile_picture: '',
   });
-  const [majors, setMajors] = useState([]);
-  const [userRole, setUserRole] = useState(null);
-  const [oldboyApplicant, setOldboyApplicant] = useState(null);
+
+  const [majors, setMajors] = useState<Major[]>([]);
+  const [userRole, setUserRole] = useState<number | null>(null);
+  const [oldboyApplicant, setOldboyApplicant] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isMeLoading) return;
+
     if (isUnauthenticated || !me) {
       alert('로그인이 필요합니다.');
       pushLoginWithRedirect(router);
@@ -44,6 +57,7 @@ function EditUserInfoClient() {
       major_id: me.major_id?.toString() || '',
       profile_picture: me.profile_picture || '',
     });
+
     setUserRole(me.role);
     setLoading(false);
 
@@ -54,34 +68,46 @@ function EditUserInfoClient() {
         fetchBackendClient('/api/user/oldboy/applicant'),
       ]);
 
-      const majorList = resMajors.ok ? await resMajors.json() : [];
+      const majorList: Major[] = resMajors.ok ? ((await resMajors.json()) as Major[]) : [];
+
       setMajors(majorList);
-      if (!resMajors.ok) console.warn('Failed to load majors');
+
+      if (!resMajors.ok) {
+        console.warn('Failed to load majors');
+      }
+
       if (resOldboy.ok) {
-        setOldboyApplicant(await resOldboy.json());
+        const applicant: unknown = await resOldboy.json();
+        setOldboyApplicant(applicant);
       }
     };
+
     fetchData();
   }, [router, me, isMeLoading, isUnauthenticated]);
 
   const handleSubmit = async () => {
     const { name, kakao_name, phone, student_id, major_id } = form;
-    const errors = [];
+    const errors: string[] = [];
+
     validator.name(name, (ok) => {
       if (!ok) errors.push('이름이 올바르지 않습니다.');
     });
+
     validator.phoneNumber(phone, (ok) => {
       if (!ok) errors.push('전화번호 형식이 올바르지 않습니다.');
     });
+
     validator.studentID(student_id, (ok) => {
       if (!ok) errors.push('학번 형식이 올바르지 않습니다.');
     });
+
     if (errors.length) {
       alert(errors[0]);
       return;
     }
 
     setLoading(true);
+
     const res = await fetchBackendClient('/api/user/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -93,6 +119,7 @@ function EditUserInfoClient() {
         major_id: Number(major_id),
       }),
     });
+
     setLoading(false);
 
     if (res.status === 204) {
@@ -109,16 +136,23 @@ function EditUserInfoClient() {
 
   const handleDelete = async () => {
     const ok = confirm('정말 휴회원 처리하시겠습니까?');
+
     if (!ok) return;
+
     setLoading(true);
-    const res = await fetchBackendClient('/api/user/delete', { method: 'POST' });
+
+    const res = await fetchBackendClient('/api/user/delete', {
+      method: 'POST',
+    });
+
     setLoading(false);
 
     if (res.status === 204) {
       alert('휴회원으로 전환되었습니다.');
       router.push('/about/my-page');
     } else if (res.status === 403) {
-      alert(`잘못된 접근입니다: ${(await res.json()).detail}`);
+      const data = (await res.json()) as ErrorResponse;
+      alert(`잘못된 접근입니다: ${data.detail ?? ''}`);
     } else {
       alert('수정에 실패했습니다. 다시 시도해주세요.');
     }
@@ -126,9 +160,15 @@ function EditUserInfoClient() {
 
   const handleOBRegister = async () => {
     const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
+
     if (!ok) return;
+
     setLoading(true);
-    const res = await fetchBackendClient('/api/user/oldboy/register', { method: 'POST' });
+
+    const res = await fetchBackendClient('/api/user/oldboy/register', {
+      method: 'POST',
+    });
+
     setLoading(false);
 
     if (res.status === 201) {
@@ -145,9 +185,15 @@ function EditUserInfoClient() {
 
   const handleOBUnregister = async () => {
     const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
+
     if (!ok) return;
+
     setLoading(true);
-    const res = await fetchBackendClient('/api/user/oldboy/unregister', { method: 'POST' });
+
+    const res = await fetchBackendClient('/api/user/oldboy/unregister', {
+      method: 'POST',
+    });
+
     setLoading(false);
 
     if (res.status === 204) {
@@ -168,9 +214,15 @@ function EditUserInfoClient() {
     const ok = confirm(
       '정말 정회원으로 전환하시겠습니까? 전환 후 회비를 납부해야 전환이 완료됩니다.',
     );
+
     if (!ok) return;
+
     setLoading(true);
-    const res = await fetchBackendClient('/api/user/oldboy/reactivate', { method: 'POST' });
+
+    const res = await fetchBackendClient('/api/user/oldboy/reactivate', {
+      method: 'POST',
+    });
+
     setLoading(false);
 
     if (res.status === 204) {
@@ -186,6 +238,7 @@ function EditUserInfoClient() {
   return (
     <div className={styles.editUserInfo}>
       <h2>내 정보 수정</h2>
+
       <img
         src={form.profile_picture || '/asset/default-pfp.webp'}
         alt="Profile"
@@ -193,7 +246,9 @@ function EditUserInfoClient() {
         width={50}
         height={50}
       />
+
       <PfpUpdate />
+
       <div className={styles.userData}>
         <label>이름</label>
         <input type="text" value={form.name} disabled />
@@ -202,7 +257,12 @@ function EditUserInfoClient() {
         <input
           type="text"
           value={form.kakao_name}
-          onChange={(e) => setForm({ ...form, kakao_name: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              kakao_name: e.target.value,
+            })
+          }
           placeholder="본명과 같으면 비워두세요"
         />
 
@@ -210,7 +270,12 @@ function EditUserInfoClient() {
         <input
           type="text"
           value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              phone: e.target.value,
+            })
+          }
           placeholder="01012345678"
         />
 
@@ -218,16 +283,27 @@ function EditUserInfoClient() {
         <input
           type="text"
           value={form.student_id}
-          onChange={(e) => setForm({ ...form, student_id: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              student_id: e.target.value,
+            })
+          }
           placeholder="202512345"
         />
 
         <label>전공</label>
         <select
           value={form.major_id}
-          onChange={(e) => setForm({ ...form, major_id: e.target.value })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              major_id: e.target.value,
+            })
+          }
         >
           <option value="">전공 선택</option>
+
           {majors.map((m) => (
             <option key={m.id} value={m.id}>
               {m.college} - {m.major_name}
@@ -240,9 +316,11 @@ function EditUserInfoClient() {
         <button onClick={handleSubmit} disabled={loading}>
           저장하기
         </button>
+
         <button onClick={handleDelete} disabled={loading}>
           휴회원으로 전환
         </button>
+
         {userRole === oldboyLevel ? (
           <button onClick={handleOBReactivate} disabled={loading}>
             정회원 전환 신청

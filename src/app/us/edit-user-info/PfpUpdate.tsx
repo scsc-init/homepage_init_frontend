@@ -3,14 +3,17 @@
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import type { ChangeEvent } from 'react';
 import styles from './page.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
+type ProfilePictureMode = 'url' | 'file';
+
 export default function PfpUpdate() {
-  const [mode, setMode] = useState('url');
+  const [mode, setMode] = useState<ProfilePictureMode>('url');
   const [url, setUrl] = useState('');
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
 
   const handleProfileUpdateSuccess = async () => {
@@ -18,15 +21,16 @@ export default function PfpUpdate() {
     router.push('/about/my-page');
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null;
     setFile(f);
+
     if (f) {
       setPreview(URL.createObjectURL(f));
     }
   };
 
-  const handleUrlChange = (e) => {
+  const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputUrl = e.target.value;
     setUrl(inputUrl);
     setPreview(inputUrl || null);
@@ -42,11 +46,13 @@ export default function PfpUpdate() {
           profile_picture_is_url: true,
         }),
       });
+
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);
         return;
       }
+
       if (res.status === 204) {
         await handleProfileUpdateSuccess();
       } else {
@@ -60,11 +66,13 @@ export default function PfpUpdate() {
         method: 'POST',
         body: form,
       });
+
       if (res.status === 401) {
         alert('로그인이 필요합니다.');
         pushLoginWithRedirect(router);
         return;
       }
+
       if (res.status === 204) {
         await handleProfileUpdateSuccess();
       } else {
@@ -76,6 +84,7 @@ export default function PfpUpdate() {
   return (
     <div className={styles.PfpUpdateContainer}>
       <p>프로필 사진 변경</p>
+
       <div>
         <label>
           <input
@@ -88,6 +97,7 @@ export default function PfpUpdate() {
           />
           URL 입력
         </label>
+
         <label className={styles.PfpUpdateContainerSecondLabel}>
           <input
             type="radio"

@@ -1,8 +1,7 @@
-// src/app/us/login/AuthClient.jsx
 'use client';
 
 import { fetchMajors } from '@/util/fetch/client-util';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '@/styles/theme.css';
 import styles from '../auth.module.css';
 import '@radix-ui/colors/red.css';
@@ -12,8 +11,19 @@ import { useSession } from 'next-auth/react';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { createUser } from './actions';
 
-function cleanName(raw) {
+type Major = {
+  id: number;
+  college: string;
+  major_name: string;
+};
+
+type LoginResponse = {
+  jwt?: string;
+};
+
+function cleanName(raw: string) {
   if (!raw) return '';
+
   return raw
     .normalize('NFC')
     .replace(/^[\s\-\u00AD\u2010-\u2015]+/u, '')
@@ -22,15 +32,21 @@ function cleanName(raw) {
     .trim();
 }
 
-function log(event, data = {}) {
+function log(event: string, data: Record<string, unknown> = {}) {
   try {
-    const body = JSON.stringify({ event, data, ts: new Date().toISOString() });
+    const body = JSON.stringify({
+      event,
+      data,
+      ts: new Date().toISOString(),
+    });
     const url = '/api/log';
+
     if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
       const blob = new Blob([body], { type: 'application/json' });
       navigator.sendBeacon(url, blob);
       return;
     }
+
     fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -42,6 +58,7 @@ function log(event, data = {}) {
 
 export default function AuthClient() {
   const { data: session, update } = useSession();
+
   const [stage, setStage] = useState(1);
   const [form, setForm] = useState({
     email: '',
@@ -55,38 +72,61 @@ export default function AuthClient() {
     major_id: '',
     profile_picture_url: '',
   });
-  const [majors, setMajors] = useState([]);
+
+  const [majors, setMajors] = useState<Major[]>([]);
   const [college, setCollege] = useState('');
   const [kakaoNameDiffers, setKakaoNameDiffers] = useState(false);
-  const studentIdNumberRef = useRef(null);
-  const phone2Ref = useRef(null);
-  const phone3Ref = useRef(null);
+  const studentIdNumberRef = useRef<HTMLInputElement>(null);
+  const phone2Ref = useRef<HTMLInputElement>(null);
+  const phone3Ref = useRef<HTMLInputElement>(null);
   const [signupBusy, setSignupBusy] = useState(false);
 
   useEffect(() => {
     const email = (session?.user?.email || '').toLowerCase();
     const cName = cleanName(session?.user?.name || '');
     const image = session?.user?.image || '';
-    setForm((p) => ({ ...p, email, name: cName, profile_picture_url: image }));
+
+    setForm((p) => ({
+      ...p,
+      email,
+      name: cName,
+      profile_picture_url: image,
+    }));
+
     log('signup_required', { email });
   }, [session]);
 
   useEffect(() => {
     if (stage !== 4) return;
+
     const loadMajors = async () => {
       try {
-        const data = await fetchMajors();
+        const data = await fetchMajors<Major[]>();
         setMajors(data);
-        log('majors_loaded', { count: Array.isArray(data) ? data.length : 0 });
+
+        log('majors_loaded', {
+          count: Array.isArray(data) ? data.length : 0,
+        });
       } catch (e) {
-        log('majors_load_failed', { error: String(e) });
+        log('majors_load_failed', {
+          error: String(e),
+        });
       }
     };
+
     loadMajors();
   }, [stage]);
 
   const handleSubmit = async () => {
     log('signup_submit_start');
+
+    const hashToken = session?.hashToken;
+
+    if (!hashToken) {
+      alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+      return;
+    }
+
     const student_id = `${form.student_id_year}${form.student_id_number}`;
     const phone = `${form.phone1}${form.phone2}${form.phone3}`;
     const email = String(form.email || '').toLowerCase();
@@ -100,19 +140,28 @@ export default function AuthClient() {
       major_id: Number(form.major_id),
       profile_picture: form.profile_picture_url,
       profile_picture_is_url: true,
-      hashToken: session.hashToken,
+      hashToken,
     });
 
     if (createRes.status !== 201) {
-      const createData =
-        createRes.body && typeof createRes.body === 'object'
-          ? createRes.body
-          : { detail: createRes.body || '서버 응답을 처리할 수 없습니다.' };
+      let detail = '알 수 없는 오류가 발생했습니다.';
+
+      if (createRes.body && typeof createRes.body === 'object' && 'detail' in createRes.body) {
+        const bodyDetail = createRes.body.detail;
+
+        if (typeof bodyDetail === 'string' && bodyDetail) {
+          detail = bodyDetail;
+        }
+      } else if (createRes.body) {
+        detail = String(createRes.body);
+      }
+
       log('signup_create_failed', {
         status: createRes.status,
-        detail: createData?.detail || null,
+        detail,
       });
-      alert(`유저 생성 실패: ${createData?.detail || '알 수 없는 오류가 발생했습니다.'}`);
+
+      alert(`유저 생성 실패: ${detail}`);
       return;
     }
 
@@ -122,17 +171,25 @@ export default function AuthClient() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ email, hashToken: session.hashToken }),
+      body: JSON.stringify({
+        email,
+        hashToken,
+      }),
     });
 
-    let data = null;
+    let data: LoginResponse | null = null;
+
     try {
-      data = await loginRes.json();
+      data = (await loginRes.json()) as LoginResponse;
     } catch {
       data = null;
     }
+
     if (loginRes.ok && data?.jwt) {
-      await update({ backendJwt: data.jwt });
+      await update({
+        backendJwt: data.jwt,
+      });
+
       log('login_complete');
       window.location.href = '/about/welcome';
     } else {
@@ -150,11 +207,16 @@ export default function AuthClient() {
             <input
               value={form.email}
               disabled
-              style={{ width: '100%', boxSizing: 'border-box' }}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
             />
+
             <p>
               이름: <strong>{form.name}</strong>
             </p>
+
             <label className={styles.KakaoCheckLabel}>
               <input
                 type="checkbox"
@@ -163,28 +225,50 @@ export default function AuthClient() {
                 onChange={(e) => {
                   const checked = e.target.checked;
                   setKakaoNameDiffers(checked);
-                  if (!checked) setForm((p) => ({ ...p, kakao_name: '' }));
+
+                  if (!checked) {
+                    setForm((p) => ({
+                      ...p,
+                      kakao_name: '',
+                    }));
+                  }
                 }}
               />
+
               <span className={styles.KakaoCheckBox} aria-hidden="true">
                 <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
                   <path d="M5 13l4 4L19 7" />
                 </svg>
               </span>
+
               <span>카톡 프로필 이름이 본명과 다른가요?</span>
             </label>
+
             {kakaoNameDiffers && (
               <input
                 value={form.kakao_name}
-                onChange={(e) => setForm({ ...form, kakao_name: e.target.value.slice(0, 64) })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    kakao_name: e.target.value.slice(0, 64),
+                  })
+                }
                 placeholder="카톡 프로필 이름"
                 maxLength={64}
-                style={{ width: '100%', boxSizing: 'border-box', marginTop: '0.5rem' }}
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  marginTop: '0.5rem',
+                }}
               />
             )}
+
             <button
               onClick={() => setStage(2)}
-              style={{ width: '100%', boxSizing: 'border-box' }}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
               disabled={
                 !form.email || !form.name || (kakaoNameDiffers && !form.kakao_name.trim())
               }
@@ -197,29 +281,52 @@ export default function AuthClient() {
         {stage === 2 && (
           <div style={{ marginTop: '0vh' }}>
             <p>학번 입력</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
               <input
                 value={form.student_id_year}
                 onChange={(e) => {
                   const val = e.target.value;
-                  setForm({ ...form, student_id_year: val });
-                  if (val.length === 4) studentIdNumberRef.current?.focus();
+
+                  setForm({
+                    ...form,
+                    student_id_year: val,
+                  });
+
+                  if (val.length === 4) {
+                    studentIdNumberRef.current?.focus();
+                  }
                 }}
                 maxLength={4}
                 placeholder="2025"
               />
+
               <span style={{ fontSize: '1.25rem' }}>-</span>
+
               <input
                 ref={studentIdNumberRef}
                 value={form.student_id_number}
-                onChange={(e) => setForm({ ...form, student_id_number: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    student_id_number: e.target.value,
+                  })
+                }
                 maxLength={5}
                 placeholder="10056"
               />
             </div>
+
             <button
               onClick={() => {
                 const sid = `${form.student_id_year}${form.student_id_number}`;
+
                 validator.studentID(sid, (ok) =>
                   ok ? setStage(3) : alert('올바른 학번 형식이 아닙니다.'),
                 );
@@ -234,39 +341,68 @@ export default function AuthClient() {
         {stage === 3 && (
           <div style={{ marginTop: '0vh' }}>
             <p>전화번호 입력</p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+              }}
+            >
               <input
                 value={form.phone1}
                 onChange={(e) => {
                   const val = e.target.value;
-                  setForm({ ...form, phone1: val });
-                  if (val.length === 3) phone2Ref.current?.focus();
+
+                  setForm({
+                    ...form,
+                    phone1: val,
+                  });
+
+                  if (val.length === 3) {
+                    phone2Ref.current?.focus();
+                  }
                 }}
                 maxLength={3}
                 placeholder="010"
               />
+
               <input
                 ref={phone2Ref}
                 value={form.phone2}
                 onChange={(e) => {
                   const val = e.target.value;
-                  setForm({ ...form, phone2: val });
-                  if (val.length === 4) phone3Ref.current?.focus();
+
+                  setForm({
+                    ...form,
+                    phone2: val,
+                  });
+
+                  if (val.length === 4) {
+                    phone3Ref.current?.focus();
+                  }
                 }}
                 maxLength={4}
                 placeholder="1234"
               />
+
               <input
                 ref={phone3Ref}
                 value={form.phone3}
-                onChange={(e) => setForm({ ...form, phone3: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    phone3: e.target.value,
+                  })
+                }
                 maxLength={4}
                 placeholder="5678"
               />
             </div>
+
             <button
               onClick={() => {
                 const phone = `${form.phone1}${form.phone2}${form.phone3}`;
+
                 validator.phoneNumber(phone, (ok) =>
                   ok ? setStage(4) : alert('전화번호 형식이 올바르지 않습니다.'),
                 );
@@ -281,22 +417,36 @@ export default function AuthClient() {
         {stage === 4 && (
           <div style={{ marginTop: '0vh' }}>
             <p>단과대학 소속 입력</p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+              }}
+            >
               <select onChange={(e) => setCollege(e.target.value)} value={college}>
                 <option value="">단과대학 선택</option>
+
                 {[...new Set(majors.map((m) => m.college))].map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
               </select>
+
               <select
-                onChange={(e) => setForm({ ...form, major_id: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    major_id: e.target.value,
+                  })
+                }
                 value={form.major_id}
               >
                 <option value="">학과/학부 선택</option>
+
                 {majors
-                  .filter((m) => m.college == college)
+                  .filter((m) => m.college === college)
                   .map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.major_name}
@@ -304,6 +454,7 @@ export default function AuthClient() {
                   ))}
               </select>
             </div>
+
             <p className={`${styles.PolicyLink} ${styles.agree}`}>
               회원 가입 시{' '}
               <a
@@ -315,22 +466,27 @@ export default function AuthClient() {
               </a>
               에 동의합니다.
             </p>
+
             <button
               type="button"
               className={`${styles.SignupBtn} ${signupBusy ? styles['is-disabled'] : ''}`}
               onClick={async () => {
                 if (signupBusy) return;
+
                 setSignupBusy(true);
+
                 if (!college) {
                   alert('단과대학을 선택하세요.');
                   setSignupBusy(false);
                   return;
                 }
+
                 if (!form.major_id) {
                   alert('학과/학부를 선택하세요.');
                   setSignupBusy(false);
                   return;
                 }
+
                 try {
                   await handleSubmit();
                 } finally {

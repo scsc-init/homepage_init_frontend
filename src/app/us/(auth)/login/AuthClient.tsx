@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
@@ -20,15 +20,28 @@ const IN_APP_BROWSER_NAMES = {
   line: '라인',
 };
 
-function log(event, data = {}) {
+type AuthClientProps = {
+  initialRedirect?: string | null;
+  snuEmailCheck?: boolean;
+};
+
+type PendingMode = 'snu' | 'external' | null;
+
+function log(event: string, data: Record<string, unknown> = {}) {
   try {
-    const body = JSON.stringify({ event, data, ts: new Date().toISOString() });
+    const body = JSON.stringify({
+      event,
+      data,
+      ts: new Date().toISOString(),
+    });
     const url = '/api/log';
+
     if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
       const blob = new Blob([body], { type: 'application/json' });
       navigator.sendBeacon(url, blob);
       return;
     }
+
     fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -38,12 +51,15 @@ function log(event, data = {}) {
   } catch {}
 }
 
-export default function AuthClient({ initialRedirect = null, snuEmailCheck = false }) {
+export default function AuthClient({
+  initialRedirect = null,
+  snuEmailCheck = false,
+}: AuthClientProps) {
   const { me } = useMe();
   const [inAppWarning, setInAppWarning] = useState(false);
-  const [pendingMode, setPendingMode] = useState(null);
+  const [pendingMode, setPendingMode] = useState<PendingMode>(null);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
-  const handledErrorRef = useRef(null);
+  const handledErrorRef = useRef<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
@@ -64,21 +80,28 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
       handledErrorRef.current = null;
       return;
     }
+
     if (handledErrorRef.current === error) return;
+
     handledErrorRef.current = error;
+
     switch (error) {
       case 'invalid_email':
         alert('SNU 구글 계정(@snu.ac.kr)으로만 로그인할 수 있습니다.');
         break;
+
       case 'snu_external_login':
         alert('서울대학교 계정은 위의 SNU 로그인 버튼을 이용해주세요.');
         break;
+
       case 'no_information':
         alert('구글 계정에 등록된 정보가 올바르지 않습니다.');
         break;
+
       default:
         alert('로그인이 실패했습니다. 다시 시도해주세요.');
     }
+
     try {
       const url = new URL(window.location.href);
       url.searchParams.delete('error');
@@ -95,6 +118,7 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
 
     for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
       const re = new RegExp(`\\b${key}\\b`);
+
       if (re.test(ua)) {
         setInAppWarning(true);
         setInAppBrowserName(name);
@@ -113,41 +137,51 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
             height={670}
             loading="eager"
           />
+
           <div className={styles['main-subtitle__login']}>
             Seoul National University Computer Study Club
           </div>
         </div>
+
         {mounted && inAppWarning && (
           <>
             <div className={styles['warning-wrapper']}>
               <h3 style={{ marginBottom: '0px' }}>
                 <strong>{inAppBrowserName}</strong> 브라우저에서는
               </h3>
+
               <h3 style={{ marginTop: '0px' }}>
                 <strong>로그인</strong>이 실패할 수 있습니다
               </h3>
+
               <p style={{ marginBottom: '20px' }}>
                 인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부
                 브라우저를 이용하면 더 안전합니다.
               </p>
             </div>
+
             <div className={styles['copy-button-wrapper']}>
               <CopyButton link="scsc.dev" label="외부 브라우저 링크 복사" />
             </div>
+
             <div className={styles['copy-button-wrapper']}>
               <InAppBrowserOutButton />
             </div>
           </>
         )}
+
         <p className={styles['login-description']}>SNU 구글 계정으로 로그인/회원가입</p>
+
         <div className={styles['google-signin-button-wrapper']}>
           <button
             type="button"
             className={styles['GoogleLoginBtn']}
             onClick={async () => {
               if (pendingMode) return;
+
               setPendingMode('snu');
               log('click_login_button', { provider: 'google' });
+
               await signIn(
                 'google',
                 { callbackUrl: '/us/login/callback?mode=snu' },
@@ -166,6 +200,7 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
                 <path d="M24 47c6.5 0 12.1-2.1 16.1-5.8l-7.1-5.5c-2 1.3-4.6 2.1-9 2.1-6.3 0-11.6-5.4-13.2-10.2l-7.9 6.1C6.7 41.7 14.7 47 24 47z" />
               </svg>
             </span>
+
             <span className={styles['GoogleLoginText']}>Google 계정으로 로그인</span>
           </button>
         </div>
@@ -176,8 +211,10 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
             className={`${styles.GoogleLoginBtn} ${styles.ExternalLoginLinkButton}`}
             onClick={async () => {
               if (pendingMode) return;
+
               setPendingMode('external');
               log('click_external_login_button', { provider: 'google' });
+
               await signIn('google', {
                 callbackUrl: '/us/login/callback?mode=external',
               });
@@ -194,6 +231,7 @@ export default function AuthClient({ initialRedirect = null, snuEmailCheck = fal
                 <path d="M24 47c6.5 0 12.1-2.1 16.1-5.8l-7.1-5.5c-2 1.3-4.6 2.1-9 2.1-6.3 0-11.6-5.4-13.2-10.2l-7.9 6.1C6.7 41.7 14.7 47 24 47z" />
               </svg>
             </span>
+
             <span className={styles['GoogleLoginText']}>외부회원으로 로그인/회원가입</span>
           </button>
         </div>
