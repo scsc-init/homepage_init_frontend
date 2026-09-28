@@ -1,5 +1,22 @@
 'use client';
 
+type AttachmentRef = string | { file_id?: string; id?: string };
+type Article = {
+  id: number;
+  title: string;
+  content: string | null;
+  created_at: string;
+  attachments: AttachmentRef[];
+  is_deleted?: boolean;
+};
+type FileMetadata = {
+  id: string;
+  file_id?: string;
+  original_filename?: string;
+  mime_type?: string;
+};
+type BoardViewProps = { board: { id: number }; sortOrder: 'latest' | 'oldest' | 'title' };
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -10,9 +27,9 @@ import styles from './board.module.css';
 
 const METADATA_CHUNK_SIZE = 30;
 
-export default function FileBoardView({ board, sortOrder }) {
-  const [articles, setArticles] = useState(null);
-  const [metadataMap, setMetadataMap] = useState({});
+export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
+  const [articles, setArticles] = useState<Article[] | null>(null);
+  const [metadataMap, setMetadataMap] = useState<Record<string, FileMetadata>>({});
   const [unauthorized, setUnauthorized] = useState(false);
 
   const boardId = board?.id;
@@ -32,7 +49,7 @@ export default function FileBoardView({ board, sortOrder }) {
           setUnauthorized(true);
           return;
         }
-        const data = await res.json();
+        const data: Article[] = await res.json();
         setArticles(Array.isArray(data) ? data : []);
       } catch (_) {
         setUnauthorized(true);
@@ -70,7 +87,7 @@ export default function FileBoardView({ board, sortOrder }) {
 
     const fetchMetadata = async () => {
       try {
-        const next = {};
+        const next: Record<string, FileMetadata> = {};
 
         for (let i = 0; i < attachmentIds.length; i += METADATA_CHUNK_SIZE) {
           const params = new URLSearchParams();
@@ -79,7 +96,7 @@ export default function FileBoardView({ board, sortOrder }) {
             .forEach((id) => params.append('ids', id));
 
           const res = await fetchBackendClient(`/api/file/metadata?${params.toString()}`);
-          const data = await res.json().catch(() => []);
+          const data: FileMetadata[] = await res.json().catch(() => []);
           if (!res.ok || cancelled) return;
 
           (Array.isArray(data) ? data : []).forEach((item) => {
@@ -112,8 +129,10 @@ export default function FileBoardView({ board, sortOrder }) {
   if (!Array.isArray(articles)) return <LoadingSpinner />;
 
   const sortedArticles = [...articles].sort((a, b) => {
-    if (sortOrder === 'latest') return new Date(b.created_at) - new Date(a.created_at);
-    if (sortOrder === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+    if (sortOrder === 'latest')
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    if (sortOrder === 'oldest')
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
     if (sortOrder === 'title') return a.title.localeCompare(b.title);
     return 0;
   });
@@ -133,7 +152,7 @@ export default function FileBoardView({ board, sortOrder }) {
         );
 
         const primaryId = ids[0];
-        const primaryMeta = primaryId ? metadataMap[primaryId] : null;
+        const primaryMeta = primaryId ? metadataMap[primaryId] : undefined;
         const primaryName = primaryMeta?.original_filename || primaryId || '첨부파일';
         const primaryHref = primaryId ? getAttachmentDownloadUrl(primaryId, primaryMeta) : '';
         const preview = String(article.content || '')

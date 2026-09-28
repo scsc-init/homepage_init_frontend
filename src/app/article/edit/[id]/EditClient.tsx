@@ -1,5 +1,15 @@
 'use client';
 
+type AttachmentRef = string | { file_id?: string; id?: string };
+type Article = {
+  title: string;
+  author_id: string;
+  board_id: number;
+  content: string | null;
+  attachments: AttachmentRef[];
+};
+type ArticleFormValues = { title: string; editor: string };
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -11,15 +21,25 @@ import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 
+// Preserve the existing optional event calls during the TypeScript migration.
+// App Router does not supply these events; this type does not add them at runtime.
+type RouterWithOptionalEvents = ReturnType<typeof useRouter> & {
+  events?: {
+    emit?: (event: 'routeChangeError') => void;
+    on?: (event: 'routeChangeStart', handler: () => void) => void;
+    off?: (event: 'routeChangeStart', handler: () => void) => void;
+  };
+};
+
 const Editor = dynamic(() => import('@/components/form-control/EditorWrapper'), { ssr: false });
 
-export default function EditClient({ articleId }) {
-  const router = useRouter();
+export default function EditClient({ articleId }: { articleId: string }) {
+  const router = useRouter() as RouterWithOptionalEvents;
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [loading, setLoading] = useState(true);
-  const [boardId, setBoardId] = useState(null);
+  const [boardId, setBoardId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [attachmentIds, setAttachmentIds] = useState([]);
+  const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
   const isFormSubmitted = useRef(false);
 
   const {
@@ -28,7 +48,7 @@ export default function EditClient({ articleId }) {
     setValue,
     watch,
     formState: { isDirty },
-  } = useForm({ defaultValues: { title: '', editor: '' } });
+  } = useForm<ArticleFormValues>({ defaultValues: { title: '', editor: '' } });
 
   const content = watch('editor');
 
@@ -44,7 +64,7 @@ export default function EditClient({ articleId }) {
       try {
         const articleRes = await fetchBackendClient(`/api/article/${articleId}`);
         if (!articleRes.ok) throw new Error();
-        const article = await articleRes.json();
+        const article: Article = await articleRes.json();
 
         if (user.id !== article.author_id) {
           alert('작성자만 수정할 수 있습니다.');
@@ -75,7 +95,7 @@ export default function EditClient({ articleId }) {
   }, [router, articleId, setValue, user, isMeLoading, isUnauthenticated]);
 
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (!isFormSubmitted.current && isDirty) {
         e.preventDefault();
         e.returnValue = '';
@@ -98,7 +118,7 @@ export default function EditClient({ articleId }) {
     };
   }, [isDirty, router]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: ArticleFormValues) => {
     setSubmitting(true);
     try {
       const res = await fetchBackendClient(`/api/article/update/${articleId}`, {
@@ -107,7 +127,7 @@ export default function EditClient({ articleId }) {
         body: JSON.stringify({
           title: data.title,
           content: data.editor,
-          board_id: parseInt(boardId ?? 0),
+          board_id: parseInt(String(boardId ?? 0)),
           attachments: Array.isArray(attachmentIds) ? attachmentIds : [],
         }),
       });
@@ -128,7 +148,7 @@ export default function EditClient({ articleId }) {
         throw new Error(errText);
       }
     } catch (e) {
-      alert(e.message || '네트워크 오류');
+      alert((e as { message?: string }).message || '네트워크 오류');
     } finally {
       setSubmitting(false);
     }

@@ -1,4 +1,15 @@
 'use client';
+type ArticleFormValues = { title: string; editor: string };
+type WriteEditorProps = {
+  boardInfo?: unknown;
+  onSubmit: (data: {
+    title: string;
+    editor: string;
+    attachments: string[];
+  }) => void | Promise<void>;
+  submitting: boolean;
+  onDirtyChange?: (dirty: boolean) => void;
+};
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AttachmentUploader from '@/components/form-control/AttachmentUploader';
@@ -6,23 +17,27 @@ import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import styles from './page.module.css';
 
-export default function WriteEditorStandard({ onSubmit, submitting, onDirtyChange }) {
+export default function WriteEditorStandard({
+  onSubmit,
+  submitting,
+  onDirtyChange,
+}: WriteEditorProps) {
   const {
     register,
     handleSubmit,
     control,
     formState: { isDirty },
-  } = useForm({
+  } = useForm<ArticleFormValues>({
     defaultValues: { title: '', editor: '' },
   });
 
-  const [attachmentIds, setAttachmentIds] = useState([]);
+  const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
 
   useEffect(() => {
     onDirtyChange?.(isDirty || attachmentIds.length > 0);
   }, [attachmentIds.length, isDirty, onDirtyChange]);
 
-  const handleInternalSubmit = (data) => {
+  const handleInternalSubmit = (data: ArticleFormValues) => {
     onSubmit({
       ...data,
       attachments: attachmentIds,
