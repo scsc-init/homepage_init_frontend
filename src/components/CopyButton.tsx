@@ -1,9 +1,12 @@
 'use client';
 import styles from './CopyButton.module.css';
 
-export default function CopyButton(props) {
-  const { link, label = '복사' } = props;
+type CopyButtonProps = {
+  link: string;
+  label?: string;
+};
 
+export default function CopyButton({ link, label = '복사' }: CopyButtonProps) {
   const handleClick = () => {
     if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(link).catch((err) => {

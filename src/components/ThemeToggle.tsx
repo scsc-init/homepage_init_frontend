@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import '@/styles/theme.css';
 import styles from './ThemeToggle.module.css';
 
-function setCookie(name, value, days = 365) {
+function setCookie(name: string, value: string, days = 365): void {
   if (typeof document === 'undefined') return;
   const maxAge = days * 24 * 60 * 60;
   const secure =
@@ -12,9 +12,13 @@ function setCookie(name, value, days = 365) {
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
 }
 
-export default function ThemeToggle({ initialDark }) {
+type ThemeToggleProps = {
+  initialDark?: boolean;
+};
+
+export default function ThemeToggle({ initialDark }: ThemeToggleProps) {
   const [dark, setDark] = useState(typeof initialDark === 'boolean' ? initialDark : true);
-  const animTimer = useRef(null);
+  const animTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -38,7 +42,7 @@ export default function ThemeToggle({ initialDark }) {
       const ms = raw.endsWith('ms') ? value : value * 1000;
       animTimer.current = setTimeout(() => {
         html.classList.remove('theme-animating');
-        animTimer.current = null;
+        animTimer.current = undefined;
       }, ms + 50);
     });
   };
