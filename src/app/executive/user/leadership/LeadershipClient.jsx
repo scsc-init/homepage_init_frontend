@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ExecutiveUserTable } from '../UserList';
-import * as AdminLayout from '@/components/AdminLayout';
+import { ExecutiveUserTable } from './ExecutiveUserTable';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function LeadershipClient({ users, majors }) {
   const [debugMessage, setDebugMessage] = useState('');

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { SEMESTER_MAP } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 import { getKvClient, setKvClient } from '@/util/fetch/client-util';
 
 const ENROLLMENT_POLICY_KV_KEY = `enrollment_grant_until`;

@@ -94,6 +94,7 @@ export const headerMenuData: HeaderMenuSection[] = [
     title: 'SIG/PIG',
     items: [
       { label: 'SIG', url: '/sig' },
+      { label: '소모임', url: '/small-group' },
       { label: 'PIG', url: '/pig' },
     ],
   },
@@ -160,7 +161,7 @@ export const footerLogoData: FooterLogoItem[] = [
 /**
  * 푸터가 표시되지 않는 라우트의 리스트입니다.
  */
-export const hideFooterRoutes: string[] = ['/', '/us/login', '/signup', '/about/my-page'];
+export const hideFooterRoutes: string[] = ['/us/login', '/signup', '/about/my-page'];
 
 /**
  * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
@@ -230,6 +231,11 @@ export const SIG_ADMISSION_LABEL_MAP: Record<string, string> = {
   always: '항상 가입 받기',
   during_recruiting: 'SIG 가입 기간에만 가입 받기',
   never: '항상 가입 받지 않기',
+};
+
+export const SMALL_GROUP_ADMISSION_LABEL_MAP: Record<string, string> = {
+  ...SIG_ADMISSION_LABEL_MAP,
+  during_recruiting: '소모임 가입 기간에만 가입 받기',
 };
 
 /*
@@ -308,6 +314,7 @@ export const ALLOWED_REDIRECT_PREFIXES: string[] = [
   '/board',
   '/article',
   '/sig',
+  '/small-group',
   '/pig',
   '/us/edit-user-info',
   '/about',

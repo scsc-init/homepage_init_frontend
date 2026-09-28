@@ -1,0 +1,196 @@
+'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
+import { getKvsClient } from '@/util/fetch/client-util';
+import { useEffect, useRef, useState } from 'react';
+import {
+  minExecutiveLevel,
+  excludedExecutiveEmails,
+  DEFAULT_EXECUTIVE_PFP,
+} from '@/util/constants';
+import { resolveProfileImage } from '@/util/profileImage';
+import styles from '../about.module.css';
+import type { ExecutiveCandidate } from '@/types/user';
+
+type LeadershipIds = {
+  presidentId: string | null;
+  vicePresidentIds: string | null;
+};
+
+type NormalizedExecutive = ReturnType<typeof normUser>;
+
+type Executive = Omit<NormalizedExecutive, 'level'> & {
+  roleNum: number;
+  role: string;
+};
+
+function roleDisplay(user: NormalizedExecutive, leadershipIds: LeadershipIds) {
+  if (!user) return '임원';
+  const { presidentId, vicePresidentIds } = leadershipIds || {};
+  const userId = String(user.id ?? '').trim();
+  const presidentKey = String(presidentId ?? '').trim();
+  const vicePresidentKey = String(vicePresidentIds ?? '')
+    .trim()
+    .split(';');
+  if (presidentKey && userId === presidentKey) return '회장';
+  if (vicePresidentKey && vicePresidentKey.includes(userId)) return '부회장';
+  return '임원';
+}
+
+function normUser(u: ExecutiveCandidate) {
+  const email = u?.email || '';
+  const name = u?.name || email || '';
+  const id = u?.id || email || name;
+  const level = Number.isFinite(Number(u?.role)) ? Number(u.role) : 0;
+  const image = resolveProfileImage(u, DEFAULT_EXECUTIVE_PFP);
+  return { id, name, email, level, image };
+}
+
+export default function ExecutivesClient() {
+  const [people, setPeople] = useState<Executive[]>([]);
+  const [centerIndex, setCenterIndex] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const autoRef = useRef<ReturnType<typeof setInterval>>();
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [execRes, kvValues] = await Promise.all([
+          fetchBackendClient('/api/user/executives', { cache: 'no-store' }),
+          getKvsClient(['main-president', 'vice-president']).catch(() => []),
+        ]);
+
+        if (!execRes.ok) throw new Error('failed');
+
+        const execJson = await execRes.json();
+
+        const [presidentValue, vicePresidentValue] = Array.isArray(kvValues) ? kvValues : [];
+        const leadership = {
+          presidentId: presidentValue || null,
+          vicePresidentIds: vicePresidentValue || null,
+        };
+
+        const raw: ExecutiveCandidate[] = Array.isArray(execJson) ? execJson : [];
+
+        const excludedSet = new Set(
+          excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
+        );
+
+        const normalized = raw
+          .map(normUser)
+          .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
+          .filter((u) => u.level >= minExecutiveLevel);
+
+        const dedup: NormalizedExecutive[] = [];
+        const seen = new Set<string>();
+        for (const u of normalized) {
+          const key = String(u.id || u.email || '').trim();
+          if (!key) continue;
+          if (!seen.has(key)) {
+            seen.add(key);
+            dedup.push(u);
+          }
+        }
+
+        const mapped = dedup.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          roleNum: u.level,
+          role: roleDisplay(u, leadership),
+          image: u.image || DEFAULT_EXECUTIVE_PFP,
+        }));
+
+        const prez = mapped.filter((p) => p.role === '회장');
+        const vprez = mapped.filter((p) => p.role === '부회장');
+        const others = mapped
+          .filter((p) => p.role === '임원')
+          .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+        setPeople([...prez, ...vprez, ...others]);
+        setCenterIndex(0);
+      } catch {
+        setPeople([]);
+      }
+    };
+
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (!hovered && people.length > 1) {
+      autoRef.current = setInterval(() => setCenterIndex((p) => (p + 1) % people.length), 4000);
+    }
+    return () => clearInterval(autoRef.current);
+  }, [hovered, people.length]);
+
+  const total = people.length;
+
+  const positionClass = (idx: number) => {
+    if (!total) return 'hidden';
+    const offset = (idx - centerIndex + total) % total;
+    if (offset === 0) return styles.carouselCardCenter;
+    if (offset === 1 || offset === -total + 1) return styles.carouselCardRight1;
+    if (offset === 2 || offset === -total + 2) return styles.carouselCardRight2;
+    if (offset === total - 1) return styles.carouselCardLeft1;
+    if (offset === total - 2) return styles.carouselCardLeft2;
+    return '';
+  };
+
+  return (
+    <>
+      <div
+        className={styles.carouselWrapper}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div className={styles.carouselCentered}>
+          {people.map((person, idx) => (
+            <div
+              className={`${styles.carouselCard} ${positionClass(idx)}`}
+              key={person.id || idx}
+              style={{ transition: 'transform 0.6s ease, opacity 0.6s ease' }}
+            >
+              <div className={styles.imageWrapper}>
+                <img
+                  src={person.image || DEFAULT_EXECUTIVE_PFP}
+                  alt={person.name}
+                  className={styles.image}
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <h3>{person.name}</h3>
+              <p className={styles.roleText}>{person.role}</p>
+            </div>
+          ))}
+        </div>
+        <div className={styles.carouselDots}>
+          {people.map((_, i) => (
+            <div
+              key={i}
+              className={`${styles.carouselDot} ${i === centerIndex ? styles.carouselDotActive : ''}`}
+              onClick={() => setCenterIndex(i)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.masonry}>
+        {people.map((person, i) => (
+          <div className={styles.masonryCard} key={person.id || i}>
+            <div className={styles.imageWrapper}>
+              <img
+                src={person.image || DEFAULT_EXECUTIVE_PFP}
+                alt={person.name}
+                className={styles.image}
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <h3>{person.name}</h3>
+            <p className={styles.roleText}>{person.role}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}

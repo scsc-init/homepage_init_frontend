@@ -14,6 +14,12 @@ const LABELS = {
     leaveSuccess: 'SIG 탈퇴 성공!',
     leaveFailure: 'SIG 탈퇴 실패: ',
   },
+  'small-group': {
+    joinSuccess: '소모임 가입 성공!',
+    joinFailure: '소모임 가입 실패: ',
+    leaveSuccess: '소모임 탈퇴 성공!',
+    leaveFailure: '소모임 탈퇴 실패: ',
+  },
   pig: {
     joinSuccess: 'PIG 가입 성공!',
     joinFailure: 'PIG 가입 실패: ',

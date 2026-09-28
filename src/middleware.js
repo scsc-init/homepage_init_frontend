@@ -121,15 +121,17 @@ const publicRoutes = [
   '/about/developers',
   '/about/rules',
   '/sig',
+  '/small-group',
   '/pig',
   '/us/contact',
+  '/us/contact/developer',
   '/us/login',
   '/us/login/callback',
   '/us/register',
   '/us/external-register',
 ];
 
-const publicRoutePatterns = [/^\/(sig|pig)\/\d+$/];
+const publicRoutePatterns = [/^\/(sig|small-group|pig)\/\d+$/];
 
 function isPublicRoute(pathname) {
   return (
@@ -150,6 +152,7 @@ export const config = {
     '/err/:path*',
     '/executive/:path*',
     '/sig/:path*',
+    '/small-group/:path*',
     '/pig/:path*',
     '/testutils/:path*',
     '/us/:path*',

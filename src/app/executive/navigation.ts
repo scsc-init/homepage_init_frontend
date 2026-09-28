@@ -68,12 +68,17 @@ export const EXECUTIVE_NAV_GROUPS: ExecutiveNavGroup[] = [
     ],
   },
   {
-    title: 'SIG/PIG',
+    title: 'SIG/소모임/PIG',
     items: [
       {
         title: 'SIG 관리',
         description: 'SIG 목록과 구성원을 관리합니다.',
         href: '/executive/sig',
+      },
+      {
+        title: '소모임 관리',
+        description: '소모임 목록과 구성원을 관리합니다.',
+        href: '/executive/small-group',
       },
       {
         title: 'PIG 관리',

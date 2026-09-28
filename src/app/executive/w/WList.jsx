@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import { utc2kst } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function WList({ wMetas }) {
   const [isBusy, setIsBusy] = useState(false);

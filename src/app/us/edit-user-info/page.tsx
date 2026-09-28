@@ -1,0 +1,352 @@
+'use client';
+
+import { fetchBackendClient } from '@/util/fetch/client';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import * as validator from '@/util/validator';
+import PfpUpdate from './PfpUpdate';
+import styles from './page.module.css';
+import { oldboyLevel } from '@/util/constants';
+import { useMe } from '@/util/hooks/useMe';
+import { pushLoginWithRedirect } from '@/util/loginRedirect';
+
+type Major = {
+  id: number;
+  college: string;
+  major_name: string;
+};
+
+type ErrorResponse = {
+  detail?: string;
+};
+
+function EditUserInfoClient() {
+  const router = useRouter();
+  const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
+
+  const [form, setForm] = useState({
+    name: '',
+    kakao_name: '',
+    phone: '',
+    student_id: '',
+    major_id: '',
+    profile_picture: '',
+  });
+
+  const [majors, setMajors] = useState<Major[]>([]);
+  const [userRole, setUserRole] = useState<number | null>(null);
+  const [oldboyApplicant, setOldboyApplicant] = useState<unknown>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isMeLoading) return;
+
+    if (isUnauthenticated || !me) {
+      alert('로그인이 필요합니다.');
+      pushLoginWithRedirect(router);
+      return;
+    }
+
+    // Populate own info and enable the form immediately from the session,
+    // so values show and buttons are clickable without waiting on the network.
+    setForm({
+      name: me.name || '',
+      kakao_name: me.kakao_name || '',
+      phone: me.phone || '',
+      student_id: me.student_id || '',
+      major_id: me.major_id?.toString() || '',
+      profile_picture: me.profile_picture || '',
+    });
+
+    setUserRole(me.role);
+    setLoading(false);
+
+    // Load majors (dropdown options) and oldboy state in the background.
+    const fetchData = async () => {
+      const [resMajors, resOldboy] = await Promise.all([
+        fetchBackendClient('/api/majors'),
+        fetchBackendClient('/api/user/oldboy/applicant'),
+      ]);
+
+      const majorList: Major[] = resMajors.ok ? ((await resMajors.json()) as Major[]) : [];
+
+      setMajors(majorList);
+
+      if (!resMajors.ok) {
+        console.warn('Failed to load majors');
+      }
+
+      if (resOldboy.ok) {
+        const applicant: unknown = await resOldboy.json();
+        setOldboyApplicant(applicant);
+      }
+    };
+
+    fetchData();
+  }, [router, me, isMeLoading, isUnauthenticated]);
+
+  const handleSubmit = async () => {
+    const { name, kakao_name, phone, student_id, major_id } = form;
+    const errors: string[] = [];
+
+    validator.name(name, (ok) => {
+      if (!ok) errors.push('이름이 올바르지 않습니다.');
+    });
+
+    validator.phoneNumber(phone, (ok) => {
+      if (!ok) errors.push('전화번호 형식이 올바르지 않습니다.');
+    });
+
+    validator.studentID(student_id, (ok) => {
+      if (!ok) errors.push('학번 형식이 올바르지 않습니다.');
+    });
+
+    if (errors.length) {
+      alert(errors[0]);
+      return;
+    }
+
+    setLoading(true);
+
+    const res = await fetchBackendClient('/api/user/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        kakao_name,
+        phone,
+        student_id,
+        major_id: Number(major_id),
+      }),
+    });
+
+    setLoading(false);
+
+    if (res.status === 204) {
+      alert('정보가 수정되었습니다.');
+      router.push('/about/my-page');
+    } else if (res.status === 409) {
+      alert('이미 사용 중인 전화번호 또는 학번입니다.');
+    } else if (res.status === 422) {
+      alert('입력값이 올바르지 않습니다.');
+    } else {
+      alert('수정에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleDelete = async () => {
+    const ok = confirm('정말 휴회원 처리하시겠습니까?');
+
+    if (!ok) return;
+
+    setLoading(true);
+
+    const res = await fetchBackendClient('/api/user/delete', {
+      method: 'POST',
+    });
+
+    setLoading(false);
+
+    if (res.status === 204) {
+      alert('휴회원으로 전환되었습니다.');
+      router.push('/about/my-page');
+    } else if (res.status === 403) {
+      const data = (await res.json()) as ErrorResponse;
+      alert(`잘못된 접근입니다: ${data.detail ?? ''}`);
+    } else {
+      alert('수정에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleOBRegister = async () => {
+    const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
+
+    if (!ok) return;
+
+    setLoading(true);
+
+    const res = await fetchBackendClient('/api/user/oldboy/register', {
+      method: 'POST',
+    });
+
+    setLoading(false);
+
+    if (res.status === 201) {
+      alert('졸업생 전환 신청이 완료되었습니다.');
+      router.push('/about/my-page');
+    } else if (res.status === 400) {
+      alert('졸업생 전환 신청 자격이 없습니다.');
+    } else if (res.status === 409) {
+      alert('이미 졸업생 전환 신청을 완료했습니다.');
+    } else {
+      alert('신청에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleOBUnregister = async () => {
+    const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
+
+    if (!ok) return;
+
+    setLoading(true);
+
+    const res = await fetchBackendClient('/api/user/oldboy/unregister', {
+      method: 'POST',
+    });
+
+    setLoading(false);
+
+    if (res.status === 204) {
+      alert('졸업생 전환 신청 취소가 완료되었습니다.');
+      router.push('/about/my-page');
+    } else if (res.status === 400) {
+      alert(
+        '이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.',
+      );
+    } else if (res.status === 404) {
+      alert('졸업생 전환 신청을 하지 않았습니다.');
+    } else {
+      alert('신청 취소에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleOBReactivate = async () => {
+    const ok = confirm(
+      '정말 정회원으로 전환하시겠습니까? 전환 후 회비를 납부해야 전환이 완료됩니다.',
+    );
+
+    if (!ok) return;
+
+    setLoading(true);
+
+    const res = await fetchBackendClient('/api/user/oldboy/reactivate', {
+      method: 'POST',
+    });
+
+    setLoading(false);
+
+    if (res.status === 204) {
+      alert('정회원 전환 신청이 완료되었습니다. 회비를 납부해야 정회원 전환이 완료됩니다.');
+      router.push('/about/welcome');
+    } else if (res.status === 400) {
+      alert('졸업생이 아니어서 정회원으로 전환할 수 없습니다.');
+    } else {
+      alert('신청에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  return (
+    <div className={styles.editUserInfo}>
+      <h2>내 정보 수정</h2>
+
+      <img
+        src={form.profile_picture || '/asset/default-pfp.webp'}
+        alt="Profile"
+        className={styles['user-profile-picture']}
+        width={50}
+        height={50}
+      />
+
+      <PfpUpdate />
+
+      <div className={styles.userData}>
+        <label>이름</label>
+        <input type="text" value={form.name} disabled />
+
+        <label>카톡 프로필 이름</label>
+        <input
+          type="text"
+          value={form.kakao_name}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              kakao_name: e.target.value,
+            })
+          }
+          placeholder="본명과 같으면 비워두세요"
+        />
+
+        <label>전화번호</label>
+        <input
+          type="text"
+          value={form.phone}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              phone: e.target.value,
+            })
+          }
+          placeholder="01012345678"
+        />
+
+        <label>학번</label>
+        <input
+          type="text"
+          value={form.student_id}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              student_id: e.target.value,
+            })
+          }
+          placeholder="202512345"
+        />
+
+        <label>전공</label>
+        <select
+          value={form.major_id}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              major_id: e.target.value,
+            })
+          }
+        >
+          <option value="">전공 선택</option>
+
+          {majors.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.college} - {m.major_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className={styles.editUserInfoButton}>
+        <button onClick={handleSubmit} disabled={loading}>
+          저장하기
+        </button>
+
+        <button onClick={handleDelete} disabled={loading}>
+          휴회원으로 전환
+        </button>
+
+        {userRole === oldboyLevel ? (
+          <button onClick={handleOBReactivate} disabled={loading}>
+            정회원 전환 신청
+          </button>
+        ) : oldboyApplicant === null ? (
+          <button onClick={handleOBRegister} disabled={loading}>
+            졸업생 전환 신청
+          </button>
+        ) : (
+          <button onClick={handleOBUnregister} disabled={loading}>
+            졸업생 전환 신청 취소
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function EditUserInfoPage() {
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.home}>
+        <div className={styles.editUserInfoContainer}>
+          <EditUserInfoClient />
+        </div>
+      </div>
+    </div>
+  );
+}

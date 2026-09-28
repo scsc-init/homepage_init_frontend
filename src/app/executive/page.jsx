@@ -2,7 +2,7 @@ import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
 import { fetchGlobalStatus, fetchDiscordBotStatus } from '@/util/fetch/server-util';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default async function AdminPanel() {
   const [scscGlobalStatus, discordBotStatus] = await Promise.allSettled([

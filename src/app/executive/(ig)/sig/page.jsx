@@ -1,5 +1,5 @@
 import IgListPage from '../components/listview/IgListPage';
 
 export default function ExecutiveSigPage() {
-  return <IgListPage igType="SIG" />;
+  return <IgListPage igType="sig" />;
 }

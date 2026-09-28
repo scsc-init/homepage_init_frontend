@@ -2,7 +2,7 @@
 
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 function TrxRecord({ record }) {
   return (

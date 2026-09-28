@@ -1,5 +1,5 @@
 import IgDetailPage from '../../components/detail/IgDetailPage';
 
 export default function ExecutiveSigDetailPage({ params }) {
-  return <IgDetailPage params={params} igType="SIG" />;
+  return <IgDetailPage params={params} igType="sig" />;
 }

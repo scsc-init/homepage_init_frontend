@@ -1,0 +1,208 @@
+.pageRoot {
+  overflow-x: hidden;
+  background: var(--main-bg-gradient);
+  min-height: 100vh;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  color: var(--color-text-body);
+  padding: 4rem 1rem;
+}
+
+.homeContent {
+  width: 100%;
+  max-width: 60rem;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.activityBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 60rem;
+  margin: 0 auto 3rem auto;
+  padding: 2.5rem 2rem;
+  border: 2px solid var(--color-button-border);
+  border-radius: 1rem;
+  background-color: var(--color-card-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.activityBlock:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.sectionHeader {
+  color: transparent;
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+  -webkit-text-stroke: 1px var(--foreground-color);
+}
+
+.wallLogo,
+.wallLogo2 {
+  position: fixed;
+  z-index: 0;
+  background-image: url('/wall-logo.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+}
+
+.wallLogo {
+  top: 80%;
+  right: 2vw;
+  width: 18vw;
+  height: 27vw;
+  opacity: 0.8;
+  transform: translateY(-50%);
+}
+
+.wallLogo2 {
+  top: 20%;
+  left: 5vw;
+  width: 18vw;
+  height: 27vw;
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+.developerContactDescription {
+  margin: -0.5rem 0 0;
+  color: var(--color-text-body);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.developerContactForm {
+  width: 100%;
+}
+
+.developerContactFieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.developerContactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.developerContactField {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.developerContactFullWidth {
+  grid-column: 1 / -1;
+}
+
+.developerContactLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.developerContactInput,
+.developerContactTextarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--color-button-border);
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--color-text-body);
+  font: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.developerContactInput:focus,
+.developerContactTextarea:focus {
+  border-color: var(--foreground-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 136, 255, 0.15);
+}
+
+.developerContactTextarea {
+  min-height: 10rem;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.developerContactFooter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.developerContactSubmit {
+  padding: 0.8rem 1.5rem;
+  border: 2px solid var(--color-button-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-body);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.developerContactSubmit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.developerContactSubmit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.developerContactFeedback {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.developerContactSuccess {
+  color: #16803c;
+}
+
+.developerContactError {
+  color: #c53030;
+}
+
+@media screen and (max-width: 768px) {
+  .sectionHeader {
+    font-size: 2rem;
+  }
+
+  .developerContactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .developerContactFullWidth {
+    grid-column: auto;
+  }
+
+  .developerContactFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

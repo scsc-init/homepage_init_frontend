@@ -1,6 +1,6 @@
 // src/app/executive/user/ExportUsersButton.jsx (CLIENT)
 'use client';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 function escapeCsvValue(value) {
   if (value === null || value === undefined) return '';

@@ -1,15 +1,17 @@
 'use client';
 
-import SortDropdown from '@/components/board/SortDropdown';
+import SortDropdown from '@/components/common/SortDropdown';
+import Button from '@/components/common/Button';
 import {
   filterSigPigItemsByTags,
   SigPigTagFilter,
   SigPigTagList,
-} from '@/components/board/SigPigTags';
+} from '@/app/(ig)/components/SigPigTags';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { LuCrown } from 'react-icons/lu';
 import { useMe } from '@/util/hooks/useMe';
 import styles from './IgList.module.css';
 
@@ -44,6 +46,19 @@ export default function IgListClient({
     return 0;
   });
 
+  const myJoinedIds = new Set(
+    items
+      .filter(
+        (item) =>
+          myId &&
+          Array.isArray(item?.members) &&
+          item.members.some(
+            (member) => String(member?.user_id ?? member?.user?.id ?? '') === myId,
+          ),
+      )
+      .map((item) => String(item.id)),
+  );
+
   const myOwnedIds = new Set(
     items
       .filter((item) => item?.owner && String(item.owner) === myId)
@@ -69,9 +84,7 @@ export default function IgListClient({
         <h1 className="text-3xl font-bold">{kindLabel} 게시판</h1>
         <div className={styles.headerActions}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
-          <button
-            type="button"
-            className={styles.createButton}
+          <Button
             onClick={() => {
               setIsLoading(true);
               router.push(createHref);
@@ -79,7 +92,7 @@ export default function IgListClient({
             disabled={isLoading}
           >
             {kindLabel} 만들기
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -115,6 +128,7 @@ export default function IgListClient({
       <div className={styles.list}>
         {sortedItems.map((item) => {
           const itemKey = String(item.id);
+          const isJoined = myJoinedIds.has(itemKey);
           const isMine = myOwnedIds.has(itemKey);
           return (
             <Link
@@ -123,9 +137,25 @@ export default function IgListClient({
               prefetch={false}
               className={styles.link}
             >
-              <div className={`${styles.card} ${isMine ? styles.isMine : ''}`}>
+              <div
+                className={`${styles.card} ${isJoined ? styles.isJoined : ''} ${
+                  isMine ? styles.isMine : ''
+                }`}
+              >
                 <div className={styles.topbar}>
-                  <span className={styles.title}>{item.title}</span>
+                  <span className={styles.titleGroup}>
+                    {isMine ? (
+                      <span
+                        className={styles.ownerCrown}
+                        title={`내가 ${kindLabel}장인 ${kindLabel}`}
+                        aria-label={`내가 ${kindLabel}장인 ${kindLabel}`}
+                        role="img"
+                      >
+                        <LuCrown aria-hidden="true" />
+                      </span>
+                    ) : null}
+                    <span className={styles.title}>{item.title}</span>
+                  </span>
                   <span className={styles.userCount}>
                     {item.year}년 {SEMESTER_MAP[item.semester]}학기
                   </span>

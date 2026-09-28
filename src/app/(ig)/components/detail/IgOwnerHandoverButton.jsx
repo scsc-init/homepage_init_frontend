@@ -16,6 +16,13 @@ const LABELS = {
     success: 'SIG장 양도 성공!',
     failure: 'SIG장 양도 실패: ',
   },
+  'small-group': {
+    button: '소모임장 양도 ▼',
+    confirm: '정말 양도하시겠습니까?',
+    empty: '인원 없음',
+    success: '소모임장 양도 성공!',
+    failure: '소모임장 양도 실패: ',
+  },
   pig: {
     button: '피그장 양도 ▼',
     confirm: '정말 양도하시겠습니까?',

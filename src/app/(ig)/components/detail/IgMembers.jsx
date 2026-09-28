@@ -7,6 +7,10 @@ const MEMBER_CONFIG = {
     headingId: 'sig-members-heading',
     title: '시그 인원',
   },
+  'small-group': {
+    headingId: 'small-group-members-heading',
+    title: '소모임 인원',
+  },
   pig: {
     headingId: 'pig-members-heading',
     title: '피그 인원',

@@ -3,7 +3,7 @@ export const revalidate = 0;
 
 import Link from 'next/link';
 import WithAuthorization from '@/components/WithAuthorization';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 import ActivityLogList from './ActivityLogList';
 import { fetchUserSummaries } from '@/util/fetch/server-util';
 

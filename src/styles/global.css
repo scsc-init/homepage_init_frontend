@@ -122,17 +122,18 @@ img {
 }
 
 html.theme-animating,
-html.theme-animating *:not(svg *):not(.no-theme-anim):not(.no-theme-anim *) {
-  transition: background-color var(--theme-anim-duration) ease !important;
-}
-html.theme-animating *::before,
-html.theme-animating *::after {
-  transition: background-color var(--theme-anim-duration) ease !important;
-}
-html.theme-animating * {
-  transition-property: background-color !important;
-  transition-duration: var(--theme-anim-duration) !important;
-  transition-timing-function: ease !important;
+html.theme-animating *:not(.no-theme-anim):not(.no-theme-anim *),
+html.theme-animating *:not(.no-theme-anim):not(.no-theme-anim *)::before,
+html.theme-animating *:not(.no-theme-anim):not(.no-theme-anim *)::after {
+  transition:
+    background-color var(--theme-anim-duration) ease,
+    color var(--theme-anim-duration) ease,
+    border-color var(--theme-anim-duration) ease,
+    outline-color var(--theme-anim-duration) ease,
+    box-shadow var(--theme-anim-duration) ease,
+    filter var(--theme-anim-duration) ease,
+    fill var(--theme-anim-duration) ease,
+    stroke var(--theme-anim-duration) ease !important;
 }
 
 a {
@@ -190,48 +191,6 @@ button {
 .decorateNone {
   text-decoration: none;
   color: var(--color-text-body);
-}
-
-.AttachmentSection {
-  width: 100%;
-  overflow: hidden;
-}
-
-.AttachmentHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.AttachmentLabel {
-  font-weight: 600;
-}
-
-.AttachmentList {
-  margin-top: 10px;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 220px; /* 무제한 대비 */
-  overflow: auto;
-}
-
-.AttachmentItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 0;
-}
-
-.AttachmentLink {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
 }
 
 input[type='checkbox'] {

@@ -38,13 +38,17 @@
   border-color: var(--color-text-body);
 }
 
-.isMine {
+.isJoined {
   border-width: 1px;
   border-color: var(--color-text-subtle);
   border-left: 4px solid var(--selection-bg);
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease;
+}
+
+.isMine {
+  position: relative;
 }
 
 .header {
@@ -61,28 +65,6 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-}
-
-.createButton {
-  background-color: var(--color-button-bg);
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.createButton:hover {
-  background-color: var(--color-button-hover-bg);
-}
-
-.createButton:disabled {
-  background-color: var(--color-button-disabled-bg);
-  color: var(--color-button-disabled-text);
-  cursor: not-allowed;
-  opacity: 0.7;
-  border-color: transparent;
 }
 
 .filterSection {
@@ -170,6 +152,21 @@
   font-size: 1.08rem;
   font-weight: 650;
   color: var(--color-text-body);
+}
+
+.titleGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.ownerCrown {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: #d99a00;
+  font-size: 1.15rem;
 }
 
 .userCount {

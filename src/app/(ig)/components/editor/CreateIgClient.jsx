@@ -20,6 +20,15 @@ const CREATE_CONFIG = {
     getDefaultRolling: (status) => (status === 'active' ? 'always' : 'during_recruiting'),
     shouldWarnRolling: (status, value) => status === 'active' && !value,
   },
+  'small-group': {
+    upperLabel: '소모임',
+    storageKey: 'smallGroupForm',
+    routeBase: '/small-group',
+    tags: ['소모임'],
+    subtitle: '새로운 소모임을 만들어 보세요',
+    getDefaultRolling: (status) => (status === 'active' ? 'always' : 'during_recruiting'),
+    shouldWarnRolling: (status, value) => status === 'active' && !value,
+  },
   pig: {
     upperLabel: 'PIG',
     storageKey: 'pigForm',

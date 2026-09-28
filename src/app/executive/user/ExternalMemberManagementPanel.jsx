@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { utc2kst } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function ExternalMemberManagementPanel() {
   const [applicants, setApplicants] = useState([]);

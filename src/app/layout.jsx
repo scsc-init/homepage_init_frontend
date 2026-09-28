@@ -39,7 +39,10 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
       <head>
-        <meta name="color-scheme" content="dark light" />
+        <meta
+          name="color-scheme"
+          content={(initialDark ?? true) ? 'dark light' : 'light dark'}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

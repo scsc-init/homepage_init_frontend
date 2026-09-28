@@ -5,7 +5,7 @@ import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { STATUS_MAP } from '@/util/constants';
-import * as AdminLayout from '@/components/AdminLayout';
+import * as AdminLayout from '@/app/executive/AdminLayout';
 
 const TRANSITION_MAP_REGULAR = {
   recruiting: 'active',
@@ -88,7 +88,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               placeholder="확인 문구 입력"
             />
             <AdminLayout.AdminFlex style={{ justifyContent: 'flex-end' }}>
-              <AdminLayout.AdminButton className="outline" onClick={() => setModalOpen(false)}>
+              <AdminLayout.AdminButton variant="secondary" onClick={() => setModalOpen(false)}>
                 취소
               </AdminLayout.AdminButton>
               <AdminLayout.AdminButton
@@ -119,7 +119,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               <span style={{ fontSize: '1.2rem' }}>→</span>
               <AdminLayout.AdminButton
                 key={nextStatus}
-                className="outline"
+                variant="secondary"
                 onClick={() => saveToModal(nextStatus)}
                 disabled={saving}
               >
