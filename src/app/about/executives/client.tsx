@@ -10,8 +10,21 @@ import {
 } from '@/util/constants';
 import { resolveProfileImage } from '@/util/profileImage';
 import styles from '../about.module.css';
+import type { ExecutiveCandidate } from '@/types/user';
 
-function roleDisplay(user, leadershipIds) {
+type LeadershipIds = {
+  presidentId: string | null;
+  vicePresidentIds: string | null;
+};
+
+type NormalizedExecutive = ReturnType<typeof normUser>;
+
+type Executive = Omit<NormalizedExecutive, 'level'> & {
+  roleNum: number;
+  role: string;
+};
+
+function roleDisplay(user: NormalizedExecutive, leadershipIds: LeadershipIds) {
   if (!user) return '임원';
   const { presidentId, vicePresidentIds } = leadershipIds || {};
   const userId = String(user.id ?? '').trim();
@@ -24,7 +37,7 @@ function roleDisplay(user, leadershipIds) {
   return '임원';
 }
 
-function normUser(u) {
+function normUser(u: ExecutiveCandidate) {
   const email = u?.email || '';
   const name = u?.name || email || '';
   const id = u?.id || email || name;
@@ -34,10 +47,10 @@ function normUser(u) {
 }
 
 export default function ExecutivesClient() {
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = useState<Executive[]>([]);
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const autoRef = useRef();
+  const autoRef = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
     const load = async () => {
@@ -57,7 +70,7 @@ export default function ExecutivesClient() {
           vicePresidentIds: vicePresidentValue || null,
         };
 
-        const raw = Array.isArray(execJson) ? execJson : [];
+        const raw: ExecutiveCandidate[] = Array.isArray(execJson) ? execJson : [];
 
         const excludedSet = new Set(
           excludedExecutiveEmails.map((x) => String(x).toLowerCase()),
@@ -68,8 +81,8 @@ export default function ExecutivesClient() {
           .filter((u) => !excludedSet.has(String(u.email || '').toLowerCase()))
           .filter((u) => u.level >= minExecutiveLevel);
 
-        const dedup = [];
-        const seen = new Set();
+        const dedup: NormalizedExecutive[] = [];
+        const seen = new Set<string>();
         for (const u of normalized) {
           const key = String(u.id || u.email || '').trim();
           if (!key) continue;
@@ -113,7 +126,7 @@ export default function ExecutivesClient() {
 
   const total = people.length;
 
-  const positionClass = (idx) => {
+  const positionClass = (idx: number) => {
     if (!total) return 'hidden';
     const offset = (idx - centerIndex + total) % total;
     if (offset === 0) return styles.carouselCardCenter;

@@ -187,7 +187,11 @@ const formerDevelopersBySemester = [
   },
 ];
 
-function FormerDevelopersSection({ semesterGroups }) {
+function FormerDevelopersSection({
+  semesterGroups,
+}: {
+  semesterGroups: typeof formerDevelopersBySemester;
+}) {
   return (
     <section className={developerStyles.formerDevelopersSection}>
       <div className={developerStyles.formerDevelopersHeader}>
@@ -233,7 +237,7 @@ function FormerDevelopersSection({ semesterGroups }) {
 export default function ExecutivesClient() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const autoRef = useRef();
+  const autoRef = useRef<ReturnType<typeof setInterval>>();
   const total = executives.length;
 
   const next = useCallback(() => {
@@ -259,7 +263,7 @@ export default function ExecutivesClient() {
     trackMouse: true,
   });
 
-  const positionClass = (idx) => {
+  const positionClass = (idx: number) => {
     const offset = (idx - centerIndex + total) % total;
     if (offset === 0) return styles.carouselCardCenter;
     if (offset === 1 || offset === -total + 1) return styles.carouselCardRight1;

@@ -4,18 +4,22 @@ import { useEffect, useState } from 'react';
 import { scrollToId } from './ScrollToID';
 import styles from '@/app/about/about.module.css';
 
-export default function ClientSidebar({ className }) {
+type SidebarProps = {
+  className?: string;
+};
+
+export default function ClientSidebar({ className }: SidebarProps) {
   const [isEnd, setIsEnd] = useState(false);
 
   useEffect(() => {
     const sections = document.querySelectorAll('section');
     const lastSection = sections[sections.length - 1];
 
-    let currentSectionElement = null;
-    let track = null;
-    let activePortion = null;
-    let target = null;
-    let currentHandler = null;
+    let currentSectionElement: HTMLElement | null = null;
+    let track: HTMLDivElement | null = null;
+    let activePortion: HTMLDivElement | null = null;
+    let target: HTMLAnchorElement | null = null;
+    let currentHandler: (() => void) | null = null;
 
     const getScroller = () => {
       if (document.documentElement.scrollTop > 0) return document.documentElement;
@@ -23,7 +27,7 @@ export default function ClientSidebar({ className }) {
       return document.documentElement;
     };
 
-    const handleScrollGen = (scroller) => () => {
+    const handleScrollGen = (scroller: HTMLElement) => () => {
       if (!currentSectionElement || !activePortion) return;
 
       const scrollerRect = scroller.getBoundingClientRect();
@@ -56,19 +60,19 @@ export default function ClientSidebar({ className }) {
 
             if (target && track && activePortion) {
               if (target.contains(track)) target.removeChild(track);
-              scroller.removeEventListener('scroll', currentHandler);
+              scroller.removeEventListener('scroll', currentHandler!);
               track = null;
               activePortion = null;
             }
 
             if (entry.target === lastSection) {
               target = document.querySelector(`a[href="#${entry.target.id}"]`);
-              target.classList.add(styles.activeSectionNav);
+              target!.classList.add(styles.activeSectionNav);
               setIsEnd(true);
               return;
             }
 
-            currentSectionElement = entry.target;
+            currentSectionElement = entry.target as HTMLElement;
             const currentSectionId = entry.target.id;
             target = document.querySelector(`a[href="#${currentSectionId}"]`);
 
