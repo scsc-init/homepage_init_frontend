@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { normalizeRedirectTarget } from '@/util/loginRedirect';
 
-function resolveTargetUrl(redirectTo) {
+function resolveTargetUrl(redirectTo: string | null | undefined): string {
   if (redirectTo) {
     const normalizedRedirect = normalizeRedirectTarget(redirectTo);
     if (normalizedRedirect) {
@@ -15,7 +15,13 @@ function resolveTargetUrl(redirectTo) {
   return new URL('/', window.location.origin).href;
 }
 
-export default function InAppBrowserOutButton({ redirectTo = null }) {
+type InAppBrowserOutButtonProps = {
+  redirectTo?: string | null;
+};
+
+export default function InAppBrowserOutButton({
+  redirectTo = null,
+}: InAppBrowserOutButtonProps) {
   const [isRedirectPossible, setIsRedirectPossible] = useState(false);
   const [useragt, setUseragt] = useState('');
 
@@ -40,7 +46,7 @@ export default function InAppBrowserOutButton({ redirectTo = null }) {
   };
 
   if (!isRedirectPossible) {
-    if (!useragt.match('everytimeapp')) return;
+    if (!useragt.match('everytimeapp')) return null;
     if (useragt.match(/iphone|ipad|ipod/i)) {
       return (
         <p>

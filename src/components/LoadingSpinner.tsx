@@ -1,10 +1,10 @@
-// @/components/LoadingSpinner.jsx
+// @/components/LoadingSpinner.tsx
 
 'use client';
 
 import { useEffect, useState } from 'react';
 import styles from './LoadingSpinner.module.css';
-const codes = [
+const codes: string[] = [
   `<span style="color:#569CD6;">#include</span> &lt;stdio.h&gt;
 <span style="color:#4EC9B0;">int</span> main(void){
   <span style="color:#DCDCAA;">printf</span>("Hello, world!");

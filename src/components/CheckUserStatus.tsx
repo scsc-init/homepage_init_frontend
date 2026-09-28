@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMe } from '@/util/hooks/useMe';
 
-export default function CheckUserStatusClient() {
+export default function CheckUserStatusClient(): null {
   const router = useRouter();
   const { me, isLoading } = useMe();
 

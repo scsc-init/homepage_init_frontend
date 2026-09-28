@@ -1,8 +1,13 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useMe } from '@/util/hooks/useMe';
 
-export default function WithAuthorization({ children }) {
+type WithAuthorizationProps = {
+  children: ReactNode;
+};
+
+export default function WithAuthorization({ children }: WithAuthorizationProps): ReactNode {
   const { me, isLoading } = useMe();
 
   if (isLoading) return <p>권한 확인 중...</p>;
