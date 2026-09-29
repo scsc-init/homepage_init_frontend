@@ -23,8 +23,8 @@ const LABELS = {
   pig: {
     joinSuccess: 'PIG 가입 성공!',
     joinFailure: 'PIG 가입 실패: ',
-    leaveSuccess: 'PIG 가입 성공!',
-    leaveFailure: 'PIG 가입 실패: ',
+    leaveSuccess: 'PIG 탈퇴 성공!',
+    leaveFailure: 'PIG 탈퇴 실패: ',
   },
 };
 
