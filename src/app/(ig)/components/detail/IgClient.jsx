@@ -7,12 +7,7 @@ import IgJoinLeaveButton from '@/app/(ig)/components/detail/IgJoinLeaveButton';
 import IgMembers from '@/app/(ig)/components/detail/IgMembers';
 import IgOwnerHandoverButton from '@/app/(ig)/components/detail/IgOwnerHandoverButton';
 import { sortSigPigTags } from '@/app/(ig)/components/SigPigTags';
-import {
-  is_sigpig_join_available,
-  is_pig_join_available,
-  minExecutiveLevel,
-  SEMESTER_MAP,
-} from '@/util/constants';
+import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
 import styles from './IgDetail.module.css';
@@ -20,7 +15,7 @@ import styles from './IgDetail.module.css';
 const JOIN_AVAILABILITY = {
   sig: is_sigpig_join_available,
   'small-group': is_sigpig_join_available,
-  pig: is_pig_join_available,
+  pig: is_sigpig_join_available,
 };
 
 export default function IgClient({
