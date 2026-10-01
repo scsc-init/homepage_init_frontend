@@ -164,15 +164,6 @@ export const footerLogoData: FooterLogoItem[] = [
 export const hideFooterRoutes: string[] = ['/us/login', '/signup', '/about/my-page'];
 
 /**
- * 시그/피그 가입/탈퇴가 가능한 상태 목록입니다.
- * BE의 src/controller/scsc.py에서 정의합니다.
- */
-const CTRL_STATUS_AVAILABLE: Record<string, readonly string[]> = {
-  JOIN_SIGPIG: ['recruiting'],
-  JOIN_SIGPIG_ROLLING_ADMISSION: ['recruiting', 'active'],
-};
-
-/**
  * 시그/피그 가입 가능 여부를 반환합니다.
  *
  * @param status - sig/pig status
@@ -181,24 +172,8 @@ const CTRL_STATUS_AVAILABLE: Record<string, readonly string[]> = {
  */
 export function is_sigpig_join_available(
   status: string,
-  is_rolling_admission: boolean | string,
+  is_rolling_admission: string,
 ): boolean {
-  const rolling =
-    typeof is_rolling_admission === 'boolean'
-      ? is_rolling_admission
-      : String(is_rolling_admission).toLowerCase() === 'true';
-  const key = rolling ? 'JOIN_SIGPIG_ROLLING_ADMISSION' : 'JOIN_SIGPIG';
-  return CTRL_STATUS_AVAILABLE[key].includes(status);
-}
-
-/**
- * PIG 가입 가능 여부를 반환합니다.
- *
- * @param status - pig status
- * @param is_rolling_admission - pig is_rolling_admission
- * @returns 가입 가능 여부
- */
-export function is_pig_join_available(status: string, is_rolling_admission: string): boolean {
   const s = String(status).toLowerCase();
   const r = String(is_rolling_admission).toLowerCase();
 
