@@ -48,7 +48,29 @@ async function isPublicArticle(pathname) {
 
 function prefersEnglish(req) {
   const acceptLanguage = req.headers.get('accept-language') || '';
-  const preferredLanguage = acceptLanguage.split(',')[0]?.trim().toLowerCase();
+
+  const preferredLanguage = acceptLanguage
+    .split(',')
+    .map((entry, index) => {
+      const [language, ...params] = entry.trim().split(';');
+      const qualityParam = params.find((param) => param.trim().startsWith('q='));
+      const parsedQuality = qualityParam ? Number.parseFloat(qualityParam.trim().slice(2)) : 1;
+
+      return {
+        language: language.toLowerCase(),
+        quality: Number.isFinite(parsedQuality) ? parsedQuality : 0,
+        index,
+      };
+    })
+    .filter(({ quality }) => quality > 0)
+    .filter(
+      ({ language }) =>
+        language === 'en' ||
+        language.startsWith('en-') ||
+        language === 'ko' ||
+        language.startsWith('ko-'),
+    )
+    .sort((a, b) => b.quality - a.quality || a.index - b.index)[0]?.language;
 
   return preferredLanguage === 'en' || preferredLanguage?.startsWith('en-');
 }
