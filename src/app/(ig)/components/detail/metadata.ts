@@ -1,4 +1,6 @@
 import { fetchBackendServerJson } from '@/util/fetch/server';
+import type { Metadata } from 'next';
+import type { IgDetail, IgKind, IgParams } from './types';
 
 const METADATA_CONFIG = {
   sig: {
@@ -18,12 +20,12 @@ const METADATA_CONFIG = {
   },
 };
 
-export async function generateIgMetadata(kind, params) {
+export async function generateIgMetadata(kind: IgKind, params: IgParams): Promise<Metadata> {
   const config = METADATA_CONFIG[kind];
   const { id } = await params;
 
   try {
-    const item = await fetchBackendServerJson('GET', `/api/sig/${id}`);
+    const item = await fetchBackendServerJson<IgDetail>('GET', `/api/sig/${id}`);
     return {
       title: item.title,
       description: item.description || config.fallbackDescription,

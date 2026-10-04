@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import 'highlight.js/styles/github.css';
 import IgClient from '@/app/(ig)/components/detail/IgClient';
 import { fetchBackendServer } from '@/util/fetch/server';
+import type { IgDetail, IgKind, IgParams } from './types';
 
 const DETAIL_CONFIG = {
   sig: {
@@ -15,7 +16,13 @@ const DETAIL_CONFIG = {
   },
 };
 
-export default async function IgDetailPage({ kind, params }) {
+export default async function IgDetailPage({
+  kind,
+  params,
+}: {
+  kind: IgKind;
+  params: IgParams;
+}) {
   const config = DETAIL_CONFIG[kind];
   const { id } = await params;
 
@@ -24,7 +31,7 @@ export default async function IgDetailPage({ kind, params }) {
     if (itemRes.status === 404) notFound();
     return <div className="p-6 text-center text-red-600">{config.missingMessage}</div>;
   }
-  const item = await itemRes.json();
+  const item: IgDetail = await itemRes.json();
 
   const rawMembers = item.members;
   const membersVisible = Array.isArray(rawMembers);

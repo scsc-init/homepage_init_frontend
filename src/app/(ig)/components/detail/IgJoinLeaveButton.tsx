@@ -6,6 +6,13 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './IgDetail.module.css';
+import type { IgKind } from './types';
+
+type IgJoinLeaveButtonProps = {
+  kind: IgKind;
+  igId: string;
+  initialIsMember?: boolean;
+};
 
 const LABELS = {
   sig: {
@@ -28,13 +35,17 @@ const LABELS = {
   },
 };
 
-export default function IgJoinLeaveButton({ kind, igId, initialIsMember = false }) {
+export default function IgJoinLeaveButton({
+  kind,
+  igId,
+  initialIsMember = false,
+}: IgJoinLeaveButtonProps) {
   const router = useRouter();
   const [isMember, setIsMember] = useState(!!initialIsMember);
   const [pending, setPending] = useState(false);
   const labels = LABELS[kind];
 
-  const requestMembership = async (nextIsMember) => {
+  const requestMembership = async (nextIsMember: boolean) => {
     const action = nextIsMember ? 'join' : 'leave';
     const successMessage = nextIsMember ? labels.joinSuccess : labels.leaveSuccess;
     const failurePrefix = nextIsMember ? labels.joinFailure : labels.leaveFailure;
@@ -56,7 +67,7 @@ export default function IgJoinLeaveButton({ kind, igId, initialIsMember = false 
         alert(failurePrefix + (await readError(res)));
       }
     } catch (e) {
-      alert(failurePrefix + (e?.message || '네트워크 오류'));
+      alert(failurePrefix + ((e as { message?: string } | null)?.message || '네트워크 오류'));
     } finally {
       setPending(false);
     }

@@ -11,6 +11,16 @@ import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/uti
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
 import styles from './IgDetail.module.css';
+import type { IgDetail, IgKind, IgMember, IgWebsite } from './types';
+
+type IgClientProps = {
+  kind: IgKind;
+  item: IgDetail;
+  members: IgMember[];
+  membersVisible?: boolean;
+  articleContent: string;
+  itemId: string;
+};
 
 const JOIN_AVAILABILITY = {
   sig: is_sigpig_join_available,
@@ -25,7 +35,7 @@ export default function IgClient({
   membersVisible = true,
   articleContent,
   itemId,
-}) {
+}: IgClientProps) {
   const { me, isLoading } = useMe();
   const isJoinAvailable = JOIN_AVAILABILITY[kind];
 
@@ -90,7 +100,7 @@ export default function IgClient({
   );
 }
 
-function IgWebsites({ kind, websites }) {
+function IgWebsites({ kind, websites }: { kind: IgKind; websites: IgWebsite[] }) {
   const headingId = `${kind}-websites-heading`;
 
   if (!Array.isArray(websites) || websites.length === 0) return null;

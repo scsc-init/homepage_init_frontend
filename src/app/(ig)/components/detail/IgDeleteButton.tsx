@@ -6,8 +6,21 @@ import { replaceLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './IgDetail.module.css';
+import type { IgKind } from './types';
 
-export default function IgDeleteButton({ kind, itemId, canDelete, isOwner }) {
+type IgDeleteButtonProps = {
+  kind: IgKind;
+  itemId: string;
+  canDelete: boolean;
+  isOwner: boolean;
+};
+
+export default function IgDeleteButton({
+  kind,
+  itemId,
+  canDelete,
+  isOwner,
+}: IgDeleteButtonProps) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
   const upperLabel = kind === 'small-group' ? '소모임' : kind.toUpperCase();
@@ -29,7 +42,10 @@ export default function IgDeleteButton({ kind, itemId, canDelete, isOwner }) {
         alert(`${upperLabel} 비활성화 실패: ` + (await readError(res)));
       }
     } catch (e) {
-      alert(`${upperLabel} 비활성화 실패: ` + (e?.message || '네트워크 오류'));
+      alert(
+        `${upperLabel} 비활성화 실패: ` +
+          ((e as { message?: string } | null)?.message || '네트워크 오류'),
+      );
     } finally {
       setPending(false);
     }
@@ -52,7 +68,10 @@ export default function IgDeleteButton({ kind, itemId, canDelete, isOwner }) {
         alert(`${upperLabel} 비활성화 실패: ` + (await readError(res)));
       }
     } catch (e) {
-      alert(`${upperLabel} 비활성화 실패: ` + (e?.message || '네트워크 오류'));
+      alert(
+        `${upperLabel} 비활성화 실패: ` +
+          ((e as { message?: string } | null)?.message || '네트워크 오류'),
+      );
     } finally {
       setPending(false);
     }
