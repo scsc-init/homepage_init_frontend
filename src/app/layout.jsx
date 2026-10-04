@@ -6,6 +6,8 @@ import ThemeToggle from '@/components/ThemeToggle';
 import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
 import styles from './layout.module.css';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -33,11 +35,17 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
+  const locale = await getLocale();
+
   const theme = (await cookies()).get('theme')?.value;
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;
 
   return (
-    <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={(initialDark ?? true) ? 'dark' : ''}
+    >
       <head>
         <meta
           name="color-scheme"
@@ -63,16 +71,18 @@ export default async function RootLayout({ children }) {
         />
       </head>
       <body className={noto_sans_kr.className} suppressHydrationWarning={true}>
-        <Providers>
-          <div id="RootContainer" className={styles.RootContainer}>
-            <Header />
-            <main id="MainContent" className={styles.MainContent}>
-              {children}
-            </main>
-            <ThemeToggle initialDark={initialDark} />
-            <Footer />
-          </div>
-        </Providers>
+        <NextIntlClientProvider>
+          <Providers>
+            <div id="RootContainer" className={styles.RootContainer}>
+              <Header />
+              <main id="MainContent" className={styles.MainContent}>
+                {children}
+              </main>
+              <ThemeToggle initialDark={initialDark} />
+              <Footer />
+            </div>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

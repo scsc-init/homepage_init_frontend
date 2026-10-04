@@ -7,6 +7,7 @@ import { useMe } from '@/util/hooks/useMe';
 import { minExecutiveLevel } from '@/util/constants';
 import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util/loginRedirect';
 import styles from '@/app/Header.module.css';
+import { useTranslations } from 'next-intl';
 
 function getLoginHrefFromCurrentPage() {
   if (typeof window === 'undefined') return '/us/login';
@@ -27,6 +28,7 @@ function getLoginHrefFromCurrentPage() {
 }
 
 export default function HeaderRight() {
+  const t = useTranslations('Header');
   const router = useRouter();
 
   const [isExecutive, setIsExecutive] = useState(false);
@@ -67,7 +69,7 @@ export default function HeaderRight() {
       {!isLoading && user === null && shouldShowDesktopContent && (
         <div className={styles.rightLogin}>
           <Link href="/us/login" onClick={handleLoginClick} className="unset decorateNone">
-            가입 / 로그인
+            {t('login')}
           </Link>
         </div>
       )}

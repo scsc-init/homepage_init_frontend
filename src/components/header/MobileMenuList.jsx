@@ -6,15 +6,17 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 import styles from '@/app/Header.module.css';
+import { useTranslations } from 'next-intl';
 
 function MobileProfileButton() {
   const { me: user } = useMe();
+  const t = useTranslations('Header');
 
   return (
     <>
       {user === null && (
         <Link href="/us/login" className={`${styles.mobileLoginLink} unset decorateNone`}>
-          가입 / 로그인
+          {t('login')}
         </Link>
       )}
 

@@ -46,6 +46,35 @@ async function isPublicArticle(pathname) {
   }
 }
 
+function prefersEnglish(req) {
+  const acceptLanguage = req.headers.get('accept-language') || '';
+  const preferredLanguage = acceptLanguage.split(',')[0]?.trim().toLowerCase();
+
+  return preferredLanguage === 'en' || preferredLanguage?.startsWith('en-');
+}
+
+function isEnglishHost(req) {
+  const host = req.headers.get('host')?.toLowerCase() || '';
+  return host.startsWith('en.');
+}
+
+function getEnglishUrl(req) {
+  const host = req.headers.get('host')?.toLowerCase() || '';
+  const url = req.nextUrl.clone();
+
+  if (host.startsWith('localhost')) {
+    url.host = `en.${host}`;
+    return url;
+  }
+
+  if (host === 'scsc.dev') {
+    url.host = 'en.scsc.dev';
+    return url;
+  }
+
+  return null;
+}
+
 export async function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
@@ -58,6 +87,14 @@ export async function middleware(req) {
   // them would redirect the fetch to login and break image optimization.
   if (/\.(jpe?g|png|gif|svg|webp|avif|ico)$/i.test(pathname)) {
     return NextResponse.next();
+  }
+
+  if (!isEnglishHost(req) && prefersEnglish(req)) {
+    const englishUrl = getEnglishUrl(req);
+
+    if (englishUrl) {
+      return NextResponse.redirect(englishUrl);
+    }
   }
 
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
