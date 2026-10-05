@@ -5,6 +5,8 @@ import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
 import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
+import { unstable_noStore as noStore } from 'next/cache';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import styles from './layout.module.css';
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
@@ -36,6 +38,9 @@ export default async function RootLayout({ children }) {
   const theme = (await cookies()).get('theme')?.value;
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;
 
+  noStore();
+  const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
+
   return (
     <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
       <head>
@@ -65,7 +70,14 @@ export default async function RootLayout({ children }) {
       <body className={noto_sans_kr.className} suppressHydrationWarning={true}>
         <Providers>
           <div id="RootContainer" className={styles.RootContainer}>
-            <Header />
+            <Header
+              year={
+                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null
+              }
+              semester={
+                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.semester : null
+              }
+            />
             <main id="MainContent" className={styles.MainContent}>
               {children}
             </main>
