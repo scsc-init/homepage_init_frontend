@@ -1,6 +1,14 @@
 import styles from './IgDetail.module.css';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import MembersLoginPrompt from './MembersLoginPrompt';
+import type { IgDetail, IgKind, IgMember } from './types';
+
+type IgMembersProps = {
+  kind: IgKind;
+  owner: IgDetail['owner'];
+  members: IgMember[];
+  visible?: boolean;
+};
 
 const MEMBER_CONFIG = {
   sig: {
@@ -17,7 +25,7 @@ const MEMBER_CONFIG = {
   },
 };
 
-export default function IgMembers({ kind, owner, members, visible = true }) {
+export default function IgMembers({ kind, owner, members, visible = true }: IgMembersProps) {
   const config = MEMBER_CONFIG[kind];
 
   if (!visible) return null;

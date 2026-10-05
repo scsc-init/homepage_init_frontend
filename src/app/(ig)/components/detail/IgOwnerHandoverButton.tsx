@@ -7,6 +7,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import styles from './IgDetail.module.css';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
+import type { IgDetail, IgKind, IgMember } from './types';
+
+type IgOwnerHandoverButtonProps = {
+  kind: IgKind;
+  igId: string;
+  members: IgMember[];
+  owner: IgDetail['owner'];
+};
 
 const LABELS = {
   sig: {
@@ -32,17 +40,22 @@ const LABELS = {
   },
 };
 
-export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
+export default function IgOwnerHandoverButton({
+  kind,
+  igId,
+  members,
+  owner,
+}: IgOwnerHandoverButtonProps) {
   const [pending, setPending] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const labels = LABELS[kind];
   const memberData = Array.isArray(members) ? members : [];
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node | null)) {
         setOpen(false);
       }
     };
@@ -50,7 +63,7 @@ export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handoverOwner = async (nextOwner) => {
+  const handoverOwner = async (nextOwner: IgMember) => {
     if (!window.confirm(labels.confirm)) return;
     try {
       setPending(true);
@@ -70,7 +83,7 @@ export default function IgOwnerHandoverButton({ kind, igId, members, owner }) {
         alert(labels.failure + (await readError(res)));
       }
     } catch (e) {
-      alert(labels.failure + (e?.message || '네트워크 오류'));
+      alert(labels.failure + ((e as { message?: string } | null)?.message || '네트워크 오류'));
     } finally {
       setPending(false);
     }

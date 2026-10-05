@@ -3,8 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './IgDetail.module.css';
+import type { IgKind } from './types';
 
-export default function EditIgButton({ kind, itemId, canEdit }) {
+type EditIgButtonProps = { kind: IgKind; itemId: string; canEdit: boolean };
+
+export default function EditIgButton({ kind, itemId, canEdit }: EditIgButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
