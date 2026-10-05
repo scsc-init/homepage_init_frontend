@@ -8,7 +8,7 @@ import { fetchBackendClient } from '@/util/fetch/client';
 const PRESIDENT_ROLE_LEVEL = 1000;
 
 function getDownloadFilename(contentDisposition) {
-  if (!contentDisposition) return 'db_backup.sql';
+  if (!contentDisposition) return 'db_backup.tar.gz';
 
   const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
   if (utf8Match?.[1]) {
@@ -20,7 +20,7 @@ function getDownloadFilename(contentDisposition) {
   }
 
   const plainMatch = contentDisposition.match(/filename="?([^"]+)"?/i);
-  return plainMatch?.[1] || 'db_backup.sql';
+  return plainMatch?.[1] || 'db_backup.tar.gz';
 }
 
 function triggerDownload(blob, filename) {
@@ -74,7 +74,7 @@ export default function DatabaseBackupPanel() {
     <AdminLayout.AdminSection>
       <h3>DB 백업</h3>
       <p style={{ marginBottom: '0.75rem' }}>
-        현재 PostgreSQL DB를 백업하고 SQL 파일을 다운로드합니다.
+        현재 PostgreSQL DB와 업로드 파일(static)을 백업하고 .tar.gz 파일을 다운로드합니다.
       </p>
       <AdminLayout.AdminButtonDanger onClick={handleBackup} disabled={downloading}>
         {downloading ? '백업 중...' : 'DB 백업 다운로드'}
