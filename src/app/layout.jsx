@@ -7,6 +7,8 @@ import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
 import { unstable_noStore as noStore } from 'next/cache';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 import styles from './layout.module.css';
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
@@ -35,6 +37,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
+  const locale = await getLocale();
   const theme = (await cookies()).get('theme')?.value;
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;
 
@@ -42,7 +45,11 @@ export default async function RootLayout({ children }) {
   const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
 
   return (
-    <html lang="ko" suppressHydrationWarning className={(initialDark ?? true) ? 'dark' : ''}>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={(initialDark ?? true) ? 'dark' : ''}
+    >
       <head>
         <meta
           name="color-scheme"
@@ -68,23 +75,27 @@ export default async function RootLayout({ children }) {
         />
       </head>
       <body className={noto_sans_kr.className} suppressHydrationWarning={true}>
-        <Providers>
-          <div id="RootContainer" className={styles.RootContainer}>
-            <Header
-              year={
-                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null
-              }
-              semester={
-                scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.semester : null
-              }
-            />
-            <main id="MainContent" className={styles.MainContent}>
-              {children}
-            </main>
-            <ThemeToggle initialDark={initialDark} />
-            <Footer />
-          </div>
-        </Providers>
+        <NextIntlClientProvider>
+          <Providers>
+            <div id="RootContainer" className={styles.RootContainer}>
+              <Header
+                year={
+                  scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null
+                }
+                semester={
+                  scscGlobalStatus.status === 'fulfilled'
+                    ? scscGlobalStatus.value.semester
+                    : null
+                }
+              />
+              <main id="MainContent" className={styles.MainContent}>
+                {children}
+              </main>
+              <ThemeToggle initialDark={initialDark} />
+              <Footer />
+            </div>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

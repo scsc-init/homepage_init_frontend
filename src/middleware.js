@@ -2,6 +2,8 @@ import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
 import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
 
 function buildReturnPath(req) {
   const { pathname, search } = req.nextUrl;
@@ -46,6 +48,52 @@ async function isPublicArticle(pathname) {
   }
 }
 
+const detectLocale = createMiddleware({
+  locales: routing.locales,
+  defaultLocale: routing.defaultLocale,
+  localePrefix: 'never',
+  localeCookie: false,
+  alternateLinks: false,
+});
+
+function getPreferredLocale(req) {
+  const response = detectLocale(req);
+  const rewriteUrl = response.headers.get('x-middleware-rewrite');
+
+  if (!rewriteUrl) {
+    return routing.defaultLocale;
+  }
+
+  return new URL(rewriteUrl).pathname.split('/')[1] || routing.defaultLocale;
+}
+
+function getLocaleDomainRedirect(req) {
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
+
+  const currentDomain = routing.domains.find(
+    ({ domain }) => domain.toLowerCase() === host.toLowerCase(),
+  );
+
+  if (!currentDomain || currentDomain.defaultLocale !== routing.defaultLocale) {
+    return null;
+  }
+
+  const preferredLocale = getPreferredLocale(req);
+
+  const targetDomain =
+    routing.domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
+    routing.domains.find(({ locales }) => locales.includes(preferredLocale));
+
+  if (!targetDomain || targetDomain.domain === currentDomain.domain) {
+    return null;
+  }
+
+  const url = req.nextUrl.clone();
+  url.host = targetDomain.domain;
+
+  return NextResponse.redirect(url);
+}
+
 export async function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
@@ -58,6 +106,12 @@ export async function middleware(req) {
   // them would redirect the fetch to login and break image optimization.
   if (/\.(jpe?g|png|gif|svg|webp|avif|ico)$/i.test(pathname)) {
     return NextResponse.next();
+  }
+
+  const localeDomainRedirect = getLocaleDomainRedirect(req);
+
+  if (localeDomainRedirect) {
+    return localeDomainRedirect;
   }
 
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';

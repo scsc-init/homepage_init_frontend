@@ -8,6 +8,7 @@ import { SEMESTER_MAP, headerMenuData, minExecutiveLevel } from '@/util/constant
 import { useMe } from '@/util/hooks/useMe';
 import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util/loginRedirect';
 import styles from './Header.module.css';
+import { useTranslations } from 'next-intl';
 
 export default function Header({ year, semester }) {
   return (
@@ -120,6 +121,7 @@ function getLoginHrefFromCurrentPage() {
 
 function HeaderRight() {
   const router = useRouter();
+  const t = useTranslations('Header');
 
   const [isExecutive, setIsExecutive] = useState(false);
   const [isMobile, setIsMobile] = useState(null);
@@ -159,7 +161,7 @@ function HeaderRight() {
       {!isLoading && user === null && shouldShowDesktopContent && (
         <div className={styles.rightLogin}>
           <Link href="/us/login" onClick={handleLoginClick} className="unset decorateNone">
-            가입 / 로그인
+            {t('login')}
           </Link>
         </div>
       )}
@@ -189,12 +191,13 @@ function HeaderRight() {
 
 function MobileProfileButton() {
   const { me: user } = useMe();
+  const t = useTranslations('Header');
 
   return (
     <>
       {user === null && (
         <Link href="/us/login" className={`${styles.mobileLoginLink} unset decorateNone`}>
-          가입 / 로그인
+          {t('login')}
         </Link>
       )}
 
