@@ -2,6 +2,8 @@ import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
 import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
 
 function buildReturnPath(req) {
   const { pathname, search } = req.nextUrl;
@@ -46,55 +48,50 @@ async function isPublicArticle(pathname) {
   }
 }
 
-function prefersEnglish(req) {
-  const acceptLanguage = req.headers.get('accept-language') || '';
+const detectLocale = createMiddleware({
+  locales: routing.locales,
+  defaultLocale: routing.defaultLocale,
+  localePrefix: 'never',
+  localeCookie: false,
+  alternateLinks: false,
+});
 
-  const preferredLanguage = acceptLanguage
-    .split(',')
-    .map((entry, index) => {
-      const [language, ...params] = entry.trim().split(';');
-      const qualityParam = params.find((param) => param.trim().startsWith('q='));
-      const parsedQuality = qualityParam ? Number.parseFloat(qualityParam.trim().slice(2)) : 1;
+function getPreferredLocale(req) {
+  const response = detectLocale(req);
+  const rewriteUrl = response.headers.get('x-middleware-rewrite');
 
-      return {
-        language: language.toLowerCase(),
-        quality: Number.isFinite(parsedQuality) ? parsedQuality : 0,
-        index,
-      };
-    })
-    .filter(({ quality }) => quality > 0)
-    .filter(
-      ({ language }) =>
-        language === 'en' ||
-        language.startsWith('en-') ||
-        language === 'ko' ||
-        language.startsWith('ko-'),
-    )
-    .sort((a, b) => b.quality - a.quality || a.index - b.index)[0]?.language;
+  if (!rewriteUrl) {
+    return routing.defaultLocale;
+  }
 
-  return preferredLanguage === 'en' || preferredLanguage?.startsWith('en-');
+  return new URL(rewriteUrl).pathname.split('/')[1] || routing.defaultLocale;
 }
 
-function isEnglishHost(req) {
-  const host = req.headers.get('host')?.toLowerCase() || '';
-  return host.startsWith('en.');
-}
+function getLocaleDomainRedirect(req) {
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
 
-function getEnglishUrl(req) {
-  const host = req.headers.get('host')?.toLowerCase() || '';
+  const currentDomain = routing.domains.find(
+    ({ domain }) => domain.toLowerCase() === host.toLowerCase(),
+  );
+
+  if (!currentDomain || currentDomain.defaultLocale !== routing.defaultLocale) {
+    return null;
+  }
+
+  const preferredLocale = getPreferredLocale(req);
+
+  const targetDomain =
+    routing.domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
+    routing.domains.find(({ locales }) => locales.includes(preferredLocale));
+
+  if (!targetDomain || targetDomain.domain === currentDomain.domain) {
+    return null;
+  }
+
   const url = req.nextUrl.clone();
+  url.host = targetDomain.domain;
 
-  if (host.startsWith('localhost')) {
-    url.host = `en.${host}`;
-    return url;
-  }
-
-  if (host === 'scsc.dev') {
-    url.host = 'en.scsc.dev';
-    return url;
-  }
-
-  return null;
+  return NextResponse.redirect(url);
 }
 
 export async function middleware(req) {
@@ -111,12 +108,10 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  if (!isEnglishHost(req) && prefersEnglish(req)) {
-    const englishUrl = getEnglishUrl(req);
+  const localeDomainRedirect = getLocaleDomainRedirect(req);
 
-    if (englishUrl) {
-      return NextResponse.redirect(englishUrl);
-    }
+  if (localeDomainRedirect) {
+    return localeDomainRedirect;
   }
 
   const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
