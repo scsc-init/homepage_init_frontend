@@ -5,9 +5,11 @@ import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
 import Providers from './Providers.jsx';
 import { cookies } from 'next/headers';
-import styles from './layout.module.css';
+import { unstable_noStore as noStore } from 'next/cache';
+import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
+import styles from './layout.module.css';
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -36,9 +38,11 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const locale = await getLocale();
-
   const theme = (await cookies()).get('theme')?.value;
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;
+
+  noStore();
+  const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
 
   return (
     <html
@@ -74,7 +78,16 @@ export default async function RootLayout({ children }) {
         <NextIntlClientProvider>
           <Providers>
             <div id="RootContainer" className={styles.RootContainer}>
-              <Header />
+              <Header
+                year={
+                  scscGlobalStatus.status === 'fulfilled' ? scscGlobalStatus.value.year : null
+                }
+                semester={
+                  scscGlobalStatus.status === 'fulfilled'
+                    ? scscGlobalStatus.value.semester
+                    : null
+                }
+              />
               <main id="MainContent" className={styles.MainContent}>
                 {children}
               </main>
