@@ -1,0 +1,32 @@
+name: '🐛 Bug Report'
+description: 'Report a problem or unexpected behavior'
+labels: ['bug']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "What's wrong?"
+      description: 'What happened, and what did you expect instead?'
+      placeholder: 'ex. Clicking "Save" on my profile shows an error instead of saving.'
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: 'Where?'
+      description: 'Which files need to change? (or the page URL / API endpoint)'
+      placeholder: 'ex. src/app/board/[id]/page.tsx (/board/1)'
+  - type: textarea
+    id: steps
+    attributes:
+      label: 'Steps to reproduce'
+      description: 'Optional. Skip if it is obvious from above.'
+      placeholder: |
+        1. Log in
+        2. Go to ...
+        3. Click ...
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 'Screenshots / logs'
+      description: 'Optional. Drag and drop images or paste error messages.'
