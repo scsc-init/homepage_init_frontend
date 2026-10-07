@@ -1,0 +1,17 @@
+name: '📝 Documentation'
+description: 'Report a problem or suggest an improvement in the docs'
+labels: ['documentation']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 'What needs to change?'
+      placeholder: 'ex. The setup guide is missing the step for creating the .env file.'
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: 'Target Area'
+      description: 'Which files need to change?'
+      placeholder: 'ex. README.md, docs/devenv_setup.md'
