@@ -12,5 +12,6 @@ body:
   - type: input
     id: where
     attributes:
-      label: 'Which files to change?'
+      label: 'Target Area'
+      description: 'Which files need to change?'
       placeholder: 'ex. README.md, docs/devenv_setup.md'

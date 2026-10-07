@@ -13,7 +13,7 @@ body:
   - type: input
     id: where
     attributes:
-      label: 'Where?'
+      label: 'Target Area'
       description: 'Which files need to change? (or the page URL / API endpoint)'
       placeholder: 'ex. src/app/board/[id]/page.tsx (/board/1)'
   - type: textarea

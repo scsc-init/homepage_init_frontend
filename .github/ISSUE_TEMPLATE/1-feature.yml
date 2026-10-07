@@ -21,14 +21,14 @@ body:
   - type: input
     id: where
     attributes:
-      label: 'Where?'
+      label: 'Target Area'
       description: 'Which files need to change? (or the page URL / API endpoint)'
       placeholder: 'ex. src/app/board/[id]/page.tsx (/board/1)'
   - type: textarea
     id: done
     attributes:
-      label: 'Goal'
-      description: 'Complete state of changes'
+      label: 'Goals'
+      description: 'Proposed complete state of changes'
       value: |
         - [ ]
   - type: input
