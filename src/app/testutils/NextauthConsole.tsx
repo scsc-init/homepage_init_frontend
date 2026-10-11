@@ -10,7 +10,7 @@ export default function NextauthConsole() {
       <h2>NEXTAUTH Session</h2>
       <h3>{status}</h3>
       <p>{JSON.stringify(data)}</p>
-      <button onClick={signOut}>signOut</button>
+      <button onClick={() => void signOut()}>signOut</button>
     </section>
   );
 }

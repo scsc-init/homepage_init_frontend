@@ -1,17 +1,17 @@
 import { getToken } from 'next-auth/jwt';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
 import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 
-function buildReturnPath(req) {
+function buildReturnPath(req: NextRequest): string | null {
   const { pathname, search } = req.nextUrl;
   const target = `${pathname}${search || ''}`;
   return isAllowedRedirectPath(target) ? target : null;
 }
 
-function isPrefetchRequest(req) {
+function isPrefetchRequest(req: NextRequest): boolean {
   const purpose = req.headers.get('purpose') || '';
   const secPurpose = req.headers.get('sec-purpose') || '';
 
@@ -23,7 +23,7 @@ function isPrefetchRequest(req) {
   );
 }
 
-async function isPublicArticle(pathname) {
+async function isPublicArticle(pathname: string): Promise<boolean> {
   const articleId = pathname.match(/^\/article\/([^/]+)$/)?.[1];
   const backendUrl = process.env.BACKEND_URL?.replace(/\/+$/, '');
 
@@ -56,7 +56,7 @@ const detectLocale = createMiddleware({
   alternateLinks: false,
 });
 
-function getPreferredLocale(req) {
+function getPreferredLocale(req: NextRequest): (typeof routing.locales)[number] {
   const response = detectLocale(req);
   const rewriteUrl = response.headers.get('x-middleware-rewrite');
 
@@ -64,13 +64,18 @@ function getPreferredLocale(req) {
     return routing.defaultLocale;
   }
 
-  return new URL(rewriteUrl).pathname.split('/')[1] || routing.defaultLocale;
+  const locale = new URL(rewriteUrl).pathname.split('/')[1];
+  return (
+    routing.locales.find((supportedLocale) => supportedLocale === locale) ??
+    routing.defaultLocale
+  );
 }
 
-function getLocaleDomainRedirect(req) {
+function getLocaleDomainRedirect(req: NextRequest): NextResponse | null {
   const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
+  const domains = routing.domains ?? [];
 
-  const currentDomain = routing.domains.find(
+  const currentDomain = domains.find(
     ({ domain }) => domain.toLowerCase() === host.toLowerCase(),
   );
 
@@ -81,8 +86,8 @@ function getLocaleDomainRedirect(req) {
   const preferredLocale = getPreferredLocale(req);
 
   const targetDomain =
-    routing.domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
-    routing.domains.find(({ locales }) => locales.includes(preferredLocale));
+    domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
+    domains.find(({ locales }) => locales.some((locale) => locale === preferredLocale));
 
   if (!targetDomain || targetDomain.domain === currentDomain.domain) {
     return null;
@@ -94,7 +99,7 @@ function getLocaleDomainRedirect(req) {
   return NextResponse.redirect(url);
 }
 
-export async function middleware(req) {
+export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
 
   if (pathname.startsWith('/err/browser')) {
@@ -187,7 +192,7 @@ const publicRoutes = [
 
 const publicRoutePatterns = [/^\/(sig|small-group|pig)\/\d+$/];
 
-function isPublicRoute(pathname) {
+function isPublicRoute(pathname: string): boolean {
   return (
     publicRoutes.includes(pathname) ||
     publicRoutePatterns.some((pattern) => pattern.test(pathname))
