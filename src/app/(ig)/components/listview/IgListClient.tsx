@@ -1,12 +1,10 @@
 'use client';
 
-import SortDropdown from '@/components/common/SortDropdown';
+import SortDropdown, { type SortOrder } from '@/components/common/SortDropdown';
 import Button from '@/components/common/Button';
-import {
-  filterSigPigItemsByTags,
-  SigPigTagFilter,
-  SigPigTagList,
-} from '@/app/(ig)/components/SigPigTags';
+import { sortSigPigTags, type SigPigTag } from '@/app/(ig)/utils/sigPigTags';
+import type { IgDetail } from '@/app/(ig)/components/detail/types';
+import type { IgListItem } from './types';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -21,10 +19,16 @@ export default function IgListClient({
   kindLabel,
   basePath,
   createHref,
+}: {
+  items: IgListItem[];
+  initialFilterTags?: string[];
+  kindLabel: string;
+  basePath: string;
+  createHref: string;
 }) {
   const { me } = useMe();
   const myId = me?.id ? String(me.id) : '';
-  const [sortOrder, setSortOrder] = useState('latest');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('latest');
   const [selectedTags, setSelectedTags] = useState(
     Array.isArray(initialFilterTags) ? initialFilterTags.filter(Boolean) : [],
   );
@@ -65,7 +69,7 @@ export default function IgListClient({
       .map((item) => String(item.id)),
   );
 
-  const updateUrlTags = (nextTags) => {
+  const updateUrlTags = (nextTags: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('tag');
     nextTags.forEach((tag) => params.append('tag', tag));
@@ -73,7 +77,7 @@ export default function IgListClient({
     router.replace(next, { scroll: false });
   };
 
-  const handleTagFilterChange = (nextTags) => {
+  const handleTagFilterChange = (nextTags: string[]) => {
     setSelectedTags(nextTags);
     updateUrlTags(nextTags);
   };
@@ -172,6 +176,141 @@ export default function IgListClient({
             </Link>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+function cx(...classes: (string | undefined | null | false)[]) {
+  return classes.filter(Boolean).join(' ');
+}
+
+function getSigPigAvailableTags(items: IgListItem[] | null | undefined) {
+  const tagByText = new Map<string, SigPigTag>();
+
+  (Array.isArray(items) ? items : []).forEach((item) => {
+    sortSigPigTags(item?.tags).forEach((tag) => {
+      if (!tagByText.has(tag.text)) tagByText.set(tag.text, tag);
+    });
+  });
+
+  return sortSigPigTags([...tagByText.values()]);
+}
+
+function filterSigPigItemsByTags(
+  items: IgListItem[] | null | undefined,
+  selectedTags: string[] | null | undefined,
+): IgListItem[] {
+  const safeItems = Array.isArray(items) ? items : [];
+  const safeSelectedTags = Array.isArray(selectedTags) ? selectedTags.filter(Boolean) : [];
+  if (safeSelectedTags.length === 0) return safeItems;
+
+  return safeItems.filter((item) => {
+    const itemTagTexts = new Set(sortSigPigTags(item?.tags).map((tag) => tag.text));
+    return safeSelectedTags.every((tagText) => itemTagTexts.has(tagText));
+  });
+}
+
+function SigPigTagList({
+  tags,
+  itemId,
+  listClassName,
+  tagClassName,
+  majorClassName,
+}: {
+  tags: IgDetail['tags'];
+  itemId?: number;
+  listClassName?: string;
+  tagClassName?: string;
+  majorClassName?: string;
+}) {
+  const sortedTags = sortSigPigTags(tags);
+  if (sortedTags.length === 0) return null;
+
+  return (
+    <div className={listClassName}>
+      {sortedTags.map((tag) => (
+        <span
+          key={`${itemId ?? 'sig-pig'}-${tag.id ?? tag.text}`}
+          className={cx(tagClassName, tag.is_major ? majorClassName : '')}
+        >
+          #{tag.text}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function SigPigTagFilter({
+  items,
+  selectedTags,
+  onChange,
+  classNames,
+}: {
+  items: IgListItem[];
+  selectedTags: string[];
+  onChange?: (tags: string[]) => void;
+  classNames: Record<
+    'section' | 'header' | 'title' | 'clearButton' | 'list' | 'chip' | 'active' | 'major',
+    string
+  >;
+}) {
+  const safeSelectedTags = Array.isArray(selectedTags) ? selectedTags : [];
+  const availableTags = getSigPigAvailableTags(items);
+
+  const updateSelectedTags = (nextTags: string[]) => {
+    onChange?.(nextTags);
+  };
+
+  const toggleTagFilter = (tagText: string) => {
+    const exists = safeSelectedTags.includes(tagText);
+    const nextTags = exists
+      ? safeSelectedTags.filter((tag) => tag !== tagText)
+      : [...safeSelectedTags, tagText];
+
+    updateSelectedTags(nextTags);
+  };
+
+  const clearTagFilter = () => {
+    updateSelectedTags([]);
+  };
+
+  return (
+    <div className={classNames.section}>
+      <div className={classNames.header}>
+        <span className={classNames.title}>태그 필터</span>
+        {safeSelectedTags.length > 0 ? (
+          <button type="button" className={classNames.clearButton} onClick={clearTagFilter}>
+            초기화
+          </button>
+        ) : null}
+      </div>
+
+      <div className={classNames.list}>
+        <button
+          type="button"
+          className={cx(
+            classNames.chip,
+            safeSelectedTags.length === 0 ? classNames.active : '',
+          )}
+          onClick={clearTagFilter}
+        >
+          #전체
+        </button>
+        {availableTags.map((tag) => (
+          <button
+            key={tag.id ?? tag.text}
+            type="button"
+            className={cx(
+              classNames.chip,
+              safeSelectedTags.includes(tag.text) ? classNames.active : '',
+              tag.is_major ? classNames.major : '',
+            )}
+            onClick={() => toggleTagFilter(tag.text)}
+          >
+            #{tag.text}
+          </button>
+        ))}
       </div>
     </div>
   );
