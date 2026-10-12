@@ -1,0 +1,25 @@
+name: '✨ New Feature'
+description: 'Request a feature that does not exist yet'
+labels: ['new feature']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 'What should the feature do?'
+      placeholder: 'ex. Let users search board posts by author name.'
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: 'Target Area'
+      description: 'Which files need to change? (or the page URL / API endpoint)'
+      placeholder: 'ex. src/app/board/[id]/page.tsx (/board/1)'
+  - type: textarea
+    id: done
+    attributes:
+      label: 'Goals'
+      description: 'Proposed complete state of changes'
+    attributes:
+      label: 'Related issues / PRs'
+      placeholder: 'ex. #123, scsc-init/homepage_init_backend#45'

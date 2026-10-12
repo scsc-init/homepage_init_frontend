@@ -1,21 +1,12 @@
-name: '✨ Feature / Enhancement'
-description: 'Request a new feature or an improvement to an existing one'
+name: '⚡ Enhancement'
+description: 'Improvement to an existing feature'
+labels: ['enhancement']
 body:
-  - type: dropdown
-    id: type
-    attributes:
-      label: 'Type'
-      description: 'The matching label is applied automatically'
-      options:
-        - New feature
-        - Enhancement
-    validations:
-      required: true
   - type: textarea
     id: what
     attributes:
-      label: 'What should change?'
-      placeholder: 'ex. Let users search board posts by author name.'
+      label: 'What should be improved?'
+      placeholder: 'ex. Show the author name next to each comment instead of the user ID.'
     validations:
       required: true
   - type: input
@@ -29,8 +20,6 @@ body:
     attributes:
       label: 'Goals'
       description: 'Proposed complete state of changes'
-      value: |
-        - [ ]
   - type: input
     id: related
     attributes:

@@ -5,7 +5,7 @@ body:
   - type: textarea
     id: what
     attributes:
-      label: "What's wrong?"
+      label: 'What went wrong?'
       description: 'What happened, and what did you expect instead?'
       placeholder: 'ex. Clicking "Save" on my profile shows an error instead of saving.'
     validations:
@@ -14,13 +14,13 @@ body:
     id: where
     attributes:
       label: 'Target Area'
-      description: 'Which files need to change? (or the page URL / API endpoint)'
+      description: 'Where does the issue occur? (page URL / API endpoint / file component)'
       placeholder: 'ex. src/app/board/[id]/page.tsx (/board/1)'
   - type: textarea
     id: steps
     attributes:
       label: 'Steps to reproduce'
-      description: 'Optional. Skip if it is obvious from above.'
+      description: 'Skip if it is obvious from above.'
       placeholder: |
         1. Log in
         2. Go to ...
@@ -29,4 +29,9 @@ body:
     id: evidence
     attributes:
       label: 'Screenshots / logs'
-      description: 'Optional. Drag and drop images or paste error messages.'
+      description: 'Drag and drop images or paste error messages.'
+  - type: input
+    id: related
+    attributes:
+      label: 'Related issues / PRs'
+      placeholder: 'ex. #123, scsc-init/homepage_init_backend#45'
