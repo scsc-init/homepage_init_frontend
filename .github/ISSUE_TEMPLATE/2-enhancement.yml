@@ -1,14 +1,27 @@
 name: '⚡ Enhancement'
-description: 'Suggest an improvement to an existing feature'
+description: 'Improvement to an existing feature'
 labels: ['enhancement']
 body:
-  - type: input
-    id: target
-    attributes:
-      label: 'Target area'
-      description: 'Which part of the project does this enhance?'
   - type: textarea
-    id: proposal
+    id: what
     attributes:
-      label: 'Proposed change'
-      description: 'What improvement would you like to see?'
+      label: 'What should be improved?'
+      placeholder: 'ex. Show the author name next to each comment instead of the user ID.'
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: 'Target Area'
+      description: 'Which files need to change? (or the page URL / API endpoint)'
+      placeholder: 'ex. src/app/board/[id]/page.tsx (/board/1)'
+  - type: textarea
+    id: done
+    attributes:
+      label: 'Goals'
+      description: 'Proposed complete state of changes'
+  - type: input
+    id: related
+    attributes:
+      label: 'Related issues / PRs'
+      placeholder: 'ex. #123, scsc-init/homepage_init_backend#45'
