@@ -1,0 +1,220 @@
+import { getToken } from 'next-auth/jwt';
+import { NextResponse, type NextRequest } from 'next/server';
+import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
+import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
+
+function buildReturnPath(req: NextRequest): string | null {
+  const { pathname, search } = req.nextUrl;
+  const target = `${pathname}${search || ''}`;
+  return isAllowedRedirectPath(target) ? target : null;
+}
+
+function isPrefetchRequest(req: NextRequest): boolean {
+  const purpose = req.headers.get('purpose') || '';
+  const secPurpose = req.headers.get('sec-purpose') || '';
+
+  return (
+    req.headers.get('next-router-prefetch') === '1' ||
+    req.headers.get('x-middleware-prefetch') === '1' ||
+    purpose.toLowerCase() === 'prefetch' ||
+    secPurpose.toLowerCase().includes('prefetch')
+  );
+}
+
+async function isPublicArticle(pathname: string): Promise<boolean> {
+  const articleId = pathname.match(/^\/article\/([^/]+)$/)?.[1];
+  const backendUrl = process.env.BACKEND_URL?.replace(/\/+$/, '');
+
+  if (!articleId || !backendUrl) return false;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 3_000);
+
+  try {
+    const res = await fetch(`${backendUrl}/api/article/${encodeURIComponent(articleId)}`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    if (!res.ok) return false;
+
+    const article = await res.json();
+    return isPublicBoardId(article?.board_id);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+const detectLocale = createMiddleware({
+  locales: routing.locales,
+  defaultLocale: routing.defaultLocale,
+  localePrefix: 'never',
+  localeCookie: false,
+  alternateLinks: false,
+});
+
+function getPreferredLocale(req: NextRequest): (typeof routing.locales)[number] {
+  const response = detectLocale(req);
+  const rewriteUrl = response.headers.get('x-middleware-rewrite');
+
+  if (!rewriteUrl) {
+    return routing.defaultLocale;
+  }
+
+  const locale = new URL(rewriteUrl).pathname.split('/')[1];
+  return (
+    routing.locales.find((supportedLocale) => supportedLocale === locale) ??
+    routing.defaultLocale
+  );
+}
+
+function getLocaleDomainRedirect(req: NextRequest): NextResponse | null {
+  if (!routing.domains) return null;
+
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
+
+  const currentDomain = routing.domains.find(
+    ({ domain }) => domain.toLowerCase() === host.toLowerCase(),
+  );
+
+  if (!currentDomain || currentDomain.defaultLocale !== routing.defaultLocale) {
+    return null;
+  }
+
+  const preferredLocale = getPreferredLocale(req);
+
+  const targetDomain =
+    routing.domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
+    routing.domains.find(({ locales }) => locales.some((locale) => locale === preferredLocale));
+
+  if (!targetDomain || targetDomain.domain === currentDomain.domain) {
+    return null;
+  }
+
+  const url = req.nextUrl.clone();
+  url.host = targetDomain.domain;
+
+  return NextResponse.redirect(url);
+}
+
+export async function middleware(req: NextRequest): Promise<NextResponse> {
+  const pathname = req.nextUrl.pathname;
+
+  if (pathname.startsWith('/err/browser')) {
+    return NextResponse.next();
+  }
+
+  // Static asset files (images, etc.) must bypass auth: Next's image optimizer
+  // fetches these server-side without the user's session cookie, so protecting
+  // them would redirect the fetch to login and break image optimization.
+  if (/\.(jpe?g|png|gif|svg|webp|avif|ico)$/i.test(pathname)) {
+    return NextResponse.next();
+  }
+
+  const localeDomainRedirect = getLocaleDomainRedirect(req);
+
+  if (localeDomainRedirect) {
+    return localeDomainRedirect;
+  }
+
+  const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
+
+  const kakaotalk = ['kakao', 'kakaotalk'];
+  const isKakaoScraper = userAgent.includes('kakaotalk-scrap');
+  const everytime = ['everytime'];
+  const redirectParam = buildReturnPath(req);
+  const redirectQuery = redirectParam ? `?redirect=${encodeURIComponent(redirectParam)}` : '';
+
+  if (!isKakaoScraper && kakaotalk.some((keyword) => userAgent.includes(keyword))) {
+    return NextResponse.redirect(new URL(`/err/browser/kakaotalk${redirectQuery}`, req.url));
+  }
+  if (everytime.some((keyword) => userAgent.includes(keyword))) {
+    return NextResponse.redirect(new URL(`/err/browser/everytime${redirectQuery}`, req.url));
+  }
+
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const jwt = token?.backendJwt || null;
+
+  if (jwt) return NextResponse.next();
+
+  if (await isPublicArticle(pathname)) return NextResponse.next();
+
+  const returnTo = buildReturnPath(req);
+  const shouldPreserveRedirect = returnTo && !isPrefetchRequest(req);
+
+  const loginUrl = req.nextUrl.clone();
+  loginUrl.pathname = '/us/login';
+  loginUrl.search = '';
+
+  if (shouldPreserveRedirect) {
+    loginUrl.searchParams.set('redirect', returnTo);
+  }
+
+  const res = NextResponse.redirect(loginUrl);
+
+  if (shouldPreserveRedirect) {
+    res.cookies.set(REDIRECT_COOKIE, returnTo, {
+      path: '/',
+      maxAge: 300,
+      sameSite: 'lax',
+      secure: req.nextUrl.protocol === 'https:',
+    });
+  }
+
+  return res;
+}
+
+const publicRoutes = [
+  '/',
+  '/board/1',
+  '/board/2',
+  ...[...PUBLIC_BOARD_IDS].map((boardId) => `/board/${boardId}`),
+  '/about',
+  '/about/executives',
+  '/about/developers',
+  '/about/rules',
+  '/sig',
+  '/small-group',
+  '/pig',
+  '/us/contact',
+  '/us/contact/developer',
+  '/us/login',
+  '/us/login/callback',
+  '/us/register',
+  '/us/external-register',
+];
+
+const publicRoutePatterns = [/^\/(sig|small-group|pig)\/\d+$/];
+
+function isPublicRoute(pathname: string): boolean {
+  return (
+    publicRoutes.includes(pathname) ||
+    publicRoutePatterns.some((pattern) => pattern.test(pathname))
+  );
+}
+
+/**
+ * middleware을 거치게 되는 라우트
+ */
+export const config = {
+  matcher: [
+    '/',
+    '/about/:path*',
+    '/article/:path*',
+    '/board/:path*',
+    '/err/:path*',
+    '/executive/:path*',
+    '/sig/:path*',
+    '/small-group/:path*',
+    '/pig/:path*',
+    '/testutils/:path*',
+    '/us/:path*',
+  ],
+};

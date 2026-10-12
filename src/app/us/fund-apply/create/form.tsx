@@ -490,7 +490,8 @@ export default function FundApplyForm({
         throw new Error(text || `신청 실패 (${res.status})`);
       }
 
-      router.replace(`/board/${boardId}`);
+      alert('지원금 신청이 완료되었습니다.');
+      router.replace(`/`);
     } catch (e) {
       const msg = `신청 중 오류: ${e instanceof Error ? e.message : 'unknown'}`;
       alert(msg);

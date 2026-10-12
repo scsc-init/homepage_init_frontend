@@ -69,18 +69,18 @@ src/
 
 ## 환경 변수
 
-| Key Name                   | Description                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------------- |
-| `BACKEND_URL`              | 연결된 BE 서버의 외부 URL                                                                   |
-| `NEXT_PUBLIC_API_BASE_URL` | FE에서 사용하는 BE 서버의 외부 URL                                                          |
-| `API_SECRET`               | BE 서버에서 처리되는 API KEY                                                                |
-| `GOOGLE_CLIENT_ID`         | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
-| `GOOGLE_CLIENT_SECRET`     | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
-| `NEXTAUTH_SECRET`          | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
-| `NEXTAUTH_URL`             | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
-| `JWT_VALID_SECONDS`        | 로그인 세션 유지 시간. 기본값은 43200초                                                     |
-| `SNU_EMAIL_CHECK`          | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
-| `ENABLE_TEST_UTILS`        | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
+| Key Name                        | Description                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
+| `BACKEND_URL`                   | 연결된 BE 서버의 외부 URL                                                                   |
+| `NEXT_PUBLIC_API_BASE_URL`      | FE에서 사용하는 BE 서버의 외부 URL                                                          |
+| `API_SECRET`                    | BE 서버에서 처리되는 API KEY                                                                |
+| `GOOGLE_CLIENT_ID`              | 구글 OAuth 애플리케이션으로 등록된 ID (하단의 `Google Auth 2.0 관리` 참조)                  |
+| `GOOGLE_CLIENT_SECRET`          | 구글 OAuth 애플리케이션의 secret (하단의 `Google Auth 2.0 관리` 참조)                       |
+| `NEXTAUTH_SECRET`               | NextAuth 에 사용될 secret, 임의로 생성함 (하단의 `next auth 설정` 참조)                     |
+| `NEXTAUTH_URL`                  | NextAuth 에 사용될 메인 URL, 프론트서버의 도메인 주소와 동일 (하단의 `next auth 설정` 참조) |
+| `JWT_VALID_SECONDS`             | 로그인 세션 유지 시간. 기본값은 43200초                                                     |
+| `SNU_EMAIL_CHECK`               | 디버깅용. 구글 OAuth로 회원가입 시 snu 도메인인지 체크 여부                                 |
+| `NEXT_PUBLIC_ENABLE_TEST_UTILS` | 테스트 유틸리티 활성화 여부. TRUE로 설정했을 때만 활성화되며, 설정하지 않으면 비활성        |
 
 ## Install & Execute
 

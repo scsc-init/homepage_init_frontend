@@ -32,6 +32,7 @@
     "material-icons": "^1.13.14",
     "next": "^15.5.23",
     "next-auth": "^4.24.15",
+    "next-intl": "^4.14.9",
     "normalize.css": "^8.0.1",
     "react": "^18",
     "react-dom": "^18",

@@ -140,6 +140,7 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [state, setState] = useState({ loading: true, error: '' });
   const fetchedDetailRef = useRef(new Set<string>());
+  const [unoptimizedIds, setUnoptimizedIds] = useState(() => new Set<string>());
 
   const listUrl = useMemo(() => `/api/articles/${boardId}`, [boardId]);
 
@@ -292,6 +293,11 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
                     alt={it.title || 'image'}
                     fill
                     sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    unoptimized={unoptimizedIds.has(it.articleId)}
+                    onError={() => {
+                      if (unoptimizedIds.has(it.articleId)) return;
+                      setUnoptimizedIds((prev) => new Set(prev).add(it.articleId));
+                    }}
                   />
                 ) : (
                   <img
