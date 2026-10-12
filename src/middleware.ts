@@ -72,10 +72,11 @@ function getPreferredLocale(req: NextRequest): (typeof routing.locales)[number] 
 }
 
 function getLocaleDomainRedirect(req: NextRequest): NextResponse | null {
-  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
-  const domains = routing.domains ?? [];
+  if (!routing.domains) return null;
 
-  const currentDomain = domains.find(
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? '';
+
+  const currentDomain = routing.domains.find(
     ({ domain }) => domain.toLowerCase() === host.toLowerCase(),
   );
 
@@ -86,8 +87,8 @@ function getLocaleDomainRedirect(req: NextRequest): NextResponse | null {
   const preferredLocale = getPreferredLocale(req);
 
   const targetDomain =
-    domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
-    domains.find(({ locales }) => locales.some((locale) => locale === preferredLocale));
+    routing.domains.find(({ defaultLocale }) => defaultLocale === preferredLocale) ??
+    routing.domains.find(({ locales }) => locales.some((locale) => locale === preferredLocale));
 
   if (!targetDomain || targetDomain.domain === currentDomain.domain) {
     return null;
