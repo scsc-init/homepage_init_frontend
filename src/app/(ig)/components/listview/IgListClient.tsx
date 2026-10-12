@@ -3,6 +3,7 @@
 import SortDropdown, { type SortOrder } from '@/components/common/SortDropdown';
 import Button from '@/components/common/Button';
 import type { IgDetail } from '@/app/(ig)/components/detail/types';
+import { sortSigPigTags, type SigPigTag } from '@/app/(ig)/utils/sortSigPigTags';
 import type { IgListItem } from './types';
 import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
@@ -182,17 +183,6 @@ export default function IgListClient({
 
 function cx(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(' ');
-}
-
-type SigPigTag = NonNullable<IgDetail['tags']>[number];
-
-export function sortSigPigTags(tags: IgDetail['tags'] | null): SigPigTag[] {
-  return [...(Array.isArray(tags) ? tags : [])]
-    .filter((tag) => tag?.text)
-    .sort((a, b) => {
-      if (!!a?.is_major !== !!b?.is_major) return a?.is_major ? -1 : 1;
-      return String(a?.text ?? '').localeCompare(String(b?.text ?? ''), 'ko');
-    });
 }
 
 function getSigPigAvailableTags(items: IgListItem[] | null | undefined) {

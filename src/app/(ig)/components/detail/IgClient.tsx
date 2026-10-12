@@ -6,7 +6,7 @@ import IgDeleteButton from '@/app/(ig)/components/detail/IgDeleteButton';
 import IgJoinLeaveButton from '@/app/(ig)/components/detail/IgJoinLeaveButton';
 import IgMembers from '@/app/(ig)/components/detail/IgMembers';
 import IgOwnerHandoverButton from '@/app/(ig)/components/detail/IgOwnerHandoverButton';
-import { sortSigPigTags } from '@/app/(ig)/components/listview/IgListClient';
+import { sortSigPigTags } from '@/app/(ig)/utils/sortSigPigTags';
 import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
