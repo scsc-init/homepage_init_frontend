@@ -1,3 +1,5 @@
+import type { IgKind } from '@/app/(ig)/components/detail/types';
+import type { IgListItem, IgSearchParams } from './types';
 import IgListClient from '@/app/(ig)/components/listview/IgListClient';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
@@ -27,7 +29,7 @@ const LIST_CONFIG = {
   },
 };
 
-function getInitialTags(searchParams) {
+function getInitialTags(searchParams: Awaited<IgSearchParams> | undefined) {
   if (Array.isArray(searchParams?.tag)) {
     return searchParams.tag.filter((tag) => typeof tag === 'string');
   }
@@ -37,7 +39,13 @@ function getInitialTags(searchParams) {
   return [];
 }
 
-export default async function IgListPage({ kind, searchParams }) {
+export default async function IgListPage({
+  kind,
+  searchParams,
+}: {
+  kind: IgKind;
+  searchParams: IgSearchParams;
+}) {
   const config = LIST_CONFIG[kind];
   const resolvedSearchParams = await searchParams;
   const initialTags = getInitialTags(resolvedSearchParams);
@@ -49,7 +57,7 @@ export default async function IgListPage({ kind, searchParams }) {
 
   const currTerm = getCurrentTerm(globalStatus.value);
   const [items] = await Promise.allSettled([
-    fetchBackendServerJson('GET', '/api/sigs', {
+    fetchBackendServerJson<IgListItem[]>('GET', '/api/sigs', {
       query: { tag: config.apiTag, year: currTerm.year, semester: currTerm.semester },
     }),
   ]);

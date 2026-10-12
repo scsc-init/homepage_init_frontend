@@ -1,4 +1,4 @@
-export const readError = async (res) => {
+export const readError = async (res: Response) => {
   const base = `HTTP ${res.status}`;
   const ct = res.headers.get('content-type') || '';
   try {
