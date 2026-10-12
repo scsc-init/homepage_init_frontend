@@ -10,6 +10,7 @@ const MENUS = [
     label: 'SIG/PIG',
     children: [
       { label: 'SIG', href: '/sig' },
+      { label: '소모임', href: '/small-group' },
       { label: 'PIG', href: '/pig' },
     ],
   },
@@ -26,13 +27,12 @@ const BRANCH_SPAN = 260;
 const DOT_R = 11;
 
 const TWIG_END = WORD_RIGHT - DOT_R;
+const TRUNK_X = TWIG_END - BRANCH_SPAN * 0.7;
 const STUB = 26;
 
 const FIRST_GAP = 74;
-const ROW_GAP = 72;
+const ROW_GAP = 96;
 const NOMINAL_ANCHOR_Y = 106;
-const TREE_H = NOMINAL_ANCHOR_Y + FIRST_GAP + ROW_GAP + 52;
-
 const rowY = (anchorY, index) => anchorY + FIRST_GAP + index * ROW_GAP;
 
 const DASH = 420;
@@ -124,7 +124,9 @@ export default function JoinMenu() {
           const hasChildren = Boolean(menu.children);
           const open = openLabel === menu.label;
           const anchor = anchors[menu.label];
-          const height = hasChildren ? TREE_H : WORD_H;
+          const height = hasChildren
+            ? rowY(anchor?.y ?? NOMINAL_ANCHOR_Y, menu.children.length - 1) + 52
+            : WORD_H;
 
           return (
             <li
@@ -134,7 +136,7 @@ export default function JoinMenu() {
               data-branch={hasChildren ? '' : undefined}
               style={{
                 '--collapsed': `${(WORD_H / VB_W) * 100}%`,
-                '--expanded': `${(TREE_H / VB_W) * 100}%`,
+                '--expanded': `${(height / VB_W) * 100}%`,
                 '--order': index,
               }}
               onMouseEnter={hasChildren ? () => setOpenLabel(menu.label) : undefined}
@@ -187,7 +189,7 @@ export default function JoinMenu() {
                     />
                     <path
                       className={styles.joinBranchLine}
-                      d={`M ${(anchor.x - BRANCH_SPAN + TWIG_END) / 2} ${anchor.y} V ${rowY(anchor.y, menu.children.length - 1)}`}
+                      d={`M ${TRUNK_X} ${anchor.y} V ${rowY(anchor.y, menu.children.length - 1)}`}
                       pathLength="1"
                       style={{ '--seq': 1 }}
                     />
@@ -195,7 +197,7 @@ export default function JoinMenu() {
                       <path
                         key={child.label}
                         className={styles.joinBranchLine}
-                        d={`M ${(anchor.x - BRANCH_SPAN + TWIG_END) / 2} ${rowY(anchor.y, childIndex)} h ${STUB}`}
+                        d={`M ${TRUNK_X} ${rowY(anchor.y, childIndex)} h ${STUB}`}
                         pathLength="1"
                         style={{ '--seq': 2 + childIndex }}
                       />
