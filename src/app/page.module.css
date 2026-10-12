@@ -630,7 +630,7 @@
 
 .joinSubLink {
   display: inline-block;
-  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: inherit;
   padding: 0.4rem 0 0.4rem 1rem;
   font-size: clamp(1.05rem, 2.2vw, 1.4rem);
   font-weight: 800;
