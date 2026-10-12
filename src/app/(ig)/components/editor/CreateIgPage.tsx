@@ -1,8 +1,14 @@
 import CreateIgClient from '@/app/(ig)/components/editor/CreateIgClient';
+import type { IgKind } from '@/app/(ig)/components/editor/types';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
 
-export default async function CreateIgPage({ kind }) {
+type CreateIgPageProps = {
+  kind: IgKind;
+};
+
+export default async function CreateIgPage({ kind }: CreateIgPageProps) {
   const [scscGlobalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
+
   return (
     <CreateIgClient
       kind={kind}
