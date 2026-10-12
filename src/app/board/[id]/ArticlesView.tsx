@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
+import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 
@@ -104,6 +105,6 @@ export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
  * @returns
  */
 function toPreview(str: string | null, limit: number) {
-  const preview = str?.replace(/\s+/g, ' ').trim() ?? '';
+  const preview = toPlainPreview(str);
   return preview ? `${preview.slice(0, limit)}${preview.length > limit ? '...' : ''}` : '';
 }
