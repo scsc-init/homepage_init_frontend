@@ -182,7 +182,7 @@ export default function HomePage() {
         <div className={styles.joinInner}>
           <div className={styles.joinLead}>
             <Reveal>
-              <p className={styles.joinKicker}>SCSC와 함께 하시겠어요?</p>
+              <p className={styles.joinKicker}>SCSC와 함께하시겠어요?</p>
             </Reveal>
             <Reveal>
               <p className={styles.joinHeadline}>
