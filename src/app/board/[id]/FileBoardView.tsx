@@ -23,6 +23,7 @@ import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { utc2kst } from '@/util/constants';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
+import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
 
 const METADATA_CHUNK_SIZE = 30;
@@ -155,9 +156,7 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
         const primaryMeta = primaryId ? metadataMap[primaryId] : undefined;
         const primaryName = primaryMeta?.original_filename || primaryId || '첨부파일';
         const primaryHref = primaryId ? getAttachmentDownloadUrl(primaryId, primaryMeta) : '';
-        const preview = String(article.content || '')
-          .replace(/\s+/g, ' ')
-          .trim();
+        const preview = toPlainPreview(article.content);
 
         return (
           <div key={article.id} className={styles.fileCard}>
