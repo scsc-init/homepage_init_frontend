@@ -1,4 +1,6 @@
-export function sampleAlphaGrid(image, pitch) {
+export type AlphaGrid = { cols: number; rows: number; coverage: Float32Array };
+
+export function sampleAlphaGrid(image: HTMLImageElement, pitch: number): AlphaGrid | null {
   const w = image.naturalWidth;
   const h = image.naturalHeight;
   if (!w || !h) return null;
@@ -47,14 +49,14 @@ export function sampleAlphaGrid(image, pitch) {
   return { cols, rows, coverage };
 }
 
-const gridCache = new Map();
+const gridCache = new Map<string, Promise<AlphaGrid | null>>();
 
-export function loadDotGrid(src, pitch) {
+export function loadDotGrid(src: string, pitch: number): Promise<AlphaGrid | null> {
   const key = `${src}@${pitch}`;
   const cached = gridCache.get(key);
   if (cached) return cached;
 
-  const pending = new Promise((resolve) => {
+  const pending = new Promise<AlphaGrid | null>((resolve) => {
     const image = new Image();
     image.decoding = 'async';
     image.addEventListener('load', () => resolve(sampleAlphaGrid(image, pitch)), {

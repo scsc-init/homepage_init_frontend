@@ -1,8 +1,21 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+type ShimmerOverlayProps = {
+  src: string;
+  className?: string;
+  width: number;
+  height: number;
+  onReady?: () => void;
+};
 
-export default function ShimmerOverlay({ src, className, width, height, onReady }) {
+export default function ShimmerOverlay({
+  src,
+  className,
+  width,
+  height,
+  onReady,
+}: ShimmerOverlayProps) {
   const onReadyRef = useRef(onReady);
   onReadyRef.current = onReady;
 

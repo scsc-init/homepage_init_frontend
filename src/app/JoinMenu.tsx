@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
+import type { CSSProperties } from 'react';
 
 const MENUS = [
   { label: 'About', href: '/about' },
@@ -14,7 +15,7 @@ const MENUS = [
     ],
   },
   { label: 'Contact', href: '/us/contact' },
-];
+] as const;
 
 const VB_W = 1000;
 const WORD_SIZE = 150;
@@ -33,20 +34,21 @@ const ROW_GAP = 72;
 const NOMINAL_ANCHOR_Y = 106;
 const TREE_H = NOMINAL_ANCHOR_Y + FIRST_GAP + ROW_GAP + 52;
 
-const rowY = (anchorY, index) => anchorY + FIRST_GAP + index * ROW_GAP;
+type Anchor = { x: number; y: number };
+const rowY = (anchorY: number, index: number) => anchorY + FIRST_GAP + index * ROW_GAP;
 
 const DASH = 420;
 
 export default function JoinMenu() {
-  const rootRef = useRef(null);
+  const rootRef = useRef<HTMLElement>(null);
   const [entered, setEntered] = useState(false);
-  const [openLabel, setOpenLabel] = useState(null);
-  const [anchors, setAnchors] = useState({});
-  const textRefs = useRef({});
-  const restoreScroll = useRef(null);
+  const [openLabel, setOpenLabel] = useState<string | null>(null);
+  const [anchors, setAnchors] = useState<Record<string, Anchor>>({});
+  const textRefs = useRef<Record<string, SVGTextElement | null>>({});
+  const restoreScroll = useRef<(() => void) | null>(null);
 
   const measure = useCallback(() => {
-    const next = {};
+    const next: Record<string, Anchor> = {};
     for (const [label, node] of Object.entries(textRefs.current)) {
       if (!node) continue;
       try {
@@ -121,7 +123,8 @@ export default function JoinMenu() {
 
       <ul className={styles.joinMenuList}>
         {MENUS.map((menu, index) => {
-          const hasChildren = Boolean(menu.children);
+          const children = 'children' in menu ? menu.children : undefined;
+          const hasChildren = Boolean(children);
           const open = openLabel === menu.label;
           const anchor = anchors[menu.label];
           const height = hasChildren ? TREE_H : WORD_H;
@@ -132,11 +135,13 @@ export default function JoinMenu() {
               className={styles.joinMenuItem}
               data-open={open ? '' : undefined}
               data-branch={hasChildren ? '' : undefined}
-              style={{
-                '--collapsed': `${(WORD_H / VB_W) * 100}%`,
-                '--expanded': `${(TREE_H / VB_W) * 100}%`,
-                '--order': index,
-              }}
+              style={
+                {
+                  '--collapsed': `${(WORD_H / VB_W) * 100}%`,
+                  '--expanded': `${(TREE_H / VB_W) * 100}%`,
+                  '--order': index,
+                } as CSSProperties
+              }
               onMouseEnter={hasChildren ? () => setOpenLabel(menu.label) : undefined}
               onMouseLeave={hasChildren ? () => setOpenLabel(null) : undefined}
             >
@@ -177,7 +182,7 @@ export default function JoinMenu() {
                       className={styles.joinBranchLine}
                       d={`M ${anchor.x - BRANCH_SPAN} ${anchor.y} H ${TWIG_END}`}
                       pathLength="1"
-                      style={{ '--seq': 0 }}
+                      style={{ '--seq': 0 } as CSSProperties}
                     />
                     <circle
                       className={styles.joinBranchDot}
@@ -187,17 +192,17 @@ export default function JoinMenu() {
                     />
                     <path
                       className={styles.joinBranchLine}
-                      d={`M ${(anchor.x - BRANCH_SPAN + TWIG_END) / 2} ${anchor.y} V ${rowY(anchor.y, menu.children.length - 1)}`}
+                      d={`M ${(anchor.x - BRANCH_SPAN + TWIG_END) / 2} ${anchor.y} V ${rowY(anchor.y, children!.length - 1)}`}
                       pathLength="1"
-                      style={{ '--seq': 1 }}
+                      style={{ '--seq': 1 } as CSSProperties}
                     />
-                    {menu.children.map((child, childIndex) => (
+                    {children!.map((child, childIndex) => (
                       <path
                         key={child.label}
                         className={styles.joinBranchLine}
                         d={`M ${(anchor.x - BRANCH_SPAN + TWIG_END) / 2} ${rowY(anchor.y, childIndex)} h ${STUB}`}
                         pathLength="1"
-                        style={{ '--seq': 2 + childIndex }}
+                        style={{ '--seq': 2 + childIndex } as CSSProperties}
                       />
                     ))}
                   </g>
@@ -215,16 +220,18 @@ export default function JoinMenu() {
                     <span className={styles.srOnly}>{menu.label}</span>
                   </button>
                   <ul className={styles.joinSubList}>
-                    {menu.children.map((child, childIndex) => (
+                    {children!.map((child, childIndex) => (
                       <li
                         key={child.label}
-                        style={{
-                          '--row-top': anchor
-                            ? `${(rowY(anchor.y, childIndex) / VB_W) * 100}%`
-                            : '0%',
-                          '--row-right': `${((VB_W - WORD_RIGHT) / VB_W) * 100}%`,
-                          '--seq': 2 + childIndex,
-                        }}
+                        style={
+                          {
+                            '--row-top': anchor
+                              ? `${(rowY(anchor.y, childIndex) / VB_W) * 100}%`
+                              : '0%',
+                            '--row-right': `${((VB_W - WORD_RIGHT) / VB_W) * 100}%`,
+                            '--seq': 2 + childIndex,
+                          } as CSSProperties
+                        }
                       >
                         <Link
                           href={child.href}
@@ -239,7 +246,7 @@ export default function JoinMenu() {
                 </>
               ) : (
                 <Link
-                  href={menu.href}
+                  href={'href' in menu ? menu.href : '/'}
                   className={styles.joinHit}
                   onClick={suppressSmoothScroll}
                 >

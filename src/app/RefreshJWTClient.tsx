@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { useMe } from '@/util/hooks/useMe';
 import { useRouter } from 'next/navigation';
 
-function isJwtExpired(jwt) {
+function isJwtExpired(jwt: string) {
   try {
     const encodedPayload = jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     const payload = JSON.parse(
@@ -93,4 +93,6 @@ export default function RefreshJWTClient() {
       }
     })();
   }, [me, session, status, router, update]);
+
+  return null;
 }

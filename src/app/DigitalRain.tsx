@@ -53,11 +53,48 @@ const scrollOffset = () =>
     document.body.scrollTop || 0,
   );
 
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
-const smooth = (v) => v * v * (3 - 2 * v);
-const settle = (v) => v * v * v * (v * (v * 6 - 15) + 10);
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const smooth = (v: number) => v * v * (3 - 2 * v);
+const settle = (v: number) => v * v * v * (v * (v * 6 - 15) + 10);
 
-function toDots(grid) {
+type Dot = {
+  col: number;
+  row: number;
+  cov: number;
+  size: number;
+  phase: number;
+  jitter: number;
+  target?: Dot;
+};
+type DotGrid = { cols: number; rows: number; coverage: Float32Array; dots: Dot[] };
+type Flow = {
+  xRight: number;
+  xLeft: number;
+  top: number;
+  width: number;
+  height: number;
+  fall: number;
+  cycle: number;
+  speed: number;
+  lead: number;
+  formStart: number;
+  formEnd: number;
+};
+type Source = {
+  el: HTMLElement;
+  grid: DotGrid;
+  flowIndex: number;
+  fillers: { origin: Dot; target: Dot }[];
+  docTop: number;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
+function toDots(
+  grid: { cols: number; rows: number; coverage: Float32Array } | null,
+): DotGrid | null {
   if (!grid) return null;
   const { cols, rows, coverage } = grid;
   const dots = [];
@@ -79,9 +116,9 @@ function toDots(grid) {
   return { dots, cols, rows, coverage };
 }
 
-export default function DigitalRain({ className }) {
-  const wrapperRef = useRef(null);
-  const canvasRef = useRef(null);
+export default function DigitalRain({ className }: { className?: string }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -93,9 +130,9 @@ export default function DigitalRain({ className }) {
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    let wall = null;
-    let sources = [];
-    let flows = [];
+    let wall: DotGrid | null = null;
+    let sources: Source[] = [];
+    let flows: Flow[] = [];
     let raf = 0;
     let lastTime = 0;
     let cssW = 0;
@@ -111,7 +148,7 @@ export default function DigitalRain({ className }) {
     let buckets = Array.from({ length: ALPHA_STEPS }, () => new Path2D());
     const bucketUsed = new Uint8Array(ALPHA_STEPS);
 
-    const pushRect = (alpha, x, y, side) => {
+    const pushRect = (alpha: number, x: number, y: number, side: number) => {
       const index = Math.min(ALPHA_STEPS - 1, Math.max(0, Math.round(alpha * ALPHA_STEPS) - 1));
       buckets[index].rect(x, y, side, side);
       bucketUsed[index] = 1;
@@ -139,7 +176,7 @@ export default function DigitalRain({ className }) {
       const height = FLOW_BOX_HEIGHT_VW * vw;
       const width = height * STRIP_ASPECT;
 
-      flows = FLOWS.map((flow) => {
+      flows = FLOWS.map((flow): Flow => {
         const boxRight =
           flow.anchor === 'left'
             ? (flow.offsetVw + FLOW_BOX_WIDTH_VW) * vw
@@ -155,6 +192,9 @@ export default function DigitalRain({ className }) {
           fall: 0,
           cycle: 0,
           speed: flow.speed,
+          lead: 0,
+          formStart: 0,
+          formEnd: 0,
         };
       });
 
@@ -222,7 +262,7 @@ export default function DigitalRain({ className }) {
       if (Math.abs(raw - targetScroll) > SCROLL_DEADZONE_PX || raw === 0) targetScroll = raw;
     };
 
-    const advanceProgress = (dt, now) => {
+    const advanceProgress = (dt: number, now: number) => {
       const previous = progress;
       const scripted = sampleRun(now);
       if (scripted !== null) {
@@ -246,7 +286,7 @@ export default function DigitalRain({ className }) {
 
     const isSettling = () => Math.abs(targetScroll - smoothScroll) > SETTLE_EPSILON_PX;
 
-    const paintGrains = (time) => {
+    const paintGrains = (time: number) => {
       const gatherAt = GATHER_AT;
       const fallDistance = cssH * FALL_ACCEL;
 
@@ -258,6 +298,7 @@ export default function DigitalRain({ className }) {
         const cellW = source.width / grid.cols;
         const cellH = source.height / grid.rows;
         const originDot = Math.min(cellW, cellH);
+        if (!wall) continue;
         const targetCellW = flow.width / wall.cols;
         const targetCellH = flow.height / wall.rows;
         const targetDot = Math.min(targetCellW, targetCellH);
@@ -265,7 +306,7 @@ export default function DigitalRain({ className }) {
         const logoTop = flow.top + flow.fall;
         const flowLeft = flow.cycle === 0 ? flow.xRight : flow.xLeft;
 
-        const drawGrain = (dot, target, isFiller) => {
+        const drawGrain = (dot: Dot, target: Dot | undefined, isFiller: boolean) => {
           const release =
             flow.lead + (1 - dot.row / grid.rows) * ROW_SPREAD + dot.jitter * GRAIN_JITTER;
           const local = clamp01((progress - release) / GRAIN_SPAN);
@@ -322,14 +363,14 @@ export default function DigitalRain({ className }) {
       }
     };
 
-    const paint = (time) => {
+    const paint = (time: number) => {
       ctx.clearRect(0, 0, cssW, cssH);
       ctx.fillStyle = dotColor;
       paintGrains(time);
       flushBuckets();
     };
 
-    const step = (time) => {
+    const step = (time: number) => {
       raf = requestAnimationFrame(step);
       if (document.hidden || !cssW || !cssH || !wall) return;
 
@@ -370,14 +411,14 @@ export default function DigitalRain({ className }) {
 
     const collectSources = async () => {
       const elements = Array.from(document.querySelectorAll('[data-hero-dots]'));
-      const loaded = await Promise.all(
+      const loaded: (Source | null)[] = await Promise.all(
         elements.map(async (el) => {
           const src = el.getAttribute('data-src');
           if (!src) return null;
           const grid = toDots(await loadDotGrid(src, HERO_DOT_PITCH));
           return grid
             ? {
-                el,
+                el: el as HTMLElement,
                 grid,
                 flowIndex: 0,
                 fillers: [],
@@ -390,7 +431,7 @@ export default function DigitalRain({ className }) {
             : null;
         }),
       );
-      return loaded.filter(Boolean);
+      return loaded.filter((source): source is Source => source !== null);
     };
 
     (async () => {

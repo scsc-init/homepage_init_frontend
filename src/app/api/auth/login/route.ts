@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { fetchBackendServer } from '@/util/fetch/server';
 import { resolveProfileImage } from '@/util/profileImage';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   const apiSecret = process.env.API_SECRET;
   const publicBackendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -27,9 +28,9 @@ export async function POST(request) {
     return NextResponse.json({ error: 'login failed' }, { status: 400 });
   }
 
-  let jwt;
+  let jwt: string | undefined;
   try {
-    const data = await res.json();
+    const data: { jwt?: string } = await res.json();
     jwt = data.jwt;
   } catch {
     return NextResponse.json({ error: 'login failed' }, { status: 400 });
@@ -52,7 +53,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'profile fetch failed' }, { status: 400 });
     }
 
-    const userData = await profileRes.json();
+    const userData: Record<string, unknown> | null = await profileRes.json();
 
     if (userData) {
       userProfile = {

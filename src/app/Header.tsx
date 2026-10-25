@@ -10,7 +10,9 @@ import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util
 import styles from './Header.module.css';
 import { useTranslations } from 'next-intl';
 
-export default function Header({ year, semester }) {
+type HeaderProps = { year?: number | null; semester?: number | null };
+
+export default function Header({ year, semester }: HeaderProps) {
   return (
     <div>
       <div className={styles.container}>
@@ -32,7 +34,7 @@ export default function Header({ year, semester }) {
   );
 }
 
-function HeaderLeft({ year, semester }) {
+function HeaderLeft({ year, semester }: HeaderProps) {
   return (
     <>
       <Link href="/" className="unset">
@@ -55,12 +57,12 @@ function HeaderLeft({ year, semester }) {
 }
 
 function HeaderCenter() {
-  const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
-  const timeoutRef = useRef();
+  const [openedMenuIndex, setOpenedMenuIndex] = useState<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
-  const open = (i) => {
+  const open = (i: number) => {
     clearTimeout(timeoutRef.current);
     setOpenedMenuIndex(i);
   };
@@ -124,7 +126,7 @@ function HeaderRight() {
   const t = useTranslations('Header');
 
   const [isExecutive, setIsExecutive] = useState(false);
-  const [isMobile, setIsMobile] = useState(null);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   const { me: user, isLoading } = useMe();
 
@@ -145,7 +147,7 @@ function HeaderRight() {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
   }, [user]);
 
-  function handleLoginClick(event) {
+  function handleLoginClick(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
 
     clearRedirectAfterLogin();
@@ -233,7 +235,7 @@ function MobileExecutiveButton() {
 }
 
 function MobileMenuList() {
-  const [openedMenuIndex, setOpenedMenuIndex] = useState(null);
+  const [openedMenuIndex, setOpenedMenuIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();

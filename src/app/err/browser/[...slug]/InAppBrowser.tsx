@@ -9,14 +9,15 @@ import styles from './page.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
 
-const IN_APP_BROWSER_NAMES = {
+type InAppBrowserProps = { initialRedirect?: string | null; slug?: string[] };
+const IN_APP_BROWSER_NAMES: Record<string, string> = {
   kakaotalk: '카카오톡',
   everytime: '에브리타임',
   instagram: '인스타그램',
   line: '라인',
 };
 
-export default function InAppBrowser({ initialRedirect = null, slug = [] }) {
+export default function InAppBrowser({ initialRedirect = null, slug = [] }: InAppBrowserProps) {
   const [inAppWarning, setInAppWarning] = useState(false);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
   const [mounted, setMounted] = useState(false);
