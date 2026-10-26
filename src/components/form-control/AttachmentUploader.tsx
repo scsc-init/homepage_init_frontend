@@ -276,7 +276,6 @@ export default function AttachmentUploader({
                         className={styles.AttachmentRemove}
                         onClick={() => removeId(id)}
                         disabled={isUploading}
-                        aria-label="remove attachment"
                       >
                         {t('remove')}
                       </button>
@@ -302,7 +301,6 @@ export default function AttachmentUploader({
                     className={styles.AttachmentRemove}
                     onClick={() => removeId(id)}
                     disabled={isUploading}
-                    aria-label="remove attachment"
                   >
                     {t('remove')}
                   </button>

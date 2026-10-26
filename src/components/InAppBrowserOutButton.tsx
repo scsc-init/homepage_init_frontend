@@ -59,7 +59,7 @@ export default function InAppBrowserOutButton({
                 width={12}
                 height={12}
                 className="ico"
-                alt="arrow button"
+                alt=""
               />
             ),
           })}
