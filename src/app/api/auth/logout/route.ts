@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { REDIRECT_COOKIE } from '@/util/loginRedirect';
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   const res = NextResponse.redirect(new URL('/', req.url));
 
   res.cookies.set('app_jwt', '', {

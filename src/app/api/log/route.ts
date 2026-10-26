@@ -1,15 +1,18 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export async function POST(req) {
+type ClientEventBody = { ts?: string; event?: string; data?: unknown };
+
+export async function POST(req: NextRequest) {
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     req.headers.get('x-real-ip') ||
     'unknown';
   const ua = req.headers.get('user-agent') || '';
   const referer = req.headers.get('referer') || '';
-  let body = {};
+  let body: ClientEventBody = {};
   try {
-    body = await req.json();
+    body = (await req.json()) as ClientEventBody;
   } catch {}
   const payload = {
     type: 'client_event',

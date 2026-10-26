@@ -11,13 +11,13 @@ import { getKvsClient } from '@/util/fetch/client-util';
 export default function Footer() {
   const pathname = usePathname();
   const [footerMessage, setFooterMessage] = useState('');
-  const [kvHrefs, setKvHrefs] = useState({});
+  const [kvHrefs, setKvHrefs] = useState<Record<string, string | undefined>>({});
 
   useEffect(() => {
     const fetchAllKvs = async () => {
       const hrefKeys = footerLogoData
         .map((item) => item.hrefKvKey)
-        .filter((k) => typeof k === 'string' && k.length > 0);
+        .filter((k): k is string => typeof k === 'string' && k.length > 0);
       const allKeys = ['footer-message', ...hrefKeys];
       const values = await getKvsClient(allKeys);
 

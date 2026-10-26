@@ -1,6 +1,7 @@
 import { fetchBackendServer } from '@/util/fetch/server';
+import type { NextRequest } from 'next/server';
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   const formData = await req.formData();
 
   const res = await fetchBackendServer('POST', '/api/file/image/upload', {

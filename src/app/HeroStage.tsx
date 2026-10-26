@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ShimmerOverlay from './ShimmerOverlay';
+import type { ReactNode } from 'react';
 
 const OVERLAYS = [
   { src: '/main/logo-overlay-left.png', width: 1490, height: 1094 },
@@ -16,13 +17,21 @@ export function useHeroIntroStarted() {
   return useContext(HeroIntroContext);
 }
 
+type HeroStageProps = {
+  id?: string;
+  className?: string;
+  overlayContainerClassName?: string;
+  overlayClassName?: string;
+  children: ReactNode;
+};
+
 export default function HeroStage({
   id,
   className,
   overlayContainerClassName,
   overlayClassName,
   children,
-}) {
+}: HeroStageProps) {
   const [started, setStarted] = useState(false);
   const readyCount = useRef(0);
 

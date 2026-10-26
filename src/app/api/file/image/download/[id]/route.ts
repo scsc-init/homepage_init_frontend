@@ -1,6 +1,7 @@
 import { fetchBackendServer } from '@/util/fetch/server';
+import type { NextRequest } from 'next/server';
 
-export async function GET(_req, { params }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const id = encodeURIComponent(resolvedParams.id);
 

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { normalizeRedirectTarget } from '@/util/loginRedirect';
 
-export function GET(request) {
+export function GET(request: NextRequest) {
   const raw = request.cookies.get('redirect_after_login')?.value || null;
 
   let target = null;

@@ -2,9 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
+import type { ReactNode } from 'react';
 
-export default function Reveal({ children, className = '' }) {
-  const ref = useRef(null);
+export default function Reveal({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

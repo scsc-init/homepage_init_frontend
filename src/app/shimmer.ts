@@ -15,18 +15,18 @@ const LUT_SIZE = 2048;
 const SIN_LUT = new Float32Array(LUT_SIZE);
 for (let i = 0; i < LUT_SIZE; i++) SIN_LUT[i] = Math.sin((i / LUT_SIZE) * TWO_PI);
 
-const fastSin = (x) => {
+const fastSin = (x: number) => {
   const idx = (x * (LUT_SIZE / TWO_PI)) | 0;
   return SIN_LUT[((idx % LUT_SIZE) + LUT_SIZE) % LUT_SIZE];
 };
 
 export const MAX_SIZE_SWING = 1.05;
 
-export function dotPhase(col, row) {
+export function dotPhase(col: number, row: number): number {
   return (Math.sin(col * 12.9898 + row * 78.233) * 43758.5453) % (Math.PI * 2);
 }
 
-export function shimmerSwing(col, row, phase, timeMs) {
+export function shimmerSwing(col: number, row: number, phase: number, timeMs: number): number {
   const s =
     0.5 + 0.5 * fastSin(col * KX + row * KY - timeMs * WAVE_SPEED + phase * PHASE_JITTER);
   return SWING_BASE + SWING_BODY * s + SWING_CREST * (s * s * s);
