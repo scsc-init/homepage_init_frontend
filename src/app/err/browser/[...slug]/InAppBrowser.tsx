@@ -8,18 +8,15 @@ import { setRedirectAfterLogin } from '@/util/loginRedirect';
 import styles from './page.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
+import { useTranslations } from 'next-intl';
 
 type InAppBrowserProps = { initialRedirect?: string | null; slug?: string[] };
-const IN_APP_BROWSER_NAMES: Record<string, string> = {
-  kakaotalk: '카카오톡',
-  everytime: '에브리타임',
-  instagram: '인스타그램',
-  line: '라인',
-};
+const IN_APP_BROWSER_KEYS = ['kakaotalk', 'everytime', 'instagram', 'line'];
 
 export default function InAppBrowser({ initialRedirect = null, slug = [] }: InAppBrowserProps) {
   const [inAppWarning, setInAppWarning] = useState(false);
-  const [inAppBrowserName, setInAppBrowserName] = useState('');
+  const t = useTranslations('InAppBrowser');
+  const [inAppBrowserKey, setInAppBrowserKey] = useState('');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -34,23 +31,23 @@ export default function InAppBrowser({ initialRedirect = null, slug = [] }: InAp
 
     if (slug?.length > 0) {
       const key = slug[0];
-      if (IN_APP_BROWSER_NAMES[key]) {
+      if (IN_APP_BROWSER_KEYS.includes(key)) {
         setInAppWarning(true);
-        setInAppBrowserName(IN_APP_BROWSER_NAMES[key]);
+        setInAppBrowserKey(key);
         return;
       }
     }
 
-    for (const [key, name] of Object.entries(IN_APP_BROWSER_NAMES)) {
+    for (const key of IN_APP_BROWSER_KEYS) {
       if (ua.includes(key)) {
         setInAppWarning(true);
-        setInAppBrowserName(name);
+        setInAppBrowserKey(key);
         return;
       }
     }
 
     setInAppWarning(true);
-    setInAppBrowserName('인앱');
+    setInAppBrowserKey('inApp');
   }, [slug]);
 
   return (
@@ -59,19 +56,21 @@ export default function InAppBrowser({ initialRedirect = null, slug = [] }: InAp
       <div className={styles['page-container']}>
         <div className={styles['warning-wrapper']}>
           <h1 style={{ marginBottom: 0 }}>
-            <strong>{inAppBrowserName}</strong> 브라우저에서는
+            {t.rich('titleBrowser', {
+              browser: t(`browserNames.${inAppBrowserKey}`),
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
           </h1>
           <h1 style={{ marginTop: 0, marginBottom: '10px' }}>
-            <strong>로그인</strong>이 실패할 수 있습니다
+            {t.rich('titleLogin', { strong: (chunks) => <strong>{chunks}</strong> })}
           </h1>
           <h3 style={{ marginBottom: '20px' }}>
-            인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부
-            브라우저를 이용해주세요.
+            {t.rich('guide', { strong: (chunks) => <strong>{chunks}</strong> })}
           </h3>
         </div>
 
         <div className={styles['copy-button-wrapper']}>
-          <CopyButton link="scsc.dev" label="외부 브라우저 링크 복사" />
+          <CopyButton link="scsc.dev" label={t('copyLink')} />
         </div>
 
         <div className={styles['copy-button-wrapper']}>

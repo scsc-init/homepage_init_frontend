@@ -1,5 +1,76 @@
 {
   "Header": {
-    "login": "Sign Up / Sign In"
+    "login": "Sign Up / Sign In",
+    "semester": "{year} - {semester, select, 1 {Spring} 2 {Summer} 3 {Fall} 4 {Winter} other {}}",
+    "executivePage": "Executive Page",
+    "menu": {
+      "smallGroup": "Small Group"
+    }
+  },
+  "Footer": {
+    "loadError": "Failed to load footer information."
+  },
+  "WithAuthorization": {
+    "checking": "Checking permissions...",
+    "noPermission": "You do not have permission to access this page."
+  },
+  "InAppBrowserOutButton": {
+    "iosGuide": "Tap the arrow icon ( <icon></icon> ) at the top → Open in external browser",
+    "androidGuide": "Tap the three dots ( ⋮ ) at the top → Open in external browser",
+    "openExternal": "Open in external browser"
+  },
+  "CopyButton": {
+    "label": "Copy",
+    "ariaLabel": "Copy content"
+  },
+  "EditorWrapper": {
+    "loading": "Loading..."
+  },
+  "AttachmentList": {
+    "label": "Attachments"
+  },
+  "AttachmentUploader": {
+    "label": "Attachments",
+    "imageOnly": "Only image files can be uploaded.",
+    "unsupportedType": "Unsupported file type. Only PDF, DOCX, and PPTX files can be uploaded.",
+    "networkError": "A network error occurred while uploading the file.",
+    "loginRequired": "You need to sign in. Please sign in again and upload the file.",
+    "uploadFailed": "File upload failed (status {status})",
+    "missingId": "The file upload response does not contain an id.",
+    "uploading": "Uploading...",
+    "addImage": "Add image",
+    "addFile": "Add file",
+    "noImages": "No images attached.",
+    "noFiles": "No files attached.",
+    "uploadedImageAlt": "Uploaded image",
+    "imageLoading": "Loading image",
+    "remove": "Remove"
+  },
+  "ToggleInput": {
+    "on": "On",
+    "off": "Off"
+  },
+  "TextListInput": {
+    "placeholder": "Press Enter to add"
+  },
+  "SortDropdown": {
+    "latest": "Newest",
+    "oldest": "Oldest",
+    "title": "Title",
+    "ariaLabel": "Sort: {label}",
+    "menuAriaLabel": "Sort by"
+  },
+  "InAppBrowser": {
+    "browserNames": {
+      "kakaotalk": "KakaoTalk",
+      "everytime": "Everytime",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "inApp": "in-app"
+    },
+    "titleBrowser": "In the <strong>{browser}</strong> browser,",
+    "titleLogin": "<strong>sign-in</strong> may fail",
+    "guide": "Please use an external browser such as <strong>Chrome, Safari, or Samsung Internet</strong> instead of an in-app browser.",
+    "copyLink": "Copy link for external browser"
   }
 }

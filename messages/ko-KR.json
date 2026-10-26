@@ -1,5 +1,76 @@
 {
   "Header": {
-    "login": "가입 / 로그인"
+    "login": "가입 / 로그인",
+    "semester": "{year} - {semester, select, 1 {1} 2 {여름} 3 {2} 4 {겨울} other {}}학기",
+    "executivePage": "운영진 페이지",
+    "menu": {
+      "smallGroup": "소모임"
+    }
+  },
+  "Footer": {
+    "loadError": "Footer 정보를 불러오지 못했습니다."
+  },
+  "WithAuthorization": {
+    "checking": "권한 확인 중...",
+    "noPermission": "접근 권한이 없습니다."
+  },
+  "InAppBrowserOutButton": {
+    "iosGuide": "상단의 화살표 아이콘( <icon></icon> ) 클릭 → 외부 브라우저로 열기",
+    "androidGuide": "상단의 점 세 개( ⋮ ) 클릭 → 외부 브라우저로 열기",
+    "openExternal": "외부 브라우저로 이동"
+  },
+  "CopyButton": {
+    "label": "복사",
+    "ariaLabel": "내용 복사"
+  },
+  "EditorWrapper": {
+    "loading": "로딩 중..."
+  },
+  "AttachmentList": {
+    "label": "첨부 파일"
+  },
+  "AttachmentUploader": {
+    "label": "첨부파일",
+    "imageOnly": "이미지 파일만 업로드할 수 있습니다.",
+    "unsupportedType": "지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX 파일만 업로드할 수 있습니다.",
+    "networkError": "파일 업로드 중 네트워크 오류가 발생했습니다.",
+    "loginRequired": "로그인이 필요합니다. 다시 로그인한 후 파일을 업로드해 주세요.",
+    "uploadFailed": "파일 업로드 실패 (status {status})",
+    "missingId": "파일 업로드 응답에 id가 없습니다.",
+    "uploading": "업로드 중...",
+    "addImage": "이미지 추가",
+    "addFile": "파일 추가",
+    "noImages": "첨부한 이미지가 없습니다.",
+    "noFiles": "첨부파일이 없습니다.",
+    "uploadedImageAlt": "업로드한 이미지",
+    "imageLoading": "이미지 로딩 중",
+    "remove": "제거"
+  },
+  "ToggleInput": {
+    "on": "켜짐",
+    "off": "꺼짐"
+  },
+  "TextListInput": {
+    "placeholder": "엔터를 눌러 추가하세요"
+  },
+  "SortDropdown": {
+    "latest": "최신순",
+    "oldest": "오래된 순",
+    "title": "제목순",
+    "ariaLabel": "정렬: {label}",
+    "menuAriaLabel": "정렬 기준"
+  },
+  "InAppBrowser": {
+    "browserNames": {
+      "kakaotalk": "카카오톡",
+      "everytime": "에브리타임",
+      "instagram": "인스타그램",
+      "line": "라인",
+      "inApp": "인앱"
+    },
+    "titleBrowser": "<strong>{browser}</strong> 브라우저에서는",
+    "titleLogin": "<strong>로그인</strong>이 실패할 수 있습니다",
+    "guide": "인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부 브라우저를 이용해주세요.",
+    "copyLink": "외부 브라우저 링크 복사"
   }
 }

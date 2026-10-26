@@ -6,6 +6,7 @@ import { getAttachmentDownloadUrl, isImageAttachment } from '@/util/getAttachmen
 import type { AttachmentMeta } from '@/util/getAttachmentDownloadUrl';
 import { uploadCompressedImage } from '@/util/fetch/imageUpload';
 import styles from './Attachment.module.css';
+import { useTranslations } from 'next-intl';
 
 type AttachmentItem = AttachmentMeta & {
   id?: string | number;
@@ -38,10 +39,11 @@ function getErrorMessage(data: unknown, fallback: string): string {
 export default function AttachmentUploader({
   valueIds,
   onChangeIds,
-  label = '첨부파일',
+  label,
   isImageUpload,
   isFileUpload,
 }: AttachmentUploaderProps) {
+  const t = useTranslations('AttachmentUploader');
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState<Record<string, AttachmentItem>>({});
 
@@ -116,11 +118,7 @@ export default function AttachmentUploader({
             return !(name.endsWith('.pdf') || name.endsWith('.docx') || name.endsWith('.pptx'));
           });
       if (invalidFiles.length > 0) {
-        alert(
-          isImageUpload
-            ? '이미지 파일만 업로드할 수 있습니다.'
-            : '지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX 파일만 업로드할 수 있습니다.',
-        );
+        alert(isImageUpload ? t('imageOnly') : t('unsupportedType'));
       }
 
       const files = isImageUpload
@@ -160,7 +158,7 @@ export default function AttachmentUploader({
               },
             );
           } catch {
-            alert('파일 업로드 중 네트워크 오류가 발생했습니다.');
+            alert(t('networkError'));
             continue;
           }
           let data: unknown = null;
@@ -172,16 +170,16 @@ export default function AttachmentUploader({
 
           if (!res.ok) {
             if (res.status === 401) {
-              alert('로그인이 필요합니다. 다시 로그인한 후 파일을 업로드해 주세요.');
+              alert(t('loginRequired'));
               continue;
             }
-            const msg = getErrorMessage(data, `파일 업로드 실패 (status ${res.status})`);
+            const msg = getErrorMessage(data, t('uploadFailed', { status: res.status }));
             alert(msg);
             continue;
           }
 
           if (!isAttachmentItem(data) || !data.id) {
-            alert('파일 업로드 응답에 id가 없습니다.');
+            alert(t('missingId'));
             continue;
           }
 
@@ -205,7 +203,7 @@ export default function AttachmentUploader({
         registerMetadata(uploadedItems);
       }
     },
-    [ids, isUploading, onChangeIds, registerMetadata, isImageUpload],
+    [ids, isUploading, onChangeIds, registerMetadata, isImageUpload, t],
   );
 
   const removeId = useCallback(
@@ -224,7 +222,7 @@ export default function AttachmentUploader({
   return (
     <section className={styles.AttachmentSection}>
       <div className={styles.AttachmentHeader}>
-        <div className={styles.AttachmentLabel}>{label}</div>
+        <div className={styles.AttachmentLabel}>{label ?? t('label')}</div>
         <label className={`${styles.AttachmentPick} ${isUploading ? 'is-busy' : ''}`}>
           <input
             type="file"
@@ -234,13 +232,13 @@ export default function AttachmentUploader({
             disabled={isUploading}
             className={styles.AttachmentInput}
           />
-          {isUploading ? '업로드 중...' : isImageUpload ? '이미지 추가' : '파일 추가'}
+          {isUploading ? t('uploading') : isImageUpload ? t('addImage') : t('addFile')}
         </label>
       </div>
 
       {ids.length === 0 ? (
         <div className={styles.AttachmentEmpty}>
-          {isImageUpload ? '첨부한 이미지가 없습니다.' : '첨부파일이 없습니다.'}
+          {isImageUpload ? t('noImages') : t('noFiles')}
         </div>
       ) : (
         <>
@@ -260,12 +258,12 @@ export default function AttachmentUploader({
                       {isImageAttachment(meta) ? (
                         <img
                           src={href}
-                          alt={meta?.original_filename || '업로드한 이미지'}
+                          alt={meta?.original_filename || t('uploadedImageAlt')}
                           className={styles.AttachmentPreviewImage}
                         />
                       ) : (
                         <div className={styles.AttachmentPreviewFallback}>
-                          {meta?.original_filename || '이미지 로딩 중'}
+                          {meta?.original_filename || t('imageLoading')}
                         </div>
                       )}
                     </a>
@@ -280,7 +278,7 @@ export default function AttachmentUploader({
                         disabled={isUploading}
                         aria-label="remove attachment"
                       >
-                        제거
+                        {t('remove')}
                       </button>
                     </div>
                   </li>
@@ -306,7 +304,7 @@ export default function AttachmentUploader({
                     disabled={isUploading}
                     aria-label="remove attachment"
                   >
-                    제거
+                    {t('remove')}
                   </button>
                 </li>
               ))}
