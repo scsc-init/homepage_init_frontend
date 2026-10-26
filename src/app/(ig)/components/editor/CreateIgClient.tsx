@@ -23,9 +23,9 @@ type CreateIgClientProps = {
 };
 
 type CreateConfig = {
-  upperLabel: 'SIG' | 'PIG';
+  upperLabel: 'SIG' | 'PIG' | '소모임';
   storageKey: string;
-  routeBase: '/sig' | '/pig';
+  routeBase: '/sig' | '/pig' | '/small-group';
   tags: string[];
   subtitle: string;
   getDefaultRolling: (status: string | null) => AdmissionMode;
@@ -49,6 +49,16 @@ const CREATE_CONFIG: Record<IgKind, CreateConfig> = {
     routeBase: '/sig',
     tags: ['SIG'],
     subtitle: '새로운 SIG를 만들어 보세요',
+    getDefaultRolling: (status) => (status === 'active' ? 'always' : 'during_recruiting'),
+    shouldWarnRolling: (status, value) =>
+      status === 'active' && (value === 'during_recruiting' || value === 'never'),
+  },
+  'small-group': {
+    upperLabel: '소모임',
+    storageKey: 'smallGroupForm',
+    routeBase: '/small-group',
+    tags: ['소모임'],
+    subtitle: '새로운 소모임을 만들어 보세요',
     getDefaultRolling: (status) => (status === 'active' ? 'always' : 'during_recruiting'),
     shouldWarnRolling: (status, value) => status === 'active' && !value,
   },

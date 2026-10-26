@@ -5,7 +5,11 @@ import EditorInput from '@/components/form-control/EditorInput';
 import TextInput from '@/components/form-control/TextInput';
 import TextListInput from '@/components/form-control/TextListInput';
 import ToggleInput from '@/components/form-control/ToggleInput';
-import { PIG_ADMISSION_LABEL_MAP, SIG_ADMISSION_LABEL_MAP } from '@/util/constants';
+import {
+  PIG_ADMISSION_LABEL_MAP,
+  SIG_ADMISSION_LABEL_MAP,
+  SMALL_GROUP_ADMISSION_LABEL_MAP,
+} from '@/util/constants';
 import type { ReactNode } from 'react';
 import type {
   Control,
@@ -31,6 +35,12 @@ const FORM_CONFIG = {
     titlePlaceholder: 'AI SIG',
     descriptionPlaceholder: 'AI를 공부하는 SIG입니다',
     admissionLabelMap: SIG_ADMISSION_LABEL_MAP,
+  },
+  'small-group': {
+    upperLabel: '소모임',
+    titlePlaceholder: '군입대 소모임',
+    descriptionPlaceholder: '군대를 준비하는 소모임입니다',
+    admissionLabelMap: SMALL_GROUP_ADMISSION_LABEL_MAP,
   },
   pig: {
     upperLabel: 'PIG',

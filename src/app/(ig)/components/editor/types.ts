@@ -1,4 +1,4 @@
-﻿export type IgKind = 'sig' | 'pig';
+export type IgKind = 'sig' | 'small-group' | 'pig';
 
 export type AdmissionMode = 'always' | 'during_recruiting' | 'never';
 

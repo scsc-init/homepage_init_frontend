@@ -18,6 +18,10 @@ const EDIT_CONFIG: Record<IgKind, EditPageConfig> = {
     heading: 'SIG 수정',
     errorMessage: '시그 정보를 불러오지 못했습니다.',
   },
+  'small-group': {
+    heading: '소모임 수정',
+    errorMessage: '소모임 정보를 불러오지 못했습니다.',
+  },
   pig: {
     heading: 'PIG 수정',
     errorMessage: '피그 정보를 불러오지 못했습니다.',

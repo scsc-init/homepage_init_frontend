@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 import styles from './SigTagManager.module.css';
+import Button from '@/components/common/Button';
 
 type SigTagManagerProps = {
   sigId?: string | number | null;
@@ -323,14 +324,15 @@ const SigTagManager = forwardRef<SigTagManagerHandle, SigTagManagerProps>(
               </option>
             ))}
           </select>
-          <button
+          <Button
+            variant="secondary"
             type="button"
             className={styles.SigTagActionButton}
             onClick={addExistingTag}
             disabled={loading || disabled || !selectedTagId}
           >
             기존 태그 추가
-          </button>
+          </Button>
         </div>
 
         <div className={styles.SigTagControlGroup}>
@@ -356,7 +358,8 @@ const SigTagManager = forwardRef<SigTagManagerHandle, SigTagManagerProps>(
               <span>major</span>
             </label>
           ) : null}
-          <button
+          <Button
+            variant="secondary"
             type="button"
             className={styles.SigTagActionButton}
             onClick={() => {
@@ -365,7 +368,7 @@ const SigTagManager = forwardRef<SigTagManagerHandle, SigTagManagerProps>(
             disabled={loading || disabled || !newTagText.trim()}
           >
             새 태그 생성 후 추가
-          </button>
+          </Button>
         </div>
       </div>
     );

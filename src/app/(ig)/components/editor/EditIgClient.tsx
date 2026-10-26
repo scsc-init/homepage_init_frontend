@@ -29,8 +29,8 @@ type EditIgClientProps = {
 };
 
 type EditConfig = {
-  upperLabel: 'SIG' | 'PIG';
-  routeBase: '/sig' | '/pig';
+  upperLabel: 'SIG' | '소모임' | 'PIG';
+  routeBase: '/sig' | '/small-group' | '/pig';
   targetLabel?: 'PIG';
 };
 
@@ -48,6 +48,11 @@ const EDIT_CONFIG: Record<IgKind, EditConfig> = {
   sig: {
     upperLabel: 'SIG',
     routeBase: '/sig',
+  },
+  'small-group': {
+    upperLabel: '소모임',
+    routeBase: '/small-group',
+    targetLabel: undefined,
   },
   pig: {
     upperLabel: 'PIG',
