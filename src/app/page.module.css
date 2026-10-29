@@ -621,17 +621,36 @@
 .joinSubList > li {
   position: absolute;
   top: 0;
+  left: var(--row-left);
   right: var(--row-right);
+  display: flex;
+  align-items: center;
   z-index: 2;
   margin-top: var(--row-top);
   transform: translateY(-50%);
   text-align: right;
 }
 
+.joinSubList > li::before {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--color-text-strong);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  transition-delay: calc(var(--seq) * 70ms + 60ms);
+}
+
+.joinMenuItem:hover .joinSubList > li::before,
+.joinMenuItem:focus-within .joinSubList > li::before,
+.joinMenuItem[data-open] .joinSubList > li::before {
+  opacity: 1;
+}
+
 .joinSubLink {
   display: inline-block;
   font-family: inherit;
-  padding: 0.4rem 0 0.4rem 1rem;
+  flex-shrink: 0;
+  padding: 0.4rem 0;
   font-size: clamp(1.05rem, 2.2vw, 1.4rem);
   font-weight: 800;
   line-height: 1.1;

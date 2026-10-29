@@ -28,7 +28,6 @@ const DOT_R = 11;
 
 const TWIG_END = WORD_RIGHT - DOT_R;
 const TRUNK_X = TWIG_END - BRANCH_SPAN * 0.7;
-const STUB = 26;
 
 const FIRST_GAP = 74;
 const ROW_GAP = 96;
@@ -193,15 +192,6 @@ export default function JoinMenu() {
                       pathLength="1"
                       style={{ '--seq': 1 }}
                     />
-                    {menu.children.map((child, childIndex) => (
-                      <path
-                        key={child.label}
-                        className={styles.joinBranchLine}
-                        d={`M ${TRUNK_X} ${rowY(anchor.y, childIndex)} h ${STUB}`}
-                        pathLength="1"
-                        style={{ '--seq': 2 + childIndex }}
-                      />
-                    ))}
                   </g>
                 )}
               </svg>
@@ -224,6 +214,7 @@ export default function JoinMenu() {
                           '--row-top': anchor
                             ? `${(rowY(anchor.y, childIndex) / VB_W) * 100}%`
                             : '0%',
+                          '--row-left': `${(TRUNK_X / VB_W) * 100}%`,
                           '--row-right': `${((VB_W - WORD_RIGHT) / VB_W) * 100}%`,
                           '--seq': 2 + childIndex,
                         }}
