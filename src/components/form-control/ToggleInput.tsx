@@ -2,6 +2,7 @@ import styles from './ToggleInput.module.css';
 
 import { Controller } from 'react-hook-form';
 import { useId, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { ChangeEvent, ComponentPropsWithoutRef } from 'react';
 import type { Control, FieldPathByValue, FieldValues } from 'react-hook-form';
 
@@ -20,13 +21,14 @@ function ToggleSwitch({
   const isControlled = typeof checked !== 'undefined' || typeof valueProp !== 'undefined';
   const isOn = isControlled ? !!(typeof checked !== 'undefined' ? checked : valueProp) : false;
   const [focus, setFocus] = useState(false);
+  const t = useTranslations('ToggleInput');
   const id = useId();
 
   return (
     <label
       className={`${styles.switch} ${styles.form}`}
       htmlFor={id}
-      title={isOn ? '켜짐' : '꺼짐'}
+      title={isOn ? t('on') : t('off')}
     >
       <input
         id={id}

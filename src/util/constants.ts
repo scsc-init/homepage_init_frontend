@@ -61,6 +61,10 @@ export const FUND_APPLY_GUIDELINE_LINK =
 
 export interface HeaderMenuItem {
   label: string;
+  /**
+   * 지정 시, messages의 Header.menu.{labelKey} 번역문이 label 대신 표시됩니다.
+   */
+  labelKey?: string;
   url: string;
 }
 
@@ -94,7 +98,7 @@ export const headerMenuData: HeaderMenuSection[] = [
     title: 'SIG/PIG',
     items: [
       { label: 'SIG', url: '/sig' },
-      { label: '소모임', url: '/small-group' },
+      { label: '소모임', labelKey: 'smallGroup', url: '/small-group' },
       { label: 'PIG', url: '/pig' },
     ],
   },

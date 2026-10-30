@@ -2,6 +2,7 @@
 
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import styles from './Attachment.module.css';
+import { useTranslations } from 'next-intl';
 
 import type { AttachmentMeta } from '@/util/getAttachmentDownloadUrl';
 
@@ -14,12 +15,14 @@ type AttachmentListProps = {
 export default function AttachmentList({
   attachmentIds,
   attachmentMetaMap,
-  label = '첨부 파일',
+  label,
 }: AttachmentListProps) {
+  const t = useTranslations('AttachmentList');
+
   return (
     <section className={styles.AttachmentSection}>
       <div className={styles.AttachmentHeader}>
-        <div className={styles.AttachmentLabel}>{label}</div>
+        <div className={styles.AttachmentLabel}>{label ?? t('label')}</div>
       </div>
       <ul className={styles.AttachmentList}>
         {attachmentIds.map((attachmentId) => {
