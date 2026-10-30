@@ -22,6 +22,7 @@ import {
   type MDXEditorProps,
 } from '@mdxeditor/editor';
 import styles from './editor.module.css';
+import { useTranslations } from 'next-intl';
 
 import '@mdxeditor/editor/style.css';
 
@@ -35,13 +36,17 @@ export default function InitializedMDXEditor({
   onChange = () => {},
   className = '',
 }: InitializedMDXEditorProps) {
-  const handleImageUpload = useCallback(async (file: File): Promise<string> => {
-    const uploaded = await uploadCompressedImage(file);
+  const t = useTranslations('MDXEditor');
+  const handleImageUpload = useCallback(
+    async (file: File): Promise<string> => {
+      const uploaded = await uploadCompressedImage(file);
 
-    if (!uploaded?.id) throw new Error('이미지 업로드에 실패했습니다.');
+      if (!uploaded?.id) throw new Error(t('imageUploadFailed'));
 
-    return `/api/file/image/download/${encodeURIComponent(uploaded.id)}`;
-  }, []);
+      return `/api/file/image/download/${encodeURIComponent(uploaded.id)}`;
+    },
+    [t],
+  );
 
   return (
     <MDXEditor

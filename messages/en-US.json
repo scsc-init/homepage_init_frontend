@@ -26,6 +26,9 @@
   "EditorWrapper": {
     "loading": "Loading..."
   },
+  "MDXEditor": {
+    "imageUploadFailed": "Image upload failed."
+  },
   "AttachmentList": {
     "label": "Attachments"
   },

@@ -26,6 +26,9 @@
   "EditorWrapper": {
     "loading": "로딩 중..."
   },
+  "MDXEditor": {
+    "imageUploadFailed": "이미지 업로드에 실패했습니다."
+  },
   "AttachmentList": {
     "label": "첨부 파일"
   },
