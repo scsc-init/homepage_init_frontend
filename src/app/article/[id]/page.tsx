@@ -45,12 +45,15 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import Comments from './Comments';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { isPublicBoardId, utc2kst } from '@/util/constants';
+import { isPublicBoardId } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import AttachmentList from '@/components/form-control/AttachmentList';
+import { useFormatter, useTranslations } from 'next-intl';
 
 export default function ArticleDetail() {
+  const t = useTranslations('Article');
+  const format = useFormatter();
   const { id } = useParams<{ id: string }>();
 
   const router = useRouter();
@@ -155,15 +158,15 @@ export default function ArticleDetail() {
 
   if (isLoading) return <LoadingSpinner />;
   if (isError || !article) {
-    return <div>게시글을 찾을 수 없습니다.</div>;
+    return <div>{t('notFound')}</div>;
   }
 
-  const markdown = article.content ?? '내용이 비어 있습니다.';
+  const markdown = article.content ?? t('emptyContent');
   const isAuthor =
     user?.id != null && article?.author_id != null && user.id === article.author_id;
 
   const handleDelete = async () => {
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    if (!window.confirm(t('deleteConfirm'))) return;
     setIsDeleting(true);
     try {
       const res = await fetchBackendClient(`/api/article/delete/${id}`, { method: 'POST' });
@@ -171,10 +174,10 @@ export default function ArticleDetail() {
         const boardId = article?.board_id;
         router.push(boardId ? `/board/${boardId}` : '/');
       } else {
-        alert('삭제에 실패했습니다.');
+        alert(t('deleteFailed'));
       }
     } catch (_) {
-      alert('삭제 중 오류가 발생했습니다.');
+      alert(t('deleteError'));
     } finally {
       setIsDeleting(false);
     }
@@ -183,15 +186,23 @@ export default function ArticleDetail() {
   return (
     <div className={styles.DetailContainer}>
       <h1 className={styles.Title}>{article.title}</h1>
-      <p className={styles.Info}>작성일 {utc2kst(article.created_at)}</p>
+      <p className={styles.Info}>
+        {t('createdAt', {
+          date: format.dateTime(new Date(article.created_at), {
+            dateStyle: 'short',
+            timeStyle: 'medium',
+            timeZone: 'Asia/Seoul',
+          }),
+        })}
+      </p>
 
       {isAuthor && (
         <div className={`${styles.ActionRow} ${isDeleting ? 'is-busy' : ''}`}>
           <button className={styles.Button} onClick={() => router.push(`/article/edit/${id}`)}>
-            수정
+            {t('edit')}
           </button>
           <button className={styles.Button} onClick={handleDelete} disabled={isDeleting}>
-            {isDeleting ? '삭제 중...' : '삭제'}
+            {isDeleting ? t('deleting') : t('delete')}
           </button>
         </div>
       )}

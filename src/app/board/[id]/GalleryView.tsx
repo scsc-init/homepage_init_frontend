@@ -21,6 +21,7 @@ type GalleryArticle = Article & {
 type GalleryItem = { articleId: string; title: string; created_at: string; thumbSrc: string };
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './board.module.css';
@@ -35,28 +36,18 @@ const API_IMG_ID_REGEX = new RegExp(
 const MD_IMG_REGEX = /!\[[^\]]*?\]\(([^)]+)\)/g;
 const HTML_IMG_REGEX = /<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i;
 
-function sortArticles(items: GalleryItem[], sortOrder: SortOrder) {
+function sortArticles(items: GalleryItem[], sortOrder: SortOrder, locale: string) {
   const arr = items.slice();
   if (sortOrder === 'oldest') {
     arr.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     return arr;
   }
   if (sortOrder === 'title') {
-    arr.sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), 'ko'));
+    arr.sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), locale));
     return arr;
   }
   arr.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   return arr;
-}
-
-function formatDate(iso: string) {
-  try {
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return '';
-    return d.toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' });
-  } catch {
-    return '';
-  }
 }
 
 function pickArticleId(a: GalleryArticle) {
@@ -136,6 +127,9 @@ async function pLimitMap<T, R>(
 }
 
 export default function GalleryView({ board, sortOrder }: BoardViewProps) {
+  const t = useTranslations('Board');
+  const format = useFormatter();
+  const locale = useLocale();
   const boardId = board?.id;
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [state, setState] = useState({ loading: true, error: '' });
@@ -189,7 +183,7 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
           loading: false,
           error: (e as { message?: unknown } | null)?.message
             ? String((e as { message: unknown }).message)
-            : '불러오기 실패',
+            : t('fetchFailed'),
         });
       }
     }
@@ -254,7 +248,10 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
     };
   }, [items]);
 
-  const sorted = useMemo(() => sortArticles(items, sortOrder), [items, sortOrder]);
+  const sorted = useMemo(
+    () => sortArticles(items, sortOrder, locale),
+    [items, sortOrder, locale],
+  );
 
   if (state.loading) {
     return (
@@ -268,19 +265,24 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
 
   if (state.error) {
     return (
-      <div className={styles.galleryError}>갤러리를 불러올 수 없습니다: {state.error}</div>
+      <div className={styles.galleryError}>
+        {t('galleryLoadFailed', { error: state.error })}
+      </div>
     );
   }
 
   if (!sorted.length) {
-    return <div className={styles.galleryEmpty}>아직 게시글이 없습니다.</div>;
+    return <div className={styles.galleryEmpty}>{t('empty')}</div>;
   }
 
   return (
     <div className={styles.galleryGrid}>
       {sorted.map((it) => {
         const href = `/article/${encodeURIComponent(it.articleId)}`;
-        const date = formatDate(it.created_at);
+        const parsedDate = new Date(it.created_at);
+        const date = Number.isNaN(parsedDate.getTime())
+          ? ''
+          : format.dateTime(parsedDate, { dateStyle: 'short', timeZone: 'Asia/Seoul' });
 
         return (
           <a key={it.articleId} className={styles.galleryLink} href={href}>
@@ -312,7 +314,7 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
 
               <div className={styles.galleryOverlay}>
                 <div className={styles.galleryTitle} title={it.title}>
-                  {it.title || '(제목 없음)'}
+                  {it.title || t('noTitle')}
                 </div>
                 {date ? <div className={styles.galleryMeta}>{date}</div> : null}
               </div>

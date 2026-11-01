@@ -14,27 +14,30 @@ type PageProps = { params: Promise<{ id: string }> };
 import styles from './page.module.css';
 import BoardClient from './BoardClient';
 import { fetchBackendServer, fetchBackendServerJson } from '@/util/fetch/server';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const t = await getTranslations('Board');
   const { id } = await params;
 
   try {
     const board = await fetchBackendServerJson<Board>('GET', `/api/board/${id}`);
     const name = (board?.name || '').trim();
-    return { title: name || '게시판' };
+    return { title: name || t('title') };
   } catch {
-    return { title: '게시판' };
+    return { title: t('title') };
   }
 }
 
 export default async function BoardPage({ params }: PageProps) {
+  const t = await getTranslations('Board');
   const { id } = await params;
   const boardId = id;
 
   const boardRes = await fetchBackendServer('GET', `/api/board/${boardId}`);
 
   if (!boardRes.ok) {
-    return <div>게시판 정보를 불러올 수 없습니다.</div>;
+    return <div>{t('loadFailed')}</div>;
   }
 
   const board: Board = await boardRes.json();

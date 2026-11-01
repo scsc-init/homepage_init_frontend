@@ -1,5 +1,97 @@
 {
   "Header": {
     "login": "Sign Up / Sign In"
+  },
+  "Article": {
+    "notFound": "Article not found.",
+    "emptyContent": "This article is empty.",
+    "deleteConfirm": "Are you sure you want to delete this article?",
+    "deleteFailed": "Failed to delete the article.",
+    "deleteError": "An error occurred while deleting the article.",
+    "createdAt": "Created at {date}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleting": "Deleting..."
+  },
+  "Comments": {
+    "replyFailed": "Failed to post reply: {error}",
+    "commentDeleteFailed": "Failed to delete comment: {error}",
+    "commentFailed": "Failed to post comment: {error}",
+    "networkError": "Network error",
+    "cancel": "Cancel",
+    "reply": "Reply",
+    "delete": "Delete comment",
+    "replyPlaceholder": "Write a reply",
+    "commentPlaceholder": "Write a comment",
+    "submit": "Post",
+    "loginRequired": "Please sign in.",
+    "loadFailed": "Failed to load comments",
+    "addComment": "Add a comment",
+    "empty": "No comments.",
+    "checkingUser": "Checking user..."
+  },
+  "Board": {
+    "title": "Board",
+    "loadFailed": "Could not load board information.",
+    "noInfo": "Board information is unavailable.",
+    "noPermission": "You do not have permission.",
+    "noPermissionShort": "Access denied.",
+    "write": "Write a post",
+    "empty": "No posts yet.",
+    "galleryLoadFailed": "Could not load gallery: {error}",
+    "fetchFailed": "Failed to load",
+    "noTitle": "(Untitled)",
+    "attachment": "Attachment",
+    "attachmentsCount": "{count, plural, one {# attachment} other {# attachments}}",
+    "attachmentInfoMissing": "Attachment information unavailable"
+  },
+  "ArticleEdit": {
+    "loginRequired": "Please sign in.",
+    "authorOnly": "Only the author can edit this article.",
+    "loadFailed": "Could not load article information.",
+    "leaveConfirm": "You have unsaved changes. Leave this page?",
+    "success": "Article updated!",
+    "loginAgain": "Please sign in again.",
+    "failed": "Update failed",
+    "title": "Edit article",
+    "titlePlaceholder": "Enter a title",
+    "submitting": "Updating...",
+    "submit": "Save changes",
+    "networkError": "Network error"
+  },
+  "BoardCreate": {
+    "loginRequired": "Please sign in.",
+    "success": "Post created!",
+    "loginAgain": "Please sign in again.",
+    "failed": "Post failed: {error}",
+    "networkError": "Network error",
+    "title": "Write a post in {name}",
+    "genericTitle": "Write a post",
+    "loadingBoard": "Loading board information...",
+    "standard": {
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter a title",
+      "contentLabel": "Content",
+      "submitting": "Submitting...",
+      "submit": "Post"
+    },
+    "album": {
+      "photoPrompt": "Choose photos for the album",
+      "titleLabel": "Album title",
+      "titlePlaceholder": "Enter an album title (e.g. Workshop photos)",
+      "optionalDescription": "Album description (optional)",
+      "submitting": "Submitting...",
+      "submit": "Create album"
+    },
+    "file": {
+      "attachmentPrompt": "Attach files to include in the post",
+      "titleLabel": "File post title",
+      "titlePlaceholder": "Enter a file post title",
+      "optionalDescription": "Description (optional)",
+      "titleRequired": "Please enter a title.",
+      "attachmentRequired": "Please attach at least one file.",
+      "submitting": "Submitting...",
+      "submit": "Create file post"
+    }
   }
 }
