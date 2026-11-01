@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { readError } from '@/app/(ig)/utils/readError';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
@@ -16,30 +17,6 @@ type IgOwnerHandoverButtonProps = {
   owner: IgDetail['owner'];
 };
 
-const LABELS = {
-  sig: {
-    button: '시그장 양도 ▼',
-    confirm: '정말 양도하시겠습니까?',
-    empty: '인원 없음',
-    success: 'SIG장 양도 성공!',
-    failure: 'SIG장 양도 실패: ',
-  },
-  'small-group': {
-    button: '소모임장 양도 ▼',
-    confirm: '정말 양도하시겠습니까?',
-    empty: '인원 없음',
-    success: '소모임장 양도 성공!',
-    failure: '소모임장 양도 실패: ',
-  },
-  pig: {
-    button: '피그장 양도 ▼',
-    confirm: '정말 양도하시겠습니까?',
-    empty: '인원 없음',
-    success: 'PIG장 양도 성공!',
-    failure: 'PIG장 양도 실패: ',
-  },
-};
-
 export default function IgOwnerHandoverButton({
   kind,
   igId,
@@ -49,8 +26,9 @@ export default function IgOwnerHandoverButton({
   const [pending, setPending] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const t = useTranslations('Ig');
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const labels = LABELS[kind];
+  const kindLabel = t(`kind.${kind}`);
   const memberData = Array.isArray(members) ? members : [];
 
   useEffect(() => {
@@ -64,7 +42,7 @@ export default function IgOwnerHandoverButton({
   }, []);
 
   const handoverOwner = async (nextOwner: IgMember) => {
-    if (!window.confirm(labels.confirm)) return;
+    if (!window.confirm(t('handoverConfirm'))) return;
     try {
       setPending(true);
       const res = await fetchBackendClient(`/api/sig/${igId}/handover`, {
@@ -74,16 +52,19 @@ export default function IgOwnerHandoverButton({
       });
 
       if (res.ok) {
-        alert(labels.success);
+        alert(t('handoverSuccess', { kind: kindLabel }));
         router.refresh();
       } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         replaceLoginWithRedirect(router);
       } else {
-        alert(labels.failure + (await readError(res)));
+        alert(t('handoverFailure', { kind: kindLabel }) + (await readError(res)));
       }
     } catch (e) {
-      alert(labels.failure + ((e as { message?: string } | null)?.message || '네트워크 오류'));
+      alert(
+        t('handoverFailure', { kind: kindLabel }) +
+          ((e as { message?: string } | null)?.message || t('networkError')),
+      );
     } finally {
       setPending(false);
     }
@@ -98,13 +79,13 @@ export default function IgOwnerHandoverButton({
         className={styles.memberButton}
         onClick={() => setOpen((prev) => !prev)}
       >
-        {labels.button}
+        {t('handover', { kind: kindLabel })}
       </button>
       {open ? (
         <div className={`${styles.memberMenu} ${styles.fixedWidth}`}>
           {candidates.length === 0 ? (
             <button type="button" onClick={() => setOpen(false)}>
-              {labels.empty}
+              {t('handoverEmpty')}
             </button>
           ) : (
             <ul className={styles.memberMenuList}>
@@ -116,7 +97,7 @@ export default function IgOwnerHandoverButton({
                     aria-busy={pending}
                     onClick={() => handoverOwner(member)}
                   >
-                    To {member.name}
+                    {t('handoverTo', { name: member.name })}
                   </button>
                 </li>
               ))}

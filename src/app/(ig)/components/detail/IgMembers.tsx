@@ -1,6 +1,6 @@
+import { useTranslations } from 'next-intl';
 import styles from './IgDetail.module.css';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
-import MembersLoginPrompt from './MembersLoginPrompt';
 import type { IgDetail, IgKind, IgMember } from './types';
 
 type IgMembersProps = {
@@ -10,23 +10,9 @@ type IgMembersProps = {
   visible?: boolean;
 };
 
-const MEMBER_CONFIG = {
-  sig: {
-    headingId: 'sig-members-heading',
-    title: '시그 인원',
-  },
-  'small-group': {
-    headingId: 'small-group-members-heading',
-    title: '소모임 인원',
-  },
-  pig: {
-    headingId: 'pig-members-heading',
-    title: '피그 인원',
-  },
-};
-
 export default function IgMembers({ kind, owner, members, visible = true }: IgMembersProps) {
-  const config = MEMBER_CONFIG[kind];
+  const t = useTranslations('Ig');
+  const headingId = `${kind}-members-heading`;
 
   if (!visible) return null;
 
@@ -43,16 +29,16 @@ export default function IgMembers({ kind, owner, members, visible = true }: IgMe
   const count = list.length;
 
   return (
-    <section className={styles.membersSection} aria-labelledby={config.headingId}>
+    <section className={styles.membersSection} aria-labelledby={headingId}>
       <div className={styles.membersHeader}>
-        <h2 id={config.headingId} className={styles.membersTitle}>
-          {config.title}
+        <h2 id={headingId} className={styles.membersTitle}>
+          {t('members', { kind: t(`kind.${kind}`) })}
         </h2>
-        <span className={styles.membersCount}>{count}명</span>
+        <span className={styles.membersCount}>{t('memberCount', { count })}</span>
       </div>
 
       {count === 0 ? (
-        <div className={styles.membersEmpty}>가입한 인원이 없습니다.</div>
+        <div className={styles.membersEmpty}>{t('noMembers')}</div>
       ) : (
         <ul className={styles.memberList}>
           {list.map((m) =>

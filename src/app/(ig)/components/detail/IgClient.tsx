@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import EditIgButton from '@/app/(ig)/components/detail/EditIgButton';
 import IgContents from '@/app/(ig)/components/detail/IgContents';
 import IgDeleteButton from '@/app/(ig)/components/detail/IgDeleteButton';
@@ -7,7 +8,7 @@ import IgJoinLeaveButton from '@/app/(ig)/components/detail/IgJoinLeaveButton';
 import IgMembers from '@/app/(ig)/components/detail/IgMembers';
 import IgOwnerHandoverButton from '@/app/(ig)/components/detail/IgOwnerHandoverButton';
 import { sortSigPigTags } from '@/app/(ig)/utils/sortSigPigTags';
-import { is_sigpig_join_available, minExecutiveLevel, SEMESTER_MAP } from '@/util/constants';
+import { is_sigpig_join_available, minExecutiveLevel } from '@/util/constants';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
 import styles from './IgDetail.module.css';
@@ -37,6 +38,7 @@ export default function IgClient({
   itemId,
 }: IgClientProps) {
   const { me, isLoading } = useMe();
+  const t = useTranslations('Ig');
   const isJoinAvailable = JOIN_AVAILABILITY[kind];
 
   if (!isJoinAvailable) {
@@ -49,9 +51,6 @@ export default function IgClient({
     !!me &&
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || item?.owner === me?.id);
   const isOwner = !!me && item?.owner === me?.id;
-  const semesterLabel = SEMESTER_MAP[Number(item?.semester)] ?? `${item?.semester}`;
-  const createdSemesterLabel =
-    SEMESTER_MAP[Number(item?.created_semester)] ?? `${item?.created_semester}`;
   const hasCreated = item?.created_year != null && item?.created_semester != null;
   const websites = Array.isArray(item?.websites) ? item.websites : [];
   const hasSectionBelowDivider = websites.length > 0 || membersVisible;
@@ -64,9 +63,16 @@ export default function IgClient({
       <h1 className={styles.title}>{item.title}</h1>
       <p className={styles.info}>
         {hasCreated
-          ? `최초 생성: ${item.created_year}학년도 ${createdSemesterLabel}학기 · `
+          ? t('created', {
+              term: t('academicTerm', {
+                year: item.created_year!,
+                semester: String(item.created_semester),
+              }),
+            })
           : ''}
-        {item.year}학년도 {semesterLabel}학기 · 상태: {item.status}
+        {t('academicTerm', { year: item.year, semester: String(item.semester) })}
+        {' · '}
+        {t('status', { status: t('statusLabel', { status: item.status }) })}
       </p>
       <p className={styles.description}>{item.description}</p>
       {normalizedTagText.length > 0 ? (
@@ -101,6 +107,7 @@ export default function IgClient({
 }
 
 function IgWebsites({ kind, websites }: { kind: IgKind; websites: IgWebsite[] }) {
+  const t = useTranslations('Ig');
   const headingId = `${kind}-websites-heading`;
 
   if (!Array.isArray(websites) || websites.length === 0) return null;
@@ -108,7 +115,7 @@ function IgWebsites({ kind, websites }: { kind: IgKind; websites: IgWebsite[] })
   return (
     <section className={styles.websitesSection} aria-labelledby={headingId}>
       <h2 id={headingId} className={styles.websitesTitle}>
-        관련 웹사이트
+        {t('websites')}
       </h2>
       <ul className={styles.websitesList}>
         {websites.map((website, idx) => {
