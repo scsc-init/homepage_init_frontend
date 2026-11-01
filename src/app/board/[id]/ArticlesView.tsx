@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useFormatter } from 'next-intl';
+import { useFormatter, useLocale } from 'next-intl';
 import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
@@ -23,6 +23,7 @@ import { useTranslations } from 'next-intl';
 export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
   const t = useTranslations('Board');
   const format = useFormatter();
+  const locale = useLocale();
   const router = useRouter();
   const [articles, setArticles] = useState<Article[] | null>(null);
   const [unauthorized, setUnauthorized] = useState(false);
@@ -78,7 +79,7 @@ export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     if (sortOrder === 'oldest')
       return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    if (sortOrder === 'title') return a.title.localeCompare(b.title);
+    if (sortOrder === 'title') return a.title.localeCompare(b.title, locale);
     return 0;
   });
   const displayArticles = sortedArticles.filter((a) => a?.is_deleted !== true);

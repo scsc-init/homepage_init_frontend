@@ -62,10 +62,11 @@ async function notFoundPage(request: Request) {
 }
 
 function getRequestLocale(request: Request) {
-  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '')
-    .split(',')[0]
-    .trim()
-    .toLowerCase();
+  const host = (
+    request.headers.get('x-forwarded-host') ??
+    request.headers.get('host') ??
+    ''
+  ).toLowerCase();
   return (
     routing.domains?.find((domain) => domain.domain.toLowerCase() === host)?.defaultLocale ??
     routing.defaultLocale

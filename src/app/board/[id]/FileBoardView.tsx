@@ -21,7 +21,7 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useFormatter } from 'next-intl';
+import { useFormatter, useLocale } from 'next-intl';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
@@ -32,6 +32,7 @@ const METADATA_CHUNK_SIZE = 30;
 export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
   const t = useTranslations('Board');
   const format = useFormatter();
+  const locale = useLocale();
   const [articles, setArticles] = useState<Article[] | null>(null);
   const [metadataMap, setMetadataMap] = useState<Record<string, FileMetadata>>({});
   const [unauthorized, setUnauthorized] = useState(false);
@@ -137,7 +138,7 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     if (sortOrder === 'oldest')
       return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    if (sortOrder === 'title') return a.title.localeCompare(b.title);
+    if (sortOrder === 'title') return a.title.localeCompare(b.title, locale);
     return 0;
   });
 

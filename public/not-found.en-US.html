@@ -36,6 +36,7 @@ SCSC conducts studies and research through SIGs (Special Interested Groups) or P
       .NF_Root {
         min-height: 100vh;
         background: var(--main-bg-gradient, #f8f9fa);
+        box-sizing: border-box;
         color: var(--color-text-body, #333);
         display: grid;
         place-items: center;
@@ -43,8 +44,8 @@ SCSC conducts studies and research through SIGs (Special Interested Groups) or P
         position: relative;
         overflow: hidden;
       }
-      html {
-        overflow-y: hidden;
+      body {
+        margin: 0;
       }
       .NF_Backdrop {
         position: absolute;
