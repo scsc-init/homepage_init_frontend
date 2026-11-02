@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import ExternalRegisterClient from './ExternalRegisterClient';
@@ -45,12 +46,14 @@ async function submitExternalMemberApplication(
 ): Promise<ExternalMemberApplicationResult> {
   'use server';
 
+  const t = await getTranslations('UsExternalRegister');
+
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email || !session?.user?.name || !session?.hashToken) {
     return {
       status: 401,
-      detail: '로그인 정보가 만료되었습니다. 다시 로그인해주세요.',
+      detail: t('expired'),
     };
   }
 
@@ -59,7 +62,7 @@ async function submitExternalMemberApplication(
   if (validator.email(email)) {
     return {
       status: 403,
-      detail: 'SNU 계정은 일반 회원가입을 이용해주세요.',
+      detail: t('snuAccount'),
     };
   }
 
@@ -71,7 +74,7 @@ async function submitExternalMemberApplication(
   if (!validName) {
     return {
       status: 400,
-      detail: '이름을 올바르게 입력해주세요.',
+      detail: t('serverInvalidName'),
     };
   }
 
@@ -88,7 +91,7 @@ async function submitExternalMemberApplication(
   if (!validPhone) {
     return {
       status: 400,
-      detail: '전화번호 형식이 올바르지 않습니다.',
+      detail: t('invalidPhone'),
     };
   }
 
@@ -98,7 +101,7 @@ async function submitExternalMemberApplication(
     if (!validStudentId) {
       return {
         status: 400,
-        detail: '학번 형식이 올바르지 않습니다.',
+        detail: t('invalidStudentId'),
       };
     }
   }
@@ -122,7 +125,7 @@ async function submitExternalMemberApplication(
 
     return {
       status: 503,
-      detail: '서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.',
+      detail: t('serverUnavailable'),
     };
   }
 
