@@ -85,7 +85,9 @@ function HeaderCenter() {
             onMouseEnter={() => open(index)}
             onMouseLeave={close}
           >
-            <button className={styles.menuTrigger}>{menu.title}</button>
+            <button className={styles.menuTrigger}>
+              {menu.titleKey ? t(`menu.${menu.titleKey}`) : menu.title}
+            </button>
             <div className={`${styles.menuContent} ${openClass}`}>
               <ul>
                 {items.map((item) => (
@@ -286,7 +288,9 @@ function MobileMenuList() {
                       setOpenedMenuIndex((prev) => (prev === index ? null : index));
                     }}
                   >
-                    <span className={styles.menuTitle}>{menu.title}</span>
+                    <span className={styles.menuTitle}>
+                      {menu.titleKey ? t(`menu.${menu.titleKey}`) : menu.title}
+                    </span>
                     <span className={styles.menuDropdownIcon}>
                       <span className="material-icons" style={{ fontSize: '2rem' }}>
                         {openedMenuIndex === index

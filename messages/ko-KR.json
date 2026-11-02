@@ -4,11 +4,31 @@
     "semester": "{year} - {semester, select, 1 {1} 2 {여름} 3 {2} 4 {겨울} other {}}학기",
     "executivePage": "운영진 페이지",
     "menu": {
-      "smallGroup": "소모임"
+      "smallGroup": "소모임",
+      "about": "동아리 소개",
+      "board": "게시판",
+      "sigPig": "SIG/PIG",
+      "contact": "문의",
+      "scsc": "SCSC",
+      "welcome": "가입 안내",
+      "rules": "회칙",
+      "projects": "프로젝트 기록",
+      "album": "앨범",
+      "notice": "공지사항",
+      "files": "자료실",
+      "sig": "SIG",
+      "pig": "PIG",
+      "contactUs": "문의하기",
+      "fundApply": "지원금 신청"
     }
   },
   "Footer": {
-    "loadError": "Footer 정보를 불러오지 못했습니다."
+    "loadError": "Footer 정보를 불러오지 못했습니다.",
+    "people": "사람들",
+    "menu": {
+      "executives": "운영진",
+      "developers": "개발진"
+    }
   },
   "WithAuthorization": {
     "checking": "권한 확인 중...",
@@ -21,7 +41,9 @@
   },
   "CopyButton": {
     "label": "복사",
-    "ariaLabel": "내용 복사"
+    "ariaLabel": "내용 복사",
+    "accountNumber": "계좌번호 복사",
+    "link": "링크 복사"
   },
   "EditorWrapper": {
     "loading": "로딩 중..."
@@ -75,5 +97,15 @@
     "titleLogin": "<strong>로그인</strong>이 실패할 수 있습니다",
     "guide": "인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부 브라우저를 이용해주세요.",
     "copyLink": "외부 브라우저 링크 복사"
+  },
+  "ImageUpload": {
+    "imageOnly": "이미지 파일만 업로드할 수 있습니다.",
+    "compressionFailed": "이미지 압축에 실패했습니다. 다른 이미지를 사용해 주세요.",
+    "compressionError": "이미지 압축 중 오류가 발생했습니다. 다른 이미지를 사용해 주세요.",
+    "fileTooLarge": "이미지 용량이 너무 큽니다. (10MB 이하만 업로드할 수 있습니다.)",
+    "networkError": "이미지 업로드 중 네트워크 오류가 발생했습니다.",
+    "loginRequired": "로그인이 필요합니다. 다시 로그인한 뒤 이미지를 업로드해 주세요.",
+    "uploadFailed": "이미지 업로드 실패(status {status})",
+    "missingId": "이미지 업로드 응답에 id가 없습니다."
   }
 }

@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useMe } from '@/util/hooks/useMe';
 import { getKvsClient } from '@/util/fetch/client-util';
+import { useTranslations } from 'next-intl';
 import CopyButton from '@/components/CopyButton';
 import styles from '../about.module.css';
 
 export default function WelcomePage() {
+  const t = useTranslations('CopyButton');
   const { me: profile, isLoading } = useMe();
   const [kvValues, setKvValues] = useState(['', '', '']);
 
@@ -71,7 +73,7 @@ export default function WelcomePage() {
               <div className={styles.definitionRow}>
                 <dt>입금 계좌</dt>
                 <dd>
-                  {depositAcc} <CopyButton link={depositAcc} label="계좌번호 복사" />
+                  {depositAcc} <CopyButton link={depositAcc} label={t('accountNumber')} />
                 </dd>
               </div>
             </dl>
@@ -104,7 +106,7 @@ export default function WelcomePage() {
               >
                 카카오톡 팀 채팅방 입장
               </a>
-              <CopyButton link={kakaoInviteLink} label="링크 복사" />
+              <CopyButton link={kakaoInviteLink} label={t('link')} />
             </div>
 
             <p className={styles.smallNote}>
@@ -137,7 +139,7 @@ export default function WelcomePage() {
               >
                 디스코드 서버 입장
               </a>
-              <CopyButton link={discordInviteLink} label="링크 복사" />
+              <CopyButton link={discordInviteLink} label={t('link')} />
             </div>
           </section>
           <section className={styles.statusCard}>

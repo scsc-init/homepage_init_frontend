@@ -36,16 +36,17 @@ export default function InitializedMDXEditor({
   onChange = () => {},
   className = '',
 }: InitializedMDXEditorProps) {
+  const tImageUpload = useTranslations('ImageUpload');
   const t = useTranslations('MDXEditor');
   const handleImageUpload = useCallback(
     async (file: File): Promise<string> => {
-      const uploaded = await uploadCompressedImage(file);
+      const uploaded = await uploadCompressedImage(file, tImageUpload);
 
       if (!uploaded?.id) throw new Error(t('imageUploadFailed'));
 
       return `/api/file/image/download/${encodeURIComponent(uploaded.id)}`;
     },
-    [t],
+    [t, tImageUpload],
   );
 
   return (

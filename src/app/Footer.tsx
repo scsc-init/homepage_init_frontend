@@ -21,9 +21,15 @@ export default function Footer() {
         .map((item) => item.hrefKvKey)
         .filter((k): k is string => typeof k === 'string' && k.length > 0);
       const allKeys = ['footer-message', ...hrefKeys];
-      const values = await getKvsClient(allKeys);
+      let values: string[];
+      try {
+        values = await getKvsClient(allKeys);
+      } catch {
+        setFooterMessage(null);
+        return;
+      }
 
-      setFooterMessage(values[0] || null);
+      setFooterMessage(values[0] ?? null);
 
       const hrefEntries = hrefKeys.map((key, i) => [key, values[i + 1]]);
       setKvHrefs(Object.fromEntries(hrefEntries));
@@ -51,12 +57,14 @@ export default function Footer() {
                   ))}
               </p>
             </div>
-            <nav className={styles.footerNav} aria-label="People">
-              <span className={styles.footerNavTitle}>People</span>
+            <nav className={styles.footerNav} aria-label={t('people')}>
+              <span className={styles.footerNavTitle}>{t('people')}</span>
               <ul className={styles.footerNavList}>
                 {footerMenuData.map((item) => (
                   <li key={item.url}>
-                    <Link href={item.url}>{item.label}</Link>
+                    <Link href={item.url}>
+                      {item.labelKey ? t(`menu.${item.labelKey}`) : item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -43,6 +43,7 @@ export default function AttachmentUploader({
   isImageUpload,
   isFileUpload,
 }: AttachmentUploaderProps) {
+  const tImageUpload = useTranslations('ImageUpload');
   const t = useTranslations('AttachmentUploader');
   const [isUploading, setIsUploading] = useState(false);
   const [metadataMap, setMetadataMap] = useState<Record<string, AttachmentItem>>({});
@@ -135,7 +136,7 @@ export default function AttachmentUploader({
       try {
         for (const file of files) {
           if (isImageUpload) {
-            const uploaded = await uploadCompressedImage(file);
+            const uploaded = await uploadCompressedImage(file, tImageUpload);
             if (!uploaded?.id) continue;
 
             uploadedItems.push({
@@ -203,7 +204,7 @@ export default function AttachmentUploader({
         registerMetadata(uploadedItems);
       }
     },
-    [ids, isUploading, onChangeIds, registerMetadata, isImageUpload, t],
+    [ids, isUploading, onChangeIds, registerMetadata, isImageUpload, t, tImageUpload],
   );
 
   const removeId = useCallback(

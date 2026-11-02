@@ -4,11 +4,31 @@
     "semester": "{year} - {semester, select, 1 {Spring} 2 {Summer} 3 {Fall} 4 {Winter} other {}}",
     "executivePage": "Executive Page",
     "menu": {
-      "smallGroup": "Small Group"
+      "smallGroup": "Small Group",
+      "about": "About us",
+      "board": "Board",
+      "sigPig": "SIG/PIG",
+      "contact": "Contact",
+      "scsc": "SCSC",
+      "welcome": "Welcome Guide",
+      "rules": "Rules",
+      "projects": "Project Archives",
+      "album": "Album",
+      "notice": "Notice",
+      "files": "Files",
+      "sig": "SIG",
+      "pig": "PIG",
+      "contactUs": "Contact Us!",
+      "fundApply": "Fund Apply"
     }
   },
   "Footer": {
-    "loadError": "Failed to load footer information."
+    "loadError": "Failed to load footer information.",
+    "people": "People",
+    "menu": {
+      "executives": "Executives",
+      "developers": "Developers"
+    }
   },
   "WithAuthorization": {
     "checking": "Checking permissions...",
@@ -21,7 +41,9 @@
   },
   "CopyButton": {
     "label": "Copy",
-    "ariaLabel": "Copy content"
+    "ariaLabel": "Copy content",
+    "accountNumber": "Copy account number",
+    "link": "Copy link"
   },
   "EditorWrapper": {
     "loading": "Loading..."
@@ -75,5 +97,15 @@
     "titleLogin": "<strong>sign-in</strong> may fail",
     "guide": "Please use an external browser such as <strong>Chrome, Safari, or Samsung Internet</strong> instead of an in-app browser.",
     "copyLink": "Copy link for external browser"
+  },
+  "ImageUpload": {
+    "imageOnly": "Only image files can be uploaded.",
+    "compressionFailed": "Image compression failed. Please use another image.",
+    "compressionError": "An error occurred while compressing the image. Please use another image.",
+    "fileTooLarge": "The image is too large. Only images up to 10MB can be uploaded.",
+    "networkError": "A network error occurred while uploading the image.",
+    "loginRequired": "Please sign in again before uploading the image.",
+    "uploadFailed": "Image upload failed (status {status})",
+    "missingId": "The image upload response does not contain an id."
   }
 }
