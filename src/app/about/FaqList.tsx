@@ -40,6 +40,7 @@ export default function FaqList() {
           <div
             className={styles.faqContent}
             id={`faq-${faq.id}`}
+            aria-hidden={openIdx !== idx}
             ref={(el) => {
               contentRefs.current[idx] = el;
             }}
