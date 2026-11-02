@@ -22,6 +22,7 @@ type TextListInputProps<
   TName extends ArrayPath<TFieldValues> = ArrayPath<TFieldValues>,
 > = {
   label: string;
+  placeholder?: string;
   name: TName;
   register: UseFormRegister<TFieldValues>;
   control: Control<TFieldValues>;
@@ -31,7 +32,14 @@ type TextListInputProps<
 export default function TextListInput<
   TFieldValues extends FieldValues,
   TName extends ArrayPath<TFieldValues> = ArrayPath<TFieldValues>,
->({ label, name, register, control, inputKey }: TextListInputProps<TFieldValues, TName>) {
+>({
+  label,
+  placeholder = '엔터를 눌러 추가하세요',
+  name,
+  register,
+  control,
+  inputKey,
+}: TextListInputProps<TFieldValues, TName>) {
   const { fields, append, remove } = useFieldArray<TFieldValues, TName>({ control, name });
   const ref = useRef<HTMLInputElement>(null);
 
@@ -54,7 +62,7 @@ export default function TextListInput<
       <TextInput<TFieldValues>
         label={label}
         name={`fakeinput-${name}` as FieldPathByValue<TFieldValues, string>}
-        placeholder="엔터를 눌러 추가하세요"
+        placeholder={placeholder}
         register={(() => ({ ref })) as unknown as UseFormRegister<TFieldValues>}
         onEnter={handleAdd}
       />

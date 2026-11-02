@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import type { IgKind } from '@/app/(ig)/components/detail/types';
 import type { IgListItem, IgSearchParams } from './types';
 import IgListClient from '@/app/(ig)/components/listview/IgListClient';
@@ -10,22 +11,16 @@ const LIST_CONFIG = {
     apiTag: 'SIG',
     basePath: '/sig',
     createHref: '/sig/create',
-    errorMessage: '시그 정보를 불러올 수 없습니다.',
-    kindLabel: 'SIG',
   },
   'small-group': {
     apiTag: '소모임',
     basePath: '/small-group',
     createHref: '/small-group/create',
-    errorMessage: '소모임 정보를 불러올 수 없습니다.',
-    kindLabel: '소모임',
   },
   pig: {
     apiTag: 'PIG',
     basePath: '/pig',
     createHref: '/pig/create',
-    errorMessage: '피그 정보를 불러올 수 없습니다.',
-    kindLabel: 'PIG',
   },
 };
 
@@ -46,13 +41,15 @@ export default async function IgListPage({
   kind: IgKind;
   searchParams: IgSearchParams;
 }) {
+  const t = await getTranslations('Ig');
   const config = LIST_CONFIG[kind];
+  const kindLabel = t(`kind.${kind}`);
   const resolvedSearchParams = await searchParams;
   const initialTags = getInitialTags(resolvedSearchParams);
   const [globalStatus] = await Promise.allSettled([fetchGlobalStatus()]);
 
   if (globalStatus.status === 'rejected') {
-    return <div>{config.errorMessage}</div>;
+    return <div>{t('loadError', { kind: kindLabel })}</div>;
   }
 
   const currTerm = getCurrentTerm(globalStatus.value);
@@ -63,7 +60,7 @@ export default async function IgListPage({
   ]);
 
   if (items.status === 'rejected') {
-    return <div>{config.errorMessage}</div>;
+    return <div>{t('loadError', { kind: kindLabel })}</div>;
   }
 
   const allowed = new Set(['recruiting', 'active']);
@@ -75,7 +72,7 @@ export default async function IgListPage({
     <IgListClient
       items={visibleItems}
       initialFilterTags={initialTags}
-      kindLabel={config.kindLabel}
+      kindLabel={kindLabel}
       basePath={config.basePath}
       createHref={config.createHref}
     />

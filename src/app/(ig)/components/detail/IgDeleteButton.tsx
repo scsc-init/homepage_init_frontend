@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { readError } from '@/app/(ig)/utils/readError';
 import { replaceLoginWithRedirect } from '@/util/loginRedirect';
@@ -23,7 +24,8 @@ export default function IgDeleteButton({
 }: IgDeleteButtonProps) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
-  const upperLabel = kind === 'small-group' ? '소모임' : kind.toUpperCase();
+  const t = useTranslations('Ig');
+  const upperLabel = t(`kind.${kind}`);
 
   const deleteBySelf = async () => {
     try {
@@ -33,18 +35,18 @@ export default function IgDeleteButton({
         headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
-        alert(`${upperLabel} 비활성화 성공!`);
+        alert(t('deactivateSuccess', { kind: upperLabel }));
         router.refresh();
       } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         replaceLoginWithRedirect(router);
       } else {
-        alert(`${upperLabel} 비활성화 실패: ` + (await readError(res)));
+        alert(t('deactivateFailure', { kind: upperLabel }) + (await readError(res)));
       }
     } catch (e) {
       alert(
-        `${upperLabel} 비활성화 실패: ` +
-          ((e as { message?: string } | null)?.message || '네트워크 오류'),
+        t('deactivateFailure', { kind: upperLabel }) +
+          ((e as { message?: string } | null)?.message || t('networkError')),
       );
     } finally {
       setPending(false);
@@ -59,18 +61,18 @@ export default function IgDeleteButton({
         headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
-        alert(`${upperLabel} 비활성화 성공!`);
+        alert(t('deactivateSuccess', { kind: upperLabel }));
         router.refresh();
       } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         replaceLoginWithRedirect(router);
       } else {
-        alert(`${upperLabel} 비활성화 실패: ` + (await readError(res)));
+        alert(t('deactivateFailure', { kind: upperLabel }) + (await readError(res)));
       }
     } catch (e) {
       alert(
-        `${upperLabel} 비활성화 실패: ` +
-          ((e as { message?: string } | null)?.message || '네트워크 오류'),
+        t('deactivateFailure', { kind: upperLabel }) +
+          ((e as { message?: string } | null)?.message || t('networkError')),
       );
     } finally {
       setPending(false);
@@ -85,7 +87,7 @@ export default function IgDeleteButton({
       disabled={pending}
       aria-busy={pending}
     >
-      비활성화
+      {t('deactivate')}
     </button>
   ) : null;
 }
