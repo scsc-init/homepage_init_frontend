@@ -21,9 +21,9 @@ export default function Footer() {
         .map((item) => item.hrefKvKey)
         .filter((k): k is string => typeof k === 'string' && k.length > 0);
       const allKeys = ['footer-message', ...hrefKeys];
-      let values: string[];
+      let values: Array<string | undefined>;
       try {
-        values = await getKvsClient(allKeys);
+        values = await getKvsClient(allKeys, { preserveMissing: true });
       } catch {
         setFooterMessage(null);
         return;
