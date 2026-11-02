@@ -16,12 +16,7 @@ export default function CopyButton({ link, label = '복사' }: CopyButtonProps) 
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={styles['invite-link-copy']}
-      aria-label="내용 복사"
-    >
+    <button type="button" onClick={handleClick} className={styles['invite-link-copy']}>
       <span className={styles.icon} aria-hidden="true">
         📋
       </span>
