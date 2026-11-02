@@ -166,8 +166,8 @@
     "payment": "입금 안내",
     "edit": "정보 수정",
     "logout": "로그아웃",
-    "title": "My Page",
-    "userInfo": "User Info"
+    "title": "마이 페이지",
+    "userInfo": "사용자 정보"
   },
   "UsFundApply": {
     "fileTooLarge": "파일 용량이 너무 큽니다. 10MB 이하만 업로드할 수 있습니다.",

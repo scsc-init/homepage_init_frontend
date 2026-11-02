@@ -13,7 +13,7 @@ import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
 import { getKvsClient } from '@/util/fetch/client-util';
-import { ROLE_MAP, roleEnglish } from '@/util/constants';
+import { ROLE_MAP } from '@/util/constants';
 import type { UserProfile } from '@/types/user';
 
 const cx = (...classes: unknown[]) => classes.filter(Boolean).join(' ');
@@ -95,7 +95,7 @@ export default function MyProfileClient() {
         <div className={styles['user-name-container']}>
           <div className={styles['user-name']}>
             {user
-              ? `${user.name} [${(locale === 'en-US' ? roleEnglish(user.role) : ROLE_MAP[user.role]?.korean) || t('unknownRole')}]`
+              ? `${user.name} [${(locale === 'en-US' ? ROLE_MAP[user.role]?.english : ROLE_MAP[user.role]?.korean) || t('unknownRole')}]`
               : ''}
           </div>
         </div>

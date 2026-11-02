@@ -66,7 +66,7 @@
     "kakaoPlaceholder": "KakaoTalk profile name",
     "studentIdPlaceholder": "Enter your SNU student ID, if applicable",
     "reasonPlaceholder": "Tell us why you wish to join SCSC as an external member.",
-    "agreePrivacy": "I agree to the Privacy Policy above.",
+    "agreePrivacy": " I agree to the Privacy Policy above.",
     "submitting": "Submitting...",
     "apply": "Submit application",
     "expired": "Your session has expired. Please sign in again.",
@@ -170,7 +170,7 @@
     "userInfo": "User information"
   },
   "UsFundApply": {
-    "fileTooLarge": "This file is too large. Upload files under 10 MB.",
+    "fileTooLarge": "This file is too large. Upload files of 10 MB or less.",
     "uploadError": "An error occurred while uploading the file.",
     "uploadIdMissing": "The upload response did not include a file ID.",
     "userLoading": "Your account information has not loaded yet.",
@@ -219,7 +219,7 @@
     "holderPlaceholder": "Account holder",
     "reasonPlaceholder": "Reason / additional details",
     "previousTerm": "Previous semester",
-    "guidelineAcknowledged": "reviewed and understood.",
+    "guidelineAcknowledged": " I have reviewed and understood.",
     "submitting": "Submitting...",
     "apply": "Submit application",
     "instructions": {
