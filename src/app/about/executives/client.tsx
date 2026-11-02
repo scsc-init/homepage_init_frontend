@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { fetchBackendClient } from '@/util/fetch/client';
 import { getKvsClient } from '@/util/fetch/client-util';
 import { useEffect, useRef, useState } from 'react';
@@ -21,20 +23,23 @@ type NormalizedExecutive = ReturnType<typeof normUser>;
 
 type Executive = Omit<NormalizedExecutive, 'level'> & {
   roleNum: number;
-  role: string;
+  role: 'president' | 'vicePresident' | 'executive';
 };
 
-function roleDisplay(user: NormalizedExecutive, leadershipIds: LeadershipIds) {
-  if (!user) return '임원';
+function roleDisplay(
+  user: NormalizedExecutive,
+  leadershipIds: LeadershipIds,
+): Executive['role'] {
+  if (!user) return 'executive';
   const { presidentId, vicePresidentIds } = leadershipIds || {};
   const userId = String(user.id ?? '').trim();
   const presidentKey = String(presidentId ?? '').trim();
   const vicePresidentKey = String(vicePresidentIds ?? '')
     .trim()
     .split(';');
-  if (presidentKey && userId === presidentKey) return '회장';
-  if (vicePresidentKey && vicePresidentKey.includes(userId)) return '부회장';
-  return '임원';
+  if (presidentKey && userId === presidentKey) return 'president';
+  if (vicePresidentKey && vicePresidentKey.includes(userId)) return 'vicePresident';
+  return 'executive';
 }
 
 function normUser(u: ExecutiveCandidate) {
@@ -47,6 +52,7 @@ function normUser(u: ExecutiveCandidate) {
 }
 
 export default function ExecutivesClient() {
+  const t = useTranslations('Executives');
   const [people, setPeople] = useState<Executive[]>([]);
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
@@ -101,10 +107,10 @@ export default function ExecutivesClient() {
           image: u.image || DEFAULT_EXECUTIVE_PFP,
         }));
 
-        const prez = mapped.filter((p) => p.role === '회장');
-        const vprez = mapped.filter((p) => p.role === '부회장');
+        const prez = mapped.filter((p) => p.role === 'president');
+        const vprez = mapped.filter((p) => p.role === 'vicePresident');
         const others = mapped
-          .filter((p) => p.role === '임원')
+          .filter((p) => p.role === 'executive')
           .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 
         setPeople([...prez, ...vprez, ...others]);
@@ -160,7 +166,7 @@ export default function ExecutivesClient() {
                 />
               </div>
               <h3>{person.name}</h3>
-              <p className={styles.roleText}>{person.role}</p>
+              <p className={styles.roleText}>{t(`roles.${person.role}`)}</p>
             </div>
           ))}
         </div>
@@ -187,7 +193,7 @@ export default function ExecutivesClient() {
               />
             </div>
             <h3>{person.name}</h3>
-            <p className={styles.roleText}>{person.role}</p>
+            <p className={styles.roleText}>{t(`roles.${person.role}`)}</p>
           </div>
         ))}
       </div>
