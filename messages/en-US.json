@@ -64,6 +64,7 @@
     "description": "{kind} short description",
     "introduction": "About this {kind}",
     "websiteLabel": "Websites",
+    "websitePlaceholder": "Press Enter to add",
     "admission": "Admission period",
     "extend": "Request renewal for next semester",
     "admissionAlways": "Always accept new members",

@@ -64,6 +64,7 @@
     "description": "{kind} 한 줄 설명",
     "introduction": "{kind} 소개",
     "websiteLabel": "웹사이트",
+    "websitePlaceholder": "엔터를 눌러 추가하세요",
     "admission": "가입 기간",
     "extend": "다음 학기에 연장 신청",
     "admissionAlways": "항상 가입 받기",
