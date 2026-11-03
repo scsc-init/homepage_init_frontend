@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { SEMESTER_MAP, headerMenuData, minExecutiveLevel } from '@/util/constants';
+import { headerMenuData, minExecutiveLevel } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 import { clearRedirectAfterLogin, isLoginPath, isSafeInternalPath } from '@/util/loginRedirect';
 import styles from './Header.module.css';
@@ -35,6 +35,8 @@ export default function Header({ year, semester }: HeaderProps) {
 }
 
 function HeaderLeft({ year, semester }: HeaderProps) {
+  const t = useTranslations('Header');
+
   return (
     <>
       <Link href="/" className="unset">
@@ -48,15 +50,14 @@ function HeaderLeft({ year, semester }: HeaderProps) {
         />
       </Link>
       {year && semester && (
-        <div className={styles.semesterLabel}>
-          {year} - {SEMESTER_MAP[semester]}학기
-        </div>
+        <div className={styles.semesterLabel}>{t('semester', { year, semester })}</div>
       )}
     </>
   );
 }
 
 function HeaderCenter() {
+  const t = useTranslations('Header');
   const [openedMenuIndex, setOpenedMenuIndex] = useState<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -84,13 +85,15 @@ function HeaderCenter() {
             onMouseEnter={() => open(index)}
             onMouseLeave={close}
           >
-            <button className={styles.menuTrigger}>{menu.title}</button>
+            <button className={styles.menuTrigger}>
+              {menu.titleKey ? t(`menu.${menu.titleKey}`) : menu.title}
+            </button>
             <div className={`${styles.menuContent} ${openClass}`}>
               <ul>
                 {items.map((item) => (
                   <li key={item.label}>
                     <Link className={styles.menuLink} href={item.url}>
-                      {item.label}
+                      {item.labelKey ? t(`menu.${item.labelKey}`) : item.label}
                     </Link>
                   </li>
                 ))}
@@ -172,7 +175,7 @@ function HeaderRight() {
         <div className={styles.rightMain}>
           {isExecutive && (
             <Link href="/executive" className={`${styles.executiveLink} unset`}>
-              운영진 페이지
+              {t('executivePage')}
             </Link>
           )}
           <Link href="/about/my-page" className={`${styles.userLink} unset`}>
@@ -221,6 +224,7 @@ function MobileProfileButton() {
 
 function MobileExecutiveButton() {
   const { me: user } = useMe();
+  const t = useTranslations('Header');
   const [isExecutive, setIsExecutive] = useState(false);
   useEffect(() => {
     setIsExecutive((user?.role ?? 0) >= minExecutiveLevel);
@@ -229,12 +233,13 @@ function MobileExecutiveButton() {
   if (!user || !isExecutive) return null;
   return (
     <Link href="/executive" className={`${styles.mobileExecutiveLink} unset`}>
-      운영진 페이지
+      {t('executivePage')}
     </Link>
   );
 }
 
 function MobileMenuList() {
+  const t = useTranslations('Header');
   const [openedMenuIndex, setOpenedMenuIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -283,7 +288,9 @@ function MobileMenuList() {
                       setOpenedMenuIndex((prev) => (prev === index ? null : index));
                     }}
                   >
-                    <span className={styles.menuTitle}>{menu.title}</span>
+                    <span className={styles.menuTitle}>
+                      {menu.titleKey ? t(`menu.${menu.titleKey}`) : menu.title}
+                    </span>
                     <span className={styles.menuDropdownIcon}>
                       <span className="material-icons" style={{ fontSize: '2rem' }}>
                         {openedMenuIndex === index
@@ -301,7 +308,7 @@ function MobileMenuList() {
                             href={item.url}
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            {item.label}
+                            {item.labelKey ? t(`menu.${item.labelKey}`) : item.label}
                           </Link>
                         </li>
                       ))}
