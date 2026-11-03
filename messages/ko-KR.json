@@ -5,29 +5,29 @@
     "executivePage": "운영진 페이지",
     "menu": {
       "smallGroup": "소모임",
-      "about": "동아리 소개",
-      "board": "게시판",
+      "about": "About us",
+      "board": "Board",
       "sigPig": "SIG/PIG",
-      "contact": "문의",
+      "contact": "Contact",
       "scsc": "SCSC",
-      "welcome": "가입 안내",
-      "rules": "회칙",
-      "projects": "프로젝트 기록",
-      "album": "앨범",
-      "notice": "공지사항",
-      "files": "자료실",
+      "welcome": "Welcome Guide",
+      "rules": "Rules",
+      "projects": "Project Archives",
+      "album": "Album",
+      "notice": "Notice",
+      "files": "Files",
       "sig": "SIG",
       "pig": "PIG",
-      "contactUs": "문의하기",
-      "fundApply": "지원금 신청"
+      "contactUs": "Contact Us!",
+      "fundApply": "Fund Apply"
     }
   },
   "Footer": {
     "loadError": "Footer 정보를 불러오지 못했습니다.",
-    "people": "사람들",
+    "people": "People",
     "menu": {
-      "executives": "운영진",
-      "developers": "개발진"
+      "executives": "Executives",
+      "developers": "Developers"
     }
   },
   "WithAuthorization": {
