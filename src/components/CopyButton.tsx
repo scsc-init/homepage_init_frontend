@@ -19,12 +19,7 @@ export default function CopyButton({ link, label }: CopyButtonProps) {
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={styles['invite-link-copy']}
-      aria-label={t('ariaLabel')}
-    >
+    <button type="button" onClick={handleClick} className={styles['invite-link-copy']}>
       <span className={styles.icon} aria-hidden="true">
         📋
       </span>

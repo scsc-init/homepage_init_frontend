@@ -107,5 +107,160 @@
     "loginRequired": "Please sign in again before uploading the image.",
     "uploadFailed": "Image upload failed (status {status})",
     "missingId": "The image upload response does not contain an id."
+  },
+  "About": {
+    "intro": {
+      "question": "<b>Hangul, Lineage, Lineage II, Aion.</b><br></br> What do they have in common?",
+      "club": "<b>SCSC</b> stands for <b>SNU Computer Study Club</b>.<br></br> Our club has a <b>long tradition dating back to 1984</b>.",
+      "hangul": "The first Korean word processor, <b>Hangul 1.0</b>,<br></br> was unveiled at the <b>third SCSC exhibition</b>.<br></br> Our alumni <b>Lee Chan-jin, Kim Hyeong-jip, Woo Won-sik, and Kim Taek-jin</b><br></br> played key roles in Korea’s software history.",
+      "companies": "They popularized <b>Hangul</b> at <b>Hancom</b>,<br></br> founded <b>HanmeSoft</b> and <b>NCSoft</b>,<br></br> and created software and games including<br></br> <b>Hanme Typing Tutor, Hanme Hangul, Lineage, and Aion</b>.",
+      "alumni": "Many other SCSC alumni have also<br></br> founded companies and helped lead the IT industry.",
+      "legacy": "<b>Hangul, Lineage, Lineage II, Aion.</b><br></br> These stories would not have been possible <b>without SCSC</b>.",
+      "events": "Today, SCSC organizes the SKYST hackathon and SCPC programming contest,<br></br> invites professional developers to give seminars,<br></br> and runs a wide variety of events.",
+      "members": "Around 200 members from diverse majors are active in SCSC.<br></br> We help members build their own expertise in areas such as<br></br> apps, the web, artificial intelligence, and algorithms.",
+      "future": "SCSC keeps moving forward!"
+    },
+    "title": "About us",
+    "activitiesTitle": "What we do",
+    "facilitiesTitle": "Inside our club room",
+    "moreTitle": "Want to learn more about SCSC?",
+    "activities": {
+      "seminar": {
+        "title": "Seminars",
+        "description": "Industry guests and club members give seminars on computing topics."
+      },
+      "sig": {
+        "description": "Members with a shared interest meet to study a topic together."
+      },
+      "pig": {
+        "description": "Project teams, including INIT, work together to build things."
+      },
+      "scpc": {
+        "description": "An algorithmic programming contest."
+      },
+      "skyst": {
+        "description": "A joint hackathon with other clubs."
+      },
+      "social": {
+        "title": "Social events",
+        "description": "Club trips, casual meetups, and other opportunities to get to know one another."
+      }
+    },
+    "facilities": {
+      "pc": {
+        "title": "High-performance computers",
+        "description": "Workstations for deep learning and software development."
+      },
+      "sofa": {
+        "title": "Sofas & meeting space",
+        "description": "A comfortable place to sit and relax."
+      },
+      "refreshments": {
+        "title": "Drinks & snacks",
+        "description": "A large refrigerator and snacks are always available."
+      },
+      "books": {
+        "title": "Books & resources",
+        "description": "Programming books and a variety of study materials."
+      },
+      "printer": {
+        "title": "Printer",
+        "description": "A high-performance printer with color printing."
+      },
+      "games": {
+        "title": "Game consoles",
+        "description": "Take a break with Nintendo, PS4, and other consoles."
+      }
+    },
+    "links": {
+      "recruiting": "Recruitment information",
+      "sig": "Browse SIGs",
+      "pig": "Browse PIGs",
+      "discord": "Official Discord server",
+      "instagram": "Official Instagram",
+      "github": "Official GitHub"
+    },
+    "sidebar": {
+      "activities": "Activities",
+      "faq": "FAQ",
+      "facilities": "Facilities",
+      "more": "Learn more"
+    },
+    "faq": {
+      "time": {
+        "question": "How much time should I spend on club activities?",
+        "answer": "The commitment varies by person, but you should expect to spend at least one or two days a week. SIGs are our main activity, and there are currently 13. You can join as many as you like. Most SIGs arrange their own schedules and meet once or twice a week. Weekly SIG presentations, hackathons, and occasional seminars may require additional time."
+      },
+      "eligibility": {
+        "question": "Who can join?",
+        "answer": "Any Seoul National University student interested in computer science and programming can join, regardless of major, year, or experience. Students on leave and graduate students are welcome too."
+      },
+      "recruitment": {
+        "question": "Can I join after the recruitment period?",
+        "answer": "Yes! SCSC accepts members throughout the year. However, activities start soon after the official recruitment period, so you may miss the mentor program, SIG enrollment, or the opening general meeting."
+      },
+      "beginners": {
+        "question": "Can I join if I am new to coding?",
+        "answer": "Absolutely. We offer SIGs on basic programming every semester. Follow along and you can build confidence with computers and programming."
+      },
+      "dues": {
+        "question": "How much are membership dues, and how are they used?",
+        "answer": "Membership dues are KRW 25,000 per semester. Spending is disclosed at the closing general meeting. Dues mainly support SIG activities, group meals, and the purchase of computing equipment."
+      },
+      "sig": {
+        "question": "What is a SIG?",
+        "answer": "A SIG is a group of members who study a shared topic together. Last year, study groups covered languages such as C++, Python, and Rust, frontend and backend web development, algorithms, machine learning, and deep learning. Some SIGs, including deep learning and algorithms, offered different levels of difficulty."
+      }
+    },
+    "faqTitle": "Frequently asked questions"
+  },
+  "Welcome": {
+    "greetingNamed": "Welcome, <nameTag>{name}</nameTag>!",
+    "greeting": "Welcome!",
+    "pending": "We have received your application. Please follow steps 1–3 below.",
+    "active": "Your registration is complete! Please follow steps 2–3 below.",
+    "depositInstructions": "To complete your registration, transfer the <strong>membership fee</strong> to the account below.",
+    "depositorInstructions": "Enter <u>your name + the last two digits of your phone number</u> as the <strong>depositor name</strong>.<br></br> Example: 김창섭57",
+    "kakaoInstructions": "<important>You must join the KakaoTalk team chat</important> for payment confirmation and club announcements.",
+    "kakaoTip": "TIP. Request to join <strong>right after your transfer</strong> to help us confirm your payment sooner.",
+    "discordInstructions": "Join the server below and enter the <strong><important>/enroll</important></strong> command to get ready for club activities.",
+    "statusInstructions": "Check your payment confirmation and membership approval status on <strong>My Page</strong>.",
+    "title": "Welcome guide",
+    "depositTitle": "Pay the membership fee",
+    "feeLabel": "Membership fee",
+    "feeAmount": "KRW 25,000",
+    "accountLabel": "Bank account",
+    "kakaoTitle": "Join the KakaoTalk team chat",
+    "kakaoAction": "Join KakaoTalk chat",
+    "discordAction": "Join Discord",
+    "optional": "(optional)",
+    "statusTitle": "Check your membership status",
+    "statusAction": "Open My Page",
+    "copyAccount": "Copy account number",
+    "copyLink": "Copy link"
+  },
+  "Executives": {
+    "title": "Meet our executives",
+    "roles": {
+      "president": "President",
+      "vicePresident": "Vice President",
+      "executive": "Executive"
+    }
+  },
+  "Developers": {
+    "title": "Meet our developers",
+    "descriptions": {
+      "doheyn1008": "Go, College of Transdisciplinary and Innovative Studies!",
+      "coshaman": "I’m cute!",
+      "juwonlee718": "Crong crong~",
+      "tteokgook1": "It’s time to go."
+    },
+    "formerTitle": "Former developers"
+  },
+  "Rules": {
+    "title": "Club rules",
+    "original": "Read the Korean original",
+    "translationNotice": "This English translation is provided for reference and is based on the Korean rules revised on March 25, 2026. Consult the Korean original for the latest text.",
+    "loadError": "Unable to load the club rules. Please use the link below to read the original."
   }
 }
