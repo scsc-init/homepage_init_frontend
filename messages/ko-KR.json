@@ -1,6 +1,267 @@
 {
   "Header": {
-    "login": "가입 / 로그인"
+    "login": "가입 / 로그인",
+    "semester": "{year} - {semester, select, 1 {1} 2 {여름} 3 {2} 4 {겨울} other {}}학기",
+    "executivePage": "운영진 페이지",
+    "menu": {
+      "smallGroup": "소모임",
+      "about": "About us",
+      "board": "Board",
+      "sigPig": "SIG/PIG",
+      "contact": "Contact",
+      "scsc": "SCSC",
+      "welcome": "Welcome Guide",
+      "rules": "Rules",
+      "projects": "Project Archives",
+      "album": "Album",
+      "notice": "Notice",
+      "files": "Files",
+      "sig": "SIG",
+      "pig": "PIG",
+      "contactUs": "Contact Us!",
+      "fundApply": "Fund Apply"
+    }
+  },
+  "Footer": {
+    "loadError": "Footer 정보를 불러오지 못했습니다.",
+    "people": "People",
+    "menu": {
+      "executives": "Executives",
+      "developers": "Developers"
+    }
+  },
+  "WithAuthorization": {
+    "checking": "권한 확인 중...",
+    "noPermission": "접근 권한이 없습니다."
+  },
+  "InAppBrowserOutButton": {
+    "iosGuide": "상단의 화살표 아이콘( <icon></icon> ) 클릭 → 외부 브라우저로 열기",
+    "androidGuide": "상단의 점 세 개( ⋮ ) 클릭 → 외부 브라우저로 열기",
+    "openExternal": "외부 브라우저로 이동"
+  },
+  "CopyButton": {
+    "label": "복사",
+    "ariaLabel": "내용 복사",
+    "accountNumber": "계좌번호 복사",
+    "link": "링크 복사"
+  },
+  "EditorWrapper": {
+    "loading": "로딩 중..."
+  },
+  "MDXEditor": {
+    "imageUploadFailed": "이미지 업로드에 실패했습니다."
+  },
+  "AttachmentList": {
+    "label": "첨부 파일"
+  },
+  "AttachmentUploader": {
+    "label": "첨부파일",
+    "imageOnly": "이미지 파일만 업로드할 수 있습니다.",
+    "unsupportedType": "지원하지 않는 파일 형식입니다. PDF, DOCX, PPTX 파일만 업로드할 수 있습니다.",
+    "networkError": "파일 업로드 중 네트워크 오류가 발생했습니다.",
+    "loginRequired": "로그인이 필요합니다. 다시 로그인한 후 파일을 업로드해 주세요.",
+    "uploadFailed": "파일 업로드 실패 (status {status})",
+    "missingId": "파일 업로드 응답에 id가 없습니다.",
+    "uploading": "업로드 중...",
+    "addImage": "이미지 추가",
+    "addFile": "파일 추가",
+    "noImages": "첨부한 이미지가 없습니다.",
+    "noFiles": "첨부파일이 없습니다.",
+    "uploadedImageAlt": "업로드한 이미지",
+    "imageLoading": "이미지 로딩 중",
+    "remove": "제거"
+  },
+  "ToggleInput": {
+    "on": "켜짐",
+    "off": "꺼짐"
+  },
+  "TextListInput": {
+    "placeholder": "엔터를 눌러 추가하세요"
+  },
+  "SortDropdown": {
+    "latest": "최신순",
+    "oldest": "오래된 순",
+    "title": "제목순",
+    "ariaLabel": "정렬: {label}",
+    "menuAriaLabel": "정렬 기준"
+  },
+  "InAppBrowser": {
+    "browserNames": {
+      "kakaotalk": "카카오톡",
+      "everytime": "에브리타임",
+      "instagram": "인스타그램",
+      "line": "라인",
+      "inApp": "인앱"
+    },
+    "titleBrowser": "<strong>{browser}</strong> 브라우저에서는",
+    "titleLogin": "<strong>로그인</strong>이 실패할 수 있습니다",
+    "guide": "인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부 브라우저를 이용해주세요.",
+    "copyLink": "외부 브라우저 링크 복사"
+  },
+  "ImageUpload": {
+    "imageOnly": "이미지 파일만 업로드할 수 있습니다.",
+    "compressionFailed": "이미지 압축에 실패했습니다. 다른 이미지를 사용해 주세요.",
+    "compressionError": "이미지 압축 중 오류가 발생했습니다. 다른 이미지를 사용해 주세요.",
+    "fileTooLarge": "이미지 용량이 너무 큽니다. (10MB 이하만 업로드할 수 있습니다.)",
+    "networkError": "이미지 업로드 중 네트워크 오류가 발생했습니다.",
+    "loginRequired": "로그인이 필요합니다. 다시 로그인한 뒤 이미지를 업로드해 주세요.",
+    "uploadFailed": "이미지 업로드 실패(status {status})",
+    "missingId": "이미지 업로드 응답에 id가 없습니다."
+  },
+  "About": {
+    "intro": {
+      "question": "<b>한글, 리니지, 리니지2, 아이온.</b><br></br>이들의 공통점은 무엇일까요?",
+      "club": "<b>SCSC</b>는 <b>서울대학교 컴퓨터 연구회</b> (SNU Computer Study Club)의 약자로,<br></br><b>1984년부터 이어져 온 전통 있는 동아리</b>입니다.",
+      "hangul": "세계 최초의 한글 워드프로세서 <b>‘한글 1.0’</b>은<br></br><b>제3회 SCSC 전시회</b>에서 처음 공개되었습니다.<br></br><b>이찬진, 김형집, 우원식, 김택진</b> 선배님들은<br></br>우리나라 소프트웨어 역사의 주역이셨습니다.",
+      "companies": "<b>‘한글과컴퓨터’</b>에서 <b>한글</b>을 대중화시키고,<br></br><b>‘한메소프트’</b>와 <b>‘NC소프트’</b>를 창업하여<br></br><b>한메 타자교사, 한메 한글, 리니지, 아이온</b> 등<br></br>수많은 명작 소프트웨어와 게임을 만들었습니다.",
+      "alumni": "그 외에도 수많은 SCSC 선배님들이<br></br>다양한 기업을 창업하고 IT 산업을 이끌고 있습니다.",
+      "legacy": "<b>한글, 리니지, 리니지2, 아이온</b><br></br>이 모든 것은 <b>SCSC 없이는 불가능했을</b> 이야기입니다.",
+      "events": "지금의 SCSC는 SKYST 해커톤 및 SCPC 알고리즘 대회를 개최하거나<br></br>현직 개발자분들을 초청해 세미나를 진행하는 등<br></br>다양한 행사를 기획 및 운영하고 있습니다.",
+      "members": "200여 명의 다양한 전공을 가진 동아리원이 활동하고 있으며,<br></br>그런 만큼 SCSC는 앱•웹•인공지능•알고리즘 등 여러 분야에 걸쳐<br></br>자신만의 전문성을 가질 수 있도록 돕는 것을 주된 목표로 삼고 있습니다.",
+      "future": "SCSC는 계속해서 나아갑니다!"
+    },
+    "title": "About us",
+    "activitiesTitle": "SCSC는 이러한 활동을 합니다",
+    "facilitiesTitle": "동아리방에는 무엇이 있을까요?",
+    "moreTitle": "SCSC에 대해 더 알아보고 싶다면?",
+    "activities": {
+      "seminar": {
+        "title": "세미나",
+        "description": "외부 기업인 또는 동아리원이 컴퓨터와 관련된 주제로 세미나를 개최합니다."
+      },
+      "sig": {
+        "description": "특정 주제에 관심이 있는 동아리원이 모여 함께 공부하는 모임입니다."
+      },
+      "pig": {
+        "description": "프로젝트 중심의 팀 활동입니다. INIT 등이 있습니다."
+      },
+      "scpc": {
+        "description": "알고리즘 대회입니다."
+      },
+      "skyst": {
+        "description": "타 동아리와 연합한 해커톤 대회입니다."
+      },
+      "social": {
+        "title": "친목 활동",
+        "description": "MT, 번개 등 다양한 친목 도모 활동이 있습니다."
+      }
+    },
+    "facilities": {
+      "pc": {
+        "title": "고성능 컴퓨터",
+        "description": "딥러닝과 개발용 워크스테이션을 갖춘 환경"
+      },
+      "sofa": {
+        "title": "소파 & 회의 공간",
+        "description": "편하게 앉아 쉴 수 있는 공간"
+      },
+      "refreshments": {
+        "title": "음료 및 간식",
+        "description": "대형 냉장고와 간식이 항상 구비되어 있습니다"
+      },
+      "books": {
+        "title": "책과 자료들",
+        "description": "프로그래밍 서적과 다양한 공부 자료 보유"
+      },
+      "printer": {
+        "title": "프린터기",
+        "description": "컬러 출력이 가능한 고성능 프린터"
+      },
+      "games": {
+        "title": "게임기",
+        "description": "닌텐도, PS4 등 게임기로 여가도 즐길 수 있습니다"
+      }
+    },
+    "links": {
+      "recruiting": "리크루팅 정보 바로가기",
+      "sig": "시그 목록 바로가기",
+      "pig": "피그 목록 바로가기",
+      "discord": "공식 디스코드 서버",
+      "instagram": "공식 인스타그램",
+      "github": "공식 깃허브"
+    },
+    "sidebar": {
+      "activities": "활동",
+      "faq": "자주 묻는 질문",
+      "facilities": "동아리 시설",
+      "more": "더 알아보기"
+    },
+    "faq": {
+      "time": {
+        "question": "동아리 활동에 어느 정도의 시간을 할애해야 하나요?",
+        "answer": "부담 정도는 개인에 따라 다르게 느껴질 수 있지만, 일주일에 적어도 1~2일은 투자해야 합니다. SCSC의 가장 주요한 활동인 SIG는 현재 13개입니다. 시그 가입 개수에 대한 제한은 없으며, 대부분 시그원끼리 시간을 조정하여 주 1~2회 시그를 진행합니다. 그외에도 주간 시그 보고회, 해커톤, 비정기 세미나가 진행되기도 합니다. 따라서 최소한 일주일에 1~2일, 활동량에 따라 그 이상의 시간이 필요할 수 있습니다."
+      },
+      "eligibility": {
+        "question": "가입할 수 있는 회원에 제한이 있나요?",
+        "answer": "단과대와 학번에 관계 없이, 컴퓨터 공학과 프로그래밍에 관심이 있는 서울대학교 학생 누구나 참여하실 수 있습니다. 휴학생, 대학원생 모두 가입가능합니다. 실력에 관계 없이 활동 가능하므로 많은 지원 부탁드립니다."
+      },
+      "recruitment": {
+        "question": "모집기간이 지나면 가입할 수 없나요?",
+        "answer": "SCSC는 상시모집을 원칙으로 하므로 공식 모집 기간이 지난 후에도 가입이 가능합니다! 다만, 공식 일정이 모집 직후부터 진행되므로 짝선짝후, SIG, 개강총회 등의 활동에 참여하기 어려울 수 있습니다."
+      },
+      "beginners": {
+        "question": "코딩을 잘 하지 못하는데 괜찮나요?",
+        "answer": "물론 괜찮습니다. 기초 프로그래밍을 배우는 SIG가 매학기 개설되어 있으므로 끝까지 따라오기만 한다면 충분히 컴퓨터에 익숙해질 수 있습니다."
+      },
+      "dues": {
+        "question": "회비는 얼마이며, 어떤 곳에 사용되나요?",
+        "answer": "회비는 한 학기 당 2.5만원입니다. 회비 사용 내역은 종강총회일에 투명하게 공개합니다. 주로 시그 활동 지원비, 회식비, 컴퓨터 관련 물품 구매 비용 등으로 사용합니다."
+      },
+      "sig": {
+        "question": "SIG란 무엇인가요?",
+        "answer": "SIG는 특정 주제에 관심 있는 동아리원이 모여 함께 같은 주제를 공부하는 SIG입니다. 지난 년도에는 그룹스터디형 SIG로 각 언어(C++, 파이썬, 러스트 등), 웹(프론트엔드, 백엔드), 알고리즘, 머신러닝, 딥러닝 스터디 등이 개설되었으며 딥러닝, 알고리즘 등의 SIG는 수준별로 난이도를 나누어 진행하였습니다."
+      }
+    },
+    "faqTitle": "자주 묻는 질문"
+  },
+  "Welcome": {
+    "greetingNamed": "<nameTag>{name}님</nameTag>, 환영합니다!",
+    "greeting": "환영합니다!",
+    "pending": "가입 신청이 접수되었어요. 아래 STEP 1-3 순서대로 진행해주세요.",
+    "active": "등록이 완료되었습니다! 아래 STEP 2-3 순서대로 진행해주세요.",
+    "depositInstructions": "가입을 완료하려면 아래 계좌로 <strong>가입비</strong>를 입금해 주세요.",
+    "depositorInstructions": "<strong>입금자명</strong>은 <u>이름 + 전화번호 마지막 두 자리</u>로 입력해 주세요.<br></br>예시) 김창섭57",
+    "kakaoInstructions": "가입비 입금 확인과 공지 전달을 위해 <important>카카오톡 팀 채팅방 입장은 필수</important>입니다.",
+    "kakaoTip": "TIP. 입금 <strong>직후</strong> 바로 입장 신청을 해주시면 확인이 더 빠릅니다.",
+    "discordInstructions": "원활한 동아리 활동을 위해 아래 서버에 입장해 <strong><important>/enroll</important></strong> 명령어를 입력해주세요.",
+    "statusInstructions": "입금 확인과 가입 승인 상태는 <strong>마이페이지</strong>에서 확인할 수 있어요.",
+    "title": "가입 안내",
+    "depositTitle": "가입비 입금",
+    "feeLabel": "가입비",
+    "feeAmount": "25,000원",
+    "accountLabel": "입금 계좌",
+    "kakaoTitle": "카카오톡 팀 채팅방 가입",
+    "kakaoAction": "카카오톡 팀 채팅방 입장",
+    "discordAction": "디스코드 서버 입장",
+    "optional": "(선택)",
+    "statusTitle": "가입 상태 확인",
+    "statusAction": "마이페이지 열기",
+    "copyAccount": "계좌번호 복사",
+    "copyLink": "링크 복사"
+  },
+  "Executives": {
+    "title": "임원진 소개",
+    "roles": {
+      "president": "회장",
+      "vicePresident": "부회장",
+      "executive": "임원"
+    }
+  },
+  "Developers": {
+    "title": "개발자 소개",
+    "descriptions": {
+      "doheyn1008": "첨융 화이팅!",
+      "coshaman": "난 귀여워!",
+      "juwonlee718": "크롱크롱~",
+      "tteokgook1": "이제 갈 때가 됐다"
+    },
+    "formerTitle": "과거 개발자"
+  },
+  "Rules": {
+    "title": "회칙",
+    "original": "한국어 원문 보기",
+    "translationNotice": "회칙 원문은 아래 링크에서 확인할 수 있습니다.",
+    "loadError": "회칙을 불러오지 못했습니다. 아래 링크에서 원문을 확인해 주세요."
   },
   "Article": {
     "notFound": "게시글을 찾을 수 없습니다.",

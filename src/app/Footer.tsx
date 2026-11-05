@@ -7,10 +7,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { hideFooterRoutes, footerLogoData, footerMenuData } from '@/util/constants';
 import { getKvsClient } from '@/util/fetch/client-util';
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
   const pathname = usePathname();
-  const [footerMessage, setFooterMessage] = useState('');
+  const t = useTranslations('Footer');
+  const [footerMessage, setFooterMessage] = useState<string | null>('');
   const [kvHrefs, setKvHrefs] = useState<Record<string, string | undefined>>({});
 
   useEffect(() => {
@@ -19,9 +21,15 @@ export default function Footer() {
         .map((item) => item.hrefKvKey)
         .filter((k): k is string => typeof k === 'string' && k.length > 0);
       const allKeys = ['footer-message', ...hrefKeys];
-      const values = await getKvsClient(allKeys);
+      let values: Array<string | undefined>;
+      try {
+        values = await getKvsClient(allKeys, { preserveMissing: true });
+      } catch {
+        setFooterMessage(null);
+        return;
+      }
 
-      setFooterMessage(values[0] || 'Footer 정보를 불러오지 못했습니다.');
+      setFooterMessage(values[0] ?? null);
 
       const hrefEntries = hrefKeys.map((key, i) => [key, values[i + 1]]);
       setKvHrefs(Object.fromEntries(hrefEntries));
@@ -38,7 +46,7 @@ export default function Footer() {
           <div>
             <div>
               <p className={styles.message}>
-                {(footerMessage || '')
+                {(footerMessage ?? t('loadError'))
                   .replace(/\\n/g, '\n')
                   .split('\n')
                   .map((line, i) => (
@@ -49,12 +57,14 @@ export default function Footer() {
                   ))}
               </p>
             </div>
-            <nav className={styles.footerNav} aria-label="People">
-              <span className={styles.footerNavTitle}>People</span>
+            <nav className={styles.footerNav} aria-label={t('people')}>
+              <span className={styles.footerNavTitle}>{t('people')}</span>
               <ul className={styles.footerNavList}>
                 {footerMenuData.map((item) => (
                   <li key={item.url}>
-                    <Link href={item.url}>{item.label}</Link>
+                    <Link href={item.url}>
+                      {item.labelKey ? t(`menu.${item.labelKey}`) : item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

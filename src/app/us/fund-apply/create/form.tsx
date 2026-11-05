@@ -1,5 +1,7 @@
 ﻿'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -104,6 +106,7 @@ export default function FundApplyForm({
   boardId: number;
   globalStatus: GlobalStatus;
 }) {
+  const tImageUpload = useTranslations('ImageUpload');
   const router = useRouter();
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -333,7 +336,7 @@ export default function FundApplyForm({
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const uploaded = await uploadCompressedImage(file);
+    const uploaded = await uploadCompressedImage(file, tImageUpload);
 
     if (!uploaded?.id) return null;
 
