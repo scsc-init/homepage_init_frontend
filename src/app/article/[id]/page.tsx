@@ -50,6 +50,7 @@ import { useMe } from '@/util/hooks/useMe';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import AttachmentList from '@/components/form-control/AttachmentList';
 import { useFormatter, useTranslations } from 'next-intl';
+import { parseUtcDate } from '@/util/date';
 
 export default function ArticleDetail() {
   const t = useTranslations('Article');
@@ -188,7 +189,7 @@ export default function ArticleDetail() {
       <h1 className={styles.Title}>{article.title}</h1>
       <p className={styles.Info}>
         {t('createdAt', {
-          date: format.dateTime(new Date(article.created_at), {
+          date: format.dateTime(parseUtcDate(article.created_at), {
             dateStyle: 'short',
             timeStyle: 'medium',
             timeZone: 'Asia/Seoul',

@@ -26,6 +26,7 @@ import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
 import { useTranslations } from 'next-intl';
+import { parseUtcDate } from '@/util/date';
 
 const METADATA_CHUNK_SIZE = 30;
 
@@ -135,9 +136,9 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
 
   const sortedArticles = [...articles].sort((a, b) => {
     if (sortOrder === 'latest')
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      return parseUtcDate(b.created_at).getTime() - parseUtcDate(a.created_at).getTime();
     if (sortOrder === 'oldest')
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      return parseUtcDate(a.created_at).getTime() - parseUtcDate(b.created_at).getTime();
     if (sortOrder === 'title') return a.title.localeCompare(b.title, locale);
     return 0;
   });
@@ -169,7 +170,7 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
                 {article.title}
               </Link>
               <span className={styles.fileDate}>
-                {format.dateTime(new Date(article.created_at), {
+                {format.dateTime(parseUtcDate(article.created_at), {
                   dateStyle: 'short',
                   timeStyle: 'medium',
                   timeZone: 'Asia/Seoul',

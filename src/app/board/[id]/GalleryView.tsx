@@ -21,6 +21,7 @@ type GalleryArticle = Article & {
 type GalleryItem = { articleId: string; title: string; created_at: string; thumbSrc: string };
 
 import { fetchBackendClient } from '@/util/fetch/client';
+import { parseUtcDate } from '@/util/date';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -39,14 +40,18 @@ const HTML_IMG_REGEX = /<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/i;
 function sortArticles(items: GalleryItem[], sortOrder: SortOrder, locale: string) {
   const arr = items.slice();
   if (sortOrder === 'oldest') {
-    arr.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    arr.sort(
+      (a, b) => parseUtcDate(a.created_at).getTime() - parseUtcDate(b.created_at).getTime(),
+    );
     return arr;
   }
   if (sortOrder === 'title') {
     arr.sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), locale));
     return arr;
   }
-  arr.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  arr.sort(
+    (a, b) => parseUtcDate(b.created_at).getTime() - parseUtcDate(a.created_at).getTime(),
+  );
   return arr;
 }
 
@@ -279,7 +284,7 @@ export default function GalleryView({ board, sortOrder }: BoardViewProps) {
     <div className={styles.galleryGrid}>
       {sorted.map((it) => {
         const href = `/article/${encodeURIComponent(it.articleId)}`;
-        const parsedDate = new Date(it.created_at);
+        const parsedDate = parseUtcDate(it.created_at);
         const date = Number.isNaN(parsedDate.getTime())
           ? ''
           : format.dateTime(parsedDate, { dateStyle: 'short', timeZone: 'Asia/Seoul' });
