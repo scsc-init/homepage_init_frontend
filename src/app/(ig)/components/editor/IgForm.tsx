@@ -1,14 +1,33 @@
-import TextInput from '@/components/form-control/TextInput';
-import EditorInput from '@/components/form-control/EditorInput';
-import DropdownInput from '@/components/form-control/DropdownInput';
-import ToggleInput from '@/components/form-control/ToggleInput';
+import type { IgFormValues, IgKind } from '@/app/(ig)/components/editor/types';
 import ButtonInput from '@/components/form-control/ButtonInput';
+import DropdownInput from '@/components/form-control/DropdownInput';
+import EditorInput from '@/components/form-control/EditorInput';
+import TextInput from '@/components/form-control/TextInput';
 import TextListInput from '@/components/form-control/TextListInput';
+import ToggleInput from '@/components/form-control/ToggleInput';
 import {
   PIG_ADMISSION_LABEL_MAP,
   SIG_ADMISSION_LABEL_MAP,
   SMALL_GROUP_ADMISSION_LABEL_MAP,
 } from '@/util/constants';
+import type { ReactNode } from 'react';
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from 'react-hook-form';
+
+type IgFormProps = {
+  kind: IgKind;
+  register: UseFormRegister<IgFormValues>;
+  control: Control<IgFormValues>;
+  handleSubmit: UseFormHandleSubmit<IgFormValues>;
+  onSubmit: SubmitHandler<IgFormValues>;
+  editorKey: number;
+  isCreate: boolean;
+  afterFields?: ReactNode;
+};
 
 const FORM_CONFIG = {
   sig: {
@@ -29,7 +48,7 @@ const FORM_CONFIG = {
     descriptionPlaceholder: '홈페이지 관리 PIG입니다',
     admissionLabelMap: PIG_ADMISSION_LABEL_MAP,
   },
-};
+} as const;
 
 export default function IgForm({
   kind,
@@ -40,16 +59,16 @@ export default function IgForm({
   editorKey,
   isCreate,
   afterFields,
-}) {
+}: IgFormProps) {
   const config = FORM_CONFIG[kind];
 
   return (
     <form
       className="space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        handleSubmit(onSubmit)(e);
+      onSubmit={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        void handleSubmit(onSubmit)(event);
       }}
     >
       <TextInput
@@ -92,7 +111,7 @@ export default function IgForm({
       ) : null}
       {afterFields ? <div style={{ margin: '3rem 0' }}>{afterFields}</div> : null}
 
-      <ButtonInput isSubmit={true}>
+      <ButtonInput isSubmit>
         {isCreate ? `${config.upperLabel} 생성` : `${config.upperLabel} 수정`}
       </ButtonInput>
     </form>
