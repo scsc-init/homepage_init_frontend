@@ -184,9 +184,9 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   onChange={(e) => updateFilterCriteria('status', e.target.value)}
                 >
                   <option value="">{t('allStatuses')}</option>
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
-                  <option value="banned">banned</option>
+                  <option value="active">{t('userStatuses.active')}</option>
+                  <option value="inactive">{t('userStatuses.inactive')}</option>
+                  <option value="banned">{t('userStatuses.banned')}</option>
                 </AdminLayout.AdminSelect>
               </td>
               <td colSpan={2}></td>
@@ -246,9 +246,9 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     value={user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive'}
                     onChange={(e) => updateUserStatus(user.id, e.target.value)}
                   >
-                    <option value="active">active</option>
-                    <option value="inactive">inactive</option>
-                    <option value="banned">banned</option>
+                    <option value="active">{t('userStatuses.active')}</option>
+                    <option value="inactive">{t('userStatuses.inactive')}</option>
+                    <option value="banned">{t('userStatuses.banned')}</option>
                   </AdminLayout.AdminSelect>
                 </td>
                 <td>

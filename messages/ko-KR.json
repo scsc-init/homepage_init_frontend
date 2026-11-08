@@ -664,9 +664,14 @@
     "admissionAlways": "항상 가입 받기",
     "admissionNever": "항상 가입 받지 않기",
     "admissionDuringRecruiting": "{group} 가입 기간에만 가입 받기",
-    "botStatusError": "Server Error, failed to fetch bot status",
-    "botLoggedIn": "Bot is logged in",
-    "botLoggedOut": "Bot is not logged in",
-    "botLogin": "login discord bot"
+    "botStatusError": "서버 오류로 봇 상태를 불러오지 못했습니다.",
+    "botLoggedIn": "봇이 로그인되어 있습니다.",
+    "botLoggedOut": "봇이 로그인되어 있지 않습니다.",
+    "botLogin": "디스코드 봇 로그인",
+    "userStatuses": {
+      "active": "활성",
+      "inactive": "비활성",
+      "banned": "차단됨"
+    }
   }
 }

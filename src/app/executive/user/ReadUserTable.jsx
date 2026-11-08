@@ -8,6 +8,7 @@ import { roleKorean } from '@/util/constants';
 
 export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
   const t = useTranslations('Executive');
+  const roleLabels = t.raw('roles');
   const [filter, setFilter] = useState({
     name: '',
     kakao_name: '',
@@ -30,12 +31,13 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
         (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.role ||
           roleValue.includes(filter.role) ||
-          lower(roleLabel(u.role)).includes(lower(filter.role))) &&
+          lower(roleLabel(u.role)).includes(lower(filter.role)) ||
+          lower(roleLabels[u.role]).includes(lower(filter.role))) &&
         (!filter.status || statusValue === filter.status) &&
         (!filter.major || String(u.major_id) === filter.major)
       );
     });
-  }, [users, filter]);
+  }, [users, filter, roleLabels]);
 
   const [saving, setSaving] = useState({});
 
@@ -126,9 +128,9 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   onChange={(e) => updateFilter('status', e.target.value)}
                 >
                   <option value="">{t('allStatuses')}</option>
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
-                  <option value="banned">banned</option>
+                  <option value="active">{t('userStatuses.active')}</option>
+                  <option value="inactive">{t('userStatuses.inactive')}</option>
+                  <option value="banned">{t('userStatuses.banned')}</option>
                 </AdminLayout.AdminSelect>
               </td>
               <td></td>
@@ -142,8 +144,8 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   <td>{user.name}</td>
                   <td>{user.kakao_name || '-'}</td>
                   <td>{majorsMap[user.major_id] || '-'}</td>
-                  <td>{t.raw('roles')[user.role] ?? roleLabel(user.role)}</td>
-                  <td>{status}</td>
+                  <td>{roleLabels[user.role] ?? roleLabel(user.role)}</td>
+                  <td>{t(`userStatuses.${status}`)}</td>
                   <td>
                     <AdminLayout.AdminButton
                       variant="secondary"

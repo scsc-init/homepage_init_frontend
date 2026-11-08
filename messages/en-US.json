@@ -667,6 +667,11 @@
     "botStatusError": "Server Error, failed to fetch bot status",
     "botLoggedIn": "Bot is logged in",
     "botLoggedOut": "Bot is not logged in",
-    "botLogin": "login discord bot"
+    "botLogin": "login discord bot",
+    "userStatuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "banned": "Banned"
+    }
   }
 }
