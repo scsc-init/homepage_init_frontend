@@ -10,13 +10,15 @@ type PageProps = {
 };
 import CreateBoardArticleClient from './CreateBoardArticleClient';
 import { fetchBackendServer } from '@/util/fetch/server';
+import { getTranslations } from 'next-intl/server';
 
 export default async function CreateBoardPage({ params, searchParams }: PageProps) {
+  const t = await getTranslations('Board');
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const boardInfo = await fetchBoardInfo(resolvedParams.id);
   if (!boardInfo) {
-    return <div>게시판 정보를 불러올 수 없습니다.</div>;
+    return <div>{t('loadFailed')}</div>;
   }
   const rawBoardType = resolvedSearchParams?.t;
   const fallbackBoardType =

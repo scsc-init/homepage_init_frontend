@@ -14,12 +14,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { utc2kst } from '@/util/constants';
+import { useFormatter, useLocale } from 'next-intl';
 import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
+import { useTranslations } from 'next-intl';
+import { parseUtcDate } from '@/util/date';
 
 export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
+  const t = useTranslations('Board');
+  const format = useFormatter();
+  const locale = useLocale();
   const router = useRouter();
   const [articles, setArticles] = useState<Article[] | null>(null);
   const [unauthorized, setUnauthorized] = useState(false);
@@ -61,21 +66,21 @@ export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
   }, [router, boardId]);
 
   if (!board) {
-    return <div className={styles.galleryEmpty}>게시판 정보가 없습니다.</div>;
+    return <div className={styles.galleryEmpty}>{t('noInfo')}</div>;
   }
 
   if (unauthorized) {
-    return <div className={styles.galleryError}>권한이 부족합니다.</div>;
+    return <div className={styles.galleryError}>{t('noPermission')}</div>;
   }
 
   if (!Array.isArray(articles)) return <LoadingSpinner />;
 
   const sortedArticles = [...articles].sort((a, b) => {
     if (sortOrder === 'latest')
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      return parseUtcDate(b.created_at).getTime() - parseUtcDate(a.created_at).getTime();
     if (sortOrder === 'oldest')
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    if (sortOrder === 'title') return a.title.localeCompare(b.title);
+      return parseUtcDate(a.created_at).getTime() - parseUtcDate(b.created_at).getTime();
+    if (sortOrder === 'title') return a.title.localeCompare(b.title, locale);
     return 0;
   });
   const displayArticles = sortedArticles.filter((a) => a?.is_deleted !== true);
@@ -87,7 +92,11 @@ export default function ArticlesView({ board, sortOrder }: BoardViewProps) {
             <div className={styles.topbar}>
               <span className={`${styles.title} ${styles.topbarItem}`}>{article.title}</span>
               <span className={`${styles.userCount} ${styles.topbarItem}`}>
-                {utc2kst(article.created_at)}
+                {format.dateTime(parseUtcDate(article.created_at), {
+                  dateStyle: 'short',
+                  timeStyle: 'medium',
+                  timeZone: 'Asia/Seoul',
+                })}
               </span>
             </div>
             <div className={styles.description}>{toPreview(article.content, 80)}</div>

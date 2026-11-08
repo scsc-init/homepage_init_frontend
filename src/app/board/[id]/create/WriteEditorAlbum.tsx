@@ -16,12 +16,14 @@ import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import styles from './page.module.css';
+import { useTranslations } from 'next-intl';
 
 export default function WriteEditorAlbum({
   onSubmit,
   submitting,
   onDirtyChange,
 }: WriteEditorProps) {
+  const t = useTranslations('BoardCreate.album');
   const {
     register,
     handleSubmit,
@@ -58,7 +60,7 @@ export default function WriteEditorAlbum({
     <div className={styles.CreateCard}>
       <form onSubmit={handleSubmit(handleInternalSubmit)} className={styles.AlbumForm}>
         <div className={styles.AlbumUploadPanel}>
-          <p className={styles.AlbumUploadTitle}>앨범에 올릴 사진을 선택해주세요</p>
+          <p className={styles.AlbumUploadTitle}>{t('photoPrompt')}</p>
           <AttachmentUploader
             valueIds={attachmentIds}
             onChangeIds={setAttachmentIds}
@@ -67,15 +69,15 @@ export default function WriteEditorAlbum({
         </div>
 
         <TextInput
-          label="앨범 제목"
-          placeholder="앨범 제목을 입력하세요 (예: 즐거운 워크샵 사진)"
+          label={t('titleLabel')}
+          placeholder={t('titlePlaceholder')}
           register={register}
           name="title"
           className={styles.Input}
           labelClassName={styles.InputLabel}
         />
         <EditorInput
-          label="앨범 설명 (선택)"
+          label={t('optionalDescription')}
           control={control}
           name="description"
           className={styles.Editor}
@@ -86,7 +88,7 @@ export default function WriteEditorAlbum({
           className={`${styles.CreateBtn} ${styles.AlbumSubmitButton}`}
           disabled={submitting}
         >
-          {submitting ? '업로드 중...' : '앨범 등록하기'}
+          {submitting ? t('submitting') : t('submit')}
         </button>
       </form>
     </div>

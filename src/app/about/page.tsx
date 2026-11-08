@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 // /app/about/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,7 +9,19 @@ import styles from './about.module.css';
 import Sidebar from './Sidebar';
 import { getKVValues } from '@/util/fetch/server-util';
 
+export async function generateMetadata() {
+  const t = await getTranslations('About');
+  return { title: t('title') };
+}
+
 export default async function AboutPage() {
+  const t = await getTranslations('About');
+  const rich = (key: string) =>
+    t.rich(key, {
+      b: (chunks) => <b>{chunks}</b>,
+      br: () => <br />,
+    });
+
   const DEFAULT_DISCORD_INVITE_LINK = 'https://discord.gg/SmXFDxA7XE';
   const kv = await getKVValues(['TEXT_DISCORD_INVITE_LINK']);
   const inviteResult = kv['TEXT_DISCORD_INVITE_LINK'];
@@ -27,79 +40,36 @@ export default async function AboutPage() {
           <ScrollEffectWrapper>
             <section id="scsc" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
-                <h1 className={styles.title}>About us</h1>
+                <h1 className={styles.title}>{t('title')}</h1>
                 <div className={styles.mainIntro}>
                   <ScrollEffectWrapper>
-                    <p>
-                      <b>한글, 리니지, 리니지2, 아이온.</b>
-                      <br />
-                      이들의 공통점은 무엇일까요?
-                    </p>
+                    <p>{rich('intro.question')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      <b>SCSC</b>는 <b>서울대학교 컴퓨터 연구회</b>
-                      (SNU Computer Study Club)의 약자로,
-                      <br />
-                      <b>1984년부터 이어져 온 전통 있는 동아리</b>입니다.
-                    </p>
+                    <p>{rich('intro.club')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      세계 최초의 한글 워드프로세서 <b>‘한글 1.0’</b>은
-                      <br />
-                      <b>제3회 SCSC 전시회</b>에서 처음 공개되었습니다.
-                      <br />
-                      <b>이찬진, 김형집, 우원식, 김택진</b> 선배님들은
-                      <br />
-                      우리나라 소프트웨어 역사의 주역이셨습니다.
-                    </p>
+                    <p>{rich('intro.hangul')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      <b>‘한글과컴퓨터’</b>에서 <b>한글</b>을 대중화시키고,
-                      <br />
-                      <b>‘한메소프트’</b>와 <b>‘NC소프트’</b>를 창업하여
-                      <br />
-                      <b>한메 타자교사, 한메 한글, 리니지, 아이온</b> 등
-                      <br />
-                      수많은 명작 소프트웨어와 게임을 만들었습니다.
-                    </p>
+                    <p>{rich('intro.companies')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      그 외에도 수많은 SCSC 선배님들이
-                      <br />
-                      다양한 기업을 창업하고 IT 산업을 이끌고 있습니다.
-                    </p>
+                    <p>{rich('intro.alumni')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      <b>한글, 리니지, 리니지2, 아이온</b>
-                      <br />이 모든 것은 <b>SCSC 없이는 불가능했을</b> 이야기입니다.
-                    </p>
+                    <p>{rich('intro.legacy')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      지금의 SCSC는 SKYST 해커톤 및 SCPC 알고리즘 대회를 개최하거나 <br />
-                      현직 개발자분들을 초청해 세미나를 진행하는 등
-                      <br />
-                      다양한 행사를 기획 및 운영하고 있습니다.
-                    </p>
+                    <p>{rich('intro.events')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
-                    <p>
-                      200여 명의 다양한 전공을 가진 동아리원이 활동하고 있으며,
-                      <br />
-                      그런 만큼 SCSC는 앱•웹•인공지능•알고리즘 등 여러 분야에 걸쳐
-                      <br />
-                      자신만의 전문성을 가질 수 있도록 돕는 것을 주된 목표로 삼고 있습니다.
-                    </p>
+                    <p>{rich('intro.members')}</p>
                   </ScrollEffectWrapper>
                   <ScrollEffectWrapper>
                     <h2>
                       <br />
-                      <b>SCSC는 계속해서 나아갑니다!</b>
+                      <b>{t('intro.future')}</b>
                     </h2>
                   </ScrollEffectWrapper>
                 </div>
@@ -110,39 +80,37 @@ export default async function AboutPage() {
           <ScrollEffectWrapper variant="fade">
             <section id="activities" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
-                <h2>SCSC는 이러한 활동을 합니다</h2>
+                <h2>{t('activitiesTitle')}</h2>
                 <div className={styles.facilityList}>
                   {[
                     {
-                      title: '세미나',
-                      description:
-                        '외부 기업인 또는 동아리원이 컴퓨터와 관련된 주제로 세미나를 개최합니다.',
+                      title: t('activities.seminar.title'),
+                      description: t('activities.seminar.description'),
                       image: '/about/activities/seminar.jpg',
                     },
                     {
                       title: 'SIG',
-                      description:
-                        '특정 주제에 관심이 있는 동아리원이 모여 함께 공부하는 모임입니다.',
+                      description: t('activities.sig.description'),
                       image: '/about/activities/sig.jpg',
                     },
                     {
                       title: 'PIG',
-                      description: '프로젝트 중심의 팀 활동입니다. INIT 등이 있습니다.',
+                      description: t('activities.pig.description'),
                       image: '/about/activities/pig.jpg',
                     },
                     {
                       title: 'SCPC',
-                      description: '알고리즘 대회입니다.',
+                      description: t('activities.scpc.description'),
                       image: '/about/activities/scpc.jpg',
                     },
                     {
                       title: 'SKYST',
-                      description: '타 동아리와 연합한 해커톤 대회입니다.',
+                      description: t('activities.skyst.description'),
                       image: '/about/activities/skyst.jpg',
                     },
                     {
-                      title: '친목 활동',
-                      description: 'MT, 번개 등 다양한 친목 도모 활동이 있습니다.',
+                      title: t('activities.social.title'),
+                      description: t('activities.social.description'),
                       image: '/about/activities/mt.jpg',
                     },
                   ].map(({ title, description, image }) => (
@@ -174,37 +142,37 @@ export default async function AboutPage() {
             <section id="clubroom" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <div className={styles.clubroomContainer}>
-                  <h2>동아리방에는 무엇이 있을까요?</h2>
+                  <h2>{t('facilitiesTitle')}</h2>
                   <div className={styles.facilityList}>
                     {[
                       {
-                        title: '고성능 컴퓨터',
-                        description: '딥러닝과 개발용 워크스테이션을 갖춘 환경',
+                        title: t('facilities.pc.title'),
+                        description: t('facilities.pc.description'),
                         image: '/about/club-room/pc.jpg',
                       },
                       {
-                        title: '소파 & 회의 공간',
-                        description: '편하게 앉아 쉴 수 있는 공간',
+                        title: t('facilities.sofa.title'),
+                        description: t('facilities.sofa.description'),
                         image: '/about/club-room/sofa.jpg',
                       },
                       {
-                        title: '음료 및 간식',
-                        description: '대형 냉장고와 간식이 항상 구비되어 있습니다',
+                        title: t('facilities.refreshments.title'),
+                        description: t('facilities.refreshments.description'),
                         image: '/about/club-room/refreshments.jpg',
                       },
                       {
-                        title: '책과 자료들',
-                        description: '프로그래밍 서적과 다양한 공부 자료 보유',
+                        title: t('facilities.books.title'),
+                        description: t('facilities.books.description'),
                         image: '/about/club-room/books.jpg',
                       },
                       {
-                        title: '프린터기',
-                        description: '컬러 출력이 가능한 고성능 프린터',
+                        title: t('facilities.printer.title'),
+                        description: t('facilities.printer.description'),
                         image: '/about/club-room/printer.jpg',
                       },
                       {
-                        title: '게임기',
-                        description: '닌텐도, PS4 등 게임기로 여가도 즐길 수 있습니다',
+                        title: t('facilities.games.title'),
+                        description: t('facilities.games.description'),
                         image: '/about/club-room/games.jpg',
                       },
                     ].map(({ title, description, image }) => (
@@ -229,19 +197,19 @@ export default async function AboutPage() {
             <section id="more" className={`${styles.section} ${styles.anchorOffset}`}>
               <div className={styles.inner}>
                 <div className={styles.card}>
-                  <h2>SCSC에 대해 더 알아보고 싶다면?</h2>
+                  <h2>{t('moreTitle')}</h2>
                   <div className={styles.linkList}>
                     {[
-                      { title: '리크루팅 정보 바로가기', url: '/us/contact' },
-                      { title: '시그 목록 바로가기', url: '/sig' },
-                      { title: '피그 목록 바로가기', url: '/pig' },
-                      { title: '공식 디스코드 서버', url: discordInviteLink },
+                      { title: t('links.recruiting'), url: '/us/contact' },
+                      { title: t('links.sig'), url: '/sig' },
+                      { title: t('links.pig'), url: '/pig' },
+                      { title: t('links.discord'), url: discordInviteLink },
                       {
-                        title: '공식 인스타그램',
+                        title: t('links.instagram'),
                         url: 'https://www.instagram.com/scsc_snu/?hl=ko',
                       },
                       {
-                        title: '공식 깃허브',
+                        title: t('links.github'),
                         url: 'https://github.com/SNU-SCSC',
                       },
                     ].map(({ title, url }, i) =>

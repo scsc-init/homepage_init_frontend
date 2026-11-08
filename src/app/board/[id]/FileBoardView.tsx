@@ -21,14 +21,19 @@ import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { utc2kst } from '@/util/constants';
+import { useFormatter, useLocale } from 'next-intl';
 import { getAttachmentDownloadUrl } from '@/util/getAttachmentDownloadUrl';
 import { toPlainPreview } from '@/util/toPlainPreview';
 import styles from './board.module.css';
+import { useTranslations } from 'next-intl';
+import { parseUtcDate } from '@/util/date';
 
 const METADATA_CHUNK_SIZE = 30;
 
 export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
+  const t = useTranslations('Board');
+  const format = useFormatter();
+  const locale = useLocale();
   const [articles, setArticles] = useState<Article[] | null>(null);
   const [metadataMap, setMetadataMap] = useState<Record<string, FileMetadata>>({});
   const [unauthorized, setUnauthorized] = useState(false);
@@ -120,21 +125,21 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
   }, [attachmentIds]);
 
   if (!board) {
-    return <div className="text-center text-red-600 mt-10"> 게시판 정보가 없습니다.</div>;
+    return <div className="text-center text-red-600 mt-10">{t('noInfo')}</div>;
   }
 
   if (unauthorized) {
-    return <div className="text-center text-red-600 mt-10"> 권한이 없습니다.</div>;
+    return <div className="text-center text-red-600 mt-10">{t('noPermissionShort')}</div>;
   }
 
   if (!Array.isArray(articles)) return <LoadingSpinner />;
 
   const sortedArticles = [...articles].sort((a, b) => {
     if (sortOrder === 'latest')
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      return parseUtcDate(b.created_at).getTime() - parseUtcDate(a.created_at).getTime();
     if (sortOrder === 'oldest')
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    if (sortOrder === 'title') return a.title.localeCompare(b.title);
+      return parseUtcDate(a.created_at).getTime() - parseUtcDate(b.created_at).getTime();
+    if (sortOrder === 'title') return a.title.localeCompare(b.title, locale);
     return 0;
   });
 
@@ -154,7 +159,7 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
 
         const primaryId = ids[0];
         const primaryMeta = primaryId ? metadataMap[primaryId] : undefined;
-        const primaryName = primaryMeta?.original_filename || primaryId || '첨부파일';
+        const primaryName = primaryMeta?.original_filename || primaryId || t('attachment');
         const primaryHref = primaryId ? getAttachmentDownloadUrl(primaryId, primaryMeta) : '';
         const preview = toPlainPreview(article.content);
 
@@ -164,13 +169,21 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
               <Link href={`/article/${article.id}`} className={styles.fileTitle}>
                 {article.title}
               </Link>
-              <span className={styles.fileDate}>{utc2kst(article.created_at)}</span>
+              <span className={styles.fileDate}>
+                {format.dateTime(parseUtcDate(article.created_at), {
+                  dateStyle: 'short',
+                  timeStyle: 'medium',
+                  timeZone: 'Asia/Seoul',
+                })}
+              </span>
             </div>
 
             {preview ? <div className={styles.fileDescription}>{preview}</div> : null}
 
             <div className={styles.fileAttachmentRow}>
-              <span className={styles.fileAttachmentBadge}>첨부 {ids.length}개</span>
+              <span className={styles.fileAttachmentBadge}>
+                {t('attachmentsCount', { count: ids.length })}
+              </span>
               {primaryHref ? (
                 <>
                   <a
@@ -184,7 +197,7 @@ export default function FileBoardView({ board, sortOrder }: BoardViewProps) {
                   {ids.length > 1 ? <span>...</span> : null}
                 </>
               ) : (
-                <span className={styles.fileEmpty}>첨부파일 정보 없음</span>
+                <span className={styles.fileEmpty}>{t('attachmentInfoMissing')}</span>
               )}
             </div>
           </div>

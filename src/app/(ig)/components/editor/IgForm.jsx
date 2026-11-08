@@ -48,7 +48,6 @@ export default function IgForm({
       />
       <TextListInput
         label={t('websiteLabel')}
-        placeholder={t('websitePlaceholder')}
         name="websites"
         register={register}
         control={control}

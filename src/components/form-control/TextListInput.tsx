@@ -16,13 +16,13 @@ import type {
 } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoIosLink } from 'react-icons/io';
+import { useTranslations } from 'next-intl';
 
 type TextListInputProps<
   TFieldValues extends FieldValues,
   TName extends ArrayPath<TFieldValues> = ArrayPath<TFieldValues>,
 > = {
   label: string;
-  placeholder?: string;
   name: TName;
   register: UseFormRegister<TFieldValues>;
   control: Control<TFieldValues>;
@@ -32,16 +32,10 @@ type TextListInputProps<
 export default function TextListInput<
   TFieldValues extends FieldValues,
   TName extends ArrayPath<TFieldValues> = ArrayPath<TFieldValues>,
->({
-  label,
-  placeholder = '엔터를 눌러 추가하세요',
-  name,
-  register,
-  control,
-  inputKey,
-}: TextListInputProps<TFieldValues, TName>) {
+>({ label, name, register, control, inputKey }: TextListInputProps<TFieldValues, TName>) {
   const { fields, append, remove } = useFieldArray<TFieldValues, TName>({ control, name });
   const ref = useRef<HTMLInputElement>(null);
+  const t = useTranslations('TextListInput');
 
   const handleAdd = useCallback(() => {
     if (!ref.current) return;
@@ -62,7 +56,7 @@ export default function TextListInput<
       <TextInput<TFieldValues>
         label={label}
         name={`fakeinput-${name}` as FieldPathByValue<TFieldValues, string>}
-        placeholder={placeholder}
+        placeholder={t('placeholder')}
         register={(() => ({ ref })) as unknown as UseFormRegister<TFieldValues>}
         onEnter={handleAdd}
       />
