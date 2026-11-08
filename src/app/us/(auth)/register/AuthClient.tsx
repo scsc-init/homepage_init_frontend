@@ -10,6 +10,7 @@ import * as validator from '@/util/validator';
 import { useSession } from 'next-auth/react';
 import { ENABLE_TEST_UTILS } from '@/util/constants';
 import { createUser } from './actions';
+import Checkbox from '@/components/form-control/Checkbox';
 
 type Major = {
   id: number;
@@ -217,32 +218,23 @@ export default function AuthClient() {
               이름: <strong>{form.name}</strong>
             </p>
 
-            <label className={styles.KakaoCheckLabel}>
-              <input
-                type="checkbox"
-                className={styles.KakaoCheckInput}
-                checked={kakaoNameDiffers}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setKakaoNameDiffers(checked);
+            <Checkbox
+              className={styles.SignupCheckbox}
+              checked={kakaoNameDiffers}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setKakaoNameDiffers(checked);
 
-                  if (!checked) {
-                    setForm((p) => ({
-                      ...p,
-                      kakao_name: '',
-                    }));
-                  }
-                }}
-              />
-
-              <span className={styles.KakaoCheckBox} aria-hidden="true">
-                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-
-              <span>카톡 프로필 이름이 본명과 다른가요?</span>
-            </label>
+                if (!checked) {
+                  setForm((p) => ({
+                    ...p,
+                    kakao_name: '',
+                  }));
+                }
+              }}
+            >
+              카톡 프로필 이름이 본명과 다른가요?
+            </Checkbox>
 
             {kakaoNameDiffers && (
               <input

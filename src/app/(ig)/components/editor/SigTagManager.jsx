@@ -11,6 +11,7 @@ import {
 } from 'react';
 import styles from './SigTagManager.module.css';
 import Button from '@/components/common/Button';
+import Checkbox from '@/components/form-control/Checkbox';
 
 const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const {
@@ -304,15 +305,14 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           disabled={loading || disabled}
         />
         {isExecutive ? (
-          <label className={styles.SigTagCheckboxLabel}>
-            <input
-              type="checkbox"
-              checked={newTagIsMajor}
-              onChange={(e) => setNewTagIsMajor(e.target.checked)}
-              disabled={loading || disabled}
-            />
-            <span>major</span>
-          </label>
+          <Checkbox
+            className={styles.SigTagCheckboxLabel}
+            checked={newTagIsMajor}
+            onChange={(e) => setNewTagIsMajor(e.target.checked)}
+            disabled={loading || disabled}
+          >
+            major
+          </Checkbox>
         ) : null}
         <Button
           variant="secondary"
