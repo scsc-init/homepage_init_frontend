@@ -12,87 +12,87 @@ export type ExecutiveNavGroup = {
 
 export const EXECUTIVE_NAV_GROUPS: ExecutiveNavGroup[] = [
   {
-    title: '대시보드',
+    title: 'dashboard',
     items: [
       {
-        title: '관리자 홈',
-        description: '관리자 기능 요약과 주요 상태를 확인합니다.',
+        title: 'adminHome',
+        description: 'adminHomeDescription',
         href: '/executive',
       },
     ],
   },
   {
-    title: '회원',
+    title: 'members',
     items: [
       {
-        title: '회원 관리',
-        description: '회원 목록, 임원진 구성, 등록/외부회원/졸업생 관리를 수행합니다.',
+        title: 'memberManagement',
+        description: 'memberManagementDescription',
         href: '/executive/user',
       },
       {
-        title: '유저 활동 기록',
-        description: '회원의 등록, SIG/PIG 가입/탈퇴, 임원 변경 기록을 확인합니다.',
+        title: 'activityLogs',
+        description: 'activityLogsDescription',
         href: '/executive/user/activity-logs',
       },
       {
-        title: '회장단 전용 관리',
-        description: '회장단 전용 기능과 데이터 백업 기능을 관리합니다.',
+        title: 'leadershipManagement',
+        description: 'leadershipManagementDescription',
         href: '/executive/user/leadership',
       },
     ],
   },
   {
-    title: '콘텐츠',
+    title: 'contentGroup',
     items: [
       {
-        title: '게시글 관리',
-        description: '게시판별 게시글을 관리합니다.',
+        title: 'articleManagement',
+        description: 'articleManagementDescription',
         href: '/executive/board',
       },
       {
-        title: '지원금 신청 게시판',
-        description: '지원금 신청 게시판으로 이동합니다.',
+        title: 'fundingBoard',
+        description: 'fundingBoardDescription',
         href: '/board/6',
         external: true,
       },
       {
-        title: 'HTML 페이지 관리',
-        description: '정적 HTML 페이지를 업로드, 수정, 삭제합니다.',
+        title: 'htmlManagement',
+        description: 'htmlManagementDescription',
         href: '/executive/w',
       },
       {
-        title: 'KV table 관리',
-        description: '홈페이지에서 사용하는 key-value 설정을 관리합니다.',
+        title: 'kvNavigation',
+        description: 'kvDescription',
         href: '/executive/kv',
       },
     ],
   },
   {
-    title: 'SIG/소모임/PIG',
+    title: 'groups',
     items: [
       {
-        title: 'SIG 관리',
-        description: 'SIG 목록과 구성원을 관리합니다.',
+        title: 'sigManagement',
+        description: 'sigManagementDescription',
         href: '/executive/sig',
       },
       {
-        title: '소모임 관리',
-        description: '소모임 목록과 구성원을 관리합니다.',
+        title: 'smallGroupManagement',
+        description: 'smallGroupManagementDescription',
         href: '/executive/small-group',
       },
       {
-        title: 'PIG 관리',
-        description: 'PIG 목록과 구성원을 관리합니다.',
+        title: 'pigManagement',
+        description: 'pigManagementDescription',
         href: '/executive/pig',
       },
     ],
   },
   {
-    title: '기준 정보',
+    title: 'referenceData',
     items: [
       {
-        title: '전공 관리',
-        description: '전공 목록을 관리합니다.',
+        title: 'majorManagement',
+        description: 'majorManagementDescription',
         href: '/executive/major',
       },
     ],

@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useState } from 'react';
 import Button from '@/components/common/Button';
 import styles from './MajorList.module.css';
 
 export default function MajorList({ majors: majorsDefault }) {
+  const t = useTranslations('Executive');
   const [majors, setMajors] = useState(majorsDefault ?? []);
   const [newMajor, setNewMajor] = useState({ college: '', major_name: '' });
 
@@ -19,19 +21,19 @@ export default function MajorList({ majors: majorsDefault }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(major),
     });
-    if (res.status === 204) alert('저장 완료');
-    else alert('저장 실패: ' + res.status);
+    if (res.status === 204) alert(t('saved'));
+    else alert(t('saveFailedPrefix') + res.status);
   };
 
   const deleteMajor = async (id) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+    if (!confirm(t('confirmDelete'))) return;
     const res = await fetchBackendClient(`/api/executive/major/delete/${id}`, {
       method: 'POST',
     });
     if (res.status === 204) {
-      alert('삭제 완료');
+      alert(t('deleted'));
       setMajors((prev) => prev.filter((m) => m.id !== id));
-    } else alert('삭제 실패: ' + res.status);
+    } else alert(t('deleteFailedPrefix') + res.status);
   };
 
   const createMajor = async () => {
@@ -42,21 +44,21 @@ export default function MajorList({ majors: majorsDefault }) {
     });
     if (res.status === 201) {
       setNewMajor({ college: '', major_name: '' });
-      alert('추가 완료');
-    } else alert('추가 실패: ' + res.status);
+      alert(t('added'));
+    } else alert(t('addFailedPrefix') + res.status);
   };
 
   return (
     <div>
-      <h2>전공 목록</h2>
+      <h2>{t('majorList')}</h2>
       <div className={styles.wrap}>
         <table className={styles.table}>
           <thead>
             <tr>
               <th style={{ width: '10%' }}>ID</th>
-              <th style={{ width: '30%' }}>대학</th>
-              <th style={{ width: '40%' }}>전공명</th>
-              <th style={{ width: '20%' }}>작업</th>
+              <th style={{ width: '30%' }}>{t('college')}</th>
+              <th style={{ width: '40%' }}>{t('majorName')}</th>
+              <th style={{ width: '20%' }}>{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +67,7 @@ export default function MajorList({ majors: majorsDefault }) {
               <td>
                 <input
                   className={styles.input}
-                  placeholder="대학명"
+                  placeholder={t('collegeName')}
                   value={newMajor.college}
                   onChange={(e) =>
                     setNewMajor((prev) => ({
@@ -78,7 +80,7 @@ export default function MajorList({ majors: majorsDefault }) {
               <td>
                 <input
                   className={styles.input}
-                  placeholder="전공명"
+                  placeholder={t('majorName')}
                   value={newMajor.major_name}
                   onChange={(e) =>
                     setNewMajor((prev) => ({
@@ -90,7 +92,7 @@ export default function MajorList({ majors: majorsDefault }) {
               </td>
               <td>
                 <Button className={styles.button} onClick={createMajor}>
-                  추가
+                  {t('add')}
                 </Button>
               </td>
             </tr>
@@ -114,14 +116,14 @@ export default function MajorList({ majors: majorsDefault }) {
                 <td>
                   <div>
                     <Button className={styles.button} onClick={() => saveMajor(major)}>
-                      저장
+                      {t('save')}
                     </Button>
                     <Button
                       variant="secondary"
                       className={styles.button}
                       onClick={() => deleteMajor(major.id)}
                     >
-                      삭제
+                      {t('delete')}
                     </Button>
                   </div>
                 </td>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 import { useMe } from '@/util/hooks/useMe';
@@ -35,6 +36,7 @@ function triggerDownload(blob, filename) {
 }
 
 export default function DatabaseBackupPanel() {
+  const t = useTranslations('Executive');
   const { me, isLoading } = useMe();
   const [downloading, setDownloading] = useState(false);
 
@@ -52,9 +54,9 @@ export default function DatabaseBackupPanel() {
       if (!res.ok) {
         const errorText = await res.text();
         if (res.status === 403) {
-          alert('회장 권한이 필요합니다.');
+          alert(t('presidentPermissionRequired'));
         } else {
-          alert(`DB 백업 실패: ${errorText || res.status}`);
+          alert(t('backupFailed', { value0: String(errorText || res.status) }));
         }
         return;
       }
@@ -62,9 +64,13 @@ export default function DatabaseBackupPanel() {
       const blob = await res.blob();
       const filename = getDownloadFilename(res.headers.get('Content-Disposition'));
       triggerDownload(blob, filename);
-      alert('DB 백업 파일 다운로드를 시작했습니다.');
+      alert(t('backupStarted'));
     } catch (error) {
-      alert(`DB 백업 요청 실패: ${error instanceof Error ? error.message : String(error)}`);
+      alert(
+        t('backupRequestFailed', {
+          value0: String(error instanceof Error ? error.message : String(error)),
+        }),
+      );
     } finally {
       setDownloading(false);
     }
@@ -72,12 +78,10 @@ export default function DatabaseBackupPanel() {
 
   return (
     <AdminLayout.AdminSection>
-      <h3>DB 백업</h3>
-      <p style={{ marginBottom: '0.75rem' }}>
-        현재 PostgreSQL DB와 업로드 파일(static)을 백업하고 .tar.gz 파일을 다운로드합니다.
-      </p>
+      <h3>{t('backup')}</h3>
+      <p style={{ marginBottom: '0.75rem' }}>{t('backupDescription')}</p>
       <AdminLayout.AdminButtonDanger onClick={handleBackup} disabled={downloading}>
-        {downloading ? '백업 중...' : 'DB 백업 다운로드'}
+        {downloading ? t('backingUp') : t('downloadBackup')}
       </AdminLayout.AdminButtonDanger>
     </AdminLayout.AdminSection>
   );
