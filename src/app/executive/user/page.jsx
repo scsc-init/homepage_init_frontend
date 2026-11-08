@@ -1,4 +1,5 @@
 ﻿// src/app/executive/user/page.jsx
+import { getTranslations } from 'next-intl/server';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -15,6 +16,7 @@ import { fetchBackendServerJson } from '@/util/fetch/server';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default async function ExecutiveUserPage() {
+  const t = await getTranslations('Executive');
   const [kv, majors] = await Promise.all([
     getKVValues(['main-president', 'vice-president']).catch(() => ({})),
     fetchBackendServerJson('GET', '/api/majors').catch(() => []),
@@ -51,9 +53,9 @@ export default async function ExecutiveUserPage() {
   return (
     <WithAuthorization>
       <AdminLayout.AdminPanel>
-        <h2>임원진 구성 관리</h2>
+        <h2>{t('leadershipAppointments')}</h2>
         <p style={{ marginBottom: '1rem', color: '#767676' }}>
-          회장과 부회장을 선택한 뒤 저장하면 홈페이지 임원진 목록에 반영됩니다.
+          {t('leadershipAppointmentsHelp')}
         </p>
 
         <AdminLayout.AdminSection>
@@ -77,7 +79,7 @@ export default async function ExecutiveUserPage() {
               textDecoration: 'none',
             }}
           >
-            유저 활동 기록 보기
+            {t('viewActivityLogs')}
           </Link>
         </div>
 

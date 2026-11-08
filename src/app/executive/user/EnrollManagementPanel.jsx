@@ -1,22 +1,25 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 function TrxRecord({ record }) {
+  const t = useTranslations('Executive');
   return (
     <div>
       <hr />
-      <div>입금자명: {record.deposit_name}</div>
-      <div>입금시각: {record.deposit_time}</div>
-      <div>입금금액: {record.amount}</div>
+      <div>{t('depositNameValue', { value0: record.deposit_name ?? '' })}</div>
+      <div>{t('depositTimeValue', { value0: record.deposit_time ?? '' })}</div>
+      <div>{t('depositAmountValue', { value0: record.amount ?? '' })}</div>
       <hr />
     </div>
   );
 }
 
 export default function EnrollManagementPanel() {
+  const t = useTranslations('Executive');
   const [standbys, setStandbys] = useState([]);
   const [results, setResults] = useState([]);
   const [failedCnt, setFailedCnt] = useState(0);
@@ -40,7 +43,7 @@ export default function EnrollManagementPanel() {
     });
     if (res.status !== 200) {
       const err = await res.json();
-      alert('파일 처리 실패: ' + err.detail);
+      alert(t('fileFailedPrefix') + err.detail);
     } else {
       const enrollData = await res.json();
       setFailedCnt(enrollData.cnt_failed_records);
@@ -50,15 +53,15 @@ export default function EnrollManagementPanel() {
 
   return (
     <div>
-      <h2>입금 대기자 목록</h2>
+      <h2>{t('pendingDeposits')}</h2>
       <AdminLayout.AdminTableWrap>
         <AdminLayout.AdminTable>
           <thead>
             <tr>
-              <th>이름</th>
-              <th>입금자명</th>
-              <th>입금시각</th>
-              <th>확인여부</th>
+              <th>{t('name')}</th>
+              <th>{t('depositName')}</th>
+              <th>{t('depositTime')}</th>
+              <th>{t('checked')}</th>
             </tr>
           </thead>
           <tbody>
@@ -66,7 +69,7 @@ export default function EnrollManagementPanel() {
               <tr key={u.standby_user_id}>
                 <td>{u.user_name}</td>
                 <td>{u.deposit_name}</td>
-                <td>{u.deposit_time ?? '(없음)'}</td>
+                <td>{u.deposit_time ?? t('none')}</td>
                 <td>{u.is_checked ? '✅' : '❌'}</td>
               </tr>
             ))}
@@ -75,7 +78,7 @@ export default function EnrollManagementPanel() {
       </AdminLayout.AdminTableWrap>
 
       <AdminLayout.AdminSection>
-        <h3>CSV 파일 업로드</h3>
+        <h3>{t('csvUpload')}</h3>
         <AdminLayout.AdminActions>
           <input type="file" accept=".csv" onChange={handleFileUpload} />
         </AdminLayout.AdminActions>
@@ -83,7 +86,7 @@ export default function EnrollManagementPanel() {
 
       {results.length !== 0 && (
         <AdminLayout.AdminSection>
-          <div>처리 실패 요청 건수: {failedCnt}건</div>
+          <div>{t('failedRequestCount', { value0: failedCnt ?? '' })}</div>
           {results.map((r, idx) => (
             <AdminLayout.AdminTableWrap
               key={`${r.record?.deposit_time ?? 'unknown'}-${idx}`}
@@ -91,7 +94,7 @@ export default function EnrollManagementPanel() {
             >
               <div>{r.result_msg}</div>
               <TrxRecord record={r.record} />
-              <div>오류 관련 사용자</div>
+              <div>{t('errorUsers')}</div>
               {r.users.map((u) => (
                 <div key={u.id}>{`${u.name}(${u.email})`}</div>
               ))}

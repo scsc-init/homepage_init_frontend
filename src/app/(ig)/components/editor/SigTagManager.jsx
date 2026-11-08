@@ -21,6 +21,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     onChange,
     disabled = false,
     targetLabel = 'SIG',
+    translate,
   } = props;
 
   const resolvedInitialIds = useMemo(() => {
@@ -55,18 +56,23 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
   const refreshAllTags = useCallback(async () => {
     const res = await fetchBackendClient('/api/tags', { cache: 'no-store' });
-    if (!res.ok) throw new Error('태그 목록을 불러오지 못했습니다.');
+    if (!res.ok)
+      throw new Error(
+        translate ? translate('tagsLoadFailed') : '태그 목록을 불러오지 못했습니다.',
+      );
 
     const data = await res.json();
     setAllTags(sortTags(Array.isArray(data) ? data : []));
     setCatalogError('');
-  }, []);
+  }, [translate]);
 
   useEffect(() => {
     refreshAllTags().catch(() => {
-      setCatalogError('태그 목록을 새로 불러오지 못했습니다.');
+      setCatalogError(
+        translate ? translate('tagsRefreshFailed') : '태그 목록을 새로 불러오지 못했습니다.',
+      );
     });
-  }, [refreshAllTags]);
+  }, [refreshAllTags, translate]);
 
   useEffect(() => {
     setAttachedTagIds((prev) => {
@@ -124,7 +130,11 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           .toLowerCase() === normalizedText,
     );
     if (existsInCatalog) {
-      alert('이미 존재하는 태그입니다. 기존 태그 선택에서 추가해주세요.');
+      alert(
+        translate
+          ? translate('tagExists')
+          : '이미 존재하는 태그입니다. 기존 태그 선택에서 추가해주세요.',
+      );
       return;
     }
 
@@ -141,7 +151,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail ?? '새 태그 생성 실패');
+        throw new Error(
+          err.detail ?? (translate ? translate('tagCreateFailed') : '새 태그 생성 실패'),
+        );
       }
 
       const createdTag = await res.json();
@@ -155,7 +167,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       setNewTagText('');
       setNewTagIsMajor(false);
     } catch (err) {
-      alert(err.message || '새 태그 생성 실패');
+      alert(err.message || (translate ? translate('tagCreateFailed') : '새 태그 생성 실패'));
     } finally {
       setLoading(false);
     }
@@ -189,7 +201,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
         if (!res.ok && res.status !== 204) {
           const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail ?? '태그 삭제 실패');
+          throw new Error(
+            err.detail ?? (translate ? translate('tagDeleteFailed') : '태그 삭제 실패'),
+          );
         }
       });
 
@@ -202,7 +216,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail ?? '태그 추가 실패');
+          throw new Error(
+            err.detail ?? (translate ? translate('tagAddFailed') : '태그 추가 실패'),
+          );
         }
       });
 
@@ -211,7 +227,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     } finally {
       setLoading(false);
     }
-  }, [sigId, originalAttachedTagIds, attachedTagIds]);
+  }, [sigId, originalAttachedTagIds, attachedTagIds, translate]);
 
   useImperativeHandle(
     ref,
@@ -224,16 +240,20 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   return (
     <div className={styles.SigTagManager}>
       <div className={styles.SigTagManagerHeader}>
-        <h3 className={styles.SigTagManagerTitle}>태그</h3>
+        <h3 className={styles.SigTagManagerTitle}>{translate ? translate('tags') : '태그'}</h3>
         <p className={styles.SigTagManagerDescription}>
-          수정 후 반드시 {targetLabel} 수정 버튼을 눌러주세요.
+          {translate
+            ? translate('tagsSaveHelp', { value0: targetLabel ?? '' })
+            : `수정 후 반드시 ${targetLabel} 수정 버튼을 눌러주세요.`}
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
 
       <div className={styles.SigAttachedTagSection}>
         {attachedTags.length === 0 ? (
-          <span className={styles.SigEmptyTagText}>등록된 태그 없음</span>
+          <span className={styles.SigEmptyTagText}>
+            {translate ? translate('noTags') : '등록된 태그 없음'}
+          </span>
         ) : (
           <div className={styles.SigAttachedTagList}>
             {attachedTags.map((tag) => {
@@ -250,9 +270,13 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
                       className={styles.SigAttachedTagRemove}
                       onClick={() => removeTag(tag)}
                       disabled={loading || disabled}
-                      aria-label={`${tag.text} 태그 삭제`}
+                      aria-label={
+                        translate
+                          ? translate('removeTagLabel', { value0: String(tag.text) })
+                          : `${tag.text} 태그 삭제`
+                      }
                     >
-                      삭제
+                      {translate ? translate('delete') : '삭제'}
                     </button>
                   ) : null}
                 </div>
@@ -264,7 +288,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
       <div className={styles.SigTagControlGroup}>
         <label htmlFor="sig-tag-select" className={styles.SigTagFieldLabel}>
-          기존 태그 선택
+          {translate ? translate('selectTag') : '기존 태그 선택'}
         </label>
         <select
           id="sig-tag-select"
@@ -273,7 +297,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onChange={(e) => setSelectedTagId(e.target.value)}
           disabled={loading || disabled}
         >
-          <option value="">기존 태그 선택</option>
+          <option value="">{translate ? translate('selectTag') : '기존 태그 선택'}</option>
           {selectableTags.map((tag) => (
             <option key={tag.id} value={tag.id}>
               {tag.text}
@@ -287,20 +311,20 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onClick={addExistingTag}
           disabled={loading || disabled || !selectedTagId}
         >
-          기존 태그 추가
+          {translate ? translate('addExistingTag') : '기존 태그 추가'}
         </Button>
       </div>
 
       <div className={styles.SigTagControlGroup}>
         <label htmlFor="sig-tag-new-input" className={styles.SigTagFieldLabel}>
-          새 태그명
+          {translate ? translate('newTagName') : '새 태그명'}
         </label>
         <input
           id="sig-tag-new-input"
           className={styles.SigTagInput}
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
-          placeholder="새 태그명"
+          placeholder={translate ? translate('newTagName') : '새 태그명'}
           disabled={loading || disabled}
         />
         {isExecutive ? (
@@ -320,7 +344,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onClick={createAndAddTag}
           disabled={loading || disabled || !newTagText.trim()}
         >
-          새 태그 생성 후 추가
+          {translate ? translate('createAndAddTag') : '새 태그 생성 후 추가'}
         </Button>
       </div>
     </div>
