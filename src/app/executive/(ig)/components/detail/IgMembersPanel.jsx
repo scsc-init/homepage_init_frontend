@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,15 +13,16 @@ function IgMemberAdd({
   handleAddMember,
   userLoading,
 }) {
+  const t = useTranslations('Executive');
   return (
     <div>
-      <h4>구성원 추가</h4>
+      <h4>{t('addMembers')}</h4>
       <AdminLayout.AdminTable>
         <thead>
           <tr>
-            <th>이름</th>
-            <th>이메일</th>
-            <th>작업</th>
+            <th>{t('name')}</th>
+            <th>{t('email')}</th>
+            <th>{t('actions')}</th>
           </tr>
           <tr>
             <td>
@@ -50,7 +52,7 @@ function IgMemberAdd({
                   onClick={() => handleAddMember(u)}
                   disabled={userLoading[u.id]}
                 >
-                  추가
+                  {t('add')}
                 </AdminLayout.AdminButton>
               </td>
             </tr>
@@ -68,15 +70,16 @@ function IgMemberDelete({
   handleDeleteMember,
   memberLoading,
 }) {
+  const t = useTranslations('Executive');
   return (
     <div>
-      <h4>구성원 삭제</h4>
+      <h4>{t('removeMembers')}</h4>
       <AdminLayout.AdminTable>
         <thead>
           <tr>
-            <th>이름</th>
-            <th>이메일</th>
-            <th>작업</th>
+            <th>{t('name')}</th>
+            <th>{t('email')}</th>
+            <th>{t('actions')}</th>
           </tr>
           <tr>
             <td>
@@ -106,7 +109,7 @@ function IgMemberDelete({
                   onClick={() => handleDeleteMember(m)}
                   disabled={memberLoading[m.user_id]}
                 >
-                  삭제
+                  {t('delete')}
                 </AdminLayout.AdminButton>
               </td>
             </tr>
@@ -118,6 +121,7 @@ function IgMemberDelete({
 }
 
 export default function IgMembersPanel({ ig, users }) {
+  const t = useTranslations('Executive');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [userFilter, setUserFilter] = useState({
     name: '',
@@ -172,14 +176,14 @@ export default function IgMembersPanel({ ig, users }) {
           (!memberFilter.name || lower(m.user?.name).includes(lower(memberFilter.name))) &&
           (!memberFilter.email || lower(m.user?.email).includes(lower(memberFilter.email)));
         setFilteredMembers((prev) => [...prev, newMember].filter(matches));
-        alert('저장 완료');
+        alert(t('saved'));
         router.refresh();
       } else {
-        alert('저장 실패: ' + res.status);
+        alert(t('saveFailedPrefix') + res.status);
       }
     } catch (error) {
       console.error('Add member failed:', error);
-      alert('저장 실패: 네트워크 오류');
+      alert(t('saveNetworkError'));
     } finally {
       setUserLoading((prev) => ({ ...prev, [u.id]: false }));
     }
@@ -198,15 +202,15 @@ export default function IgMembersPanel({ ig, users }) {
       if (res.status === 204) {
         setMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
         setFilteredMembers((prev) => prev.filter((m) => member.user_id !== m.user_id));
-        alert('삭제 완료');
+        alert(t('deleted'));
         router.refresh();
       } else {
         const error = await res.json().catch(() => ({ message: 'Unknown error' }));
-        alert(`삭제 실패: ${error.message || res.status}`);
+        alert(t('deleteFailedDetail', { value0: String(error.message || res.status) }));
       }
     } catch (error) {
       console.error('Delete member failed:', error);
-      alert('삭제 실패: 네트워크 오류');
+      alert(t('deleteNetworkError'));
     } finally {
       setMemberLoading((prev) => ({ ...prev, [member.user_id]: false }));
     }

@@ -23,6 +23,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     onChange,
     disabled = false,
     targetLabel = 'SIG',
+    translate,
   } = props;
 
   const resolvedInitialIds = useMemo(() => {
@@ -57,18 +58,18 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
   const refreshAllTags = useCallback(async () => {
     const res = await fetchBackendClient('/api/tags', { cache: 'no-store' });
-    if (!res.ok) throw new Error(t('tags.loadError'));
+    if (!res.ok) throw new Error(translate ? translate('tagsLoadFailed') : t('tags.loadError'));
 
     const data = await res.json();
     setAllTags(sortTags(Array.isArray(data) ? data : []));
     setCatalogError('');
-  }, [t]);
+  }, [translate, t]);
 
   useEffect(() => {
     refreshAllTags().catch(() => {
-      setCatalogError(t('tags.refreshError'));
+      setCatalogError(translate ? translate('tagsRefreshFailed') : t('tags.refreshError'));
     });
-  }, [refreshAllTags, t]);
+  }, [refreshAllTags, translate, t]);
 
   useEffect(() => {
     setAttachedTagIds((prev) => {
@@ -126,7 +127,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           .toLowerCase() === normalizedText,
     );
     if (existsInCatalog) {
-      alert(t('tags.duplicate'));
+      alert(translate ? translate('tagExists') : t('tags.duplicate'));
       return;
     }
 
@@ -143,7 +144,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail ?? t('tags.createError'));
+        throw new Error(
+          err.detail ?? (translate ? translate('tagCreateFailed') : t('tags.createError')),
+        );
       }
 
       const createdTag = await res.json();
@@ -157,7 +160,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       setNewTagText('');
       setNewTagIsMajor(false);
     } catch (err) {
-      alert(err.message || t('tags.createError'));
+      alert(err.message || (translate ? translate('tagCreateFailed') : t('tags.createError')));
     } finally {
       setLoading(false);
     }
@@ -191,7 +194,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
         if (!res.ok && res.status !== 204) {
           const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail ?? t('tags.deleteError'));
+          throw new Error(
+            err.detail ?? (translate ? translate('tagDeleteFailed') : t('tags.deleteError')),
+          );
         }
       });
 
@@ -204,7 +209,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail ?? t('tags.addError'));
+          throw new Error(
+            err.detail ?? (translate ? translate('tagAddFailed') : t('tags.addError')),
+          );
         }
       });
 
@@ -213,7 +220,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     } finally {
       setLoading(false);
     }
-  }, [sigId, originalAttachedTagIds, attachedTagIds, t]);
+  }, [sigId, originalAttachedTagIds, attachedTagIds, translate, t]);
 
   useImperativeHandle(
     ref,
@@ -226,16 +233,22 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   return (
     <div className={styles.SigTagManager}>
       <div className={styles.SigTagManagerHeader}>
-        <h3 className={styles.SigTagManagerTitle}>{t('tags.heading')}</h3>
+        <h3 className={styles.SigTagManagerTitle}>
+          {translate ? translate('tags') : t('tags.heading')}
+        </h3>
         <p className={styles.SigTagManagerDescription}>
-          {t('tags.saveHint', { kind: targetLabel })}
+          {translate
+            ? translate('tagsSaveHelp', { value0: targetLabel ?? '' })
+            : t('tags.saveHint', { kind: targetLabel })}
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
 
       <div className={styles.SigAttachedTagSection}>
         {attachedTags.length === 0 ? (
-          <span className={styles.SigEmptyTagText}>{t('tags.empty')}</span>
+          <span className={styles.SigEmptyTagText}>
+            {translate ? translate('noTags') : t('tags.empty')}
+          </span>
         ) : (
           <div className={styles.SigAttachedTagList}>
             {attachedTags.map((tag) => {
@@ -252,9 +265,13 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
                       className={styles.SigAttachedTagRemove}
                       onClick={() => removeTag(tag)}
                       disabled={loading || disabled}
-                      aria-label={t('tags.removeLabel', { tag: tag.text })}
+                      aria-label={
+                        translate
+                          ? translate('removeTagLabel', { value0: String(tag.text) })
+                          : t('tags.removeLabel', { tag: tag.text })
+                      }
                     >
-                      {t('tags.remove')}
+                      {translate ? translate('delete') : t('tags.remove')}
                     </button>
                   ) : null}
                 </div>
@@ -266,7 +283,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
       <div className={styles.SigTagControlGroup}>
         <label htmlFor="sig-tag-select" className={styles.SigTagFieldLabel}>
-          {t('tags.select')}
+          {translate ? translate('selectTag') : t('tags.select')}
         </label>
         <select
           id="sig-tag-select"
@@ -275,11 +292,11 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onChange={(e) => setSelectedTagId(e.target.value)}
           disabled={loading || disabled}
         >
-          <option value="">{t('tags.select')}</option>
+          <option value="">{translate ? translate('selectTag') : t('tags.select')}</option>
           {selectableTags.map((tag) => (
             <option key={tag.id} value={tag.id}>
               {tag.text}
-              {tag.is_major ? t('tags.majorSuffix') : ''}
+              {tag.is_major ? (translate ? ' (major)' : t('tags.majorSuffix')) : ''}
             </option>
           ))}
         </select>
@@ -289,20 +306,20 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onClick={addExistingTag}
           disabled={loading || disabled || !selectedTagId}
         >
-          {t('tags.add')}
+          {translate ? translate('addExistingTag') : t('tags.add')}
         </Button>
       </div>
 
       <div className={styles.SigTagControlGroup}>
         <label htmlFor="sig-tag-new-input" className={styles.SigTagFieldLabel}>
-          {t('tags.newName')}
+          {translate ? translate('newTagName') : t('tags.newName')}
         </label>
         <input
           id="sig-tag-new-input"
           className={styles.SigTagInput}
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
-          placeholder={t('tags.newName')}
+          placeholder={translate ? translate('newTagName') : t('tags.newName')}
           disabled={loading || disabled}
         />
         {isExecutive ? (
@@ -313,7 +330,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
               onChange={(e) => setNewTagIsMajor(e.target.checked)}
               disabled={loading || disabled}
             />
-            <span>{t('tags.major')}</span>
+            <span>{translate ? 'major' : t('tags.major')}</span>
           </label>
         ) : null}
         <Button
@@ -322,7 +339,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onClick={createAndAddTag}
           disabled={loading || disabled || !newTagText.trim()}
         >
-          {t('tags.create')}
+          {translate ? translate('createAndAddTag') : t('tags.create')}
         </Button>
       </div>
     </div>
