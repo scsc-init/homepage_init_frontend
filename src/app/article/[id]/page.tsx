@@ -32,9 +32,9 @@ import ReactMarkdown, { type ExtraProps } from 'react-markdown';
 import type { ComponentProps, ReactNode } from 'react';
 
 type LegacyMarkdownComponents = {
-  [Tag in 'h1' | 'h2' | 'p' | 'li' | 'code' | 'pre' | 'img' | 'table' | 'th' | 'td']: (
-    props: ComponentProps<Tag> & ExtraProps & { _node?: unknown },
-  ) => ReactNode;
+  [
+    Tag in 'h1' | 'h2' | 'p' | 'li' | 'code' | 'pre' | 'img' | 'input' | 'table' | 'th' | 'td'
+  ]: (props: ComponentProps<Tag> & ExtraProps & { _node?: unknown }) => ReactNode;
 };
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -49,6 +49,7 @@ import { isPublicBoardId } from '@/util/constants';
 import { useMe } from '@/util/hooks/useMe';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import AttachmentList from '@/components/form-control/AttachmentList';
+import MarkdownInput from '@/components/form-control/MarkdownInput';
 import { useFormatter, useTranslations } from 'next-intl';
 import { parseUtcDate } from '@/util/date';
 
@@ -216,6 +217,7 @@ export default function ArticleDetail() {
           rehypePlugins={[rehypeRaw, rehypeHighlight]}
           components={
             {
+              input: MarkdownInput,
               h1: ({ _node, className, ...props }) => (
                 <h1 {...props} className={`${styles['mdx-h1']} ${className ?? ''}`.trim()} />
               ),
