@@ -1,20 +1,9 @@
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import 'highlight.js/styles/github.css';
 import IgClient from '@/app/(ig)/components/detail/IgClient';
 import { fetchBackendServer } from '@/util/fetch/server';
 import type { IgDetail, IgKind, IgParams } from './types';
-
-const DETAIL_CONFIG = {
-  sig: {
-    missingMessage: '존재하지 않는 SIG입니다.',
-  },
-  'small-group': {
-    missingMessage: '존재하지 않는 소모임입니다.',
-  },
-  pig: {
-    missingMessage: '존재하지 않는 PIG입니다.',
-  },
-};
 
 export default async function IgDetailPage({
   kind,
@@ -23,13 +12,17 @@ export default async function IgDetailPage({
   kind: IgKind;
   params: IgParams;
 }) {
-  const config = DETAIL_CONFIG[kind];
+  const t = await getTranslations('Ig');
   const { id } = await params;
 
   const itemRes = await fetchBackendServer('GET', `/api/sig/${id}`);
   if (!itemRes.ok) {
     if (itemRes.status === 404) notFound();
-    return <div className="p-6 text-center text-red-600">{config.missingMessage}</div>;
+    return (
+      <div className="p-6 text-center text-red-600">
+        {t('missing', { kind: t(`kind.${kind}`) })}
+      </div>
+    );
   }
   const item: IgDetail = await itemRes.json();
 

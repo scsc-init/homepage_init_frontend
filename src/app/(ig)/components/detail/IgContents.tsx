@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import 'highlight.js/styles/github.css';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
@@ -8,7 +9,7 @@ import styles from './IgDetail.module.css';
 import type { IgKind } from './types';
 
 export default function IgContents({ kind, content }: { kind: IgKind; content: string }) {
-  const altPrefix = kind === 'small-group' ? '소모임' : kind.toUpperCase();
+  const t = useTranslations('Ig');
 
   return (
     <div className={styles.content}>
@@ -24,7 +25,11 @@ export default function IgContents({ kind, content }: { kind: IgKind; content: s
           code: ({ node: _node, ...props }) => <code className="mdx-inline-code" {...props} />,
           pre: ({ node: _node, ...props }) => <pre className="mdx-pre" {...props} />,
           img: ({ node: _node, alt, ...props }) => (
-            <img className="mdx-img" {...props} alt={alt || `${altPrefix} content image`} />
+            <img
+              className="mdx-img"
+              {...props}
+              alt={alt || t('imageAlt', { kind: t(`kind.${kind}`) })}
+            />
           ),
         }}
       >
