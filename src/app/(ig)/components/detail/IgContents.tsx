@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import MarkdownInput from '@/components/form-control/MarkdownInput';
 import styles from './IgDetail.module.css';
 import type { IgKind } from './types';
 
@@ -16,6 +17,7 @@ export default function IgContents({ kind, content }: { kind: IgKind; content: s
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
         components={{
+          input: MarkdownInput,
           h1: ({ node: _node, ...props }) => <h1 className="mdx-h1" {...props} />,
           h2: ({ node: _node, ...props }) => <h2 className="mdx-h2" {...props} />,
           p: ({ node: _node, ...props }) => <p className="mdx-p" {...props} />,

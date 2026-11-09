@@ -18,6 +18,7 @@ import styles from './form.module.css';
 import { GlobalStatus } from '@/types/system';
 
 import { FUND_APPLY_GUIDELINE_LINK } from '@/util/constants';
+import Checkbox from '@/components/form-control/Checkbox';
 const IMAGE_UPLOAD_CONCURRENCY = 3;
 const cx = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(' ');
@@ -611,23 +612,21 @@ export default function FundApplyForm({
                         </select>
 
                         {(applyType === 'fund' || applyType === 'meal') && (
-                          <label className={styles.PrevTermInlineCheck}>
-                            <input
-                              type="checkbox"
-                              className={styles.C_Checkbox}
-                              checked={usePrevTerm}
-                              onChange={(e) => {
-                                const next = e.target.checked;
-                                setUsePrevTerm(next);
-                                setValue('target', '', {
-                                  shouldValidate: true,
-                                  shouldDirty: true,
-                                });
-                              }}
-                              disabled={disableOrgSelects || !prevTerm}
-                            />
-                            <span>이전학기{prevTermLabel ? ` (${prevTermLabel})` : ''}</span>
-                          </label>
+                          <Checkbox
+                            className={styles.PrevTermInlineCheck}
+                            checked={usePrevTerm}
+                            onChange={(e) => {
+                              const next = e.target.checked;
+                              setUsePrevTerm(next);
+                              setValue('target', '', {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
+                            }}
+                            disabled={disableOrgSelects || !prevTerm}
+                          >
+                            이전학기{prevTermLabel ? ` (${prevTermLabel})` : ''}
+                          </Checkbox>
                         )}
                       </div>
                     </div>
@@ -691,15 +690,13 @@ export default function FundApplyForm({
                     </div>
 
                     <div>
-                      <label className={styles.C_CheckRow}>
-                        <input
-                          type="checkbox"
-                          className={styles.C_Checkbox}
-                          {...register('useKakaoPay')}
-                          disabled={submitting}
-                        />
+                      <Checkbox
+                        className={styles.C_CheckRow}
+                        {...register('useKakaoPay')}
+                        disabled={submitting}
+                      >
                         <span className={styles.C_CheckText}>카카오페이로 받기</span>
-                      </label>
+                      </Checkbox>
                     </div>
 
                     {!useKakaoPay && (
@@ -921,15 +918,14 @@ export default function FundApplyForm({
                     </div>
                   </div>
 
-                  <label className={styles.C_CheckRow} style={{ marginTop: '1rem' }}>
-                    <input
-                      type="checkbox"
-                      {...register('checked', {
-                        required: 'SCSC 지원 가이드라인을 확인해주세요.',
-                      })}
-                      className={styles.C_Checkbox}
-                      disabled={submitting}
-                    />
+                  <Checkbox
+                    className={styles.C_CheckRow}
+                    style={{ marginTop: '1rem' }}
+                    {...register('checked', {
+                      required: 'SCSC 지원 가이드라인을 확인해주세요.',
+                    })}
+                    disabled={submitting}
+                  >
                     <span className={styles.C_CheckText}>
                       <a
                         href={FUND_APPLY_GUIDELINE_LINK}
@@ -941,7 +937,7 @@ export default function FundApplyForm({
                       </a>
                       을 확인했습니다.
                     </span>
-                  </label>
+                  </Checkbox>
                 </div>
 
                 <div>
