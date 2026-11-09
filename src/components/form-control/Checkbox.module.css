@@ -7,6 +7,10 @@
   user-select: none;
 }
 
+.markdown {
+  vertical-align: middle;
+}
+
 .label .input {
   position: absolute;
   width: 1px;
