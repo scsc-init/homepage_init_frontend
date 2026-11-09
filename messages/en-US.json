@@ -755,6 +755,7 @@
       "loadError": "Failed to load tags.",
       "refreshError": "Failed to refresh tags.",
       "duplicate": "This tag already exists. Add it from the existing tags.",
+      "nameRequired": "Tag name cannot be empty.",
       "createError": "Failed to create a tag",
       "deleteError": "Failed to remove a tag",
       "addError": "Failed to add a tag",

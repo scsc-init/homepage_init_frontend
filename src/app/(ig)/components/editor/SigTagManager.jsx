@@ -132,6 +132,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       return;
     }
 
+    const createErrorMessage = translate ? translate('tagCreateFailed') : t('tags.createError');
     setLoading(true);
 
     try {
@@ -145,9 +146,15 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(
-          err.detail ?? (translate ? translate('tagCreateFailed') : t('tags.createError')),
-        );
+        const detail = err?.detail;
+        let message = typeof detail === 'string' && detail ? detail : createErrorMessage;
+        if (detail === '이미 존재하는 태그입니다') {
+          message = translate ? translate('tagExists') : t('tags.duplicate');
+        } else if (detail === '태그명은 비어 있을 수 없습니다') {
+          message = t('tags.nameRequired');
+        }
+        alert(message);
+        return;
       }
 
       const createdTag = await res.json();
@@ -160,8 +167,8 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       });
       setNewTagText('');
       setNewTagIsMajor(false);
-    } catch (err) {
-      alert(err.message || (translate ? translate('tagCreateFailed') : t('tags.createError')));
+    } catch {
+      alert(createErrorMessage);
     } finally {
       setLoading(false);
     }
@@ -297,7 +304,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           {selectableTags.map((tag) => (
             <option key={tag.id} value={tag.id}>
               {tag.text}
-              {tag.is_major ? (translate ? ' (major)' : t('tags.majorSuffix')) : ''}
+              {tag.is_major ? t('tags.majorSuffix') : ''}
             </option>
           ))}
         </select>
@@ -330,7 +337,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
             onChange={(e) => setNewTagIsMajor(e.target.checked)}
             disabled={loading || disabled}
           >
-            {translate ? 'major' : t('tags.major')}
+            {t('tags.major')}
           </Checkbox>
         ) : null}
         <Button

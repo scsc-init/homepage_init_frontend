@@ -755,6 +755,7 @@
       "loadError": "태그 목록을 불러오지 못했습니다.",
       "refreshError": "태그 목록을 새로 불러오지 못했습니다.",
       "duplicate": "이미 존재하는 태그입니다. 기존 태그 선택에서 추가해주세요.",
+      "nameRequired": "태그명은 비어 있을 수 없습니다.",
       "createError": "새 태그 생성 실패",
       "deleteError": "태그 삭제 실패",
       "addError": "태그 추가 실패",
