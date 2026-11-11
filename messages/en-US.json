@@ -697,8 +697,8 @@
     "status": "Status: {status}",
     "statusLabel": "{status, select, recruiting {Recruiting} active {Active} inactive {Inactive} pending {Pending approval} other {{status}}}",
     "admissionInfo": "Joining information",
-    "admissionDuringRecruiting": "Join only during {group} recruitment",
     "admissionAvailable": "You can join now.",
+    "admissionRecruitingAvailable": "You can join until the recruitment period ends.",
     "admissionNeverNow": "This group is not accepting new members.",
     "admissionRecruitingEnded": "You can join only during recruitment. Recruitment is currently closed.",
     "admissionUnavailable": "You cannot join while the group is in its current status.",
@@ -745,7 +745,7 @@
     "admission": "Admission period",
     "extend": "Request renewal for next semester",
     "admissionAlways": "Always accept new members",
-    "admissionRecruiting": "Accept members only during {kind} recruitment",
+    "admissionDuringRecruiting": "Accept members only during {kind} recruitment",
     "admissionNever": "Do not accept new members",
     "titlePlaceholder": {
       "sig": "AI SIG",

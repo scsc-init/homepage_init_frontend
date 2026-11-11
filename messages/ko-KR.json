@@ -697,8 +697,8 @@
     "status": "상태: {status}",
     "statusLabel": "{status, select, recruiting {모집 중} active {활동 중} inactive {비활성} pending {승인 대기} other {{status}}}",
     "admissionInfo": "가입 안내",
-    "admissionDuringRecruiting": "{group} 모집 기간에만 가입 가능",
     "admissionAvailable": "현재 가입할 수 있습니다.",
+    "admissionRecruitingAvailable": "모집 기간이 끝나기 전까지 가입 가능합니다.",
     "admissionNeverNow": "현재 가입을 받고 있지 않습니다.",
     "admissionRecruitingEnded": "모집 기간에만 가입할 수 있으며, 현재는 모집 기간이 아닙니다.",
     "admissionUnavailable": "현재 상태에서는 가입할 수 없습니다.",
@@ -745,7 +745,7 @@
     "admission": "가입 기간",
     "extend": "다음 학기에 연장 신청",
     "admissionAlways": "항상 가입 받기",
-    "admissionRecruiting": "{kind} 가입 기간에만 가입 받기",
+    "admissionDuringRecruiting": "{kind} 가입 기간에만 가입 받기",
     "admissionNever": "항상 가입 받지 않기",
     "titlePlaceholder": {
       "sig": "AI SIG",

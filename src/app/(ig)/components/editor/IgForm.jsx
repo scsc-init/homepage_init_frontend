@@ -58,7 +58,7 @@ export default function IgForm({
         name="is_rolling_admission"
         options={{
           always: t('admissionAlways'),
-          during_recruiting: t('admissionRecruiting', { kind: kindLabel }),
+          during_recruiting: t('admissionDuringRecruiting', { kind: kindLabel }),
           never: t('admissionNever'),
         }}
         control={control}
