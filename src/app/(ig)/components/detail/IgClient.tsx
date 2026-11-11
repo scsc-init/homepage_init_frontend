@@ -51,6 +51,21 @@ export default function IgClient({
     !!me &&
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || item?.owner === me?.id);
   const isOwner = !!me && item?.owner === me?.id;
+  const admissionPolicy = item.is_rolling_admission;
+  const admissionPolicyLabel =
+    admissionPolicy === 'always'
+      ? t('admissionAlways')
+      : admissionPolicy === 'during_recruiting'
+        ? t('admissionDuringRecruiting', { group: t(`kind.${kind}`) })
+        : t('admissionNever');
+  const canJoinNow = isJoinAvailable(item.status, admissionPolicy);
+  const admissionMessage = canJoinNow
+    ? t('admissionAvailable')
+    : admissionPolicy === 'never'
+      ? t('admissionNeverNow')
+      : admissionPolicy === 'during_recruiting' && item.status === 'active'
+        ? t('admissionRecruitingEnded')
+        : t('admissionUnavailable');
   const hasCreated = item?.created_year != null && item?.created_semester != null;
   const websites = Array.isArray(item?.websites) ? item.websites : [];
   const hasSectionBelowDivider = websites.length > 0 || membersVisible;
@@ -74,6 +89,11 @@ export default function IgClient({
         {' · '}
         {t('status', { status: t('statusLabel', { status: item.status }) })}
       </p>
+      <section className={styles.admissionInfo} aria-label={t('admissionInfo')}>
+        <strong>{t('admissionInfo')}</strong>
+        <p>{admissionPolicyLabel}</p>
+        <p>{admissionMessage}</p>
+      </section>
       <p className={styles.description}>{item.description}</p>
       {normalizedTagText.length > 0 ? (
         <div className={styles.tagInline}>
@@ -82,7 +102,7 @@ export default function IgClient({
       ) : null}
       {!isLoading && me ? (
         <div className={styles.actionRow}>
-          {isJoinAvailable(item.status, item.is_rolling_admission) ? (
+          {canJoinNow ? (
             <IgJoinLeaveButton kind={kind} igId={itemId} initialIsMember={isMember} />
           ) : null}
           <EditIgButton kind={kind} itemId={itemId} canEdit={canEdit} />
