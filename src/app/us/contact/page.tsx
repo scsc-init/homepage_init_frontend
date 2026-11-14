@@ -1,9 +1,11 @@
-﻿import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import { getKVValues } from '@/util/fetch/server-util';
 import JoinButton from './JoinButton';
 import styles from './page.module.css';
 
 export default async function Contact() {
+  const t = await getTranslations('UsContact');
   const kvMap = await getKVValues([
     'president-name',
     'president-phone',
@@ -60,7 +62,9 @@ export default async function Contact() {
           <div className={styles.activityBlock}>
             <div className={styles.sectionHeader}>CONTACT:</div>
 
-            <div className={styles.contactSubHeading}>{thisYear}년 SCSC</div>
+            <div className={styles.contactSubHeading}>
+              {t('yearHeading', { year: thisYear })}
+            </div>
 
             <div className={styles.contactWrapper}>
               <div className={styles.contactDivider} />
@@ -70,7 +74,7 @@ export default async function Contact() {
                   <tbody>
                     <tr>
                       <td className={`${styles.contactTableCell} ${styles.contactTableLabel}`}>
-                        회장
+                        {t('president')}
                       </td>
 
                       <td className={`${styles.contactTableCell} ${styles.contactTableInfo}`}>
@@ -80,7 +84,7 @@ export default async function Contact() {
 
                     <tr>
                       <td className={`${styles.contactTableCell} ${styles.contactTableLabel}`}>
-                        부회장
+                        {t('vicePresident')}
                       </td>
 
                       <td className={`${styles.contactTableCell} ${styles.contactTableInfo}`}>
@@ -97,7 +101,7 @@ export default async function Contact() {
 
                     <tr>
                       <td className={`${styles.contactTableCell} ${styles.contactTableLabel}`}>
-                        Email
+                        {t('email')}
                       </td>
 
                       <td
@@ -112,14 +116,14 @@ export default async function Contact() {
 
                     <tr>
                       <td className={`${styles.contactTableCell} ${styles.contactTableLabel}`}>
-                        Location
+                        {t('locationLabel')}
                       </td>
 
                       <td
                         colSpan={2}
                         className={`${styles.contactTableCell} ${styles.contactTableInfo}`}
                       >
-                        서울대학교 학생회관 <strong>438호</strong>
+                        {t('building')} <strong>{t('room')}</strong>
                       </td>
                     </tr>
                   </tbody>
@@ -187,7 +191,7 @@ export default async function Contact() {
 
             <div>
               <Link href="/us/contact/developer" className={styles.joinButton}>
-                개발자 문의
+                {t('developerContact')}
               </Link>
             </div>
           </div>

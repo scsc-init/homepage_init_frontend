@@ -2,7 +2,7 @@ import { defineRouting } from 'next-intl/routing';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-export const routing = defineRouting({
+const baseRouting = defineRouting({
   locales: ['ko-KR', 'en-US'],
   defaultLocale: 'ko-KR',
   localePrefix: 'never',
@@ -32,3 +32,20 @@ export const routing = defineRouting({
         },
       ],
 });
+
+// Development-only: test English on the main localhost origin.
+export const routing =
+  process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_I18N_DEV_LOCALE === 'en-US'
+    ? defineRouting({
+        locales: ['ko-KR', 'en-US'],
+        defaultLocale: 'en-US',
+        localePrefix: 'never',
+        domains: [
+          {
+            domain: 'localhost:3000',
+            defaultLocale: 'en-US',
+            locales: ['en-US'],
+          },
+        ],
+      })
+    : baseRouting;

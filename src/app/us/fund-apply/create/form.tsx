@@ -1,7 +1,6 @@
-﻿'use client';
+'use client';
 
-import { useTranslations } from 'next-intl';
-
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -22,37 +21,6 @@ import Checkbox from '@/components/form-control/Checkbox';
 const IMAGE_UPLOAD_CONCURRENCY = 3;
 const cx = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(' ');
-
-const PLACEHOLDER = {
-  contest: `아래 항목을 참고하여 상세 내용을 작성해주세요.
-
-승인 조건: 운영진 검토 후 승인
-지원 한도: 회원당 20,000원, 동반자가 필요한 경우 40,000원
-참가 인원의 80% 이상이 정회원이어야 합니다.
-대회 참가 사실을 확인할 수 있는 자료를 이미지로 첨부해주세요.
-예: ICPC 본선, 대회 참가 확인서, 영수증 등
-`,
-  fund: `아래 항목을 참고하여 상세 내용을 작성해주세요.
-
-승인 조건: 운영진 검토 후 승인
-지원 한도: SIG 50,000원, PIG는 별도 한도 없음
-반드시 결제가 이루어지기 전에 승인이 이루어져야 합니다.
-지원이 필요한 SIG 또는 PIG명과 사용 목적을 적어주세요.
-`,
-  meal: `아래 항목을 참고하여 상세 내용을 작성해주세요.
-
-승인 조건: 운영진 검토 후 승인
-지원 한도: SIG 50,000원, PIG는 별도 한도 없음
-반드시 결제가 이루어지기 전에 승인이 이루어져야 합니다.
-회식비 지원이 필요한 SIG 또는 PIG명과 회식 목적을 적어주세요.
-`,
-  pair: `아래 항목을 참고하여 상세 내용을 작성해주세요.
-
-승인 조건: 운영진 검토 후 승인
-지원 한도: 회원당 20,000원
-짝선/짝후 관계가 유효해야 합니다.
-`,
-};
 
 type FormType = {
   applyType: 'contest' | 'fund' | 'meal' | 'pair' | '';
@@ -109,6 +77,14 @@ export default function FundApplyForm({
 }) {
   const tImageUpload = useTranslations('ImageUpload');
   const router = useRouter();
+  const t = useTranslations('UsFundApply');
+  const locale = useLocale();
+  const instructionsByType = {
+    contest: t('instructions.contest'),
+    fund: t('instructions.fund'),
+    meal: t('instructions.meal'),
+    pair: t('instructions.pair'),
+  };
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState<boolean>(false);
 
@@ -139,6 +115,8 @@ export default function FundApplyForm({
 
   const [usePrevTerm, setUsePrevTerm] = useState<boolean>(false);
   const prevTermLabel = academicTerm2string(prevTerm);
+  const displayPrevTermLabel =
+    locale === 'en-US' ? `${prevTerm.year}, semester ${prevTerm.semester}` : prevTermLabel;
 
   const {
     register,
@@ -269,7 +247,7 @@ export default function FundApplyForm({
   };
 
   const buildPayload = (form: FormType) => {
-    if (!user) throw new Error('사용자 데이터가 로딩되지 않았습니다.');
+    if (!user) throw new Error(t('userLoading'));
     const title = computeTitle(form);
 
     const userName = user.name;
@@ -376,7 +354,7 @@ export default function FundApplyForm({
     file: File,
   ): Promise<{ id: string; original_filename: string } | null> => {
     if (file.size > MAX_ATTACHMENT_BYTES) {
-      alert('파일 용량이 너무 큽니다. 10MB 이하만 업로드할 수 있습니다.');
+      alert(t('fileTooLarge'));
       return null;
     }
     const formData = new FormData();
@@ -390,7 +368,7 @@ export default function FundApplyForm({
         credentials: 'include',
       });
     } catch {
-      alert('파일 업로드 중 오류가 발생했습니다.');
+      alert(t('uploadError'));
       return null;
     }
 
@@ -403,15 +381,15 @@ export default function FundApplyForm({
 
     if (!res.ok) {
       if (res.status === 401) {
-        alert('파일 업로드 중 오류가 발생했습니다.');
+        alert(t('uploadError'));
       } else {
-        alert(data?.detail || data?.message || `파일 업로드 실패 (status ${res.status})`);
+        alert(data?.detail || data?.message || t('uploadFailed', { status: res.status }));
       }
       return null;
     }
 
     if (!data?.id) {
-      alert('파일 업로드 응답에 id가 없습니다.');
+      alert(t('uploadIdMissing'));
       return null;
     }
 
@@ -467,13 +445,13 @@ export default function FundApplyForm({
       if (isMeLoading) return;
       setSubmitting(true);
 
-      if (!user) throw new Error('사용자 데이터가 로딩되지 않았습니다.');
-      if (!boardId) throw new Error('게시판 정보가 올바르지 않습니다.');
+      if (!user) throw new Error(t('userLoading'));
+      if (!boardId) throw new Error(t('invalidBoard'));
 
       const reason = String(form.reasonText ?? '').trim();
-      if (!reason) throw new Error('지원 사유/기타를 입력해주세요.');
+      if (!reason) throw new Error(t('reasonRequired'));
       if (!Array.isArray(form.imageIds) || form.imageIds.length === 0)
-        throw new Error('이미지를 1개 이상 첨부해주세요.');
+        throw new Error(t('imageRequired'));
 
       const payload = await buildPayload(form);
 
@@ -491,13 +469,13 @@ export default function FundApplyForm({
 
       if (!res.ok) {
         const text = await res.text().catch(() => '');
-        throw new Error(text || `신청 실패 (${res.status})`);
+        throw new Error(text || t('applicationFailed', { status: res.status }));
       }
 
-      alert('지원금 신청이 완료되었습니다.');
+      alert(t('completed'));
       router.replace(`/`);
     } catch (e) {
-      const msg = `신청 중 오류: ${e instanceof Error ? e.message : 'unknown'}`;
+      const msg = t('submissionError', { message: e instanceof Error ? e.message : 'unknown' });
       alert(msg);
     } finally {
       setSubmitting(false);
@@ -507,10 +485,8 @@ export default function FundApplyForm({
   return (
     <div className={styles.CreateSigContainer}>
       <div className={styles.CreateSigHeader}>
-        <h1 className={styles.CreateSigTitle}>지원금 신청</h1>
-        <p className={styles.CreateSigSubtitle}>
-          SIG/PIG 지원금 또는 대회/짝후 지원을 신청합니다.
-        </p>
+        <h1 className={styles.CreateSigTitle}>{t('title')}</h1>
+        <p className={styles.CreateSigSubtitle}>{t('subtitle')}</p>
       </div>
 
       <div className={styles.CreateSigCard}>
@@ -522,7 +498,7 @@ export default function FundApplyForm({
           >
             <div className={cx(styles.Step, styles['fade-in'], styles['space-y-4'])}>
               <div>
-                <label className={styles.C_Label}>신청 유형</label>
+                <label className={styles.C_Label}>{t('type')}</label>
                 <select
                   {...register('applyType', { required: true })}
                   className={cx(
@@ -533,19 +509,19 @@ export default function FundApplyForm({
                   defaultValue=""
                 >
                   <option className={styles.C_InputOption} value="">
-                    선택
+                    {t('select')}
                   </option>
                   <option className={styles.C_InputOption} value="fund">
-                    SIG/PIG 지원금
+                    {t('fund')}
                   </option>
                   <option className={styles.C_InputOption} value="meal">
-                    SIG/PIG 회식비
+                    {t('meal')}
                   </option>
                   <option className={styles.C_InputOption} value="contest">
-                    대회 참가 지원
+                    {t('contest')}
                   </option>
                   <option className={styles.C_InputOption} value="pair">
-                    짝후 지원
+                    {t('pair')}
                   </option>
                 </select>
               </div>
@@ -556,10 +532,10 @@ export default function FundApplyForm({
                 {applyType === 'contest' || applyType === 'pair' ? (
                   applyType === 'contest' ? (
                     <div>
-                      <label className={styles.C_Label}>대회명</label>
+                      <label className={styles.C_Label}>{t('contestName')}</label>
                       <input
                         {...register('contestName', { required: true })}
-                        placeholder="대회명을 입력하세요"
+                        placeholder={t('contestNamePlaceholder')}
                         className={styles.C_Input}
                         disabled={submitting}
                       />
@@ -567,19 +543,19 @@ export default function FundApplyForm({
                   ) : (
                     <div className={styles.twoColumnGrid}>
                       <div>
-                        <label className={styles.C_Label}>짝선 이름</label>
+                        <label className={styles.C_Label}>{t('pairBefore')}</label>
                         <input
                           {...register('pairBefore', { required: true })}
-                          placeholder="짝선 이름"
+                          placeholder={t('pairBeforePlaceholder')}
                           className={styles.C_Input}
                           disabled={submitting}
                         />
                       </div>
                       <div>
-                        <label className={styles.C_Label}>짝후 이름</label>
+                        <label className={styles.C_Label}>{t('pairAfter')}</label>
                         <input
                           {...register('pairAfter', { required: true })}
-                          placeholder="짝후 이름"
+                          placeholder={t('pairAfterPlaceholder')}
                           className={styles.C_Input}
                           disabled={submitting}
                         />
@@ -589,7 +565,7 @@ export default function FundApplyForm({
                 ) : (
                   <div className={styles['space-y-4']}>
                     <div>
-                      <label className={styles.C_Label}>대상 유형</label>
+                      <label className={styles.C_Label}>{t('orgType')}</label>
                       <div className={styles.SigPigControlRow}>
                         <select
                           {...register('orgCategory', { required: true })}
@@ -601,7 +577,7 @@ export default function FundApplyForm({
                           defaultValue=""
                         >
                           <option className={styles.C_InputOption} value="">
-                            SIG/PIG 선택
+                            {t('orgSelect')}
                           </option>
                           <option className={styles.C_InputOption} value="sig">
                             SIG
@@ -625,14 +601,15 @@ export default function FundApplyForm({
                             }}
                             disabled={disableOrgSelects || !prevTerm}
                           >
-                            이전학기{prevTermLabel ? ` (${prevTermLabel})` : ''}
+                            {t('previousTerm')}
+                            {displayPrevTermLabel ? ` (${displayPrevTermLabel})` : ''}
                           </Checkbox>
                         )}
                       </div>
                     </div>
 
                     <div>
-                      <label className={styles.C_Label}>대상 선택</label>
+                      <label className={styles.C_Label}>{t('targetSelectLabel')}</label>
                       <select
                         {...register('target', { required: true })}
                         className={cx(
@@ -643,11 +620,11 @@ export default function FundApplyForm({
                         defaultValue=""
                       >
                         <option className={styles.C_InputOption} value="">
-                          대상 선택
+                          {t('targetSelectLabel')}
                         </option>
                         {sigList.length === 0 ? (
                           <option className={styles.C_InputOption} disabled>
-                            목록이 없습니다
+                            {t('noTargets')}
                           </option>
                         ) : (
                           sigList.map((item, idx) => (
@@ -672,15 +649,15 @@ export default function FundApplyForm({
                 {(applyType === 'fund' || applyType === 'meal' || applyType === 'contest') && (
                   <div className={styles.PayoutSection}>
                     <div className={styles.PayoutHeader}>
-                      <label className={styles.C_Label}>신청 금액</label>
+                      <label className={styles.C_Label}>{t('amount')}</label>
                     </div>
 
                     <div className={cx(styles.PayoutField, styles['max-w-md'])}>
                       <input
                         id="fund-amount-input"
                         type="number"
-                        {...register('amount', { required: '신청 금액을 입력해주세요.' })}
-                        placeholder="예: 20000"
+                        {...register('amount', { required: t('amountRequired') })}
+                        placeholder={t('amountExample')}
                         className={cx(styles.C_Input, styles.FundAmountInput)}
                         disabled={submitting}
                       />
@@ -695,7 +672,7 @@ export default function FundApplyForm({
                         {...register('useKakaoPay')}
                         disabled={submitting}
                       >
-                        <span className={styles.C_CheckText}>카카오페이로 받기</span>
+                        <span className={styles.C_CheckText}>{t('kakaoPay')}</span>
                       </Checkbox>
                     </div>
 
@@ -703,13 +680,13 @@ export default function FundApplyForm({
                       <div className={styles.PayoutGrid}>
                         <div className={styles.PayoutField}>
                           <label className={styles.C_SubLabel} htmlFor="fund-bank-input">
-                            은행
+                            {t('bank')}
                           </label>
                           <input
                             id="fund-bank-input"
                             type="text"
                             {...register('bankName')}
-                            placeholder="은행명"
+                            placeholder={t('bankPlaceholder')}
                             className={styles.C_Input}
                             disabled={useKakaoPay || submitting}
                           />
@@ -717,7 +694,7 @@ export default function FundApplyForm({
 
                         <div className={styles.PayoutField}>
                           <label className={styles.C_SubLabel} htmlFor="fund-account-input">
-                            계좌번호
+                            {t('accountNumber')}
                           </label>
                           <input
                             id="fund-account-input"
@@ -725,10 +702,10 @@ export default function FundApplyForm({
                             {...register('accountNumber', {
                               pattern: {
                                 value: /^[0-9-]+$/,
-                                message: '계좌번호는 숫자와 -만 입력 가능합니다.',
+                                message: t('accountNumberInvalid'),
                               },
                             })}
-                            placeholder="계좌번호"
+                            placeholder={t('accountPlaceholder')}
                             className={cx(styles.C_Input, styles.FundAccountInput)}
                             disabled={useKakaoPay || submitting}
                           />
@@ -741,13 +718,13 @@ export default function FundApplyForm({
 
                         <div className={styles.PayoutField}>
                           <label className={styles.C_SubLabel} htmlFor="fund-holder-input">
-                            예금주
+                            {t('accountHolder')}
                           </label>
                           <input
                             id="fund-holder-input"
                             type="text"
                             {...register('accountHolder')}
-                            placeholder="예금주"
+                            placeholder={t('holderPlaceholder')}
                             className={styles.C_Input}
                             disabled={useKakaoPay || submitting}
                           />
@@ -759,17 +736,17 @@ export default function FundApplyForm({
 
                 <div>
                   <div>
-                    <label className={styles.C_Label}>상세 내용</label>
+                    <label className={styles.C_Label}>{t('details')}</label>
                   </div>
 
                   <div className={styles.EditorWrapper}>
                     <div>
                       <div className={styles.EditorPlaceholderText}>
-                        {(applyType ? PLACEHOLDER[applyType] : '').trim()}
+                        {(applyType ? instructionsByType[applyType] : '').trim()}
                       </div>
 
                       <div style={{ marginTop: '1rem' }}>
-                        <label className={styles.C_Label}>이미지 첨부</label>
+                        <label className={styles.C_Label}>{t('imageAttachments')}</label>
                         <input
                           type="file"
                           accept="image/*"
@@ -787,9 +764,7 @@ export default function FundApplyForm({
                           type="hidden"
                           {...register('imageIds', {
                             validate: (v) =>
-                              Array.isArray(v) && v.length > 0
-                                ? true
-                                : '이미지를 1개 이상 첨부해주세요.',
+                              Array.isArray(v) && v.length > 0 ? true : t('imageRequired'),
                           })}
                         />
 
@@ -831,7 +806,7 @@ export default function FundApplyForm({
                                     cursor: 'pointer',
                                   }}
                                 >
-                                  삭제
+                                  {t('delete')}
                                 </button>
                               </div>
                             ))}
@@ -841,7 +816,7 @@ export default function FundApplyForm({
 
                       <div style={{ marginTop: '1rem' }}>
                         <input type="hidden" {...register('attachmentIds')} />
-                        <label className={styles.C_Label}>파일 첨부</label>
+                        <label className={styles.C_Label}>{t('fileAttachments')}</label>
                         <input
                           type="file"
                           multiple
@@ -886,7 +861,7 @@ export default function FundApplyForm({
                                     cursor: 'pointer',
                                   }}
                                 >
-                                  삭제
+                                  {t('delete')}
                                 </button>
                               </div>
                             ))}
@@ -895,15 +870,14 @@ export default function FundApplyForm({
                       </div>
 
                       <div style={{ marginTop: '1rem' }}>
-                        <label className={styles.C_Label}>지원 사유/기타</label>
+                        <label className={styles.C_Label}>{t('reason')}</label>
                         <textarea
                           {...register('reasonText', {
-                            required: '지원 사유/기타를 입력해주세요.',
+                            required: t('reasonRequired'),
                             validate: (v) =>
-                              String(v ?? '').trim().length > 0 ||
-                              '지원 사유/기타를 입력해주세요.',
+                              String(v ?? '').trim().length > 0 || t('reasonRequired'),
                           })}
-                          placeholder="지원 사유/기타"
+                          placeholder={t('reasonPlaceholder')}
                           className={styles.C_Input}
                           disabled={submitting}
                           rows={8}
@@ -922,7 +896,7 @@ export default function FundApplyForm({
                     className={styles.C_CheckRow}
                     style={{ marginTop: '1rem' }}
                     {...register('checked', {
-                      required: 'SCSC 지원 가이드라인을 확인해주세요.',
+                      required: t('guidelineRequired'),
                     })}
                     disabled={submitting}
                   >
@@ -933,9 +907,9 @@ export default function FundApplyForm({
                         rel="noreferrer"
                         className={styles.C_Link}
                       >
-                        SCSC 지원 가이드라인
+                        {t('guidelineLink')}
                       </a>
-                      을 확인했습니다.
+                      {t('guidelineAcknowledged')}
                     </span>
                   </Checkbox>
                 </div>
@@ -953,7 +927,7 @@ export default function FundApplyForm({
                       attachmentUploading
                     }
                   >
-                    {submitting ? '신청 중...' : '신청하기'}
+                    {submitting ? t('submitting') : t('apply')}
                   </button>
                 </div>
               </div>

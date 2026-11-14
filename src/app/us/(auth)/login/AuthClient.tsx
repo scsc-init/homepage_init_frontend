@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations, useLocale } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -12,6 +13,13 @@ import styles from '../auth.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
 import { useMe } from '@/util/hooks/useMe';
+
+const IN_APP_BROWSER_NAMES_EN: Record<string, string> = {
+  kakaotalk: 'KakaoTalk',
+  everytimeapp: 'Everytime',
+  instagram: 'Instagram',
+  line: 'LINE',
+};
 
 const IN_APP_BROWSER_NAMES = {
   kakaotalk: '카카오톡',
@@ -56,6 +64,8 @@ export default function AuthClient({
   snuEmailCheck = false,
 }: AuthClientProps) {
   const { me } = useMe();
+  const t = useTranslations('UsLogin');
+  const locale = useLocale();
   const [inAppWarning, setInAppWarning] = useState(false);
   const [pendingMode, setPendingMode] = useState<PendingMode>(null);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
@@ -87,19 +97,19 @@ export default function AuthClient({
 
     switch (error) {
       case 'invalid_email':
-        alert('SNU 구글 계정(@snu.ac.kr)으로만 로그인할 수 있습니다.');
+        alert(t('invalidEmail'));
         break;
 
       case 'snu_external_login':
-        alert('서울대학교 계정은 위의 SNU 로그인 버튼을 이용해주세요.');
+        alert(t('externalSnu'));
         break;
 
       case 'no_information':
-        alert('구글 계정에 등록된 정보가 올바르지 않습니다.');
+        alert(t('invalidInfo'));
         break;
 
       default:
-        alert('로그인이 실패했습니다. 다시 시도해주세요.');
+        alert(t('loginFailed'));
     }
 
     try {
@@ -121,11 +131,11 @@ export default function AuthClient({
 
       if (re.test(ua)) {
         setInAppWarning(true);
-        setInAppBrowserName(name);
+        setInAppBrowserName(locale === 'en-US' ? IN_APP_BROWSER_NAMES_EN[key] || name : name);
         break;
       }
     }
-  }, []);
+  }, [locale]);
 
   return (
     <div id={styles['GoogleSignupContainer']}>
@@ -147,21 +157,22 @@ export default function AuthClient({
           <>
             <div className={styles['warning-wrapper']}>
               <h3 style={{ marginBottom: '0px' }}>
-                <strong>{inAppBrowserName}</strong> 브라우저에서는
+                <strong>{inAppBrowserName}</strong> {t('inAppWarningPart1')}
               </h3>
 
               <h3 style={{ marginTop: '0px' }}>
-                <strong>로그인</strong>이 실패할 수 있습니다
+                <strong>{t('signInNoun')}</strong>
+                {t('inAppWarningPart2')}
               </h3>
 
               <p style={{ marginBottom: '20px' }}>
-                인앱 브라우저가 아닌 <strong>Chrome, Safari, 삼성 인터넷</strong> 등의 외부
-                브라우저를 이용하면 더 안전합니다.
+                {t('externalBrowserBefore')} <strong>{t('recommendedBrowsers')}</strong>{' '}
+                {t('externalBrowserAfter')}
               </p>
             </div>
 
             <div className={styles['copy-button-wrapper']}>
-              <CopyButton link="scsc.dev" label="외부 브라우저 링크 복사" />
+              <CopyButton link={window.location.href} label={t('copyLink')} />
             </div>
 
             <div className={styles['copy-button-wrapper']}>
@@ -170,7 +181,7 @@ export default function AuthClient({
           </>
         )}
 
-        <p className={styles['login-description']}>SNU 구글 계정으로 로그인/회원가입</p>
+        <p className={styles['login-description']}>{t('snuLoginDescription')}</p>
 
         <div className={styles['google-signin-button-wrapper']}>
           <button
@@ -201,7 +212,7 @@ export default function AuthClient({
               </svg>
             </span>
 
-            <span className={styles['GoogleLoginText']}>Google 계정으로 로그인</span>
+            <span className={styles['GoogleLoginText']}>{t('googleSignIn')}</span>
           </button>
         </div>
 
@@ -232,7 +243,7 @@ export default function AuthClient({
               </svg>
             </span>
 
-            <span className={styles['GoogleLoginText']}>외부회원으로 로그인/회원가입</span>
+            <span className={styles['GoogleLoginText']}>{t('externalSignIn')}</span>
           </button>
         </div>
       </div>

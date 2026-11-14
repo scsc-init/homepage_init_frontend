@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -11,13 +12,14 @@ type ProfilePictureMode = 'url' | 'file';
 
 export default function PfpUpdate() {
   const [mode, setMode] = useState<ProfilePictureMode>('url');
+  const t = useTranslations('UsProfilePicture');
   const [url, setUrl] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
 
   const handleProfileUpdateSuccess = async () => {
-    alert('변경 완료');
+    alert(t('success'));
     router.push('/about/my-page');
   };
 
@@ -48,7 +50,7 @@ export default function PfpUpdate() {
       });
 
       if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         pushLoginWithRedirect(router);
         return;
       }
@@ -56,7 +58,7 @@ export default function PfpUpdate() {
       if (res.status === 204) {
         await handleProfileUpdateSuccess();
       } else {
-        alert('변경 실패');
+        alert(t('failed'));
       }
     } else if (mode === 'file' && file) {
       const form = new FormData();
@@ -68,7 +70,7 @@ export default function PfpUpdate() {
       });
 
       if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         pushLoginWithRedirect(router);
         return;
       }
@@ -76,14 +78,14 @@ export default function PfpUpdate() {
       if (res.status === 204) {
         await handleProfileUpdateSuccess();
       } else {
-        alert('변경 실패');
+        alert(t('failed'));
       }
     }
   };
 
   return (
     <div className={styles.PfpUpdateContainer}>
-      <p>프로필 사진 변경</p>
+      <p>{t('title')}</p>
 
       <div>
         <label>
@@ -95,7 +97,7 @@ export default function PfpUpdate() {
             onChange={() => setMode('url')}
             className={styles.setMode}
           />
-          URL 입력
+          {t('urlMode')}
         </label>
 
         <label className={styles.PfpUpdateContainerSecondLabel}>
@@ -107,14 +109,14 @@ export default function PfpUpdate() {
             onChange={() => setMode('file')}
             className={styles.setMode}
           />
-          이미지 업로드
+          {t('uploadMode')}
         </label>
       </div>
 
       {mode === 'url' && (
         <input
           type="text"
-          placeholder="이미지 URL 입력"
+          placeholder={t('urlPlaceholder')}
           value={url}
           onChange={handleUrlChange}
           className={styles.imageInput}
@@ -136,7 +138,7 @@ export default function PfpUpdate() {
         </div>
       )}
 
-      <button onClick={handleSubmit}>저장</button>
+      <button onClick={handleSubmit}>{t('save')}</button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 import { fetchBackendClient } from '@/util/fetch/client';
@@ -27,6 +28,7 @@ const INITIAL_VALUES: ContactFormValues = {
 
 export default function DeveloperContactForm() {
   const [values, setValues] = useState<ContactFormValues>(INITIAL_VALUES);
+  const t = useTranslations('UsDeveloperContact');
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>(null);
 
@@ -54,7 +56,7 @@ export default function DeveloperContactForm() {
     if (!payload.name || !payload.email || !payload.title || !payload.content) {
       setFeedback({
         type: 'error',
-        message: '모든 항목을 입력해주세요.',
+        message: t('required'),
       });
       return;
     }
@@ -71,26 +73,23 @@ export default function DeveloperContactForm() {
 
       if (!response.ok) {
         if (response.status === 422) {
-          throw new Error('입력값의 형식과 길이를 확인해주세요.');
+          throw new Error(t('invalidInput'));
         }
         if (response.status === 503) {
-          throw new Error('문의 서비스를 잠시 사용할 수 없습니다.');
+          throw new Error(t('serviceUnavailable'));
         }
-        throw new Error(`문의 전송에 실패했습니다. (${response.status})`);
+        throw new Error(t('sendFailed', { status: response.status }));
       }
 
       setValues(INITIAL_VALUES);
       setFeedback({
         type: 'success',
-        message: '개발자 문의가 전달되었습니다.',
+        message: t('success'),
       });
     } catch (error) {
       setFeedback({
         type: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : '문의 전송 중 알 수 없는 오류가 발생했습니다.',
+        message: error instanceof Error ? error.message : t('unknownError'),
       });
     } finally {
       setSubmitting(false);
@@ -100,15 +99,13 @@ export default function DeveloperContactForm() {
   return (
     <section className={styles.activityBlock}>
       <div className={styles.sectionHeader}>DEVELOPER CONTACT:</div>
-      <p className={styles.developerContactDescription}>
-        홈페이지 오류나 개선 의견을 개발팀에 보내주세요. 로그인하지 않아도 문의할 수 있습니다.
-      </p>
+      <p className={styles.developerContactDescription}>{t('description')}</p>
 
       <form className={styles.developerContactForm} onSubmit={handleSubmit}>
         <fieldset className={styles.developerContactFieldset} disabled={submitting}>
           <div className={styles.developerContactGrid}>
             <label className={styles.developerContactField}>
-              <span className={styles.developerContactLabel}>이름</span>
+              <span className={styles.developerContactLabel}>{t('name')}</span>
               <input
                 className={styles.developerContactInput}
                 type="text"
@@ -123,7 +120,7 @@ export default function DeveloperContactForm() {
             </label>
 
             <label className={styles.developerContactField}>
-              <span className={styles.developerContactLabel}>회신 이메일</span>
+              <span className={styles.developerContactLabel}>{t('replyEmail')}</span>
               <input
                 className={styles.developerContactInput}
                 type="email"
@@ -138,7 +135,7 @@ export default function DeveloperContactForm() {
             <label
               className={`${styles.developerContactField} ${styles.developerContactFullWidth}`}
             >
-              <span className={styles.developerContactLabel}>제목</span>
+              <span className={styles.developerContactLabel}>{t('subject')}</span>
               <input
                 className={styles.developerContactInput}
                 type="text"
@@ -154,7 +151,7 @@ export default function DeveloperContactForm() {
             <label
               className={`${styles.developerContactField} ${styles.developerContactFullWidth}`}
             >
-              <span className={styles.developerContactLabel}>문의 내용</span>
+              <span className={styles.developerContactLabel}>{t('message')}</span>
               <textarea
                 className={styles.developerContactTextarea}
                 name="content"
@@ -173,7 +170,7 @@ export default function DeveloperContactForm() {
               type="submit"
               disabled={submitting}
             >
-              {submitting ? '전송 중...' : '문의 보내기'}
+              {submitting ? t('sending') : t('send')}
             </button>
 
             {feedback && (

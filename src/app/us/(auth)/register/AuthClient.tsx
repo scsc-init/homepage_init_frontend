@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchMajors } from '@/util/fetch/client-util';
 import { useEffect, useRef, useState } from 'react';
 import '@/styles/theme.css';
@@ -59,6 +60,7 @@ function log(event: string, data: Record<string, unknown> = {}) {
 
 export default function AuthClient() {
   const { data: session, update } = useSession();
+  const t = useTranslations('UsRegister');
 
   const [stage, setStage] = useState(1);
   const [form, setForm] = useState({
@@ -124,7 +126,7 @@ export default function AuthClient() {
     const hashToken = session?.hashToken;
 
     if (!hashToken) {
-      alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+      alert(t('missingSession'));
       return;
     }
 
@@ -145,7 +147,7 @@ export default function AuthClient() {
     });
 
     if (createRes.status !== 201) {
-      let detail = '알 수 없는 오류가 발생했습니다.';
+      let detail = t('unknownError');
 
       if (createRes.body && typeof createRes.body === 'object' && 'detail' in createRes.body) {
         const bodyDetail = createRes.body.detail;
@@ -162,7 +164,7 @@ export default function AuthClient() {
         detail,
       });
 
-      alert(`유저 생성 실패: ${detail}`);
+      alert(t('createFailed', { detail }));
       return;
     }
 
@@ -195,7 +197,7 @@ export default function AuthClient() {
       window.location.href = '/about/welcome';
     } else {
       log('login_failed');
-      alert('로그인에 실패했습니다. 다시 시도해주세요.');
+      alert(t('loginFailed'));
       return;
     }
   };
@@ -215,7 +217,7 @@ export default function AuthClient() {
             />
 
             <p>
-              이름: <strong>{form.name}</strong>
+              {t('nameLabel')}: <strong>{form.name}</strong>
             </p>
 
             <Checkbox
@@ -233,7 +235,7 @@ export default function AuthClient() {
                 }
               }}
             >
-              카톡 프로필 이름이 본명과 다른가요?
+              {t('kakaoDifferent')}
             </Checkbox>
 
             {kakaoNameDiffers && (
@@ -245,7 +247,7 @@ export default function AuthClient() {
                     kakao_name: e.target.value.slice(0, 64),
                   })
                 }
-                placeholder="카톡 프로필 이름"
+                placeholder={t('kakaoPlaceholder')}
                 maxLength={64}
                 style={{
                   width: '100%',
@@ -265,14 +267,14 @@ export default function AuthClient() {
                 !form.email || !form.name || (kakaoNameDiffers && !form.kakao_name.trim())
               }
             >
-              다음
+              {t('next')}
             </button>
           </div>
         )}
 
         {stage === 2 && (
           <div style={{ marginTop: '0vh' }}>
-            <p>학번 입력</p>
+            <p>{t('studentIdStep')}</p>
 
             <div
               style={{
@@ -320,19 +322,19 @@ export default function AuthClient() {
                 const sid = `${form.student_id_year}${form.student_id_number}`;
 
                 validator.studentID(sid, (ok) =>
-                  ok ? setStage(3) : alert('올바른 학번 형식이 아닙니다.'),
+                  ok ? setStage(3) : alert(t('invalidStudentId')),
                 );
               }}
               disabled={!form.student_id_year || !form.student_id_number}
             >
-              다음
+              {t('next')}
             </button>
           </div>
         )}
 
         {stage === 3 && (
           <div style={{ marginTop: '0vh' }}>
-            <p>전화번호 입력</p>
+            <p>{t('phoneStep')}</p>
 
             <div
               style={{
@@ -396,19 +398,19 @@ export default function AuthClient() {
                 const phone = `${form.phone1}${form.phone2}${form.phone3}`;
 
                 validator.phoneNumber(phone, (ok) =>
-                  ok ? setStage(4) : alert('전화번호 형식이 올바르지 않습니다.'),
+                  ok ? setStage(4) : alert(t('invalidPhone')),
                 );
               }}
               disabled={!form.phone1 || !form.phone2 || !form.phone3}
             >
-              다음
+              {t('next')}
             </button>
           </div>
         )}
 
         {stage === 4 && (
           <div style={{ marginTop: '0vh' }}>
-            <p>단과대학 소속 입력</p>
+            <p>{t('collegeStep')}</p>
 
             <div
               style={{
@@ -417,7 +419,7 @@ export default function AuthClient() {
               }}
             >
               <select onChange={(e) => setCollege(e.target.value)} value={college}>
-                <option value="">단과대학 선택</option>
+                <option value="">{t('collegePlaceholder')}</option>
 
                 {[...new Set(majors.map((m) => m.college))].map((c) => (
                   <option key={c} value={c}>
@@ -435,7 +437,7 @@ export default function AuthClient() {
                 }
                 value={form.major_id}
               >
-                <option value="">학과/학부 선택</option>
+                <option value="">{t('majorPlaceholder')}</option>
 
                 {majors
                   .filter((m) => m.college === college)
@@ -448,15 +450,15 @@ export default function AuthClient() {
             </div>
 
             <p className={`${styles.PolicyLink} ${styles.agree}`}>
-              회원 가입 시{' '}
+              {t('privacyBefore')}{' '}
               <a
                 href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                개인정보 처리방침
+                {t('privacyLink')}
               </a>
-              에 동의합니다.
+              {t('privacyAfter')}
             </p>
 
             <button
@@ -468,13 +470,13 @@ export default function AuthClient() {
                 setSignupBusy(true);
 
                 if (!college) {
-                  alert('단과대학을 선택하세요.');
+                  alert(t('chooseCollegeError'));
                   setSignupBusy(false);
                   return;
                 }
 
                 if (!form.major_id) {
-                  alert('학과/학부를 선택하세요.');
+                  alert(t('chooseMajorError'));
                   setSignupBusy(false);
                   return;
                 }
@@ -488,7 +490,8 @@ export default function AuthClient() {
               disabled={signupBusy}
               aria-disabled={signupBusy}
             >
-              {ENABLE_TEST_UTILS && '[테스트] 관리자로 '}가입하기
+              {ENABLE_TEST_UTILS && t('testAdminPrefix')}
+              {t('signUp')}
             </button>
           </div>
         )}
