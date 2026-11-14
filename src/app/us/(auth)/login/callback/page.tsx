@@ -5,13 +5,20 @@ import { signOut, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import * as validator from '@/util/validator';
-import { consumeRedirectAfterLogin, replaceLoginWithRedirect } from '@/util/loginRedirect';
+import {
+  consumeRedirectAfterLogin,
+  isAllowedRedirectPath,
+  replaceLoginWithRedirect,
+  setRedirectAfterLogin,
+} from '@/util/loginRedirect';
 
 export default function OAuthLanding() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const mode = searchParams.get('mode') === 'external' ? 'external' : 'snu';
+  const rawRedirect = searchParams.get('redirect');
+  const redirectTo = rawRedirect && isAllowedRedirectPath(rawRedirect) ? rawRedirect : null;
   const didNavigateRef = useRef(false);
 
   useEffect(() => {
@@ -20,39 +27,40 @@ export default function OAuthLanding() {
 
     if (status === 'unauthenticated') {
       didNavigateRef.current = true;
-      replaceLoginWithRedirect(router);
+      replaceLoginWithRedirect(router, { redirectTo: redirectTo ?? undefined });
       return;
     }
 
     const email = session?.user?.email?.toLowerCase();
     const isSnuEmail = validator.email(email);
 
-    if (mode === 'snu' && !isSnuEmail) {
-      didNavigateRef.current = true;
-      void signOut({ redirect: false }).then(() => {
-        router.replace('/us/login?error=invalid_email');
-      });
-      return;
-    }
+    const invalidAccount = mode === 'snu' ? !isSnuEmail : isSnuEmail;
 
-    if (mode === 'external' && isSnuEmail) {
+    if (invalidAccount) {
       didNavigateRef.current = true;
+      const target = redirectTo ?? consumeRedirectAfterLogin();
+      const params = new URLSearchParams({
+        error: mode === 'snu' ? 'invalid_email' : 'snu_external_login',
+      });
+      if (target) params.set('redirect', target);
+
       void signOut({ redirect: false }).then(() => {
-        router.replace('/us/login?error=snu_external_login');
+        router.replace(`/us/login?${params}`);
       });
       return;
     }
 
     if (session?.registered) {
-      const redirectTo = consumeRedirectAfterLogin();
+      const redirectFromCookie = consumeRedirectAfterLogin();
       didNavigateRef.current = true;
-      router.replace(redirectTo || '/');
+      router.replace(redirectTo ?? redirectFromCookie ?? '/');
       return;
     }
 
     didNavigateRef.current = true;
+    if (redirectTo) setRedirectAfterLogin(redirectTo);
     router.replace(mode === 'external' ? '/us/external-register' : '/us/register');
-  }, [status, session, router, mode]);
+  }, [status, session, router, mode, redirectTo]);
 
   return <LoadingSpinner />;
 }

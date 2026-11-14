@@ -4,6 +4,7 @@ import Google from 'next-auth/providers/google';
 import type { UserProfile } from '@/types/user';
 import { fetchBackendServer } from '@/util/fetch/server';
 import { resolveProfileImage } from '@/util/profileImage';
+import { shareAuthCookies, SHARED_AUTH_COOKIE_PREFIX } from '@/util/authCookies';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -30,11 +31,9 @@ const parseJwtValidSeconds = (value?: string) => {
 
 const jwtValidSeconds = parseJwtValidSeconds(process.env.JWT_VALID_SECONDS);
 
-const shareAuthCookies = process.env.NEXTAUTH_URL?.replace(/\/+$/, '') === 'https://scsc.dev';
-
 function sharedAuthCookie(suffix: string, maxAge?: number) {
   return {
-    name: `__Secure-next-auth.${suffix}`,
+    name: `${SHARED_AUTH_COOKIE_PREFIX}.${suffix}`,
     options: {
       httpOnly: true,
       sameSite: 'lax' as const,

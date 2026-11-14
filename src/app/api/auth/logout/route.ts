@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { REDIRECT_COOKIE } from '@/util/loginRedirect';
+import {
+  isLegacySessionCookie,
+  shareAuthCookies,
+  SHARED_SESSION_COOKIE_NAME,
+} from '@/util/authCookies';
 
 export async function POST(req: NextRequest) {
   const res = NextResponse.redirect(new URL('/', req.url));
@@ -16,9 +21,13 @@ export async function POST(req: NextRequest) {
   const sessionCookieNames = new Set([
     'next-auth.session-token',
     '__Secure-next-auth.session-token',
+    SHARED_SESSION_COOKIE_NAME,
     ...req.cookies
       .getAll()
-      .filter(({ name }) => /^(?:__Secure-)?next-auth\.session-token(?:\.\d+)?$/.test(name))
+      .filter(
+        ({ name }) =>
+          isLegacySessionCookie(name) || name.startsWith(`${SHARED_SESSION_COOKIE_NAME}.`),
+      )
       .map(({ name }) => name),
   ]);
 
@@ -37,7 +46,7 @@ export async function POST(req: NextRequest) {
     secure: process.env.NODE_ENV === 'production',
   });
 
-  if (process.env.NEXTAUTH_URL?.replace(/\/+$/, '') === 'https://scsc.dev') {
+  if (shareAuthCookies) {
     // Append separately to expire both host-only and shared cookies of the same name.
     for (const name of sessionCookieNames) {
       if (!name.startsWith('__Secure-')) continue;

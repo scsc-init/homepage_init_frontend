@@ -1,6 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse, type NextRequest } from 'next/server';
 import { isAllowedRedirectPath } from '@/util/loginRedirect';
+import { shareAuthCookies, SHARED_SESSION_COOKIE_NAME } from '@/util/authCookies';
 import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
@@ -130,7 +131,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: process.env.NODE_ENV === 'production',
+    cookieName: shareAuthCookies ? SHARED_SESSION_COOKIE_NAME : undefined,
   });
   const jwt = token?.backendJwt || null;
 

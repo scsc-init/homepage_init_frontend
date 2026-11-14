@@ -9,6 +9,7 @@ import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
 import {
   clearRedirectAfterLogin,
+  isAllowedRedirectPath,
   replaceLoginWithRedirect,
   setRedirectAfterLogin,
 } from '@/util/loginRedirect';
@@ -69,11 +70,20 @@ export default function AuthClient({
   const router = useRouter();
   const params = useSearchParams();
   const error = params.get('error');
+  const redirectTo =
+    initialRedirect && isAllowedRedirectPath(initialRedirect) ? initialRedirect : null;
+
+  function getCallbackUrl(mode: 'snu' | 'external'): string {
+    const url = new URL('/us/login/callback', window.location.origin);
+    url.searchParams.set('mode', mode);
+    if (redirectTo) url.searchParams.set('redirect', redirectTo);
+    return url.href;
+  }
 
   useEffect(() => {
     clearRedirectAfterLogin();
-    if (initialRedirect) setRedirectAfterLogin(initialRedirect);
-  }, [initialRedirect]);
+    if (redirectTo) setRedirectAfterLogin(redirectTo);
+  }, [redirectTo]);
 
   useEffect(() => {
     if (me) router.replace('/api/auth/consume-redirect');
@@ -189,8 +199,7 @@ export default function AuthClient({
               await signIn(
                 'google',
                 {
-                  callbackUrl: new URL('/us/login/callback?mode=snu', window.location.origin)
-                    .href,
+                  callbackUrl: getCallbackUrl('snu'),
                 },
                 snuEmailCheck ? { hd: 'snu.ac.kr' } : undefined,
               );
@@ -223,8 +232,7 @@ export default function AuthClient({
               log('click_external_login_button', { provider: 'google' });
 
               await signIn('google', {
-                callbackUrl: new URL('/us/login/callback?mode=external', window.location.origin)
-                  .href,
+                callbackUrl: getCallbackUrl('external'),
               });
             }}
             disabled={inAppWarning}
