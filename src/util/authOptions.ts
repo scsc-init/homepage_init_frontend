@@ -4,6 +4,7 @@ import Google from 'next-auth/providers/google';
 import type { UserProfile } from '@/types/user';
 import { fetchBackendServer } from '@/util/fetch/server';
 import { resolveProfileImage } from '@/util/profileImage';
+import { shareAuthCookies, SHARED_AUTH_COOKIE_PREFIX } from '@/util/authCookies';
 
 interface LoginResponseBody {
   jwt?: string;
@@ -30,7 +31,29 @@ const parseJwtValidSeconds = (value?: string) => {
 
 const jwtValidSeconds = parseJwtValidSeconds(process.env.JWT_VALID_SECONDS);
 
+function sharedAuthCookie(suffix: string, maxAge?: number) {
+  return {
+    name: `${SHARED_AUTH_COOKIE_PREFIX}.${suffix}`,
+    options: {
+      httpOnly: true,
+      sameSite: 'lax' as const,
+      path: '/',
+      secure: true,
+      domain: '.scsc.dev',
+      ...(maxAge === undefined ? {} : { maxAge }),
+    },
+  };
+}
+
 export const authOptions: NextAuthOptions = {
+  cookies: shareAuthCookies
+    ? {
+        sessionToken: sharedAuthCookie('session-token'),
+        callbackUrl: sharedAuthCookie('callback-url'),
+        state: sharedAuthCookie('state', 15 * 60),
+        pkceCodeVerifier: sharedAuthCookie('pkce.code_verifier', 15 * 60),
+      }
+    : undefined,
   session: {
     strategy: 'jwt',
     maxAge: jwtValidSeconds,
@@ -42,6 +65,18 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      try {
+        const target = new URL(url, baseUrl);
+        if (
+          target.origin === baseUrl ||
+          (shareAuthCookies && target.origin === 'https://en.scsc.dev')
+        ) {
+          return target.href;
+        }
+      } catch {}
+      return baseUrl;
+    },
     async signIn({ user }) {
       if (!user.email || !user.name) {
         return '/us/login?error=no_information';

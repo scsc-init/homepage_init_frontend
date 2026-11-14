@@ -7,7 +7,12 @@ import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
-import { replaceLoginWithRedirect, setRedirectAfterLogin } from '@/util/loginRedirect';
+import {
+  clearRedirectAfterLogin,
+  isAllowedRedirectPath,
+  replaceLoginWithRedirect,
+  setRedirectAfterLogin,
+} from '@/util/loginRedirect';
 import styles from '../auth.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
@@ -65,15 +70,24 @@ export default function AuthClient({
   const router = useRouter();
   const params = useSearchParams();
   const error = params.get('error');
+  const redirectTo =
+    initialRedirect && isAllowedRedirectPath(initialRedirect) ? initialRedirect : null;
+
+  function getCallbackUrl(mode: 'snu' | 'external'): string {
+    const url = new URL('/us/login/callback', window.location.origin);
+    url.searchParams.set('mode', mode);
+    if (redirectTo) url.searchParams.set('redirect', redirectTo);
+    return url.href;
+  }
+
+  useEffect(() => {
+    clearRedirectAfterLogin();
+    if (redirectTo) setRedirectAfterLogin(redirectTo);
+  }, [redirectTo]);
 
   useEffect(() => {
     if (me) router.replace('/api/auth/consume-redirect');
   }, [me, router]);
-
-  useEffect(() => {
-    if (!initialRedirect) return;
-    setRedirectAfterLogin(initialRedirect);
-  }, [initialRedirect]);
 
   useEffect(() => {
     if (!error) {
@@ -184,7 +198,9 @@ export default function AuthClient({
 
               await signIn(
                 'google',
-                { callbackUrl: '/us/login/callback?mode=snu' },
+                {
+                  callbackUrl: getCallbackUrl('snu'),
+                },
                 snuEmailCheck ? { hd: 'snu.ac.kr' } : undefined,
               );
             }}
@@ -216,7 +232,7 @@ export default function AuthClient({
               log('click_external_login_button', { provider: 'google' });
 
               await signIn('google', {
-                callbackUrl: '/us/login/callback?mode=external',
+                callbackUrl: getCallbackUrl('external'),
               });
             }}
             disabled={inAppWarning}
