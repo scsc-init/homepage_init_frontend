@@ -30,7 +30,31 @@ const parseJwtValidSeconds = (value?: string) => {
 
 const jwtValidSeconds = parseJwtValidSeconds(process.env.JWT_VALID_SECONDS);
 
+const shareAuthCookies = process.env.NEXTAUTH_URL?.replace(/\/+$/, '') === 'https://scsc.dev';
+
+function sharedAuthCookie(suffix: string, maxAge?: number) {
+  return {
+    name: `__Secure-next-auth.${suffix}`,
+    options: {
+      httpOnly: true,
+      sameSite: 'lax' as const,
+      path: '/',
+      secure: true,
+      domain: '.scsc.dev',
+      ...(maxAge === undefined ? {} : { maxAge }),
+    },
+  };
+}
+
 export const authOptions: NextAuthOptions = {
+  cookies: shareAuthCookies
+    ? {
+        sessionToken: sharedAuthCookie('session-token'),
+        callbackUrl: sharedAuthCookie('callback-url'),
+        state: sharedAuthCookie('state', 15 * 60),
+        pkceCodeVerifier: sharedAuthCookie('pkce.code_verifier', 15 * 60),
+      }
+    : undefined,
   session: {
     strategy: 'jwt',
     maxAge: jwtValidSeconds,
@@ -42,6 +66,18 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      try {
+        const target = new URL(url, baseUrl);
+        if (
+          target.origin === baseUrl ||
+          (shareAuthCookies && target.origin === 'https://en.scsc.dev')
+        ) {
+          return target.href;
+        }
+      } catch {}
+      return baseUrl;
+    },
     async signIn({ user }) {
       if (!user.email || !user.name) {
         return '/us/login?error=no_information';

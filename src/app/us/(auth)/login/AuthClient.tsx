@@ -184,7 +184,10 @@ export default function AuthClient({
 
               await signIn(
                 'google',
-                { callbackUrl: '/us/login/callback?mode=snu' },
+                {
+                  callbackUrl: new URL('/us/login/callback?mode=snu', window.location.origin)
+                    .href,
+                },
                 snuEmailCheck ? { hd: 'snu.ac.kr' } : undefined,
               );
             }}
@@ -216,7 +219,8 @@ export default function AuthClient({
               log('click_external_login_button', { provider: 'google' });
 
               await signIn('google', {
-                callbackUrl: '/us/login/callback?mode=external',
+                callbackUrl: new URL('/us/login/callback?mode=external', window.location.origin)
+                  .href,
               });
             }}
             disabled={inAppWarning}

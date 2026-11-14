@@ -1,33 +1,33 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { normalizeRedirectTarget } from '@/util/loginRedirect';
+import { routing } from '@/i18n/routing';
 
 export function GET(request: NextRequest) {
   const raw = request.cookies.get('redirect_after_login')?.value || null;
+  const target = normalizeRedirectTarget(raw);
 
-  let target = null;
-  if (raw) target = normalizeRedirectTarget(raw);
+  const host = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase();
 
-  let baseUrl = process.env.NEXTAUTH_URL;
-  if (!baseUrl) {
-    console.warn('[consume-redirect] NEXTAUTH_URL is not set; falling back to request.url');
-    baseUrl = request.url;
-  }
-  let redirectUrl;
-  try {
-    redirectUrl = new URL(target || '/', baseUrl);
-  } catch {
-    redirectUrl = new URL(target || '/', request.url);
-  }
+  // i18n에 등록된 도메인만 허용
+  const allowedHost = routing.domains?.some(({ domain }) => domain.toLowerCase() === host);
 
-  const res = NextResponse.redirect(redirectUrl);
+  const isProduction = process.env.NODE_ENV === 'production';
+  const fallbackHost = isProduction ? 'scsc.dev' : 'localhost:3000';
+
+  const origin = `${isProduction ? 'https' : 'http'}://${allowedHost ? host : fallbackHost}`;
+
+  const res = NextResponse.redirect(new URL(target ?? '/', origin));
 
   if (raw) {
     res.cookies.set('redirect_after_login', '', {
       path: '/',
       maxAge: 0,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
     });
   }
 
