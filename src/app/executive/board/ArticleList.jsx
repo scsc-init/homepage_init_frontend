@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import React, { useEffect, useState } from 'react';
 import Button from '@/components/common/Button';
@@ -7,6 +8,7 @@ import styles from './ArticleList.module.css';
 const BOARD_TYPE_OPTIONS = ['TEXT', 'NONE', 'IMAGE', 'FILE'];
 
 export default function ArticleList({ boards: boardsDefault }) {
+  const t = useTranslations('Executive');
   const [boards, setBoards] = useState(boardsDefault ?? []);
   const [articles, setArticles] = useState({});
   const [saving, setSaving] = useState({});
@@ -51,21 +53,25 @@ export default function ArticleList({ boards: boardsDefault }) {
           board_type: board.board_type ?? 'TEXT',
         }),
       });
-      if (res.status === 204) alert('게시판 이름 수정 완료');
-      else alert('게시판 이름 수정 실패: ' + res.status);
+      if (res.status === 204) alert(t('boardRenamed'));
+      else alert(t('boardRenameFailedPrefix') + res.status);
     } catch (err) {
-      alert(`게시판 이름 수정 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+      alert(
+        t('boardRenameFailed', {
+          value0: String(err instanceof Error ? err.message : t('networkError')),
+        }),
+      );
     }
   };
   const deleteBoard = async (id) => {
-    const ok = confirm('게시판을 삭제하시겠습니까?');
+    const ok = confirm(t('confirmDeleteBoard'));
     if (!ok) return;
     try {
       const res = await fetchBackendClient(`/api/executive/board/delete/${id}`, {
         method: 'POST',
       });
       if (res.status === 204) {
-        alert('삭제 완료');
+        alert(t('deleted'));
         setBoards((prev) => prev.filter((b) => b.id !== id));
         setArticles((prev) => {
           const next = { ...prev };
@@ -73,10 +79,14 @@ export default function ArticleList({ boards: boardsDefault }) {
           return next;
         });
       } else {
-        alert('삭제 실패: ' + res.status);
+        alert(t('deleteFailedPrefix') + res.status);
       }
     } catch (err) {
-      alert(`삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+      alert(
+        t('deleteFailedDetail', {
+          value0: String(err instanceof Error ? err.message : t('networkError')),
+        }),
+      );
     }
   };
 
@@ -85,7 +95,7 @@ export default function ArticleList({ boards: boardsDefault }) {
     const content = article.content?.trim() ?? '';
 
     if (!title || !content || !article.board_id) {
-      alert('제목, 내용, 게시판 ID는 필수입니다.');
+      alert(t('postRequiredFields'));
       return;
     }
     const payload = {
@@ -100,20 +110,20 @@ export default function ArticleList({ boards: boardsDefault }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (res.status === 204) alert('✅ 게시글 수정 완료');
+      if (res.status === 204) alert(t('postUpdated'));
       else {
         const error = await res.text();
-        alert('수정 실패: ' + (error || res.status));
+        alert(t('editFailedPrefix') + (error || res.status));
       }
     } catch (err) {
-      alert('요청 실패: ' + err.message);
+      alert(t('requestFailedPrefix') + err.message);
     } finally {
       setSaving((s) => ({ ...s, [article.id]: false }));
     }
   };
 
   const deleteArticle = async (id, boardId) => {
-    const ok = confirm('정말 삭제하시겠습니까?');
+    const ok = confirm(t('confirmDelete'));
     if (!ok) return;
     try {
       const res = await fetchBackendClient(`/api/executive/article/delete/${id}`, {
@@ -125,10 +135,14 @@ export default function ArticleList({ boards: boardsDefault }) {
           [boardId]: prev[boardId].filter((a) => a.id !== id),
         }));
       } else {
-        alert('삭제 실패: ' + res.status);
+        alert(t('deleteFailedPrefix') + res.status);
       }
     } catch (err) {
-      alert(`삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+      alert(
+        t('deleteFailedDetail', {
+          value0: String(err instanceof Error ? err.message : t('networkError')),
+        }),
+      );
     }
   };
 
@@ -136,7 +150,7 @@ export default function ArticleList({ boards: boardsDefault }) {
     <div className={styles.articleSection}>
       {boards.map((board) => (
         <div key={board.id} className={styles.articleSection}>
-          <h3 className={styles.articleSection}>게시판 ID {board.id}</h3>
+          <h3 className={styles.articleSection}>{t('boardId', { value0: board.id ?? '' })}</h3>
 
           <div className={styles.actions}>
             <input
@@ -156,14 +170,14 @@ export default function ArticleList({ boards: boardsDefault }) {
               ))}
             </select>
             <Button className={styles.button} onClick={() => saveBoard(board)}>
-              이름 저장
+              {t('saveName')}
             </Button>
             <Button
               variant="secondary"
               className={styles.button}
               onClick={() => deleteBoard(board.id)}
             >
-              게시판 삭제
+              {t('deleteBoard')}
             </Button>
           </div>
 
@@ -172,9 +186,9 @@ export default function ArticleList({ boards: boardsDefault }) {
               <thead>
                 <tr>
                   <th style={{ width: '10%' }}>ID</th>
-                  <th style={{ width: '30%' }}>제목</th>
-                  <th style={{ width: '45%' }}>내용</th>
-                  <th style={{ width: '15%' }}>작업</th>
+                  <th style={{ width: '30%' }}>{t('title')}</th>
+                  <th style={{ width: '45%' }}>{t('content')}</th>
+                  <th style={{ width: '15%' }}>{t('actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -192,7 +206,7 @@ export default function ArticleList({ boards: boardsDefault }) {
                     </td>
                     <td>
                       {article.content === null ? (
-                        <span>게시글을 불러오지 못했습니다.</span>
+                        <span>{t('postLoadFailed')}</span>
                       ) : (
                         <input
                           className={styles.input}
@@ -210,14 +224,14 @@ export default function ArticleList({ boards: boardsDefault }) {
                           onClick={() => saveArticle(article)}
                           disabled={saving[article.id]}
                         >
-                          저장
+                          {t('save')}
                         </Button>
                         <Button
                           variant="secondary"
                           className={styles.button}
                           onClick={() => deleteArticle(article.id, board.id)}
                         >
-                          삭제
+                          {t('delete')}
                         </Button>
                       </div>
                     </td>

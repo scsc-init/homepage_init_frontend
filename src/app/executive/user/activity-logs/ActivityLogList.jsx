@@ -1,29 +1,30 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchBackendClientJson } from '@/util/fetch/client';
 
 const LIMIT = 50;
 
 const ACTIVITY_LABELS = {
-  SIGNED_UP: '가입했음',
-  REGISTERED: '등록했음',
-  SIG_JOINED: '시그 가입했음',
-  SIG_LEFT: '시그 탈퇴했음',
-  SIG_LEADER_APPOINTED: '시그장이 됨',
+  SIGNED_UP: 'activitySignedUp',
+  REGISTERED: 'activityRegistered',
+  SIG_JOINED: 'activitySigJoined',
+  SIG_LEFT: 'activitySigLeft',
+  SIG_LEADER_APPOINTED: 'activitySigLeader',
 };
 
-function formatDate(value) {
+function formatDate(value, locale) {
   if (!value) return '-';
 
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
 
-  return date.toLocaleString('ko-KR');
+  return date.toLocaleString(locale);
 }
 
-function getActivityLabel(activityType) {
-  return ACTIVITY_LABELS[activityType] ?? activityType;
+function getActivityLabel(activityType, t) {
+  return ACTIVITY_LABELS[activityType] ? t(ACTIVITY_LABELS[activityType]) : activityType;
 }
 
 function getShortId(id) {
@@ -41,6 +42,8 @@ function getUserLabel(id, userNameById) {
 }
 
 export default function ActivityLogList({ users = [] }) {
+  const t = useTranslations('Executive');
+  const locale = useLocale();
   const [logs, setLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -95,14 +98,14 @@ export default function ActivityLogList({ users = [] }) {
         nextIdRef.current = nextLogs[nextLogs.length - 1].id;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '활동 기록을 불러오지 못했습니다.');
+      setError(err instanceof Error ? err.message : t('activityLogsLoadFailed'));
       hasMoreRef.current = false;
       setHasMore(false);
     } finally {
       isLoadingRef.current = false;
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const handleRetry = useCallback(() => {
     setError('');
@@ -142,11 +145,11 @@ export default function ActivityLogList({ users = [] }) {
           <thead>
             <tr>
               <th style={headerStyle}>ID</th>
-              <th style={{ ...headerStyle, minWidth: '8rem' }}>활동</th>
-              <th style={headerStyle}>유저</th>
-              <th style={headerStyle}>처리자</th>
-              <th style={headerStyle}>상세</th>
-              <th style={headerStyle}>생성 시각</th>
+              <th style={{ ...headerStyle, minWidth: '8rem' }}>{t('activity')}</th>
+              <th style={headerStyle}>{t('user')}</th>
+              <th style={headerStyle}>{t('processedBy')}</th>
+              <th style={headerStyle}>{t('detail')}</th>
+              <th style={headerStyle}>{t('creationTime')}</th>
             </tr>
           </thead>
           <tbody>
@@ -154,12 +157,12 @@ export default function ActivityLogList({ users = [] }) {
               <tr key={log.id}>
                 <td style={cellStyle}>{log.id}</td>
                 <td style={{ ...cellStyle, minWidth: '8rem', whiteSpace: 'nowrap' }}>
-                  {getActivityLabel(log.activity_type)}
+                  {getActivityLabel(log.activity_type, t)}
                 </td>
                 <td style={cellStyle}>{getUserLabel(log.user_id, userNameById)}</td>
                 <td style={cellStyle}>{getUserLabel(log.created_by, userNameById)}</td>
                 <td style={cellStyle}>{log.detail || '-'}</td>
-                <td style={cellStyle}>{formatDate(log.created_at)}</td>
+                <td style={cellStyle}>{formatDate(log.created_at, locale)}</td>
               </tr>
             ))}
           </tbody>
@@ -167,23 +170,23 @@ export default function ActivityLogList({ users = [] }) {
       </div>
 
       {logs.length === 0 && !isLoading && !error && (
-        <p style={{ color: '#767676' }}>아직 유저 활동 기록이 없습니다.</p>
+        <p style={{ color: '#767676' }}>{t('noActivityLogs')}</p>
       )}
 
       {error && (
         <div>
           <p style={{ color: '#d33' }}>{error}</p>
           <button type="button" onClick={handleRetry}>
-            다시 시도
+            {t('retry')}
           </button>
         </div>
       )}
 
       <div ref={observerTargetRef} style={{ minHeight: '1px' }} />
 
-      {isLoading && <p style={{ color: '#767676' }}>불러오는 중...</p>}
+      {isLoading && <p style={{ color: '#767676' }}>{t('loading')}</p>}
       {!hasMore && logs.length > 0 && (
-        <p style={{ color: '#767676' }}>마지막 활동 기록입니다.</p>
+        <p style={{ color: '#767676' }}>{t('lastActivityLog')}</p>
       )}
     </div>
   );

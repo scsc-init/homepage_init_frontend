@@ -172,7 +172,7 @@ export default function AuthClient({
             </div>
 
             <div className={styles['copy-button-wrapper']}>
-              <CopyButton link="scsc.dev" label={t('copyLink')} />
+              <CopyButton link={window.location.href} label={t('copyLink')} />
             </div>
 
             <div className={styles['copy-button-wrapper']}>

@@ -7,6 +7,7 @@ import * as validator from '@/util/validator';
 import styles from '../auth.module.css';
 import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
+import Checkbox from '@/components/form-control/Checkbox';
 
 type ValidatorFunction = (value?: string, then?: (isValid: boolean) => void) => void;
 
@@ -197,33 +198,24 @@ export default function ExternalRegisterClient({
               }}
             />
 
-            <label className={styles.KakaoCheckLabel}>
-              <input
-                type="checkbox"
-                className={styles.KakaoCheckInput}
-                checked={kakaoNameDiffers}
-                onChange={(event) => {
-                  const checked = event.target.checked;
+            <Checkbox
+              className={styles.SignupCheckbox}
+              checked={kakaoNameDiffers}
+              onChange={(event) => {
+                const checked = event.target.checked;
 
-                  setKakaoNameDiffers(checked);
+                setKakaoNameDiffers(checked);
 
-                  if (!checked) {
-                    setForm((prev) => ({
-                      ...prev,
-                      kakao_name: '',
-                    }));
-                  }
-                }}
-              />
-
-              <span className={styles.KakaoCheckBox} aria-hidden="true">
-                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-
-              <span>{t('kakaoDifferent')}</span>
-            </label>
+                if (!checked) {
+                  setForm((prev) => ({
+                    ...prev,
+                    kakao_name: '',
+                  }));
+                }
+              }}
+            >
+              {t('kakaoDifferent')}
+            </Checkbox>
 
             {kakaoNameDiffers && (
               <input
@@ -338,32 +330,21 @@ export default function ExternalRegisterClient({
               maxLength={1000}
             />
 
-            <label className={styles.KakaoCheckLabel}>
-              <input
-                type="checkbox"
-                className={styles.KakaoCheckInput}
-                checked={privacyAgreed}
-                onChange={(event) => setPrivacyAgreed(event.target.checked)}
-              />
-
-              <span className={styles.KakaoCheckBox} aria-hidden="true">
-                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-
-              <span>
-                <a
-                  href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.PolicyAnchor}
-                >
-                  {t('privacy')}
-                </a>
-                {t('agreePrivacy')}
-              </span>
-            </label>
+            <Checkbox
+              className={styles.SignupCheckbox}
+              checked={privacyAgreed}
+              onChange={(event) => setPrivacyAgreed(event.target.checked)}
+            >
+              <a
+                href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.PolicyAnchor}
+              >
+                {t('privacy')}
+              </a>
+              {t('agreePrivacy')}
+            </Checkbox>
 
             <p>
               {t('cannotLogin')}

@@ -1,12 +1,14 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
-import { SEMESTER_MAP } from '@/util/constants';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 import { getKvClient, setKvClient } from '@/util/fetch/client-util';
 
 const ENROLLMENT_POLICY_KV_KEY = `enrollment_grant_until`;
 export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
+  const t = useTranslations('Executive');
+  const semesterLabels = t.raw('semesters');
   const [isFetching, setIsFetching] = useState(true);
   const [year, setYear] = useState();
   const [semester, setSemester] = useState();
@@ -28,14 +30,14 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
     try {
       const res = await setKvClient(ENROLLMENT_POLICY_KV_KEY, `${year}-${semester}`);
       if (res.ok) {
-        alert('저장에 성공했습니다.');
+        alert(t('saveSucceeded'));
       } else if (res.status === 401 || res.status === 403) {
-        alert('편집 권한이 없습니다.');
+        alert(t('noEditPermission'));
       } else {
-        alert('저장에 실패했습니다.');
+        alert(t('saveError'));
       }
     } catch (e) {
-      alert('저장 실패: ' + (e?.message || '네트워크 오류'));
+      alert(t('saveFailedPrefix') + (e?.message || t('networkError')));
     } finally {
       setIsFetching(false);
     }
@@ -47,11 +49,13 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
     let cs = scscGlobalStatus?.semester;
     if (!cy || !year) return '';
     while (cy < year || (cy === year && cs <= semester)) {
-      grantSemesters.push(`${cy}-${SEMESTER_MAP[cs]}학기`);
+      grantSemesters.push(
+        t('yearSemester', { value0: String(cy), value1: String(semesterLabels[cs]) }),
+      );
       [cy, cs] = getNextSemester(cy, cs, 1);
     }
     return grantSemesters.join(', ');
-  }, [scscGlobalStatus?.year, scscGlobalStatus?.semester, year, semester]);
+  }, [scscGlobalStatus?.year, scscGlobalStatus?.semester, year, semester, t, semesterLabels]);
 
   const handleSelect = (value) => {
     const [y, s] = value.split('-').map((v) => Number(v));
@@ -63,8 +67,8 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   if (!scscGlobalStatus) {
     return (
       <AdminLayout.AdminSection>
-        <h3>등록 정책 관리</h3>
-        <div>상태를 불러오지 못했습니다.</div>
+        <h3>{t('enrollmentPolicy')}</h3>
+        <div>{t('statusLoadFailed')}</div>
       </AdminLayout.AdminSection>
     );
   }
@@ -72,33 +76,34 @@ export default function EnrollmentPolicyPanel({ scscGlobalStatus }) {
   if (year === undefined || semester === undefined) {
     return (
       <AdminLayout.AdminSection>
-        <h3>등록 정책 관리</h3>
-        <div>등록 정책 로딩 중</div>
+        <h3>{t('enrollmentPolicy')}</h3>
+        <div>{t('enrollmentPolicyLoading')}</div>
       </AdminLayout.AdminSection>
     );
   }
 
   return (
     <AdminLayout.AdminSection>
-      <h3>등록 정책 관리</h3>
+      <h3>{t('enrollmentPolicy')}</h3>
       <div>
-        지금 등록 시
+        {t('enrollmentStart')}{' '}
         <select value={`${year}-${semester}`} onChange={(e) => handleSelect(e.target.value)}>
           {[...Array(8).keys()].map((i) => {
             const [y, s] = getNextSemester(scscGlobalStatus.year, scscGlobalStatus.semester, i);
             return (
               <option value={`${y}-${s}`} key={`${y}-${s}`}>
-                {y}-{SEMESTER_MAP[s]}학기
+                {t('yearSemester', { value0: String(y), value1: String(semesterLabels[s]) })}
               </option>
             );
           })}
         </select>
-        까지 등록됩니다.
-        <br />
-        <span style={{ color: '#767676' }}>지금 등록 시 {grantSemestersStr}에 등록됩니다.</span>
+        {t('enrollmentEnd')} <br />
+        <span style={{ color: '#767676' }}>
+          {t('enrollmentSemesters', { value0: grantSemestersStr ?? '' })}
+        </span>
         <br />
         <AdminLayout.AdminButton onClick={sendData} disabled={isFetching}>
-          저장
+          {t('save')}
         </AdminLayout.AdminButton>
       </div>
     </AdminLayout.AdminSection>

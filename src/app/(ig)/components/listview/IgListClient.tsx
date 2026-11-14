@@ -1,11 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import SortDropdown, { type SortOrder } from '@/components/common/SortDropdown';
 import Button from '@/components/common/Button';
 import type { IgDetail } from '@/app/(ig)/components/detail/types';
 import { sortSigPigTags, type SigPigTag } from '@/app/(ig)/utils/sortSigPigTags';
 import type { IgListItem } from './types';
-import { SEMESTER_MAP } from '@/util/constants';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -27,6 +27,7 @@ export default function IgListClient({
   createHref: string;
 }) {
   const { me } = useMe();
+  const t = useTranslations('Ig');
   const myId = me?.id ? String(me.id) : '';
   const [sortOrder, setSortOrder] = useState<SortOrder>('latest');
   const [selectedTags, setSelectedTags] = useState(
@@ -85,7 +86,7 @@ export default function IgListClient({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className="text-3xl font-bold">{kindLabel} 게시판</h1>
+        <h1 className="text-3xl font-bold">{t('board', { kind: kindLabel })}</h1>
         <div className={styles.headerActions}>
           <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
           <Button
@@ -95,7 +96,7 @@ export default function IgListClient({
             }}
             disabled={isLoading}
           >
-            {kindLabel} 만들기
+            {t('make', { kind: kindLabel })}
           </Button>
         </div>
       </div>
@@ -117,16 +118,12 @@ export default function IgListClient({
       />
 
       <div className={styles.listSummary}>
-        {selectedTags.length > 0 ? (
-          <>
-            선택된 태그 <strong>{selectedTags.map((tag) => `#${tag}`).join(', ')}</strong> 를
-            모두 가진 {kindLabel} <strong>{sortedItems.length}</strong>개
-          </>
-        ) : (
-          <>
-            전체 {kindLabel} <strong>{sortedItems.length}</strong>개
-          </>
-        )}
+        {t.rich(selectedTags.length > 0 ? 'filteredSummary' : 'summary', {
+          kind: kindLabel,
+          count: sortedItems.length,
+          tags: selectedTags.map((tag) => `#${tag}`).join(', '),
+          strong: (chunks) => <strong>{chunks}</strong>,
+        })}
       </div>
 
       <div className={styles.list}>
@@ -151,8 +148,8 @@ export default function IgListClient({
                     {isMine ? (
                       <span
                         className={styles.ownerCrown}
-                        title={`내가 ${kindLabel}장인 ${kindLabel}`}
-                        aria-label={`내가 ${kindLabel}장인 ${kindLabel}`}
+                        title={t('owned', { kind: kindLabel })}
+                        aria-label={t('owned', { kind: kindLabel })}
                         role="img"
                       >
                         <LuCrown aria-hidden="true" />
@@ -161,7 +158,7 @@ export default function IgListClient({
                     <span className={styles.title}>{item.title}</span>
                   </span>
                   <span className={styles.userCount}>
-                    {item.year}년 {SEMESTER_MAP[item.semester]}학기
+                    {t('semester', { year: item.year, semester: String(item.semester) })}
                   </span>
                 </div>
                 <div className={styles.description}>{item.description}</div>
@@ -255,6 +252,7 @@ function SigPigTagFilter({
     string
   >;
 }) {
+  const t = useTranslations('Ig');
   const safeSelectedTags = Array.isArray(selectedTags) ? selectedTags : [];
   const availableTags = getSigPigAvailableTags(items);
 
@@ -278,10 +276,10 @@ function SigPigTagFilter({
   return (
     <div className={classNames.section}>
       <div className={classNames.header}>
-        <span className={classNames.title}>태그 필터</span>
+        <span className={classNames.title}>{t('tagFilter')}</span>
         {safeSelectedTags.length > 0 ? (
           <button type="button" className={classNames.clearButton} onClick={clearTagFilter}>
-            초기화
+            {t('reset')}
           </button>
         ) : null}
       </div>
@@ -295,7 +293,7 @@ function SigPigTagFilter({
           )}
           onClick={clearTagFilter}
         >
-          #전체
+          #{t('all')}
         </button>
         {availableTags.map((tag) => (
           <button

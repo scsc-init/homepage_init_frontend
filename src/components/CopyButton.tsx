@@ -1,12 +1,15 @@
 'use client';
 import styles from './CopyButton.module.css';
+import { useTranslations } from 'next-intl';
 
 type CopyButtonProps = {
   link: string;
   label?: string;
 };
 
-export default function CopyButton({ link, label = '복사' }: CopyButtonProps) {
+export default function CopyButton({ link, label }: CopyButtonProps) {
+  const t = useTranslations('CopyButton');
+
   const handleClick = () => {
     if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(link).catch((err) => {
@@ -20,7 +23,7 @@ export default function CopyButton({ link, label = '복사' }: CopyButtonProps) 
       <span className={styles.icon} aria-hidden="true">
         📋
       </span>
-      <span className={styles.text}>{label}</span>
+      <span className={styles.text}>{label ?? t('label')}</span>
     </button>
   );
 }

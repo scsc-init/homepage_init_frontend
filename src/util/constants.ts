@@ -61,11 +61,16 @@ export const FUND_APPLY_GUIDELINE_LINK =
 
 export interface HeaderMenuItem {
   label: string;
+  /**
+   * 지정 시, messages의 해당 컴포넌트 menu.{labelKey} 번역문이 label 대신 표시됩니다.
+   */
+  labelKey?: string;
   url: string;
 }
 
 export interface HeaderMenuSection {
   title: string;
+  titleKey?: string;
   items: HeaderMenuItem[];
 }
 
@@ -75,34 +80,38 @@ export interface HeaderMenuSection {
 export const headerMenuData: HeaderMenuSection[] = [
   {
     title: 'About us',
+    titleKey: 'about',
     items: [
-      { label: 'SCSC', url: '/about' },
-      { label: 'Welcome Guide', url: '/about/welcome' },
-      { label: 'Rules', url: '/about/rules' },
+      { label: 'SCSC', labelKey: 'scsc', url: '/about' },
+      { label: 'Welcome Guide', labelKey: 'welcome', url: '/about/welcome' },
+      { label: 'Rules', labelKey: 'rules', url: '/about/rules' },
     ],
   },
   {
     title: 'Board',
+    titleKey: 'board',
     items: [
-      { label: 'Project Archives', url: '/board/3' },
-      { label: 'Album', url: '/board/4' },
-      { label: 'Notice', url: '/board/5' },
-      { label: 'Files', url: '/board/7' },
+      { label: 'Project Archives', labelKey: 'projects', url: '/board/3' },
+      { label: 'Album', labelKey: 'album', url: '/board/4' },
+      { label: 'Notice', labelKey: 'notice', url: '/board/5' },
+      { label: 'Files', labelKey: 'files', url: '/board/7' },
     ],
   },
   {
     title: 'SIG/PIG',
+    titleKey: 'sigPig',
     items: [
-      { label: 'SIG', url: '/sig' },
-      { label: '소모임', url: '/small-group' },
-      { label: 'PIG', url: '/pig' },
+      { label: 'SIG', labelKey: 'sig', url: '/sig' },
+      { label: '소모임', labelKey: 'smallGroup', url: '/small-group' },
+      { label: 'PIG', labelKey: 'pig', url: '/pig' },
     ],
   },
   {
     title: 'Contact',
+    titleKey: 'contact',
     items: [
-      { label: 'Contact Us!', url: '/us/contact' },
-      { label: 'Fund Apply', url: '/us/fund-apply/create' },
+      { label: 'Contact Us!', labelKey: 'contactUs', url: '/us/contact' },
+      { label: 'Fund Apply', labelKey: 'fundApply', url: '/us/fund-apply/create' },
     ],
   },
 ];
@@ -111,8 +120,8 @@ export const headerMenuData: HeaderMenuSection[] = [
  * 푸터에 표시되는 페이지 정보입니다.
  */
 export const footerMenuData: HeaderMenuItem[] = [
-  { label: 'Executives', url: '/about/executives' },
-  { label: 'Developers', url: '/about/developers' },
+  { label: 'Executives', labelKey: 'executives', url: '/about/executives' },
+  { label: 'Developers', labelKey: 'developers', url: '/about/developers' },
 ];
 
 export interface FooterLogoItem {

@@ -1,12 +1,13 @@
+import { getTranslations } from 'next-intl/server';
 import WithAuthorization from '@/components/WithAuthorization';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import { fetchUserSummaries } from '@/util/fetch/server-util';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 import IgEdit from './IgEdit';
-import { IG_LABELS } from '../igTypes';
 import IgMembersPanel from './IgMembersPanel';
 
 export default async function IgDetailPage({ params, igType }) {
+  const t = await getTranslations('Executive');
   const { id } = await params;
 
   const [igMeta, users] = await Promise.allSettled([
@@ -24,17 +25,17 @@ export default async function IgDetailPage({ params, igType }) {
     content: raw?.content?.content ?? '',
   };
 
-  const igLabel = IG_LABELS[igType];
+  const igLabel = t.raw('groupLabels')[igType];
 
   return (
     <WithAuthorization>
       <AdminLayout.AdminPanel>
-        <h2>{igLabel} 관리</h2>
+        <h2>{t('groupManagement', { value0: igLabel ?? '' })}</h2>
         <AdminLayout.AdminSection>
           <IgEdit igType={igType} ig={ig} />
         </AdminLayout.AdminSection>
 
-        <h2>{igLabel} 구성원 관리</h2>
+        <h2>{t('groupMembers', { value0: igLabel ?? '' })}</h2>
         <AdminLayout.AdminSection>
           <IgMembersPanel ig={ig} users={users.status === 'fulfilled' ? users.value : []} />
         </AdminLayout.AdminSection>

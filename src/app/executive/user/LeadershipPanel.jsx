@@ -1,23 +1,25 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 import { setKvClient } from '@/util/fetch/client-util';
 
-function renderUserSummary(user) {
-  if (!user) return <span>미지정</span>;
+function renderUserSummary(user, t) {
+  if (!user) return <span>{t('unassigned')}</span>;
   return (
     <AdminLayout.AdminFlex style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
       <span>
         <strong>{user.name}</strong> ({user.email})
       </span>
-      <span>전화번호: {user.phone}</span>
-      <span>학번: {user.student_id}</span>
+      <span>{t('phoneValue', { value0: user.phone ?? '' })}</span>
+      <span>{t('studentIdValue', { value0: user.student_id ?? '' })}</span>
     </AdminLayout.AdminFlex>
   );
 }
 
 export default function LeadershipPanel({ initialLeadership, candidates }) {
+  const t = useTranslations('Executive');
   const [selectedPresidentId, setSelectedPresidentId] = useState(
     initialLeadership?.presidentId ?? '',
   );
@@ -61,18 +63,18 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
       selectedVicePresidentIds &&
       selectedVicePresidentIds.includes(presidentTrimmed)
     ) {
-      alert('회장과 부회장은 서로 다른 인물이어야 합니다.');
+      alert(t('presidentViceConflict'));
       return;
     }
     if (selectedPresidentId == '') {
-      alert('회장 직책은 반드시 지정해야 합니다.');
+      alert(t('presidentRequired'));
       return;
     }
     if (
       new Set(selectedVicePresidentIds.filter((id) => id !== '')).size !==
       selectedVicePresidentIds.filter((id) => id !== '').length
     ) {
-      alert('부회장끼리는 서로 다른 인물이어야 합니다.');
+      alert(t('vicePresidentConflict'));
       return;
     }
     setPending(true);
@@ -86,15 +88,15 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
         const msg1 = prezRes.ok ? '' : await prezRes.text().catch(() => '');
         const msg2 = viceRes.ok ? '' : await viceRes.text().catch(() => '');
         throw new Error(
-          [msg1, msg2].filter(Boolean).join(' | ') || '임원진 정보를 갱신하지 못했습니다.',
+          [msg1, msg2].filter(Boolean).join(' | ') || t('leadershipUpdateFailed'),
         );
       }
 
-      alert('임원진 정보가 갱신되었습니다.');
+      alert(t('leadershipUpdated'));
       window.location.reload();
     } catch (error) {
       console.error(error);
-      alert('임원진 정보를 저장하지 못했습니다.');
+      alert(t('leadershipSaveFailed'));
     } finally {
       setPending(false);
     }
@@ -116,22 +118,22 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
           <AdminLayout.AdminTable>
             <thead>
               <tr>
-                <th style={{ width: '20%' }}>직책</th>
-                <th style={{ width: '40%' }}>현재 등록된 임원</th>
-                <th style={{ width: '40%' }}>변경할 임원 선택</th>
+                <th style={{ width: '20%' }}>{t('position')}</th>
+                <th style={{ width: '40%' }}>{t('currentExecutive')}</th>
+                <th style={{ width: '40%' }}>{t('selectExecutive')}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>회장</td>
-                <td>{renderUserSummary(registeredPresident)}</td>
+                <td>{t('president')}</td>
+                <td>{renderUserSummary(registeredPresident, t)}</td>
                 <td>
                   <AdminLayout.AdminSelect
                     value={selectedPresidentId}
                     onChange={(event) => setSelectedPresidentId(event.target.value)}
                     disabled={pending}
                   >
-                    <option value="">미지정</option>
+                    <option value="">{t('unassigned')}</option>
                     {sortedCandidates.map((candidate) => (
                       <option key={candidate.id} value={String(candidate.id ?? '')}>
                         {candidate.name} ({candidate.email})
@@ -140,19 +142,23 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                   </AdminLayout.AdminSelect>
                   {selectedPresident && (
                     <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-                      선택됨: {selectedPresident.name} / {selectedPresident.email}
+                      {t('selectedExecutive', {
+                        value0: selectedPresident.name ?? '',
+                        value1: selectedPresident.email ?? '',
+                      })}
                     </p>
                   )}
                 </td>
               </tr>
               {selectedVicePresidentIds.map((id, idx) => (
                 <tr key={`${id}-${idx}`}>
-                  <td>부회장</td>
+                  <td>{t('vicePresident')}</td>
                   <td>
                     {renderUserSummary(
                       idx < registeredVicePresidents.length
                         ? registeredVicePresidents[idx]
                         : null,
+                      t,
                     )}
                   </td>
                   <td>
@@ -165,7 +171,7 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                       }}
                       disabled={pending}
                     >
-                      <option value="">미지정</option>
+                      <option value="">{t('unassigned')}</option>
                       {sortedCandidates.map((candidate) => (
                         <option key={candidate.id} value={String(candidate.id ?? '')}>
                           {candidate.name} ({candidate.email})
@@ -174,8 +180,10 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
                     </AdminLayout.AdminSelect>
                     {selectedVicePresident[idx]?.name && (
                       <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-                        선택됨: {selectedVicePresident[idx].name} /{' '}
-                        {selectedVicePresident[idx].email}
+                        {t('selectedExecutive', {
+                          value0: selectedVicePresident[idx].name ?? '',
+                          value1: selectedVicePresident[idx].email ?? '',
+                        })}
                       </p>
                     )}
                   </td>
@@ -186,11 +194,9 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
         </AdminLayout.AdminTableWrap>
         <AdminLayout.AdminActions>
           <AdminLayout.AdminButton type="submit" disabled={pending}>
-            {pending ? '저장 중...' : '변경사항 저장'}
+            {pending ? t('saving') : t('saveChanges')}
           </AdminLayout.AdminButton>
-          <span style={{ fontSize: '0.875rem' }}>
-            선택하지 않으면 해당 직책은 미지정 상태로 저장됩니다.
-          </span>
+          <span style={{ fontSize: '0.875rem' }}>{t('unassignedHelp')}</span>
         </AdminLayout.AdminActions>
       </form>
       <AdminLayout.AdminActions>
@@ -198,9 +204,9 @@ export default function LeadershipPanel({ initialLeadership, candidates }) {
           disabled={pending}
           onClick={() => setSelectedVicePresidentIds((ids) => [...ids, ''])}
         >
-          부회장 추가
+          {t('addVicePresident')}
         </AdminLayout.AdminButton>
-        <span style={{ fontSize: '0.875rem' }}>미지정으로 설정하면 삭제됩니다.</span>
+        <span style={{ fontSize: '0.875rem' }}>{t('removeVicePresidentHelp')}</span>
       </AdminLayout.AdminActions>
     </div>
   );

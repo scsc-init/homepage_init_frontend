@@ -17,6 +17,7 @@ import WriteEditorStandard from './WriteEditorStandard';
 import WriteEditorAlbum from './WriteEditorAlbum';
 import WriteEditorFile from './WriteEditorFile';
 import { useMe } from '@/util/hooks/useMe';
+import { useTranslations } from 'next-intl';
 
 export default function CreateBoardArticleClient({
   boardInfo,
@@ -25,6 +26,7 @@ export default function CreateBoardArticleClient({
   boardInfo: Board;
   boardType: 'image' | 'file' | 'text';
 }) {
+  const t = useTranslations('BoardCreate');
   const router = useRouter();
   const { me, isLoading, isUnauthenticated } = useMe();
   const [submitting, setSubmitting] = useState(false);
@@ -34,10 +36,10 @@ export default function CreateBoardArticleClient({
   useEffect(() => {
     if (isLoading) return;
     if (isUnauthenticated || !me) {
-      alert('로그인이 필요합니다.');
+      alert(t('loginRequired'));
       pushLoginWithRedirect(router);
     }
-  }, [isLoading, isUnauthenticated, me, router]);
+  }, [isLoading, isUnauthenticated, me, router, t]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -71,17 +73,17 @@ export default function CreateBoardArticleClient({
       });
 
       if (res.status === 201) {
-        alert('게시글 작성 완료!');
+        alert(t('success'));
         router.push(`/board/${boardInfo.id}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해 주세요.');
+        alert(t('loginAgain'));
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
-        throw new Error('작성 실패: ' + (err.detail ?? JSON.stringify(err)));
+        throw new Error(t('failed', { error: err.detail ?? JSON.stringify(err) }));
       }
     } catch (err) {
-      alert((err as { message?: string }).message || '네트워크 오류');
+      alert((err as { message?: string }).message || t('networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -91,11 +93,9 @@ export default function CreateBoardArticleClient({
     <div className={styles.CreateContainer}>
       <div className={styles.CreateHeader}>
         <h1 className={styles.CreateTitle}>
-          {boardInfo ? `${boardInfo.name} 게시글 작성` : '게시글 작성'}
+          {boardInfo ? t('title', { name: boardInfo.name }) : t('genericTitle')}
         </h1>
-        <p className={styles.CreateSubtitle}>
-          {boardInfo?.description ?? '게시판 정보를 불러오는 중...'}
-        </p>
+        <p className={styles.CreateSubtitle}>{boardInfo?.description ?? t('loadingBoard')}</p>
       </div>
 
       {boardType === 'image' ? (

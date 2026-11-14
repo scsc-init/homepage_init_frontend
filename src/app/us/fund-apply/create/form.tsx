@@ -17,6 +17,7 @@ import styles from './form.module.css';
 import { GlobalStatus } from '@/types/system';
 
 import { FUND_APPLY_GUIDELINE_LINK } from '@/util/constants';
+import Checkbox from '@/components/form-control/Checkbox';
 const IMAGE_UPLOAD_CONCURRENCY = 3;
 const cx = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(' ');
@@ -74,6 +75,7 @@ export default function FundApplyForm({
   boardId: number;
   globalStatus: GlobalStatus;
 }) {
+  const tImageUpload = useTranslations('ImageUpload');
   const router = useRouter();
   const t = useTranslations('UsFundApply');
   const locale = useLocale();
@@ -313,7 +315,7 @@ export default function FundApplyForm({
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const uploaded = await uploadCompressedImage(file);
+    const uploaded = await uploadCompressedImage(file, tImageUpload);
 
     if (!uploaded?.id) return null;
 
@@ -586,26 +588,22 @@ export default function FundApplyForm({
                         </select>
 
                         {(applyType === 'fund' || applyType === 'meal') && (
-                          <label className={styles.PrevTermInlineCheck}>
-                            <input
-                              type="checkbox"
-                              className={styles.C_Checkbox}
-                              checked={usePrevTerm}
-                              onChange={(e) => {
-                                const next = e.target.checked;
-                                setUsePrevTerm(next);
-                                setValue('target', '', {
-                                  shouldValidate: true,
-                                  shouldDirty: true,
-                                });
-                              }}
-                              disabled={disableOrgSelects || !prevTerm}
-                            />
-                            <span>
-                              {t('previousTerm')}
-                              {displayPrevTermLabel ? ` (${displayPrevTermLabel})` : ''}
-                            </span>
-                          </label>
+                          <Checkbox
+                            className={styles.PrevTermInlineCheck}
+                            checked={usePrevTerm}
+                            onChange={(e) => {
+                              const next = e.target.checked;
+                              setUsePrevTerm(next);
+                              setValue('target', '', {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
+                            }}
+                            disabled={disableOrgSelects || !prevTerm}
+                          >
+                            {t('previousTerm')}
+                            {displayPrevTermLabel ? ` (${displayPrevTermLabel})` : ''}
+                          </Checkbox>
                         )}
                       </div>
                     </div>
@@ -669,15 +667,13 @@ export default function FundApplyForm({
                     </div>
 
                     <div>
-                      <label className={styles.C_CheckRow}>
-                        <input
-                          type="checkbox"
-                          className={styles.C_Checkbox}
-                          {...register('useKakaoPay')}
-                          disabled={submitting}
-                        />
+                      <Checkbox
+                        className={styles.C_CheckRow}
+                        {...register('useKakaoPay')}
+                        disabled={submitting}
+                      >
                         <span className={styles.C_CheckText}>{t('kakaoPay')}</span>
-                      </label>
+                      </Checkbox>
                     </div>
 
                     {!useKakaoPay && (
@@ -896,15 +892,14 @@ export default function FundApplyForm({
                     </div>
                   </div>
 
-                  <label className={styles.C_CheckRow} style={{ marginTop: '1rem' }}>
-                    <input
-                      type="checkbox"
-                      {...register('checked', {
-                        required: t('guidelineRequired'),
-                      })}
-                      className={styles.C_Checkbox}
-                      disabled={submitting}
-                    />
+                  <Checkbox
+                    className={styles.C_CheckRow}
+                    style={{ marginTop: '1rem' }}
+                    {...register('checked', {
+                      required: t('guidelineRequired'),
+                    })}
+                    disabled={submitting}
+                  >
                     <span className={styles.C_CheckText}>
                       <a
                         href={FUND_APPLY_GUIDELINE_LINK}
@@ -916,7 +911,7 @@ export default function FundApplyForm({
                       </a>
                       {t('guidelineAcknowledged')}
                     </span>
-                  </label>
+                  </Checkbox>
                 </div>
 
                 <div>

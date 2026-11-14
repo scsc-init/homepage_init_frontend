@@ -15,10 +15,16 @@ function buildKvsPath(keys: string[] | undefined): string {
 }
 
 export async function getKvsClient(keys: string[]): Promise<string[]>;
+/** Preserves absent keys as undefined so callers can distinguish them from stored empty values. */
+export async function getKvsClient(
+  keys: string[],
+  options: { preserveMissing: true },
+): Promise<Array<string | undefined>>;
 export async function getKvsClient(keys: undefined): Promise<KvResponse[]>;
 export async function getKvsClient(
   keys: string[] | undefined,
-): Promise<string[] | KvResponse[]> {
+  options?: { preserveMissing: true },
+): Promise<Array<string | undefined> | KvResponse[]> {
   if (keys !== undefined && keys.length === 0) return [];
 
   const kvs = await fetchBackendClientJson<KvResponse[]>(buildKvsPath(keys), {}, true);
@@ -26,7 +32,9 @@ export async function getKvsClient(
   if (keys === undefined) return kvs;
 
   const valueByKey = new Map(kvs.map((kv) => [kv.key, kv.value ?? '']));
-  return keys.map((key) => valueByKey.get(key) ?? '');
+  return keys.map((key) =>
+    options?.preserveMissing ? valueByKey.get(key) : (valueByKey.get(key) ?? ''),
+  );
 }
 
 export async function getKvClient(key: string): Promise<string> {
