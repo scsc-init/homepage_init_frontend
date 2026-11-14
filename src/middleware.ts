@@ -1,6 +1,6 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse, type NextRequest } from 'next/server';
-import { REDIRECT_COOKIE, isAllowedRedirectPath } from '@/util/loginRedirect';
+import { isAllowedRedirectPath } from '@/util/loginRedirect';
 import { isPublicBoardId, PUBLIC_BOARD_IDS } from '@/util/constants';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
@@ -9,18 +9,6 @@ function buildReturnPath(req: NextRequest): string | null {
   const { pathname, search } = req.nextUrl;
   const target = `${pathname}${search || ''}`;
   return isAllowedRedirectPath(target) ? target : null;
-}
-
-function isPrefetchRequest(req: NextRequest): boolean {
-  const purpose = req.headers.get('purpose') || '';
-  const secPurpose = req.headers.get('sec-purpose') || '';
-
-  return (
-    req.headers.get('next-router-prefetch') === '1' ||
-    req.headers.get('x-middleware-prefetch') === '1' ||
-    purpose.toLowerCase() === 'prefetch' ||
-    secPurpose.toLowerCase().includes('prefetch')
-  );
 }
 
 async function isPublicArticle(pathname: string): Promise<boolean> {
@@ -151,28 +139,16 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   if (await isPublicArticle(pathname)) return NextResponse.next();
 
   const returnTo = buildReturnPath(req);
-  const shouldPreserveRedirect = returnTo && !isPrefetchRequest(req);
 
   const loginUrl = req.nextUrl.clone();
   loginUrl.pathname = '/us/login';
   loginUrl.search = '';
 
-  if (shouldPreserveRedirect) {
+  if (returnTo) {
     loginUrl.searchParams.set('redirect', returnTo);
   }
 
-  const res = NextResponse.redirect(loginUrl);
-
-  if (shouldPreserveRedirect) {
-    res.cookies.set(REDIRECT_COOKIE, returnTo, {
-      path: '/',
-      maxAge: 300,
-      sameSite: 'lax',
-      secure: req.nextUrl.protocol === 'https:',
-    });
-  }
-
-  return res;
+  return NextResponse.redirect(loginUrl);
 }
 
 const publicRoutes = [

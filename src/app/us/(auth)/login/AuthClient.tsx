@@ -7,7 +7,11 @@ import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/green.css';
 import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
-import { replaceLoginWithRedirect, setRedirectAfterLogin } from '@/util/loginRedirect';
+import {
+  clearRedirectAfterLogin,
+  replaceLoginWithRedirect,
+  setRedirectAfterLogin,
+} from '@/util/loginRedirect';
 import styles from '../auth.module.css';
 import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
@@ -67,13 +71,13 @@ export default function AuthClient({
   const error = params.get('error');
 
   useEffect(() => {
-    if (me) router.replace('/api/auth/consume-redirect');
-  }, [me, router]);
+    clearRedirectAfterLogin();
+    if (initialRedirect) setRedirectAfterLogin(initialRedirect);
+  }, [initialRedirect]);
 
   useEffect(() => {
-    if (!initialRedirect) return;
-    setRedirectAfterLogin(initialRedirect);
-  }, [initialRedirect]);
+    if (me) router.replace('/api/auth/consume-redirect');
+  }, [me, router]);
 
   useEffect(() => {
     if (!error) {
