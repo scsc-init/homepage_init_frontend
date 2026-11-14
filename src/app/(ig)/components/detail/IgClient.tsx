@@ -51,6 +51,24 @@ export default function IgClient({
     !!me &&
     ((typeof me.role === 'number' && me.role >= minExecutiveLevel) || item?.owner === me?.id);
   const isOwner = !!me && item?.owner === me?.id;
+  const normalizedStatus = String(item.status).toLowerCase();
+  const admissionPolicy = item.is_rolling_admission;
+  const admissionPolicyLabel =
+    admissionPolicy === 'always'
+      ? t('admissionAlways')
+      : admissionPolicy === 'during_recruiting'
+        ? t('admissionDuringRecruiting', { kind: t(`kind.${kind}`) })
+        : t('admissionNever');
+  const canJoinNow = isJoinAvailable(normalizedStatus, admissionPolicy);
+  const admissionMessage = canJoinNow
+    ? admissionPolicy === 'during_recruiting'
+      ? t('admissionRecruitingAvailable')
+      : t('admissionAvailable')
+    : normalizedStatus === 'recruiting' || normalizedStatus === 'active'
+      ? admissionPolicy === 'during_recruiting'
+        ? t('admissionRecruitingEnded')
+        : t('admissionNeverNow')
+      : t('admissionUnavailable');
   const hasCreated = item?.created_year != null && item?.created_semester != null;
   const websites = Array.isArray(item?.websites) ? item.websites : [];
   const hasSectionBelowDivider = websites.length > 0 || membersVisible;
@@ -72,7 +90,7 @@ export default function IgClient({
           : ''}
         {t('academicTerm', { year: item.year, semester: String(item.semester) })}
         {' · '}
-        {t('status', { status: t('statusLabel', { status: item.status }) })}
+        {t('status', { status: t('statusLabel', { status: normalizedStatus }) })}
       </p>
       <p className={styles.description}>{item.description}</p>
       {normalizedTagText.length > 0 ? (
@@ -81,21 +99,36 @@ export default function IgClient({
         </div>
       ) : null}
       {!isLoading && me ? (
-        <div className={styles.actionRow}>
-          {isJoinAvailable(item.status, item.is_rolling_admission) ? (
-            <IgJoinLeaveButton kind={kind} igId={itemId} initialIsMember={isMember} />
-          ) : null}
-          <EditIgButton kind={kind} itemId={itemId} canEdit={canEdit} />
-          {isOwner ? (
-            <IgOwnerHandoverButton
-              kind={kind}
-              igId={itemId}
-              members={members}
-              owner={item.owner}
-            />
-          ) : null}
-          <IgDeleteButton kind={kind} itemId={itemId} canDelete={canEdit} isOwner={isOwner} />
-        </div>
+        <>
+          <div className={styles.actionRow}>
+            {canJoinNow ? (
+              <IgJoinLeaveButton kind={kind} igId={itemId} initialIsMember={isMember} />
+            ) : null}
+            <EditIgButton kind={kind} itemId={itemId} canEdit={canEdit} />
+            {isOwner ? (
+              <IgOwnerHandoverButton
+                kind={kind}
+                igId={itemId}
+                members={members}
+                owner={item.owner}
+              />
+            ) : null}
+            {normalizedStatus !== 'inactive' ? (
+              <IgDeleteButton
+                kind={kind}
+                itemId={itemId}
+                canDelete={canEdit}
+                isOwner={isOwner}
+              />
+            ) : null}
+          </div>
+          <section className={styles.admissionInfo} aria-label={t('admissionInfo')}>
+            <strong>{t('admissionInfo')}</strong>
+            <p>
+              {admissionPolicyLabel} - {admissionMessage}
+            </p>
+          </section>
+        </>
       ) : null}
       <hr className={styles.divider} />
       <IgContents kind={kind} content={articleContent} />

@@ -36,6 +36,26 @@
   margin-bottom: 0.5rem;
 }
 
+.admissionInfo {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-card-shadow);
+  border-radius: 0.75rem;
+  color: var(--color-text-subtle);
+  font-size: 0.95rem;
+  background: color-mix(in srgb, var(--color-bg) 85%, var(--color-card-bg) 15%);
+  line-height: 1.5;
+}
+
+.admissionInfo strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--color-text-body);
+}
+
+.admissionInfo p {
+  margin: 0;
+}
+
 .description {
   color: var(--color-text-subtle);
   font-size: 1rem;
