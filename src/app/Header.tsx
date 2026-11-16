@@ -92,7 +92,7 @@ function HeaderCenter() {
               <ul>
                 {items.map((item) => (
                   <li key={item.label}>
-                    <Link className={styles.menuLink} href={item.url}>
+                    <Link className={styles.menuLink} href={item.url} prefetch={item.prefetch}>
                       {item.labelKey ? t(`menu.${item.labelKey}`) : item.label}
                     </Link>
                   </li>
@@ -306,6 +306,7 @@ function MobileMenuList() {
                           <Link
                             className={styles.mobileSubLink}
                             href={item.url}
+                            prefetch={item.prefetch}
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             {item.labelKey ? t(`menu.${item.labelKey}`) : item.label}

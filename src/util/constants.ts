@@ -66,6 +66,7 @@ export interface HeaderMenuItem {
    */
   labelKey?: string;
   url: string;
+  prefetch?: boolean;
 }
 
 export interface HeaderMenuSection {
@@ -111,7 +112,12 @@ export const headerMenuData: HeaderMenuSection[] = [
     titleKey: 'contact',
     items: [
       { label: 'Contact Us!', labelKey: 'contactUs', url: '/us/contact' },
-      { label: 'Fund Apply', labelKey: 'fundApply', url: '/us/fund-apply/create' },
+      {
+        label: 'Fund Apply',
+        labelKey: 'fundApply',
+        url: '/us/fund-apply/create',
+        prefetch: false,
+      },
     ],
   },
 ];
