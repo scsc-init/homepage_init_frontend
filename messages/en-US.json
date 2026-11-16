@@ -264,6 +264,7 @@
     "loadError": "Unable to load the club rules. Please use the link below to read the original."
   },
   "Article": {
+    "backToList": "Back to list",
     "notFound": "Article not found.",
     "emptyContent": "This article is empty.",
     "deleteConfirm": "Are you sure you want to delete this article?",
@@ -675,6 +676,7 @@
     }
   },
   "Ig": {
+    "backToList": "Back to list",
     "kind": {
       "sig": "SIG",
       "pig": "PIG",

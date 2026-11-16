@@ -264,6 +264,7 @@
     "loadError": "회칙을 불러오지 못했습니다. 아래 링크에서 원문을 확인해 주세요."
   },
   "Article": {
+    "backToList": "목록으로",
     "notFound": "게시글을 찾을 수 없습니다.",
     "emptyContent": "내용이 비어 있습니다.",
     "deleteConfirm": "정말 삭제하시겠습니까?",
@@ -675,6 +676,7 @@
     }
   },
   "Ig": {
+    "backToList": "목록으로",
     "kind": {
       "sig": "SIG",
       "pig": "PIG",

@@ -42,6 +42,7 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import styles from './page.module.css';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import Comments from './Comments';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -198,16 +199,24 @@ export default function ArticleDetail() {
         })}
       </p>
 
-      {isAuthor && (
-        <div className={`${styles.ActionRow} ${isDeleting ? 'is-busy' : ''}`}>
-          <button className={styles.Button} onClick={() => router.push(`/article/edit/${id}`)}>
-            {t('edit')}
-          </button>
-          <button className={styles.Button} onClick={handleDelete} disabled={isDeleting}>
-            {isDeleting ? t('deleting') : t('delete')}
-          </button>
-        </div>
-      )}
+      <div className={`${styles.ActionRow} ${isDeleting ? 'is-busy' : ''}`}>
+        <Link href={`/board/${article.board_id}`} className={styles.Button}>
+          {t('backToList')}
+        </Link>
+        {isAuthor && (
+          <>
+            <button
+              className={styles.Button}
+              onClick={() => router.push(`/article/edit/${id}`)}
+            >
+              {t('edit')}
+            </button>
+            <button className={styles.Button} onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? t('deleting') : t('delete')}
+            </button>
+          </>
+        )}
+      </div>
 
       <hr className={styles.Divider} />
 
