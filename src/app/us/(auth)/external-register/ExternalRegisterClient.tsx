@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import * as validator from '@/util/validator';
 import styles from '../auth.module.css';
 import '@/styles/theme.css';
 import { MainLogoImage } from '@/components/common/MainLogoImage';
+import Checkbox from '@/components/form-control/Checkbox';
 
 type ValidatorFunction = (value?: string, then?: (isValid: boolean) => void) => void;
 
@@ -52,6 +54,7 @@ export default function ExternalRegisterClient({
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const t = useTranslations('UsExternalRegister');
   const [submitted, setSubmitted] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [kakaoNameDiffers, setKakaoNameDiffers] = useState(false);
@@ -69,7 +72,7 @@ export default function ExternalRegisterClient({
     const validName = await validateWithCallback(validator.name, trimmedName);
 
     if (!validName) {
-      alert('이름 형식이 올바르지 않습니다(1~64자)');
+      alert(t('invalidName'));
       return;
     }
 
@@ -80,7 +83,7 @@ export default function ExternalRegisterClient({
     const validPhone = await validateWithCallback(validator.phoneNumber, phone);
 
     if (!validPhone) {
-      alert('전화번호 형식이 올바르지 않습니다.');
+      alert(t('invalidPhone'));
       return;
     }
 
@@ -88,7 +91,7 @@ export default function ExternalRegisterClient({
       const validStudentId = await validateWithCallback(validator.studentID, studentId);
 
       if (!validStudentId) {
-        alert('학번 형식이 올바르지 않습니다.');
+        alert(t('invalidStudentId'));
         return;
       }
     }
@@ -110,15 +113,15 @@ export default function ExternalRegisterClient({
       }
 
       if (result.status === 409) {
-        alert('이미 외부회원 가입 신청이 접수된 이메일입니다.');
+        alert(t('duplicateEmail'));
         return;
       }
 
-      alert(result.detail || '가입 신청 중 오류가 발생했습니다.');
+      alert(result.detail || t('applicationError'));
     } catch (error) {
       console.error(error);
 
-      alert('가입 신청 중 네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      alert(t('networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -143,11 +146,11 @@ export default function ExternalRegisterClient({
               />
             </div>
 
-            <h2>가입 신청이 접수되었습니다.</h2>
+            <h2>{t('received')}</h2>
 
-            <p>가입 신청 후 임원진에게 별도로 연락해 주세요.</p>
+            <p>{t('contactOfficers')}</p>
 
-            <p>임원진의 확인 및 승인 후 외부회원으로 로그인할 수 있습니다.</p>
+            <p>{t('approval')}</p>
 
             <button
               type="button"
@@ -155,7 +158,7 @@ export default function ExternalRegisterClient({
                 window.location.href = '/';
               }}
             >
-              홈으로 이동
+              {t('home')}
             </button>
           </div>
         ) : (
@@ -164,9 +167,9 @@ export default function ExternalRegisterClient({
             className={styles.ExternalRegisterForm}
             style={{ marginTop: '2vh' }}
           >
-            <h2>외부회원 가입 신청</h2>
+            <h2>{t('title')}</h2>
 
-            <p>이메일</p>
+            <p>{t('email')}</p>
 
             <input
               value={email}
@@ -177,7 +180,7 @@ export default function ExternalRegisterClient({
               }}
             />
 
-            <p>이름</p>
+            <p>{t('name')}</p>
 
             <input
               value={form.name}
@@ -187,7 +190,7 @@ export default function ExternalRegisterClient({
                   name: event.target.value.slice(0, 64),
                 })
               }
-              placeholder="이름"
+              placeholder={t('namePlaceholder')}
               maxLength={64}
               style={{
                 width: '100%',
@@ -195,33 +198,24 @@ export default function ExternalRegisterClient({
               }}
             />
 
-            <label className={styles.KakaoCheckLabel}>
-              <input
-                type="checkbox"
-                className={styles.KakaoCheckInput}
-                checked={kakaoNameDiffers}
-                onChange={(event) => {
-                  const checked = event.target.checked;
+            <Checkbox
+              className={styles.SignupCheckbox}
+              checked={kakaoNameDiffers}
+              onChange={(event) => {
+                const checked = event.target.checked;
 
-                  setKakaoNameDiffers(checked);
+                setKakaoNameDiffers(checked);
 
-                  if (!checked) {
-                    setForm((prev) => ({
-                      ...prev,
-                      kakao_name: '',
-                    }));
-                  }
-                }}
-              />
-
-              <span className={styles.KakaoCheckBox} aria-hidden="true">
-                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-
-              <span>카톡 프로필 이름이 본명과 다른가요?</span>
-            </label>
+                if (!checked) {
+                  setForm((prev) => ({
+                    ...prev,
+                    kakao_name: '',
+                  }));
+                }
+              }}
+            >
+              {t('kakaoDifferent')}
+            </Checkbox>
 
             {kakaoNameDiffers && (
               <input
@@ -232,7 +226,7 @@ export default function ExternalRegisterClient({
                     kakao_name: event.target.value.slice(0, 64),
                   })
                 }
-                placeholder="카톡 프로필 이름"
+                placeholder={t('kakaoPlaceholder')}
                 maxLength={64}
                 style={{
                   width: '100%',
@@ -241,7 +235,7 @@ export default function ExternalRegisterClient({
               />
             )}
 
-            <p>전화번호</p>
+            <p>{t('phone')}</p>
 
             <div
               style={{
@@ -303,7 +297,7 @@ export default function ExternalRegisterClient({
               />
             </div>
 
-            <p>학번 (선택)</p>
+            <p>{t('studentIdOptional')}</p>
 
             <input
               value={form.student_id}
@@ -313,7 +307,7 @@ export default function ExternalRegisterClient({
                   student_id: event.target.value.replace(/\D/g, '').slice(0, 9),
                 })
               }
-              placeholder="서울대학교 학번이 있는 경우 입력"
+              placeholder={t('studentIdPlaceholder')}
               inputMode="numeric"
               style={{
                 width: '100%',
@@ -321,7 +315,7 @@ export default function ExternalRegisterClient({
               }}
             />
 
-            <p>가입 신청 사유 (선택)</p>
+            <p>{t('reasonOptional')}</p>
 
             <textarea
               value={form.reason}
@@ -331,42 +325,31 @@ export default function ExternalRegisterClient({
                   reason: event.target.value.slice(0, 1000),
                 })
               }
-              placeholder="SCSC 외부회원으로 가입하려는 이유를 입력해주세요."
+              placeholder={t('reasonPlaceholder')}
               className={styles.ReasonTextarea}
               maxLength={1000}
             />
 
-            <label className={styles.KakaoCheckLabel}>
-              <input
-                type="checkbox"
-                className={styles.KakaoCheckInput}
-                checked={privacyAgreed}
-                onChange={(event) => setPrivacyAgreed(event.target.checked)}
-              />
-
-              <span className={styles.KakaoCheckBox} aria-hidden="true">
-                <svg className={styles.KakaoCheckIcon} viewBox="0 0 24 24">
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-
-              <span>
-                <a
-                  href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.PolicyAnchor}
-                >
-                  개인정보 처리방침
-                </a>
-                에 동의합니다.
-              </span>
-            </label>
+            <Checkbox
+              className={styles.SignupCheckbox}
+              checked={privacyAgreed}
+              onChange={(event) => setPrivacyAgreed(event.target.checked)}
+            >
+              <a
+                href="https://github.com/scsc-init/homepage_init/blob/master/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B2%98%EB%A6%AC%EB%B0%A9%EC%B9%A8.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.PolicyAnchor}
+              >
+                {t('privacy')}
+              </a>
+              {t('agreePrivacy')}
+            </Checkbox>
 
             <p>
-              가입 신청 후 임원진 승인 전까지 로그인할 수 없습니다.
+              {t('cannotLogin')}
               <br />
-              가입 신청 후 임원진에게 별도로 연락해 주세요.
+              {t('contactOfficers')}
             </p>
 
             <button
@@ -383,7 +366,7 @@ export default function ExternalRegisterClient({
                 (kakaoNameDiffers && !form.kakao_name.trim())
               }
             >
-              {submitting ? '신청 중...' : '가입 신청하기'}
+              {submitting ? t('submitting') : t('apply')}
             </button>
           </form>
         )}

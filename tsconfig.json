@@ -30,7 +30,7 @@
     ".next/types/**/*.ts",
     "src/app/sig/page.jsx",
     "src/app/sig/create/page.jsx",
-    "src/app/layout.jsx"
+    "src/app/layout.tsx"
   ],
   "exclude": ["node_modules"]
 }

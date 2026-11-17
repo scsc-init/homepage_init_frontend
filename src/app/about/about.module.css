@@ -775,6 +775,7 @@
 
 .definitionRow {
   display: flex;
+  align-items: baseline;
   gap: 1.25rem;
   margin-bottom: 0.4rem;
 }

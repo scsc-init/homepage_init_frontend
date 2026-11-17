@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fetchBackendServer } from '@/util/fetch/server';
+import { routing } from '@/i18n/routing';
 
 export async function GET(
   request: Request,
@@ -10,7 +11,7 @@ export async function GET(
     const resolvedParams = await params;
     const slug = normalizeSlug(resolvedParams?.slug);
     if (!slug) {
-      return await notFoundPage();
+      return await notFoundPage(request);
     }
 
     const res = await fetchBackendServer('GET', `/api/w/${encodePathValue(slug)}`, {
@@ -21,7 +22,7 @@ export async function GET(
     });
 
     if (!res.ok) {
-      return await notFoundPage();
+      return await notFoundPage(request);
     }
     const html = await res.text();
     return new Response(html, {
@@ -33,18 +34,22 @@ export async function GET(
       },
     });
   } catch {
-    return await notFoundPage();
+    return await notFoundPage(request);
   }
 }
 
-async function notFoundPage() {
-  const filePath = path.join(process.cwd(), 'public', 'not-found.html');
+async function notFoundPage(request: Request) {
+  const locale = getRequestLocale(request);
+  const fileName = locale === 'en-US' ? 'not-found.en-US.html' : 'not-found.html';
+  const filePath = path.join(process.cwd(), 'public', fileName);
   let html;
   try {
     html = await fs.readFile(filePath, 'utf-8');
   } catch {
     html =
-      '<!doctype html><html lang="ko"><meta charset="utf-8"><title>404</title><h1>페이지를 찾을 수 없습니다.</h1>';
+      locale === 'en-US'
+        ? '<!doctype html><html lang="en"><meta charset="utf-8"><title>404</title><h1>Page not found</h1>'
+        : '<!doctype html><html lang="ko"><meta charset="utf-8"><title>404</title><h1>페이지를 찾을 수 없습니다.</h1>';
   }
   return new Response(html, {
     status: 404,
@@ -54,6 +59,18 @@ async function notFoundPage() {
       'X-Content-Type-Options': 'nosniff',
     },
   });
+}
+
+function getRequestLocale(request: Request) {
+  const host = (
+    request.headers.get('x-forwarded-host') ??
+    request.headers.get('host') ??
+    ''
+  ).toLowerCase();
+  return (
+    routing.domains?.find((domain) => domain.domain.toLowerCase() === host)?.defaultLocale ??
+    routing.defaultLocale
+  );
 }
 
 function normalizeSlug(slug: string | string[] | undefined) {

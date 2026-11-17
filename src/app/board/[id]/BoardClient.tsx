@@ -21,8 +21,10 @@ import GalleryView from './GalleryView';
 import FileBoardView from './FileBoardView';
 import styles from './board.module.css';
 import { ALBUM_BOARD_ID } from '@/util/constants';
+import { useTranslations } from 'next-intl';
 
 export default function BoardClient({ board }: { board: Board }) {
+  const t = useTranslations('Board');
   const { me } = useMe();
   const [sortOrder, setSortOrder] = useState<SortOrder>('latest');
   const isAlbum = useMemo(() => String(board?.id) === String(ALBUM_BOARD_ID), [board?.id]);
@@ -41,7 +43,9 @@ export default function BoardClient({ board }: { board: Board }) {
         </div>
         {canWrite && (
           <div className={styles.rightAction}>
-            <ButtonLink href={`/board/${board.id}/create?t=${createType}`}>글 작성</ButtonLink>
+            <ButtonLink href={`/board/${board.id}/create?t=${createType}`}>
+              {t('write')}
+            </ButtonLink>
           </div>
         )}
       </div>

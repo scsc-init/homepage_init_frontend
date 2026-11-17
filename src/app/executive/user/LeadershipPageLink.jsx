@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useMe } from '@/util/hooks/useMe';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function LeadershipPageLink() {
+  const t = useTranslations('Executive');
   const { me } = useMe();
   const canManageLeadership = (me?.role ?? 0) >= 1000;
 
@@ -12,7 +14,7 @@ export default function LeadershipPageLink() {
   return (
     <AdminLayout.AdminSection>
       <AdminLayout.AdminLinkButton href="/executive/user/leadership">
-        회장단 전용 페이지로 이동
+        {t('leadershipLink')}
       </AdminLayout.AdminLinkButton>
     </AdminLayout.AdminSection>
   );

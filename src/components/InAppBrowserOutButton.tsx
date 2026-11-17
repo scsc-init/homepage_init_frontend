@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { normalizeRedirectTarget } from '@/util/loginRedirect';
 
 function resolveTargetUrl(redirectTo: string | null | undefined): string {
@@ -22,6 +23,7 @@ type InAppBrowserOutButtonProps = {
 export default function InAppBrowserOutButton({
   redirectTo = null,
 }: InAppBrowserOutButtonProps) {
+  const t = useTranslations('InAppBrowserOutButton');
   const [isRedirectPossible, setIsRedirectPossible] = useState(false);
   const [useragt, setUseragt] = useState('');
 
@@ -50,21 +52,23 @@ export default function InAppBrowserOutButton({
     if (useragt.match(/iphone|ipad|ipod/i)) {
       return (
         <p>
-          상단의 화살표 아이콘({' '}
-          <Image
-            src="/vectors/open-external-link-icon.svg"
-            width={12}
-            height={12}
-            className="ico"
-            alt="arrow button"
-          />{' '}
-          ) 클릭 &rarr; 외부 브라우저로 열기
+          {t.rich('iosGuide', {
+            icon: () => (
+              <Image
+                src="/vectors/open-external-link-icon.svg"
+                width={12}
+                height={12}
+                className="ico"
+                alt=""
+              />
+            ),
+          })}
         </p>
       );
     } else {
-      return <p>상단의 점 세 개( ⋮ ) 클릭 &rarr; 외부 브라우저로 열기</p>;
+      return <p>{t('androidGuide')}</p>;
     }
   }
 
-  return <button onClick={onClick}>외부 브라우저로 이동</button>;
+  return <button onClick={onClick}>{t('openExternal')}</button>;
 }

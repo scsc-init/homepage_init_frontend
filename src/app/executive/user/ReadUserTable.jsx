@@ -1,11 +1,14 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useMemo, useState, useEffect } from 'react';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 import { roleKorean } from '@/util/constants';
 
 export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
+  const t = useTranslations('Executive');
+  const roleLabels = t.raw('roles');
   const [filter, setFilter] = useState({
     name: '',
     kakao_name: '',
@@ -28,12 +31,13 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
         (!filter.kakao_name || lower(u.kakao_name).includes(lower(filter.kakao_name))) &&
         (!filter.role ||
           roleValue.includes(filter.role) ||
-          lower(roleLabel(u.role)).includes(lower(filter.role))) &&
+          lower(roleLabel(u.role)).includes(lower(filter.role)) ||
+          lower(roleLabels[u.role]).includes(lower(filter.role))) &&
         (!filter.status || statusValue === filter.status) &&
         (!filter.major || String(u.major_id) === filter.major)
       );
     });
-  }, [users, filter]);
+  }, [users, filter, roleLabels]);
 
   const [saving, setSaving] = useState({});
 
@@ -50,11 +54,17 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: user.id }),
       });
-      if (res.status === 204) alert(`${user.name} 입금 확인 완료`);
-      else alert(`${user.name} 입금 확인 실패: ${res.status}`);
+      if (res.status === 204) alert(t('depositConfirmed', { value0: String(user.name) }));
+      else
+        alert(
+          t('depositConfirmationFailed', {
+            value0: String(user.name),
+            value1: String(res.status),
+          }),
+        );
     } catch (error) {
       console.error(error);
-      alert(`${user.name} 입금 확인 중 오류가 발생했습니다.`);
+      alert(t('depositConfirmationError', { value0: String(user.name) }));
     } finally {
       setSaving((prev) => ({ ...prev, [user.id]: false }));
     }
@@ -67,18 +77,18 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
 
   return (
     <div>
-      <h3>Read 테이블</h3>
-      <p>전화번호/학번 없이 기본 정보와 입금 여부만 확인할 수 있습니다.</p>
+      <h3>{t('readTable')}</h3>
+      <p>{t('readTableDescription')}</p>
       <AdminLayout.AdminTableWrap>
         <AdminLayout.AdminTable>
           <thead>
             <tr>
-              <th>이름</th>
-              <th>카톡 이름</th>
-              <th>학과</th>
-              <th>권한</th>
-              <th>상태</th>
-              <th>입금 확인</th>
+              <th>{t('name')}</th>
+              <th>{t('kakaoName')}</th>
+              <th>{t('department')}</th>
+              <th>{t('role')}</th>
+              <th>{t('status')}</th>
+              <th>{t('confirmDeposit')}</th>
             </tr>
             <tr>
               <td>
@@ -98,7 +108,7 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   value={filter.major}
                   onChange={(e) => updateFilter('major', e.target.value)}
                 >
-                  <option value="">전공 전체</option>
+                  <option value="">{t('allMajors')}</option>
                   {majors.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.college} - {m.major_name}
@@ -117,10 +127,10 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   value={filter.status}
                   onChange={(e) => updateFilter('status', e.target.value)}
                 >
-                  <option value="">상태 전체</option>
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
-                  <option value="banned">banned</option>
+                  <option value="">{t('allStatuses')}</option>
+                  <option value="active">{t('userStatuses.active')}</option>
+                  <option value="inactive">{t('userStatuses.inactive')}</option>
+                  <option value="banned">{t('userStatuses.banned')}</option>
                 </AdminLayout.AdminSelect>
               </td>
               <td></td>
@@ -134,15 +144,15 @@ export function ReadUserTable({ users: usersDefault = [], majors = [] }) {
                   <td>{user.name}</td>
                   <td>{user.kakao_name || '-'}</td>
                   <td>{majorsMap[user.major_id] || '-'}</td>
-                  <td>{roleLabel(user.role)}</td>
-                  <td>{status}</td>
+                  <td>{roleLabels[user.role] ?? roleLabel(user.role)}</td>
+                  <td>{t(`userStatuses.${status}`)}</td>
                   <td>
                     <AdminLayout.AdminButton
                       variant="secondary"
                       onClick={() => manualEnroll(user)}
                       disabled={saving[user.id]}
                     >
-                      입금 확인
+                      {t('confirmDeposit')}
                     </AdminLayout.AdminButton>
                   </td>
                 </tr>

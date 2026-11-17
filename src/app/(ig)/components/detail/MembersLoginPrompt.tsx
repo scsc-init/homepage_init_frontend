@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useRouter } from 'next/navigation';
 import styles from './IgDetail.module.css';
 
 export default function MembersLoginPrompt() {
   const router = useRouter();
+  const t = useTranslations('Ig');
 
   return (
     <div className={styles.membersLocked}>
@@ -14,7 +16,7 @@ export default function MembersLoginPrompt() {
         className={styles.membersLoginButton}
         onClick={() => pushLoginWithRedirect(router)}
       >
-        로그인 후 확인
+        {t('loginToView')}
       </button>
     </div>
   );

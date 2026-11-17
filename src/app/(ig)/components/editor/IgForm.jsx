@@ -1,35 +1,10 @@
+import { useTranslations } from 'next-intl';
 import TextInput from '@/components/form-control/TextInput';
 import EditorInput from '@/components/form-control/EditorInput';
 import DropdownInput from '@/components/form-control/DropdownInput';
 import ToggleInput from '@/components/form-control/ToggleInput';
 import ButtonInput from '@/components/form-control/ButtonInput';
 import TextListInput from '@/components/form-control/TextListInput';
-import {
-  PIG_ADMISSION_LABEL_MAP,
-  SIG_ADMISSION_LABEL_MAP,
-  SMALL_GROUP_ADMISSION_LABEL_MAP,
-} from '@/util/constants';
-
-const FORM_CONFIG = {
-  sig: {
-    upperLabel: 'SIG',
-    titlePlaceholder: 'AI SIG',
-    descriptionPlaceholder: 'AI를 공부하는 SIG입니다',
-    admissionLabelMap: SIG_ADMISSION_LABEL_MAP,
-  },
-  'small-group': {
-    upperLabel: '소모임',
-    titlePlaceholder: '군입대 소모임',
-    descriptionPlaceholder: '군대를 준비하는 소모임입니다',
-    admissionLabelMap: SMALL_GROUP_ADMISSION_LABEL_MAP,
-  },
-  pig: {
-    upperLabel: 'PIG',
-    titlePlaceholder: 'INIT',
-    descriptionPlaceholder: '홈페이지 관리 PIG입니다',
-    admissionLabelMap: PIG_ADMISSION_LABEL_MAP,
-  },
-};
 
 export default function IgForm({
   kind,
@@ -41,7 +16,8 @@ export default function IgForm({
   isCreate,
   afterFields,
 }) {
-  const config = FORM_CONFIG[kind];
+  const t = useTranslations('Ig');
+  const kindLabel = t(`kind.${kind}`);
 
   return (
     <form
@@ -53,47 +29,47 @@ export default function IgForm({
       }}
     >
       <TextInput
-        label={`${config.upperLabel} 이름`}
-        placeholder={config.titlePlaceholder}
+        label={t('name', { kind: kindLabel })}
+        placeholder={t(`titlePlaceholder.${kind}`)}
         register={register}
         name="title"
       />
       <TextInput
-        label={`${config.upperLabel} 한 줄 설명`}
-        placeholder={config.descriptionPlaceholder}
+        label={t('description', { kind: kindLabel })}
+        placeholder={t(`descriptionPlaceholder.${kind}`)}
         register={register}
         name="description"
       />
       <EditorInput
-        label={`${config.upperLabel} 소개`}
+        label={t('introduction', { kind: kindLabel })}
         control={control}
         name="editor"
         editorKey={editorKey}
       />
       <TextListInput
-        label="웹사이트"
+        label={t('websiteLabel')}
         name="websites"
         register={register}
         control={control}
         inputKey="url"
       />
       <DropdownInput
-        label="가입 기간"
+        label={t('admission')}
         name="is_rolling_admission"
         options={{
-          always: config.admissionLabelMap.always,
-          during_recruiting: config.admissionLabelMap.during_recruiting,
-          never: config.admissionLabelMap.never,
+          always: t('admissionAlways'),
+          during_recruiting: t('admissionRecruiting', { kind: kindLabel }),
+          never: t('admissionNever'),
         }}
         control={control}
       />
       {!isCreate ? (
-        <ToggleInput label="다음 학기에 연장 신청" name="should_extend" control={control} />
+        <ToggleInput label={t('extend')} name="should_extend" control={control} />
       ) : null}
       {afterFields ? <div style={{ margin: '3rem 0' }}>{afterFields}</div> : null}
 
       <ButtonInput isSubmit={true}>
-        {isCreate ? `${config.upperLabel} 생성` : `${config.upperLabel} 수정`}
+        {t(isCreate ? 'create' : 'editHeading', { kind: kindLabel })}
       </ButtonInput>
     </form>
   );

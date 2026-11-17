@@ -3,13 +3,14 @@ import '@/styles/global.css';
 import Header from './Header';
 import Footer from './Footer';
 import ThemeToggle from '@/components/ThemeToggle';
-import Providers from './Providers.jsx';
+import Providers from './Providers';
 import { cookies } from 'next/headers';
 import { unstable_noStore as noStore } from 'next/cache';
 import { fetchGlobalStatus } from '@/util/fetch/server-util';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
 import styles from './layout.module.css';
+import type { ReactNode } from 'react';
 
 const noto_sans_kr = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -36,7 +37,7 @@ export const metadata = {
   icons: { icon: '/favicon.ico' },
 };
 
-export default async function RootLayout({ children }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
   const theme = (await cookies()).get('theme')?.value;
   const initialDark = theme === 'dark' ? true : theme === 'light' ? false : undefined;

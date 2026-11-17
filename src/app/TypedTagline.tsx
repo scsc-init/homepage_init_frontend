@@ -15,6 +15,11 @@ export default function TypedTagline({
   className,
   cursorClassName,
   startDelay = DEFAULT_START_DELAY_MS,
+}: {
+  lines: string[];
+  className?: string;
+  cursorClassName?: string;
+  startDelay?: number;
 }) {
   const started = useHeroIntroStarted();
   const [text, setText] = useState(lines[0]);
@@ -31,7 +36,7 @@ export default function TypedTagline({
 
     setText('');
 
-    let timer;
+    let timer: ReturnType<typeof setTimeout>;
     let lineIndex = 0;
     let charIndex = 0;
     let deleting = false;

@@ -1,12 +1,16 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import Image from 'next/image';
 import { useSwipeable } from 'react-swipeable';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from '../about.module.css';
 import developerStyles from './developers.module.css';
 
-const executives = [
+type Developer = { name: string; image: string; description: string; descriptionKey?: string };
+
+const executives: Developer[] = [
   {
     name: '강명석',
     image: '',
@@ -15,7 +19,8 @@ const executives = [
   {
     name: '김도현',
     image: '/devs/2026-1/doheyn1008.webp',
-    description: '첨융 화이팅!',
+    description: '',
+    descriptionKey: 'doheyn1008',
   },
   {
     name: '김지인',
@@ -25,7 +30,8 @@ const executives = [
   {
     name: '박성현',
     image: '/devs/2026-1/coshaman.webp',
-    description: '난 귀여워!',
+    description: '',
+    descriptionKey: 'coshaman',
   },
   {
     name: '유정균',
@@ -40,7 +46,8 @@ const executives = [
   {
     name: '이주원',
     image: '/devs/2026-1/juwonlee718.webp',
-    description: '크롱크롱~',
+    description: '',
+    descriptionKey: 'juwonlee718',
   },
   {
     name: '이태윤',
@@ -50,11 +57,12 @@ const executives = [
   {
     name: '이한경',
     image: '/devs/2026-1/tteokgook1.webp',
-    description: '이제 갈 때가 됐다',
+    description: '',
+    descriptionKey: 'tteokgook1',
   },
 ];
 
-const formerDevelopersBySemester = [
+const formerDevelopersBySemester: { semester: string; members: Developer[] }[] = [
   {
     semester: '2026-1',
     members: [
@@ -66,7 +74,8 @@ const formerDevelopersBySemester = [
       {
         name: '김도현',
         image: '/devs/2026-1/doheyn1008.webp',
-        description: '첨융 화이팅!',
+        description: '',
+        descriptionKey: 'doheyn1008',
       },
       {
         name: '김지인',
@@ -76,7 +85,8 @@ const formerDevelopersBySemester = [
       {
         name: '박성현',
         image: '/devs/2026-1/coshaman.webp',
-        description: '난 귀여워!',
+        description: '',
+        descriptionKey: 'coshaman',
       },
       {
         name: '유정균',
@@ -91,7 +101,8 @@ const formerDevelopersBySemester = [
       {
         name: '이주원',
         image: '/devs/2026-1/juwonlee718.webp',
-        description: '크롱크롱~',
+        description: '',
+        descriptionKey: 'juwonlee718',
       },
       {
         name: '이태윤',
@@ -101,7 +112,8 @@ const formerDevelopersBySemester = [
       {
         name: '이한경',
         image: '/devs/2026-1/tteokgook1.webp',
-        description: '이제 갈 때가 됐다',
+        description: '',
+        descriptionKey: 'tteokgook1',
       },
       {
         name: '임은후',
@@ -192,10 +204,11 @@ function FormerDevelopersSection({
 }: {
   semesterGroups: typeof formerDevelopersBySemester;
 }) {
+  const t = useTranslations('Developers');
   return (
     <section className={developerStyles.formerDevelopersSection}>
       <div className={developerStyles.formerDevelopersHeader}>
-        <h3 className={developerStyles.formerDevelopersTitle}>과거 개발자</h3>
+        <h3 className={developerStyles.formerDevelopersTitle}>{t('formerTitle')}</h3>
       </div>
 
       <div className={developerStyles.formerSemesterList}>
@@ -221,7 +234,9 @@ function FormerDevelopersSection({
                   <div className={developerStyles.formerMemberText}>
                     <div className={developerStyles.formerMemberName}>{member.name}</div>
                     <div className={developerStyles.formerMemberDescription}>
-                      {member.description}
+                      {member.descriptionKey
+                        ? t(`descriptions.${member.descriptionKey}`)
+                        : member.description}
                     </div>
                   </div>
                 </article>
@@ -234,7 +249,8 @@ function FormerDevelopersSection({
   );
 }
 
-export default function ExecutivesClient() {
+export default function DevelopersClient() {
+  const t = useTranslations('Developers');
   const [centerIndex, setCenterIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
   const autoRef = useRef<ReturnType<typeof setInterval>>();
@@ -324,7 +340,11 @@ export default function ExecutivesClient() {
                 className={styles.image}
               />
               <div className={styles.overlay}>
-                <p className={styles.description}>{person.description}</p>
+                <p className={styles.description}>
+                  {person.descriptionKey
+                    ? t(`descriptions.${person.descriptionKey}`)
+                    : person.description}
+                </p>
               </div>
             </div>
             <h3>{person.name}</h3>

@@ -6,12 +6,12 @@ const MAX_FRAME_S = 0.05;
 const run = { active: false, from: 0, to: 0, begin: 0, duration: 1, at: 0, sampled: 0 };
 
 const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
-export const easeInOutCubic = (t) =>
+export const easeInOutCubic = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-export function beginButtonRun(fromScroll, toScroll, descentMs) {
+export function beginButtonRun(fromScroll: number, toScroll: number, descentMs: number) {
   run.active = true;
   run.from = fromScroll;
   run.to = toScroll;
@@ -25,7 +25,7 @@ export function cancelButtonRun() {
   run.active = false;
 }
 
-export function sampleRun(time) {
+export function sampleRun(time: number): number | null {
   if (!run.active) return null;
 
   const t = (time - run.begin) / run.duration;

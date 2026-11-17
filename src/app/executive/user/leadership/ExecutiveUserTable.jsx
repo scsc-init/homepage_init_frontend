@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useMemo, useState, useEffect } from 'react';
 import * as AdminLayout from '@/app/executive/AdminLayout';
@@ -7,6 +8,7 @@ import ExportUsersButton from '../ExportUsersButton';
 import { roleEnglish, ROLE_OPTIONS } from '@/util/constants';
 
 export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onShowDetail }) {
+  const t = useTranslations('Executive');
   const [users, setUsers] = useState(usersDefault ?? []);
 
   useEffect(() => {
@@ -77,8 +79,8 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),
     });
-    if (res.status === 204) alert(`${user.name} 저장 완료`);
-    else alert(`${user.name} 저장 실패: ${res.status}`);
+    if (res.status === 204) alert(t('userSaved', { value0: String(user.name) }));
+    else alert(t('userSaveFailed', { value0: String(user.name), value1: String(res.status) }));
     setSaving((prev) => ({ ...prev, [user.id]: false }));
   };
 
@@ -89,16 +91,16 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
     }
     try {
       console.info(`User detail (${user.name}):`, JSON.stringify(user, null, 2));
-      alert('브라우저 콘솔에서 JSON 데이터를 확인하세요.');
+      alert(t('checkConsole'));
     } catch (_err) {
-      alert('상세 정보를 출력하지 못했습니다.');
+      alert(t('detailOutputFailed'));
     }
   };
 
   return (
     <div>
-      <h3>회장단 전용 테이블</h3>
-      <p>아래 버튼을 눌러 csv파일을 다운 받으세요.</p>
+      <h3>{t('leadershipTable')}</h3>
+      <p>{t('csvDownloadHelp')}</p>
       <ExportUsersButton allUsers={users} filteredUsers={filteredUsers} />
       <AdminLayout.AdminTableWrap>
         <AdminLayout.AdminTable style={{ minWidth: '1440px' }}>
@@ -115,15 +117,15 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
           </colgroup>
           <thead>
             <tr>
-              <th>이름</th>
-              <th>카톡 이름</th>
-              <th>학과</th>
-              <th>전화번호</th>
-              <th>학번</th>
-              <th>권한</th>
-              <th>상태</th>
-              <th>저장</th>
-              <th>상세 보기</th>
+              <th>{t('name')}</th>
+              <th>{t('kakaoName')}</th>
+              <th>{t('department')}</th>
+              <th>{t('phone')}</th>
+              <th>{t('studentId')}</th>
+              <th>{t('role')}</th>
+              <th>{t('status')}</th>
+              <th>{t('save')}</th>
+              <th>{t('viewDetails')}</th>
             </tr>
             <tr>
               <td>
@@ -143,7 +145,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   value={filter.major}
                   onChange={(e) => updateFilterCriteria('major', e.target.value)}
                 >
-                  <option value="">전공 전체</option>
+                  <option value="">{t('allMajors')}</option>
                   {majors.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.college} - {m.major_name}
@@ -168,10 +170,10 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   value={filter.role}
                   onChange={(e) => updateFilterCriteria('role', e.target.value)}
                 >
-                  <option value="">권한 전체</option>
+                  <option value="">{t('allRoles')}</option>
                   {ROLE_OPTIONS.map((role) => (
                     <option key={role.level} value={String(role.level)}>
-                      {role.korean}
+                      {t.raw('roles')[role.level]}
                     </option>
                   ))}
                 </AdminLayout.AdminSelect>
@@ -181,10 +183,10 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   value={filter.status}
                   onChange={(e) => updateFilterCriteria('status', e.target.value)}
                 >
-                  <option value="">상태 전체</option>
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
-                  <option value="banned">banned</option>
+                  <option value="">{t('allStatuses')}</option>
+                  <option value="active">{t('userStatuses.active')}</option>
+                  <option value="inactive">{t('userStatuses.inactive')}</option>
+                  <option value="banned">{t('userStatuses.banned')}</option>
                 </AdminLayout.AdminSelect>
               </td>
               <td colSpan={2}></td>
@@ -207,7 +209,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                       updateUserField(user.id, 'major_id', Number(e.target.value))
                     }
                   >
-                    <option value="">전공 선택</option>
+                    <option value="">{t('selectMajor')}</option>
                     {majors.map((m) => (
                       <option key={m.id} value={m.id}>
                         {m.college} - {m.major_name}
@@ -234,7 +236,7 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                   >
                     {ROLE_OPTIONS.map((role) => (
                       <option key={role.level} value={role.english}>
-                        {role.korean}
+                        {t.raw('roles')[role.level]}
                       </option>
                     ))}
                   </AdminLayout.AdminSelect>
@@ -244,9 +246,9 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     value={user.is_active ? 'active' : user.is_banned ? 'banned' : 'inactive'}
                     onChange={(e) => updateUserStatus(user.id, e.target.value)}
                   >
-                    <option value="active">active</option>
-                    <option value="inactive">inactive</option>
-                    <option value="banned">banned</option>
+                    <option value="active">{t('userStatuses.active')}</option>
+                    <option value="inactive">{t('userStatuses.inactive')}</option>
+                    <option value="banned">{t('userStatuses.banned')}</option>
                   </AdminLayout.AdminSelect>
                 </td>
                 <td>
@@ -254,12 +256,12 @@ export function ExecutiveUserTable({ users: usersDefault = [], majors = [], onSh
                     onClick={() => sendUserData(user)}
                     disabled={saving[user.id]}
                   >
-                    저장
+                    {t('save')}
                   </AdminLayout.AdminButton>
                 </td>
                 <td>
                   <AdminLayout.AdminButton variant="secondary" onClick={() => showDetail(user)}>
-                    상세 보기
+                    {t('viewDetails')}
                   </AdminLayout.AdminButton>
                 </td>
               </tr>

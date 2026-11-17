@@ -1,5 +1,6 @@
-﻿'use client';
+'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 import type { MouseEvent } from 'react';
 import { useMe } from '@/util/hooks/useMe';
@@ -7,6 +8,7 @@ import styles from './page.module.css';
 
 export default function JoinButton() {
   const { me, isLoading } = useMe();
+  const t = useTranslations('UsContact');
   const ref = useRef<HTMLAnchorElement>(null);
 
   const handleMouseEnter = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -36,9 +38,7 @@ export default function JoinButton() {
       <div className={`${styles.activityBlock} ${styles.fadeInBlock} ${styles.joinUsSection}`}>
         <div className={styles.sectionHeader}>JOIN US:</div>
 
-        <p className={styles.joinDescription}>
-          SCSC에 관심이 있으신가요? 아래 버튼을 눌러 가입 신청서를 작성해주세요.
-        </p>
+        <p className={styles.joinDescription}>{t('joinDescription')}</p>
 
         <a
           href="/us/login"
@@ -56,9 +56,7 @@ export default function JoinButton() {
     <div className={`${styles.activityBlock} ${styles.fadeInBlock} ${styles.joinUsSection}`}>
       <div className={styles.sectionHeader}>WELCOME:</div>
 
-      <p className={styles.joinDescription}>
-        입금 안내, 카카오톡/디스코드 참여 링크는 환영 페이지에서 확인할 수 있습니다.
-      </p>
+      <p className={styles.joinDescription}>{t('welcomeDescription')}</p>
 
       <a
         href="/about/welcome"
@@ -66,7 +64,7 @@ export default function JoinButton() {
         ref={ref}
         onMouseEnter={handleMouseEnter}
       >
-        환영 페이지로 이동
+        {t('welcomeLink')}
       </a>
     </div>
   );

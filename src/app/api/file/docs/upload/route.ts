@@ -1,6 +1,7 @@
 import { fetchBackendServer } from '@/util/fetch/server';
+import type { NextRequest } from 'next/server';
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
@@ -19,7 +20,10 @@ export async function POST(req) {
   } catch (error) {
     console.error('Upload Route Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal Server Error', message: error.message }),
+      JSON.stringify({
+        error: 'Internal Server Error',
+        message: error instanceof Error ? error.message : String(error),
+      }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },

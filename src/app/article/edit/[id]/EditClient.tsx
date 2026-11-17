@@ -20,6 +20,7 @@ import styles from '@/app/board/[id]/create/page.module.css';
 import AttachmentUploader from '@/components/form-control/AttachmentUploader';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
+import { useTranslations } from 'next-intl';
 
 // Preserve the existing optional event calls during the TypeScript migration.
 // App Router does not supply these events; this type does not add them at runtime.
@@ -34,6 +35,7 @@ type RouterWithOptionalEvents = ReturnType<typeof useRouter> & {
 const Editor = dynamic(() => import('@/components/form-control/EditorWrapper'), { ssr: false });
 
 export default function EditClient({ articleId }: { articleId: string }) {
+  const t = useTranslations('ArticleEdit');
   const router = useRouter() as RouterWithOptionalEvents;
   const { me: user, isLoading: isMeLoading, isUnauthenticated } = useMe();
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
   useEffect(() => {
     if (isMeLoading) return;
     if (isUnauthenticated || !user) {
-      alert('로그인이 필요합니다.');
+      alert(t('loginRequired'));
       pushLoginWithRedirect(router);
       return;
     }
@@ -67,7 +69,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
         const article: Article = await articleRes.json();
 
         if (user.id !== article.author_id) {
-          alert('작성자만 수정할 수 있습니다.');
+          alert(t('authorOnly'));
           router.replace(`/article/${articleId}`);
           return;
         }
@@ -85,14 +87,14 @@ export default function EditClient({ articleId }: { articleId: string }) {
         });
         setAttachmentIds(sanitizedIds);
       } catch {
-        alert('게시글 정보를 불러오지 못했습니다.');
+        alert(t('loadFailed'));
         router.replace(`/article/${articleId}`);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [router, articleId, setValue, user, isMeLoading, isUnauthenticated]);
+  }, [router, articleId, setValue, user, isMeLoading, isUnauthenticated, t]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -103,7 +105,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
     };
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
+        const confirmed = confirm(t('leaveConfirm'));
         if (!confirmed) {
           router.events?.emit?.('routeChangeError');
           throw 'Route change aborted by user.';
@@ -116,7 +118,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty, router]);
+  }, [isDirty, router, t]);
 
   const onSubmit = async (data: ArticleFormValues) => {
     setSubmitting(true);
@@ -134,13 +136,13 @@ export default function EditClient({ articleId }: { articleId: string }) {
 
       if (res.status === 204 || res.ok) {
         isFormSubmitted.current = true;
-        alert('수정 완료!');
+        alert(t('success'));
         router.push(`/article/${articleId}`);
       } else if (res.status === 401) {
-        alert('다시 로그인해 주세요.');
+        alert(t('loginAgain'));
         pushLoginWithRedirect(router);
       } else {
-        let errText = '수정 실패';
+        let errText = t('failed');
         try {
           const err = await res.json();
           errText = err.detail || JSON.stringify(err);
@@ -148,7 +150,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
         throw new Error(errText);
       }
     } catch (e) {
-      alert((e as { message?: string }).message || '네트워크 오류');
+      alert((e as { message?: string }).message || t('networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -159,7 +161,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
   return (
     <div className={styles.CreateContainer}>
       <div className={styles.CreateHeader}>
-        <h1 className={styles.CreateTitle}>게시글 수정</h1>
+        <h1 className={styles.CreateTitle}>{t('title')}</h1>
       </div>
 
       <div className={styles.CreateCard}>
@@ -167,7 +169,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
           <input
             type="text"
             {...register('title', { required: true })}
-            placeholder="제목을 입력하세요"
+            placeholder={t('titlePlaceholder')}
             className={styles.Input}
           />
 
@@ -183,7 +185,7 @@ export default function EditClient({ articleId }: { articleId: string }) {
             isFileUpload
           />
           <button type="submit" className={styles.CreateBtn} disabled={submitting}>
-            {submitting ? '수정 중...' : '수정 완료'}
+            {submitting ? t('submitting') : t('submit')}
           </button>
         </form>
       </div>

@@ -1,6 +1,11 @@
 import InAppBrowser from './InAppBrowser';
 
-export default async function BrowserPage(props) {
+type BrowserPageProps = {
+  params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<{ redirect?: string | string[] }>;
+};
+
+export default async function BrowserPage(props: BrowserPageProps) {
   const params = await props.params;
   const searchParams = await props.searchParams;
 

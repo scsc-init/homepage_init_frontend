@@ -1,13 +1,16 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
-import { utc2kst } from '@/util/constants';
+import { formatExecutiveDate } from '@/app/executive/formatExecutiveDate';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function WList({ wMetas }) {
+  const t = useTranslations('Executive');
+  const locale = useLocale();
   const [isBusy, setIsBusy] = useState(false);
   const [createName, setCreateName] = useState('');
   const router = useRouter();
@@ -32,14 +35,14 @@ export default function WList({ wMetas }) {
       });
       if (res.status !== 201) {
         const err = await res.json();
-        alert('파일 처리 실패: ' + err.detail);
+        alert(t('fileFailedPrefix') + err.detail);
       } else {
         router.refresh();
         setCreateName('');
-        alert('파일 처리 성공');
+        alert(t('fileProcessed'));
       }
     } catch {
-      alert('파일 처리 실패');
+      alert(t('fileFailed'));
     } finally {
       setIsBusy(false);
       if (e.target) e.target.value = '';
@@ -63,13 +66,13 @@ export default function WList({ wMetas }) {
       });
       if (res.status !== 200) {
         const err = await res.json();
-        alert('파일 처리 실패: ' + err.detail);
+        alert(t('fileFailedPrefix') + err.detail);
       } else {
         router.refresh();
-        alert('파일 처리 성공');
+        alert(t('fileProcessed'));
       }
     } catch {
-      alert('파일 처리 실패');
+      alert(t('fileFailed'));
     } finally {
       setIsBusy(false);
       if (e.target) e.target.value = '';
@@ -85,13 +88,13 @@ export default function WList({ wMetas }) {
       });
       if (res.status !== 204) {
         const err = await res.json();
-        alert('삭제 실패: ' + err.detail);
+        alert(t('deleteFailedPrefix') + err.detail);
       } else {
         router.refresh();
-        alert('삭제 성공');
+        alert(t('deleteSuccess'));
       }
     } catch {
-      alert('삭제 실패');
+      alert(t('deleteFailed'));
     } finally {
       setIsBusy(false);
     }
@@ -117,7 +120,7 @@ export default function WList({ wMetas }) {
         URL.revokeObjectURL(url);
       }
     } catch {
-      alert('다운로드 실패');
+      alert(t('downloadFailed'));
     } finally {
       setIsBusy(false);
     }
@@ -126,20 +129,20 @@ export default function WList({ wMetas }) {
   return (
     <div className={isBusy ? 'is-busy' : undefined}>
       <AdminLayout.AdminSection>
-        <h3>HTML 페이지 목록</h3>
+        <h3>{t('htmlPages')}</h3>
         <AdminLayout.AdminTableWrap>
           <AdminLayout.AdminTable>
             <thead>
               <tr>
-                <th>페이지명</th>
-                <th>최종수정자</th>
-                <th>파일크기(Bytes)</th>
-                <th>생성시각</th>
-                <th>수정시각</th>
-                <th>조회수</th>
-                <th>수정버튼</th>
-                <th>다운로드버튼</th>
-                <th>삭제버튼</th>
+                <th>{t('pageName')}</th>
+                <th>{t('lastEditor')}</th>
+                <th>{t('fileSize')}</th>
+                <th>{t('createdAt')}</th>
+                <th>{t('updatedAt')}</th>
+                <th>{t('views')}</th>
+                <th>{t('editAction')}</th>
+                <th>{t('downloadAction')}</th>
+                <th>{t('deleteAction')}</th>
               </tr>
             </thead>
             <tbody>
@@ -150,8 +153,8 @@ export default function WList({ wMetas }) {
                   </td>
                   <td>{w[1]}</td>
                   <td>{w[0].size}</td>
-                  <td>{utc2kst(w[0].created_at)}</td>
-                  <td>{utc2kst(w[0].updated_at)}</td>
+                  <td>{formatExecutiveDate(w[0].created_at, locale)}</td>
+                  <td>{formatExecutiveDate(w[0].updated_at, locale)}</td>
                   <td>{w[0].view_cnt}</td>
                   <td>
                     <input
@@ -168,7 +171,7 @@ export default function WList({ wMetas }) {
                       onClick={() => onClickDownload(w[0].name)}
                       disabled={isBusy}
                     >
-                      다운로드
+                      {t('download')}
                     </AdminLayout.AdminButton>
                   </td>
 
@@ -178,7 +181,7 @@ export default function WList({ wMetas }) {
                       onClick={() => onClickDelete(w[0].name)}
                       disabled={isBusy}
                     >
-                      페이지 삭제
+                      {t('deletePage')}
                     </AdminLayout.AdminButtonDanger>
                   </td>
                 </tr>
@@ -189,12 +192,12 @@ export default function WList({ wMetas }) {
       </AdminLayout.AdminSection>
 
       <AdminLayout.AdminSection>
-        <h3>HTML 파일 업로드</h3>
-        <p>페이지명을 아래에 작성하지 않으면 파일명이 페이지명으로 지정됩니다</p>
+        <h3>{t('htmlUpload')}</h3>
+        <p>{t('htmlPageNameHelp')}</p>
         <AdminLayout.AdminActions>
           <input
             type="text"
-            placeholder="예: scpc2026/sponsors"
+            placeholder={t('pageNamePlaceholder')}
             value={createName}
             onChange={(e) => setCreateName(e.target.value)}
             disabled={isBusy}

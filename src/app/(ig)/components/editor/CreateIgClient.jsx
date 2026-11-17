@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import IgForm from '@/app/(ig)/components/editor/IgForm';
 import styles from '@/app/(ig)/components/editor/IgEditorPage.module.css';
@@ -12,29 +13,23 @@ import { sanitizeWebsites } from '@/util/websites';
 
 const CREATE_CONFIG = {
   sig: {
-    upperLabel: 'SIG',
     storageKey: 'sigForm',
     routeBase: '/sig',
     tags: ['SIG'],
-    subtitle: '새로운 SIG를 만들어 보세요',
     getDefaultRolling: (status) => (status === 'active' ? 'always' : 'during_recruiting'),
     shouldWarnRolling: (status, value) => status === 'active' && !value,
   },
   'small-group': {
-    upperLabel: '소모임',
     storageKey: 'smallGroupForm',
     routeBase: '/small-group',
     tags: ['소모임'],
-    subtitle: '새로운 소모임을 만들어 보세요',
     getDefaultRolling: (status) => (status === 'active' ? 'always' : 'during_recruiting'),
     shouldWarnRolling: (status, value) => status === 'active' && !value,
   },
   pig: {
-    upperLabel: 'PIG',
     storageKey: 'pigForm',
     routeBase: '/pig',
     tags: ['PIG'],
-    subtitle: '새로운 PIG를 만들어 보세요',
     getDefaultRolling: (status) =>
       typeof status === 'active' ? 'always' : 'during_recruiting',
     shouldWarnRolling: (status, value) =>
@@ -44,6 +39,8 @@ const CREATE_CONFIG = {
 
 export default function CreateIgClient({ kind, scscGlobalStatus }) {
   const config = CREATE_CONFIG[kind];
+  const t = useTranslations('Ig');
+  const kindLabel = t(`kind.${kind}`);
   const router = useRouter();
   const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
@@ -107,7 +104,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
 
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
+        const confirmed = confirm(t('unsaved'));
         if (!confirmed) {
           router.events.emit('routeChangeError');
           throw 'Route change aborted by user.';
@@ -122,26 +119,20 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty, router]);
+  }, [isDirty, router, t]);
 
   const onSubmit = async (data) => {
     if (submitting) return;
 
     if (!user) {
-      alert('잠시 뒤 다시 시도해주세요');
+      alert(t('retryLater'));
       return;
     } else if (config.shouldWarnRolling(scscGlobalStatus, data.is_rolling_admission)) {
-      if (
-        !confirm(
-          '가입 기간 자유화를 활성화하지 않으면 다른 사람이 가입할 수 없습니다. 그래도 계속 진행하시겠습니까?',
-        )
-      ) {
+      if (!confirm(t('rollingWarning'))) {
         return;
       }
     } else if (!user.discord_id) {
-      if (
-        !confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?')
-      ) {
+      if (!confirm(t('discordWarning'))) {
         return;
       }
     }
@@ -165,18 +156,18 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
       if (res.status === 201) {
         isFormSubmitted.current = true;
         sessionStorage.removeItem(config.storageKey);
-        alert(`${config.upperLabel} 생성 성공!`);
+        alert(t('createSuccess', { kind: kindLabel }));
         router.push(config.routeBase);
         router.refresh();
       } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json().catch(() => ({}));
-        alert(`${config.upperLabel} 생성 실패: ` + (err.detail ?? JSON.stringify(err)));
+        alert(t('createFailure', { kind: kindLabel }) + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err?.message || '네트워크 오류');
+      alert(err?.message || t('networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -186,8 +177,8 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <h1 className={styles.title}>{`신규 ${config.upperLabel} 개설`}</h1>
-          <p className={styles.subtitle}>{config.subtitle}</p>
+          <h1 className={styles.title}>{t('createHeading', { kind: kindLabel })}</h1>
+          <p className={styles.subtitle}>{t('createSubtitle', { kind: kindLabel })}</p>
         </div>
         <IgForm
           kind={kind}

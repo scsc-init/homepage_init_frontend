@@ -1,16 +1,10 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  STATUS_MAP,
-  SEMESTER_MAP,
-  SIG_ADMISSION_LABEL_MAP,
-  SMALL_GROUP_ADMISSION_LABEL_MAP,
-  PIG_ADMISSION_LABEL_MAP,
-} from '@/util/constants';
-import { IG_LABELS } from '../igTypes';
+import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
@@ -44,6 +38,7 @@ const sanitizeWebsites = (websites = []) =>
     }));
 
 const renderIgEdit = (ig, ctx) => {
+  const { t } = ctx;
   const igIdStr = String(ig.id);
   const ownerIdStr = ig?.owner != null ? String(ig.owner) : '';
   const members = Array.isArray(ig?.members) ? ig.members : [];
@@ -57,12 +52,12 @@ const renderIgEdit = (ig, ctx) => {
         <td>{ig.id}</td>
       </tr>
 
-      {renderIgRow(ig, ctx, 'title', '이름')}
-      {renderIgRow(ig, ctx, 'description', '설명')}
-      {renderIgRow(ig, ctx, 'content', '내용')}
+      {renderIgRow(ig, ctx, 'title', t('name'))}
+      {renderIgRow(ig, ctx, 'description', t('description'))}
+      {renderIgRow(ig, ctx, 'content', t('content'))}
 
       <tr>
-        <td>웹사이트</td>
+        <td>{t('website')}</td>
         <td>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {(Array.isArray(ig.websites) ? ig.websites : []).map((website, index) => (
@@ -79,7 +74,7 @@ const renderIgEdit = (ig, ctx) => {
                   onClick={() => ctx.removeWebsite(index)}
                   disabled={ctx.saving}
                 >
-                  삭제
+                  {t('delete')}
                 </button>
               </AdminLayout.AdminFlex>
             ))}
@@ -88,14 +83,14 @@ const renderIgEdit = (ig, ctx) => {
               onClick={ctx.addWebsite}
               disabled={ctx.saving}
             >
-              웹사이트 추가
+              {t('addWebsite')}
             </AdminLayout.AdminButton>
           </div>
         </td>
       </tr>
 
       <tr>
-        <td>상태</td>
+        <td>{t('status')}</td>
         <td>
           <AdminLayout.AdminSelect
             value={ig.status ?? ''}
@@ -103,17 +98,17 @@ const renderIgEdit = (ig, ctx) => {
           >
             {Object.keys(STATUS_MAP).map((key) => (
               <option key={key} value={key}>
-                {STATUS_MAP[key]}
+                {t.raw('statuses')[key]}
               </option>
             ))}
           </AdminLayout.AdminSelect>
         </td>
       </tr>
 
-      {renderIgRow(ig, ctx, 'year', '연도')}
+      {renderIgRow(ig, ctx, 'year', t('year'))}
 
       <tr>
-        <td>학기</td>
+        <td>{t('semester')}</td>
         <td>
           <AdminLayout.AdminSelect
             value={ig.semester ?? ''}
@@ -121,7 +116,7 @@ const renderIgEdit = (ig, ctx) => {
           >
             {Object.keys(SEMESTER_MAP).map((key) => (
               <option key={key} value={key}>
-                {SEMESTER_MAP[key]}학기
+                {t('semesterLabel', { value0: t.raw('semesters')[key] ?? '' })}
               </option>
             ))}
           </AdminLayout.AdminSelect>
@@ -129,58 +124,66 @@ const renderIgEdit = (ig, ctx) => {
       </tr>
 
       <tr>
-        <td>최초 생성 연도</td>
+        <td>{t('creationYear')}</td>
         <td>{ig.created_year ?? ''}</td>
       </tr>
 
       <tr>
-        <td>최초 생성 학기</td>
+        <td>{t('creationSemester')}</td>
         <td>
           {ig.created_semester != null
-            ? `${SEMESTER_MAP[Number(ig.created_semester)] ?? ig.created_semester}학기`
+            ? t('semesterLabel', {
+                value0:
+                  t.raw('semesters')[Number(ig.created_semester)] ?? ig.created_semester ?? '',
+              })
             : ''}
         </td>
       </tr>
 
       <tr>
-        <td>연장 신청</td>
+        <td>{t('extensionRequested')}</td>
         <td>
           <AdminLayout.AdminSelectBool
             value={String(Boolean(ig.should_extend))}
             onChange={(e) => ctx.updateIgField('should_extend', e.target.value === 'true')}
           >
-            <option value="true">예</option>
-            <option value="false">아니오</option>
+            <option value="true">{t('yes')}</option>
+            <option value="false">{t('no')}</option>
           </AdminLayout.AdminSelectBool>
         </td>
       </tr>
 
       <tr>
-        <td>가입기간</td>
+        <td>{t('admissionPeriod')}</td>
         <td>
           <AdminLayout.AdminSelectBoolWide
             value={ig['is_rolling_admission'] ?? 'during_recruiting'}
             onChange={(e) => ctx.updateIgField('is_rolling_admission', e.target.value)}
           >
-            <option value="always">{ctx.admissionLabelMap.always}</option>
-            <option value="never">{ctx.admissionLabelMap.never}</option>
-            <option value="during_recruiting">{ctx.admissionLabelMap.during_recruiting}</option>
+            <option value="always">{t('admissionAlways')}</option>
+            <option value="never">{t('admissionNever')}</option>
+            <option value="during_recruiting">
+              {t('admissionDuringRecruiting', { group: ctx.igLabel ?? '' })}
+            </option>
           </AdminLayout.AdminSelectBoolWide>
         </td>
       </tr>
 
       <tr>
-        <td>{`${ctx.igLabel}장`}</td>
+        <td>{t('groupLeader', { value0: String(ctx.igLabel) })}</td>
         <td>
           <AdminLayout.AdminSelect
             value={selected || ''}
             onChange={(e) => ctx.setSelectedMember(e.target.value)}
           >
-            {members.length === 0 ? <option value="">(없음)</option> : null}
+            {members.length === 0 ? <option value="">{t('none')}</option> : null}
             {members.map((m, idx) => {
               const mid = m?.user_id != null ? String(m.user_id) : '';
               const name = m?.user?.name ?? '';
-              const label = mid && mid === ownerIdStr ? `[${ctx.igLabel}장] ${name}` : name;
+              const label =
+                mid && mid === ownerIdStr
+                  ? t('groupLeaderName', { value0: String(ctx.igLabel), value1: String(name) })
+                  : name;
               return (
                 <option key={`${igIdStr}-${mid || name}-${idx}`} value={mid}>
                   {label}
@@ -209,6 +212,7 @@ function renderIgRow(ig, ctx, attrName, attrLabel) {
 }
 
 export default function IgExecutiveEdit({ ig: _ig, igType }) {
+  const t = useTranslations('Executive');
   const [saving, setSaving] = useState(false);
   const [ig, setIg] = useState({
     ..._ig,
@@ -221,7 +225,7 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
   const isSig = igType === 'sig';
   const isSmallGroup = igType === 'small-group';
   const canEditTags = isSig || isSmallGroup;
-  const igLabel = IG_LABELS[igType];
+  const igLabel = t.raw('groupLabels')[igType];
 
   const handleSave = async () => {
     try {
@@ -243,7 +247,12 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
       });
       if (!res1.ok) {
         const msg1 = await res1.json();
-        alert(`저장 실패. ${igLabel} 정보 수정: ${msg1?.detail ?? res1.status}`);
+        alert(
+          t('groupSaveFailed', {
+            value0: String(igLabel),
+            value1: String(msg1?.detail ?? res1.status),
+          }),
+        );
         setSaving(false);
         return;
       }
@@ -258,21 +267,26 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
           body: JSON.stringify({ new_owner: selectedMember }),
         });
       }
-      if (!res2 || res2.ok) alert('저장 완료');
+      if (!res2 || res2.ok) alert(t('saved'));
       else {
         const msg2 = res2 ? await res2.json() : undefined;
-        alert(`저장 실패. ${igLabel} 변경: ${msg2?.detail ?? res2.status}`);
+        alert(
+          t('groupChangeFailed', {
+            value0: String(igLabel),
+            value1: String(msg2?.detail ?? res2.status),
+          }),
+        );
       }
       router.refresh();
     } catch (err) {
-      alert(err.message || '저장 실패: 네트워크 오류');
+      alert(err.message || t('saveNetworkError'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+    if (!confirm(t('confirmDelete'))) return;
     try {
       setSaving(true);
       const res = await fetchBackendClient(`/api/executive/sig/${id}/delete`, {
@@ -282,10 +296,10 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
         router.replace(`/executive/${igType}`);
       } else {
         const msg = await res.json();
-        alert('삭제 실패: ' + (msg.detail ?? res.status));
+        alert(t('deleteFailedPrefix') + (msg.detail ?? res.status));
       }
     } catch {
-      alert('삭제 실패: 네트워크 오류');
+      alert(t('deleteNetworkError'));
     } finally {
       setSaving(false);
     }
@@ -324,6 +338,7 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
   };
 
   const rowCtx = {
+    t,
     saving,
     selectedMember,
     setSelectedMember,
@@ -334,11 +349,6 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
     handleSave,
     handleDelete,
     igLabel,
-    admissionLabelMap: isSmallGroup
-      ? SMALL_GROUP_ADMISSION_LABEL_MAP
-      : isSig
-        ? SIG_ADMISSION_LABEL_MAP
-        : PIG_ADMISSION_LABEL_MAP,
   };
 
   return (
@@ -349,8 +359,8 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
         </colgroup>
         <thead>
           <tr>
-            <th>속성</th>
-            <th>값</th>
+            <th>{t('attribute')}</th>
+            <th>{t('value')}</th>
           </tr>
         </thead>
         <tbody>{renderIgEdit(ig, rowCtx)}</tbody>
@@ -358,6 +368,7 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
       {canEditTags ? (
         <div style={{ marginTop: '16px', marginBottom: '16px' }}>
           <SigTagManager
+            translate={t}
             ref={tagManagerRef}
             targetLabel={igLabel}
             sigId={ig.id}
@@ -369,10 +380,10 @@ export default function IgExecutiveEdit({ ig: _ig, igType }) {
       ) : null}
       <div>
         <AdminLayout.AdminButton onClick={handleSave} disabled={saving}>
-          저장
+          {t('save')}
         </AdminLayout.AdminButton>
         <AdminLayout.AdminButton onClick={() => handleDelete(ig.id)} disabled={saving}>
-          삭제
+          {t('delete')}
         </AdminLayout.AdminButton>
       </div>
     </div>

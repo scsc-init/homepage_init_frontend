@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import ScscStatusPanel from './ScscStatusPanel';
 import DiscordBotPanel from './DiscordBotPanel';
 import EnrollmentPolicyPanel from './EnrollmentPolicyPanel';
@@ -5,6 +6,7 @@ import { fetchGlobalStatus, fetchDiscordBotStatus } from '@/util/fetch/server-ut
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default async function AdminPanel() {
+  const t = await getTranslations('Executive');
   const [scscGlobalStatus, discordBotStatus] = await Promise.allSettled([
     fetchGlobalStatus(),
     fetchDiscordBotStatus(),
@@ -24,11 +26,10 @@ export default async function AdminPanel() {
         }}
       >
         <span style={{ color: 'var(--color-button-alert-bg)', fontWeight: 600 }}>
-          * 이 영역에는 시스템에 직접적인 영향을 미칠 수 있는 기능이 포함되어 있습니다. 조작 시
-          주의해주세요. *
+          {t('systemWarning')}
         </span>
 
-        <h2>SCSC status 관리</h2>
+        <h2>{t('scscStatus')}</h2>
         <AdminLayout.AdminSection>
           <EnrollmentPolicyPanel scscGlobalStatus={resolvedScscGlobalStatus} />
         </AdminLayout.AdminSection>
@@ -41,7 +42,7 @@ export default async function AdminPanel() {
         </AdminLayout.AdminSection>
       </div>
 
-      <h2>디스코드 봇 관리</h2>
+      <h2>{t('discordBotManagement')}</h2>
       <AdminLayout.AdminSection>
         <DiscordBotPanel
           is_logged_in={

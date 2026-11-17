@@ -1,10 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
-import { SEMESTER_MAP } from '@/util/constants';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { STATUS_MAP } from '@/util/constants';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 const TRANSITION_MAP_REGULAR = {
@@ -27,6 +26,9 @@ const getNextStatus = (currentStatus, currentSemester, currentYear) => {
 };
 
 export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
+  const t = useTranslations('Executive');
+  const statusLabels = t.raw('statuses');
+  const semesterLabels = t.raw('semesters');
   const [currentStatus, setCurrentStatus] = useState(scscGlobalStatus);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
@@ -48,12 +50,12 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
       body: JSON.stringify({ status: selectedStatus }),
     });
     if (res.status === 204) {
-      alert('상태가 변경되었습니다.');
+      alert(t('statusChanged'));
       setCurrentStatus(selectedStatus);
       router.refresh();
     } else {
       const error = await res.text();
-      alert('업데이트 실패: ' + error);
+      alert(t('updateFailedPrefix') + error);
     }
     setSaving(false);
     setModalOpen(false);
@@ -62,22 +64,30 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
   const [nextStatus, nextSemester, nextYear] = currentStatus
     ? getNextStatus(currentStatus, semester, year)
     : [null, null, null];
-  const totalRequiredPhrase = `${nextYear}-${SEMESTER_MAP[nextSemester]} ${STATUS_MAP[nextStatus]}으로 변경`;
+  const totalRequiredPhrase = t('statusConfirmation', {
+    value0: String(nextYear),
+    value1: String(semesterLabels[nextSemester]),
+    value2: String(statusLabels[nextStatus]),
+  });
 
   return (
     <>
       {currentStatus && modalOpen && (
         <AdminLayout.AdminModalOverlay>
           <AdminLayout.AdminModalCard>
-            <h3>상태 변경 확인</h3>
+            <h3>{t('confirmStatusChange')}</h3>
             <h4>
-              {year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}
-              학기
+              {t('semesterTransition', {
+                value0: year ?? '',
+                value1: semesterLabels[semester] ?? '',
+                value2: nextYear ?? '',
+                value3: semesterLabels[nextSemester] ?? '',
+              })}
             </h4>
             <h4>
-              {STATUS_MAP[currentStatus]} → {STATUS_MAP[nextStatus]}
+              {statusLabels[currentStatus]} → {statusLabels[nextStatus]}
             </h4>
-            <p>다음 문구를 입력해야 변경됩니다:</p>
+            <p>{t('confirmationInstructions')}</p>
             <AdminLayout.AdminPre style={{ userSelect: 'none' }}>
               {totalRequiredPhrase}
             </AdminLayout.AdminPre>
@@ -85,17 +95,17 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
               type="text"
               value={confirmationText}
               onChange={(e) => setConfirmationText(e.target.value)}
-              placeholder="확인 문구 입력"
+              placeholder={t('confirmationPlaceholder')}
             />
             <AdminLayout.AdminFlex style={{ justifyContent: 'flex-end' }}>
               <AdminLayout.AdminButton variant="secondary" onClick={() => setModalOpen(false)}>
-                취소
+                {t('cancel')}
               </AdminLayout.AdminButton>
               <AdminLayout.AdminButton
                 onClick={handleConfirmSave}
                 disabled={confirmationText !== totalRequiredPhrase || saving}
               >
-                확인
+                {t('confirm')}
               </AdminLayout.AdminButton>
             </AdminLayout.AdminFlex>
           </AdminLayout.AdminModalCard>
@@ -103,18 +113,22 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
       )}
 
       <AdminLayout.AdminSection>
-        <h3>SCSC 전체 상태 관리</h3>
+        <h3>{t('globalStatus')}</h3>
         {!currentStatus ? (
-          <div>상태를 불러오지 못했습니다.</div>
+          <div>{t('statusLoadFailed')}</div>
         ) : (
           <div>
             <div>
-              {year}년 {SEMESTER_MAP[semester]}학기 → {nextYear}년 {SEMESTER_MAP[nextSemester]}
-              학기
+              {t('semesterTransition', {
+                value0: year ?? '',
+                value1: semesterLabels[semester] ?? '',
+                value2: nextYear ?? '',
+                value3: semesterLabels[nextSemester] ?? '',
+              })}
             </div>
             <AdminLayout.AdminFlex style={{ flexWrap: 'wrap' }}>
               <div style={{ fontWeight: 700 }}>
-                {STATUS_MAP[currentStatus] || currentStatus}
+                {statusLabels[currentStatus] || currentStatus}
               </div>
               <span style={{ fontSize: '1.2rem' }}>→</span>
               <AdminLayout.AdminButton
@@ -123,7 +137,7 @@ export default function ScscStatusPanel({ scscGlobalStatus, semester, year }) {
                 onClick={() => saveToModal(nextStatus)}
                 disabled={saving}
               >
-                {STATUS_MAP[nextStatus] || nextStatus}
+                {statusLabels[nextStatus] || nextStatus}
               </AdminLayout.AdminButton>
             </AdminLayout.AdminFlex>
           </div>

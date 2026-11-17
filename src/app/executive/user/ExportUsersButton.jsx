@@ -1,5 +1,6 @@
 // src/app/executive/user/ExportUsersButton.jsx (CLIENT)
 'use client';
+import { useTranslations } from 'next-intl';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 function escapeCsvValue(value) {
@@ -57,6 +58,7 @@ function downloadCsv(rows, fileName) {
 }
 
 export default function ExportUsersButton({ allUsers = [], filteredUsers = [] }) {
+  const t = useTranslations('Executive');
   const exportData = (getSource, filename) => {
     const source = typeof getSource === 'function' ? getSource() : [];
     const rows = convertToCsvRows(source);
@@ -74,13 +76,13 @@ export default function ExportUsersButton({ allUsers = [], filteredUsers = [] })
   return (
     <AdminLayout.AdminActions style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
       <AdminLayout.AdminButton onClick={handleExportAll} type="button">
-        회원 목록 전체 저장
+        {t('exportAll')}
       </AdminLayout.AdminButton>
       <AdminLayout.AdminButton onClick={handleExportFiltered} type="button">
-        필터된 회원만 저장
+        {t('exportFiltered')}
       </AdminLayout.AdminButton>
       <AdminLayout.AdminButton onClick={handleExportRegistered} type="button">
-        등록된 회원만 저장
+        {t('exportRegistered')}
       </AdminLayout.AdminButton>
     </AdminLayout.AdminActions>
   );

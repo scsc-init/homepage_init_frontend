@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,7 @@ type ErrorResponse = {
 
 function EditUserInfoClient() {
   const router = useRouter();
+  const t = useTranslations('UsEditProfile');
   const { me, isLoading: isMeLoading, isUnauthenticated } = useMe();
 
   const [form, setForm] = useState({
@@ -42,7 +44,7 @@ function EditUserInfoClient() {
     if (isMeLoading) return;
 
     if (isUnauthenticated || !me) {
-      alert('로그인이 필요합니다.');
+      alert(t('loginRequired'));
       pushLoginWithRedirect(router);
       return;
     }
@@ -90,15 +92,15 @@ function EditUserInfoClient() {
     const errors: string[] = [];
 
     validator.name(name, (ok) => {
-      if (!ok) errors.push('이름이 올바르지 않습니다.');
+      if (!ok) errors.push(t('invalidName'));
     });
 
     validator.phoneNumber(phone, (ok) => {
-      if (!ok) errors.push('전화번호 형식이 올바르지 않습니다.');
+      if (!ok) errors.push(t('invalidPhone'));
     });
 
     validator.studentID(student_id, (ok) => {
-      if (!ok) errors.push('학번 형식이 올바르지 않습니다.');
+      if (!ok) errors.push(t('invalidStudentId'));
     });
 
     if (errors.length) {
@@ -123,19 +125,19 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
-      alert('정보가 수정되었습니다.');
+      alert(t('updated'));
       router.push('/about/my-page');
     } else if (res.status === 409) {
-      alert('이미 사용 중인 전화번호 또는 학번입니다.');
+      alert(t('duplicate'));
     } else if (res.status === 422) {
-      alert('입력값이 올바르지 않습니다.');
+      alert(t('invalidInput'));
     } else {
-      alert('수정에 실패했습니다. 다시 시도해주세요.');
+      alert(t('updateFailed'));
     }
   };
 
   const handleDelete = async () => {
-    const ok = confirm('정말 휴회원 처리하시겠습니까?');
+    const ok = confirm(t('deleteConfirm'));
 
     if (!ok) return;
 
@@ -148,18 +150,18 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
-      alert('휴회원으로 전환되었습니다.');
+      alert(t('deleted'));
       router.push('/about/my-page');
     } else if (res.status === 403) {
       const data = (await res.json()) as ErrorResponse;
-      alert(`잘못된 접근입니다: ${data.detail ?? ''}`);
+      alert(t('unauthorized', { detail: data.detail ?? '' }));
     } else {
-      alert('수정에 실패했습니다. 다시 시도해주세요.');
+      alert(t('updateFailed'));
     }
   };
 
   const handleOBRegister = async () => {
-    const ok = confirm('정말 졸업생 전환 신청하시겠습니까?');
+    const ok = confirm(t('oldboyConfirm'));
 
     if (!ok) return;
 
@@ -172,19 +174,19 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 201) {
-      alert('졸업생 전환 신청이 완료되었습니다.');
+      alert(t('oldboyRequested'));
       router.push('/about/my-page');
     } else if (res.status === 400) {
-      alert('졸업생 전환 신청 자격이 없습니다.');
+      alert(t('oldboyIneligible'));
     } else if (res.status === 409) {
-      alert('이미 졸업생 전환 신청을 완료했습니다.');
+      alert(t('oldboyAlreadyRequested'));
     } else {
-      alert('신청에 실패했습니다. 다시 시도해주세요.');
+      alert(t('requestFailed'));
     }
   };
 
   const handleOBUnregister = async () => {
-    const ok = confirm('정말 졸업생 전환 신청을 취소하시겠습니까?');
+    const ok = confirm(t('oldboyCancelConfirm'));
 
     if (!ok) return;
 
@@ -197,23 +199,19 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
-      alert('졸업생 전환 신청 취소가 완료되었습니다.');
+      alert(t('oldboyCanceled'));
       router.push('/about/my-page');
     } else if (res.status === 400) {
-      alert(
-        '이미 졸업생으로 전환되어 취소할 수 없습니다. 정회원으로 전환 기능을 이용해주세요.',
-      );
+      alert(t('oldboyCannotCancel'));
     } else if (res.status === 404) {
-      alert('졸업생 전환 신청을 하지 않았습니다.');
+      alert(t('oldboyNotRequested'));
     } else {
-      alert('신청 취소에 실패했습니다. 다시 시도해주세요.');
+      alert(t('cancelFailed'));
     }
   };
 
   const handleOBReactivate = async () => {
-    const ok = confirm(
-      '정말 정회원으로 전환하시겠습니까? 전환 후 회비를 납부해야 전환이 완료됩니다.',
-    );
+    const ok = confirm(t('reactivateConfirm'));
 
     if (!ok) return;
 
@@ -226,18 +224,18 @@ function EditUserInfoClient() {
     setLoading(false);
 
     if (res.status === 204) {
-      alert('정회원 전환 신청이 완료되었습니다. 회비를 납부해야 정회원 전환이 완료됩니다.');
+      alert(t('reactivateRequested'));
       router.push('/about/welcome');
     } else if (res.status === 400) {
-      alert('졸업생이 아니어서 정회원으로 전환할 수 없습니다.');
+      alert(t('reactivateIneligible'));
     } else {
-      alert('신청에 실패했습니다. 다시 시도해주세요.');
+      alert(t('requestFailed'));
     }
   };
 
   return (
     <div className={styles.editUserInfo}>
-      <h2>내 정보 수정</h2>
+      <h2>{t('title')}</h2>
 
       <img
         src={form.profile_picture || '/asset/default-pfp.webp'}
@@ -250,10 +248,10 @@ function EditUserInfoClient() {
       <PfpUpdate />
 
       <div className={styles.userData}>
-        <label>이름</label>
+        <label>{t('name')}</label>
         <input type="text" value={form.name} disabled />
 
-        <label>카톡 프로필 이름</label>
+        <label>{t('kakaoName')}</label>
         <input
           type="text"
           value={form.kakao_name}
@@ -263,10 +261,10 @@ function EditUserInfoClient() {
               kakao_name: e.target.value,
             })
           }
-          placeholder="본명과 같으면 비워두세요"
+          placeholder={t('kakaoPlaceholder')}
         />
 
-        <label>전화번호</label>
+        <label>{t('phone')}</label>
         <input
           type="text"
           value={form.phone}
@@ -279,7 +277,7 @@ function EditUserInfoClient() {
           placeholder="01012345678"
         />
 
-        <label>학번</label>
+        <label>{t('studentId')}</label>
         <input
           type="text"
           value={form.student_id}
@@ -292,7 +290,7 @@ function EditUserInfoClient() {
           placeholder="202512345"
         />
 
-        <label>전공</label>
+        <label>{t('major')}</label>
         <select
           value={form.major_id}
           onChange={(e) =>
@@ -302,7 +300,7 @@ function EditUserInfoClient() {
             })
           }
         >
-          <option value="">전공 선택</option>
+          <option value="">{t('majorSelect')}</option>
 
           {majors.map((m) => (
             <option key={m.id} value={m.id}>
@@ -314,24 +312,24 @@ function EditUserInfoClient() {
 
       <div className={styles.editUserInfoButton}>
         <button onClick={handleSubmit} disabled={loading}>
-          저장하기
+          {t('save')}
         </button>
 
         <button onClick={handleDelete} disabled={loading}>
-          휴회원으로 전환
+          {t('inactive')}
         </button>
 
         {userRole === oldboyLevel ? (
           <button onClick={handleOBReactivate} disabled={loading}>
-            정회원 전환 신청
+            {t('regularRequest')}
           </button>
         ) : oldboyApplicant === null ? (
           <button onClick={handleOBRegister} disabled={loading}>
-            졸업생 전환 신청
+            {t('alumniRequest')}
           </button>
         ) : (
           <button onClick={handleOBUnregister} disabled={loading}>
-            졸업생 전환 신청 취소
+            {t('alumniCancel')}
           </button>
         )}
       </div>

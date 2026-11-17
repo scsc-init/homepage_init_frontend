@@ -3,12 +3,9 @@
 import { useState, useEffect, useRef, useId, type KeyboardEvent } from 'react';
 import Button from './Button';
 import styles from './SortDropdown.module.css';
+import { useTranslations } from 'next-intl';
 
-const options = [
-  { value: 'latest', label: '최신순' },
-  { value: 'oldest', label: '오래된 순' },
-  { value: 'title', label: '제목순' },
-] as const;
+const options = [{ value: 'latest' }, { value: 'oldest' }, { value: 'title' }] as const;
 
 export type SortOrder = (typeof options)[number]['value'];
 
@@ -18,6 +15,7 @@ type SortDropdownProps = {
 };
 
 export default function SortDropdown({ sortOrder, setSortOrder }: SortDropdownProps) {
+  const t = useTranslations('SortDropdown');
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -80,7 +78,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }: SortDropdownPr
       <Button
         ref={triggerRef}
         className={styles.sortBtn}
-        aria-label={`정렬: ${options[selectedIndex].label}`}
+        aria-label={t('ariaLabel', { label: t(options[selectedIndex].value) })}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
@@ -92,14 +90,14 @@ export default function SortDropdown({ sortOrder, setSortOrder }: SortDropdownPr
           }
         }}
       >
-        {options[selectedIndex].label}
+        {t(options[selectedIndex].value)}
         <span aria-hidden="true">▾</span>
       </Button>
       {open && (
         <div
           id={menuId}
           role="menu"
-          aria-label="정렬 기준"
+          aria-label={t('menuAriaLabel')}
           className={styles.sortMenu}
           onKeyDown={handleMenuKeyDown}
         >
@@ -119,7 +117,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }: SortDropdownPr
                 closeAndFocus();
               }}
             >
-              {option.label}
+              {t(option.value)}
               <span aria-hidden="true">{sortOrder === option.value ? '✓' : ''}</span>
             </button>
           ))}

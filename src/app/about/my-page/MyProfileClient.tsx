@@ -1,5 +1,6 @@
-﻿'use client';
+'use client';
 
+import { useTranslations, useLocale } from 'next-intl';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,10 +19,10 @@ import type { UserProfile } from '@/types/user';
 const cx = (...classes: unknown[]) => classes.filter(Boolean).join(' ');
 
 function getUserStatusText(user: UserProfile) {
-  if (user.is_active === true) return '활동 중 (입금 확인 완료)';
-  if (user.is_banned === true) return '제명됨';
-  if (user.is_active === false) return '회비 미납부';
-  return '상태 확인 불가';
+  if (user.is_active === true) return 'active' as const;
+  if (user.is_banned === true) return 'banned' as const;
+  if (user.is_active === false) return 'duesUnpaid' as const;
+  return 'unknownStatus' as const;
 }
 
 async function onAuthFail() {
@@ -35,6 +36,8 @@ async function onAuthFail() {
 
 export default function MyProfileClient() {
   const { status } = useSession();
+  const t = useTranslations('AboutMyPage');
+  const locale = useLocale();
   const { me } = useMe();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
@@ -72,7 +75,7 @@ export default function MyProfileClient() {
   return (
     <div>
       <div className={styles['main-logo-wrapper__mypage']}>
-        <p className={styles['main-logo-description']}>My Page</p>
+        <p className={styles['main-logo-description']}>{t('title')}</p>
         <MainLogoImage
           className={styles['main-logo__mypage']}
           width={1976}
@@ -91,31 +94,33 @@ export default function MyProfileClient() {
         />
         <div className={styles['user-name-container']}>
           <div className={styles['user-name']}>
-            {user ? `${user.name} [${ROLE_MAP[user.role]?.korean ?? '알 수 없음'}]` : ''}
+            {user
+              ? `${user.name} [${(locale === 'en-US' ? ROLE_MAP[user.role]?.english : ROLE_MAP[user.role]?.korean) || t('unknownRole')}]`
+              : ''}
           </div>
         </div>
       </div>
 
       <div className={styles['main-container']}>
         <div className={styles['user-info-container']}>
-          <h2 className={styles['user-info-description']}>User Info</h2>
+          <h2 className={styles['user-info-description']}>{t('userInfo')}</h2>
           <table className={styles['user-info-table']}>
             <tbody>
               <tr>
-                <th>이메일</th>
+                <th>{t('email')}</th>
                 <td className={styles['mono-wrap']}>{user ? user.email : ''}</td>
               </tr>
               <tr>
-                <th>전화번호</th>
+                <th>{t('phone')}</th>
                 <td>{user ? user.phone : ''}</td>
               </tr>
               <tr>
-                <th>학번</th>
+                <th>{t('studentId')}</th>
                 <td>{user ? user.student_id : ''}</td>
               </tr>
               <tr>
-                <th>활동상태</th>
-                <td>{user ? getUserStatusText(user) : ''}</td>
+                <th>{t('statusLabel')}</th>
+                <td>{user ? t(getUserStatusText(user)) : ''}</td>
               </tr>
             </tbody>
           </table>
@@ -130,7 +135,7 @@ export default function MyProfileClient() {
               <span className={styles['btn-icon']}>
                 <AiOutlineMessage size="24" />
               </span>
-              <span className={styles['btn-label']}>카카오톡 입장</span>
+              <span className={styles['btn-label']}>{t('kakao')}</span>
             </a>
             <a
               href={inviteLinks.discord}
@@ -141,7 +146,7 @@ export default function MyProfileClient() {
               <span className={styles['btn-icon']}>
                 <FaDiscord size="24" />
               </span>
-              <span className={styles['btn-label']}>디스코드 입장</span>
+              <span className={styles['btn-label']}>{t('discord')}</span>
             </a>
 
             <a
@@ -153,14 +158,14 @@ export default function MyProfileClient() {
               <span className={styles['btn-icon']}>
                 <MdOutlineInfo size="24" />
               </span>
-              <span className={styles['btn-label']}>입금 안내</span>
+              <span className={styles['btn-label']}>{t('payment')}</span>
             </a>
 
             <Link href="/us/edit-user-info" className={styles['action-button']}>
               <span className={styles['btn-icon']}>
                 <MdArrowOutward size="24" />
               </span>
-              <span className={styles['btn-label']}>정보 수정</span>
+              <span className={styles['btn-label']}>{t('edit')}</span>
             </Link>
             <button
               onClick={handleLogout}
@@ -175,7 +180,7 @@ export default function MyProfileClient() {
               <span className={styles['btn-icon']}>
                 <MdLogout size="24" />
               </span>
-              <span className={styles['btn-label']}>로그아웃</span>
+              <span className={styles['btn-label']}>{t('logout')}</span>
             </button>
           </div>
         </div>

@@ -1,14 +1,16 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { STATUS_MAP, SEMESTER_MAP } from '@/util/constants';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
-import { IG_LABELS } from '../igTypes';
-
 const lower = (value) => value?.toString().toLowerCase() || '';
 
 function IgFilterRow({ filter, updateFilterCriteria }) {
+  const t = useTranslations('Executive');
+  const statusLabels = t.raw('statuses');
+  const semesterLabels = t.raw('semesters');
   return (
     <tr>
       <td>
@@ -22,10 +24,10 @@ function IgFilterRow({ filter, updateFilterCriteria }) {
           value={filter.status}
           onChange={(e) => updateFilterCriteria('status', e.target.value)}
         >
-          <option value="">상태 전체</option>
+          <option value="">{t('allStatuses')}</option>
           {Object.keys(STATUS_MAP).map((key) => (
             <option key={key} value={key}>
-              {STATUS_MAP[key]}
+              {statusLabels[key]}
             </option>
           ))}
         </AdminLayout.AdminSelect>
@@ -41,10 +43,10 @@ function IgFilterRow({ filter, updateFilterCriteria }) {
           value={filter.semester}
           onChange={(e) => updateFilterCriteria('semester', e.target.value)}
         >
-          <option value="">학기 전체</option>
+          <option value="">{t('allSemesters')}</option>
           {Object.keys(SEMESTER_MAP).map((key) => (
             <option key={key} value={key}>
-              {SEMESTER_MAP[key]}학기
+              {t('semesterLabel', { value0: semesterLabels[key] ?? '' })}
             </option>
           ))}
         </AdminLayout.AdminSelect>
@@ -61,16 +63,19 @@ function IgFilterRow({ filter, updateFilterCriteria }) {
 }
 
 function IgRow({ ig, igSlug }) {
+  const t = useTranslations('Executive');
+  const statusLabels = t.raw('statuses');
+  const semesterLabels = t.raw('semesters');
   return (
     <tr>
       <td>{ig.title ?? ''}</td>
-      <td>{STATUS_MAP[ig.status] ?? ''}</td>
+      <td>{statusLabels[ig.status] ?? ''}</td>
       <td>{ig.year ?? ''}</td>
-      <td>{SEMESTER_MAP[Number(ig.semester)] ?? ''}학기</td>
+      <td>{t('semesterLabel', { value0: semesterLabels[Number(ig.semester)] ?? '' ?? '' })}</td>
       <td>{ig.ownerName ?? ''}</td>
       <td>
         <a href={`/executive/${igSlug}/${ig.id}`} data-underline>
-          상세보기
+          {t('viewDetail')}
         </a>
       </td>
     </tr>
@@ -78,6 +83,7 @@ function IgRow({ ig, igSlug }) {
 }
 
 export default function IgList({ igs, igType }) {
+  const t = useTranslations('Executive');
   const [filter, setFilter] = useState({
     title: '',
     status: '',
@@ -86,7 +92,7 @@ export default function IgList({ igs, igType }) {
     ownerName: '',
   });
 
-  const igLabel = IG_LABELS[igType];
+  const igLabel = t.raw('groupLabels')[igType];
 
   const filteredIgs = useMemo(() => {
     const safeIgs = Array.isArray(igs) ? igs : [];
@@ -114,12 +120,12 @@ export default function IgList({ igs, igType }) {
         </colgroup>
         <thead>
           <tr>
-            <th>이름</th>
-            <th>상태</th>
-            <th>연도</th>
-            <th>학기</th>
-            <th>{igLabel}장</th>
-            <th>상세보기</th>
+            <th>{t('name')}</th>
+            <th>{t('status')}</th>
+            <th>{t('year')}</th>
+            <th>{t('semester')}</th>
+            <th>{t('groupLeader', { value0: String(igLabel) })}</th>
+            <th>{t('viewDetail')}</th>
           </tr>
           <IgFilterRow
             filter={filter}

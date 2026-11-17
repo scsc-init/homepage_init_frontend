@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { useEffect, useState } from 'react';
 import { scrollToId } from './ScrollToID';
 import styles from '@/app/about/about.module.css';
@@ -9,6 +11,7 @@ type SidebarProps = {
 };
 
 export default function ClientSidebar({ className }: SidebarProps) {
+  const t = useTranslations('About');
   const [isEnd, setIsEnd] = useState(false);
 
   useEffect(() => {
@@ -134,7 +137,7 @@ export default function ClientSidebar({ className }: SidebarProps) {
               scrollToId('activities');
             }}
           >
-            활동
+            {t('sidebar.activities')}
           </a>
         </li>
         <li>
@@ -146,7 +149,7 @@ export default function ClientSidebar({ className }: SidebarProps) {
               scrollToId('faq');
             }}
           >
-            자주 묻는 질문
+            {t('sidebar.faq')}
           </a>
         </li>
         <li>
@@ -158,7 +161,7 @@ export default function ClientSidebar({ className }: SidebarProps) {
               scrollToId('clubroom');
             }}
           >
-            동아리 시설
+            {t('sidebar.facilities')}
           </a>
         </li>
         <li>
@@ -170,7 +173,7 @@ export default function ClientSidebar({ className }: SidebarProps) {
               scrollToId('more');
             }}
           >
-            더 알아보기
+            {t('sidebar.more')}
           </a>
         </li>
       </ul>

@@ -1,11 +1,14 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { fetchBackendClient } from '@/util/fetch/client';
-import { utc2kst } from '@/util/constants';
+import { formatExecutiveDate } from '@/app/executive/formatExecutiveDate';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function ExternalMemberManagementPanel() {
+  const t = useTranslations('Executive');
+  const locale = useLocale();
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -17,33 +20,38 @@ export default function ExternalMemberManagementPanel() {
         const response = await fetchBackendClient('/api/executive/user/external/applicants');
 
         if (!response.ok) {
-          throw new Error(`신청 목록 조회 실패: ${response.status}`);
+          throw new Error(
+            t('applicationsLoadFailedStatus', { value0: String(response.status) }),
+          );
         }
 
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-          throw new Error('신청 목록 응답 형식이 올바르지 않습니다.');
+          throw new Error(t('applicationsInvalid'));
         }
 
         setApplicants(data);
       } catch (error) {
         console.error(error);
-        setError(error instanceof Error ? error.message : '신청 목록을 불러오지 못했습니다.');
+        setError(error instanceof Error ? error.message : t('applicationsLoadFailed'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchApplicants();
-  }, []);
+  }, [t]);
 
   const processApplication = async (application, action) => {
-    const actionLabel = action === 'approve' ? '승인' : '거절';
+    const actionLabel = action === 'approve' ? t('approve') : t('reject');
 
     if (
       !window.confirm(
-        `${application.name}님의 외부회원 가입 신청을 ${actionLabel}하시겠습니까?`,
+        t('confirmExternalApplication', {
+          value0: String(application.name),
+          value1: String(actionLabel),
+        }),
       )
     ) {
       return;
@@ -71,16 +79,32 @@ export default function ExternalMemberManagementPanel() {
           detail = null;
         }
 
-        alert(`${application.name}님 ${actionLabel} 실패: ${detail || response.status}`);
+        alert(
+          t('externalApplicationFailed', {
+            value0: String(application.name),
+            value1: String(actionLabel),
+            value2: String(detail || response.status),
+          }),
+        );
         return;
       }
 
       setApplicants((previous) => previous.filter((item) => item.id !== application.id));
 
-      alert(`${application.name}님 외부회원 가입 신청 ${actionLabel} 완료`);
+      alert(
+        t('externalApplicationProcessed', {
+          value0: String(application.name),
+          value1: String(actionLabel),
+        }),
+      );
     } catch (error) {
       console.error(error);
-      alert(`${application.name}님 ${actionLabel} 처리 중 네트워크 오류가 발생했습니다.`);
+      alert(
+        t('externalApplicationNetworkError', {
+          value0: String(application.name),
+          value1: String(actionLabel),
+        }),
+      );
     } finally {
       setSaving((previous) => ({
         ...previous,
@@ -91,10 +115,10 @@ export default function ExternalMemberManagementPanel() {
 
   return (
     <div>
-      <h2>외부회원 가입 신청자 목록</h2>
+      <h2>{t('externalApplications')}</h2>
 
       {loading ? (
-        <p>신청 목록을 불러오는 중입니다.</p>
+        <p>{t('applicationsLoading')}</p>
       ) : error ? (
         <p role="alert">{error}</p>
       ) : (
@@ -102,20 +126,20 @@ export default function ExternalMemberManagementPanel() {
           <AdminLayout.AdminTable>
             <thead>
               <tr>
-                <th>이름</th>
-                <th>이메일</th>
-                <th>전화번호</th>
-                <th>학번</th>
-                <th>신청 사유</th>
-                <th>신청 시각</th>
-                <th>처리</th>
+                <th>{t('name')}</th>
+                <th>{t('email')}</th>
+                <th>{t('phone')}</th>
+                <th>{t('studentId')}</th>
+                <th>{t('applicationReason')}</th>
+                <th>{t('applicationTime')}</th>
+                <th>{t('process')}</th>
               </tr>
             </thead>
 
             <tbody>
               {applicants.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>대기 중인 외부회원 가입 신청이 없습니다.</td>
+                  <td colSpan={7}>{t('noExternalApplications')}</td>
                 </tr>
               ) : (
                 applicants.map((application) => {
@@ -128,7 +152,7 @@ export default function ExternalMemberManagementPanel() {
                       <td>{application.phone}</td>
                       <td>{application.student_id || '-'}</td>
                       <td>{application.reason || '-'}</td>
-                      <td>{utc2kst(application.created_at)}</td>
+                      <td>{formatExecutiveDate(application.created_at, locale)}</td>
                       <td>
                         <div
                           style={{
@@ -142,7 +166,7 @@ export default function ExternalMemberManagementPanel() {
                             disabled={isSaving}
                             onClick={() => processApplication(application, 'approve')}
                           >
-                            승인
+                            {t('approve')}
                           </AdminLayout.AdminButton>
 
                           <AdminLayout.AdminButton
@@ -150,7 +174,7 @@ export default function ExternalMemberManagementPanel() {
                             disabled={isSaving}
                             onClick={() => processApplication(application, 'reject')}
                           >
-                            거절
+                            {t('reject')}
                           </AdminLayout.AdminButton>
                         </div>
                       </td>

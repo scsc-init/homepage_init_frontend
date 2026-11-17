@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './IgDetail.module.css';
@@ -9,6 +10,7 @@ type EditIgButtonProps = { kind: IgKind; itemId: string; canEdit: boolean };
 
 export default function EditIgButton({ kind, itemId, canEdit }: EditIgButtonProps) {
   const router = useRouter();
+  const t = useTranslations('Ig');
   const [isLoading, setIsLoading] = useState(false);
 
   if (!canEdit) return null;
@@ -29,7 +31,7 @@ export default function EditIgButton({ kind, itemId, canEdit }: EditIgButtonProp
         opacity: isLoading ? 0.6 : 1,
       }}
     >
-      수정하기
+      {t('edit')}
     </button>
   );
 }

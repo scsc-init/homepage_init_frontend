@@ -27,6 +27,7 @@ import { useEffect, useRef, useState } from 'react';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import styles from './Comments.module.css';
+import { useTranslations } from 'next-intl';
 
 function buildTree(comments: ArticleComment[]): CommentNode[] {
   // The original routine adds children to each input comment before linking the tree.
@@ -64,6 +65,7 @@ async function readErrorText(res: Response) {
 }
 
 function Comment({ comment, onReplySubmit, userId, userRole, articleId }: CommentProps) {
+  const t = useTranslations('Comments');
   const [showReply, setShowReply] = useState(false);
   const [replyContent, setReplyContent] = useState('');
 
@@ -84,10 +86,12 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }: Commen
         setShowReply(false);
         onReplySubmit();
       } else {
-        alert('답글 작성 실패: ' + (await readErrorText(res)));
+        alert(t('replyFailed', { error: await readErrorText(res) }));
       }
     } catch (err) {
-      alert(`답글 작성 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+      alert(
+        t('replyFailed', { error: err instanceof Error ? err.message : t('networkError') }),
+      );
     }
   };
 
@@ -104,9 +108,13 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }: Commen
       });
 
       if (res.status === 204) onReplySubmit();
-      else alert('댓글 삭제 실패: ' + (await readErrorText(res)));
+      else alert(t('commentDeleteFailed', { error: await readErrorText(res) }));
     } catch (err) {
-      alert(`댓글 삭제 실패: ${err instanceof Error ? err.message : '네트워크 오류'}`);
+      alert(
+        t('commentDeleteFailed', {
+          error: err instanceof Error ? err.message : t('networkError'),
+        }),
+      );
     }
   };
 
@@ -117,11 +125,11 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }: Commen
     >
       <div className={styles.CommentContent}>{comment.content}</div>
       <button className={styles.Button} onClick={() => setShowReply((v) => !v)}>
-        {showReply ? '취소' : '답글 달기'}
+        {showReply ? t('cancel') : t('reply')}
       </button>
       {(userId === comment.author_id || userRole >= minExecutiveLevel) && (
         <button className={styles.Button} onClick={handleDeleteReply}>
-          댓글 삭제
+          {t('delete')}
         </button>
       )}
       {showReply && (
@@ -130,13 +138,13 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }: Commen
             className={styles.Textarea}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
-            placeholder="답글을 입력하세요"
+            placeholder={t('replyPlaceholder')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleReply();
             }}
           />
           <button className={styles.Button} onClick={handleReply}>
-            작성
+            {t('submit')}
           </button>
           <button
             className={styles.Button}
@@ -145,7 +153,7 @@ function Comment({ comment, onReplySubmit, userId, userRole, articleId }: Commen
               setReplyContent('');
             }}
           >
-            취소
+            {t('cancel')}
           </button>
         </div>
       )}
@@ -173,6 +181,7 @@ export default function Comments({
   initialComments: ArticleComment[] | null;
   user: UserProfile | null;
 }) {
+  const t = useTranslations('Comments');
   const router = useRouter();
   const [comments, setComments] = useState(initialComments || []);
   const [isError, setIsError] = useState(false);
@@ -226,19 +235,21 @@ export default function Comments({
         setShowNew(false);
         await fetchComments();
       } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         pushLoginWithRedirect(router);
       } else {
-        alert('댓글 작성 실패: ' + (await readErrorText(res)));
+        alert(t('commentFailed', { error: await readErrorText(res) }));
       }
     } catch (e) {
       alert(
-        '댓글 작성 실패: ' + ((e as { message?: string } | null)?.message || '네트워크 오류'),
+        t('commentFailed', {
+          error: (e as { message?: string } | null)?.message || t('networkError'),
+        }),
       );
     }
   };
 
-  if (isError) return <div className={styles.Status}>댓글 불러오기 실패</div>;
+  if (isError) return <div className={styles.Status}>{t('loadFailed')}</div>;
 
   const commentsTree = buildTree(comments || []);
 
@@ -248,7 +259,7 @@ export default function Comments({
         className={`${styles.Button} ${styles.ToggleButton}`}
         onClick={() => setShowNew((v) => !v)}
       >
-        {showNew ? '취소' : '댓글 달기'}
+        {showNew ? t('cancel') : t('addComment')}
       </button>
       {showNew && (
         <div id="new-comment" className={styles.NewCommentEditor}>
@@ -257,13 +268,13 @@ export default function Comments({
             ref={newRef}
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
-            placeholder="댓글을 입력하세요"
+            placeholder={t('commentPlaceholder')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitNew();
             }}
           />
           <button className={styles.Button} onClick={submitNew}>
-            작성
+            {t('submit')}
           </button>
           <button
             className={styles.Button}
@@ -272,14 +283,14 @@ export default function Comments({
               setNewContent('');
             }}
           >
-            취소
+            {t('cancel')}
           </button>
         </div>
       )}
       {comments?.length === 0 ? (
-        <div className={styles.Status}>댓글이 없습니다.</div>
+        <div className={styles.Status}>{t('empty')}</div>
       ) : !user ? (
-        <div className={styles.Status}>유저 확인 중...</div>
+        <div className={styles.Status}>{t('checkingUser')}</div>
       ) : (
         commentsTree.map((comment) => (
           <Comment

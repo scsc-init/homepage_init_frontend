@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button';
@@ -10,6 +11,7 @@ import { getKvClient, getKvsClient, setKvClient } from '@/util/fetch/client-util
 const DEFAULT_PRESET_KEYS = ['footer-message'];
 
 export default function KVEditor() {
+  const t = useTranslations('Executive');
   const router = useRouter();
   const [keyInput, setKeyInput] = useState(DEFAULT_PRESET_KEYS[0]);
   const [value, setValue] = useState('');
@@ -58,7 +60,7 @@ export default function KVEditor() {
       setOriginal(raw);
       setValue(raw);
     } catch (e) {
-      alert('불러오기 실패: ' + (e?.message || '네트워크 오류'));
+      alert(t('loadFailedPrefix') + (e?.message || t('networkError')));
     } finally {
       setLoading(false);
     }
@@ -66,7 +68,7 @@ export default function KVEditor() {
 
   const saveKV = async () => {
     if (!canSave) return;
-    if (!window.confirm('저장하시겠습니까?')) return;
+    if (!window.confirm(t('confirmSave'))) return;
     setSaving(true);
     try {
       const bodyValue = value;
@@ -79,13 +81,13 @@ export default function KVEditor() {
 
         router.refresh();
       } else if (res.status === 401 || res.status === 403) {
-        alert('편집 권한이 없습니다.');
+        alert(t('noEditPermission'));
         router.refresh();
       } else {
-        alert('저장에 실패했습니다.');
+        alert(t('saveError'));
       }
     } catch (e) {
-      alert('저장 실패: ' + (e?.message || '네트워크 오류'));
+      alert(t('saveFailedPrefix') + (e?.message || t('networkError')));
     } finally {
       setSaving(false);
     }
@@ -93,7 +95,7 @@ export default function KVEditor() {
 
   const clearKV = async () => {
     if (!canSave) return;
-    if (!window.confirm('값을 비웁니다. 계속하시겠습니까?')) return;
+    if (!window.confirm(t('confirmClear'))) return;
     setSaving(true);
     try {
       const res = await setKvClient(keyInput.trim(), '');
@@ -102,13 +104,13 @@ export default function KVEditor() {
         setValue('');
         router.refresh();
       } else if (res.status === 401 || res.status === 403) {
-        alert('편집 권한이 없습니다.');
+        alert(t('noEditPermission'));
         router.refresh();
       } else {
-        alert('비우기에 실패했습니다.');
+        alert(t('clearError'));
       }
     } catch (e) {
-      alert('비우기 실패: ' + (e?.message || '네트워크 오류'));
+      alert(t('clearFailedPrefix') + (e?.message || t('networkError')));
     } finally {
       setSaving(false);
     }
@@ -139,36 +141,36 @@ export default function KVEditor() {
         </select>
         <input
           className={styles.input}
-          placeholder="키를 입력하세요"
+          placeholder={t('keyPlaceholder')}
           value={keyInput}
           onChange={(e) => setKeyInput(e.target.value)}
         />
         <Button onClick={loadKV} disabled={loading || saving || !canSave}>
-          {loading ? '불러오는 중...' : '불러오기'}
+          {loading ? t('loading') : t('load')}
         </Button>
       </div>
 
       <div className={styles.section}>
-        <div className={styles.label}>값</div>
+        <div className={styles.label}>{t('value')}</div>
         <textarea
           className={styles.textarea}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="여기에 값을 입력하세요"
+          placeholder={t('valuePlaceholder')}
         />
         <div className={styles.meta}>
-          <span>길이: {value.length}</span>
-          <span>저장됨: {original.length}자</span>
+          <span>{t('valueLength', { value0: value.length ?? '' })}</span>
+          <span>{t('savedLength', { value0: original.length ?? '' })}</span>
         </div>
         <div className={styles.actions}>
           <Button onClick={saveKV} disabled={saving || !canSave}>
-            {saving ? '저장 중...' : '저장'}
+            {saving ? t('saving') : t('save')}
           </Button>
           <Button variant="secondary" onClick={() => setValue(original)} disabled={saving}>
-            되돌리기
+            {t('revert')}
           </Button>
           <Button variant="danger" onClick={clearKV} disabled={saving || !canSave}>
-            비우기
+            {t('clear')}
           </Button>
         </div>
       </div>

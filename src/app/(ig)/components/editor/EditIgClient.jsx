@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import IgForm from '@/app/(ig)/components/editor/IgForm';
 import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
@@ -14,19 +15,13 @@ import { mapWebsitesForForm, sanitizeWebsites } from '@/util/websites';
 
 const EDIT_CONFIG = {
   sig: {
-    upperLabel: 'SIG',
     routeBase: '/sig',
-    targetLabel: undefined,
   },
   'small-group': {
-    upperLabel: '소모임',
     routeBase: '/small-group',
-    targetLabel: undefined,
   },
   pig: {
-    upperLabel: 'PIG',
     routeBase: '/pig',
-    targetLabel: 'PIG',
   },
 };
 
@@ -55,6 +50,8 @@ function generateDefaultForms(item, article) {
 
 export default function EditIgClient({ kind, itemId, item, article }) {
   const config = EDIT_CONFIG[kind];
+  const t = useTranslations('Ig');
+  const kindLabel = t(`kind.${kind}`);
   const { me, isLoading, isUnauthenticated } = useMe();
   const router = useRouter();
   const isFormSubmitted = useRef(false);
@@ -87,7 +84,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
 
     const handleRouteChange = () => {
       if (!isFormSubmitted.current && isDirty) {
-        const confirmed = confirm('작성 중인 내용이 있습니다. 페이지를 떠나시겠습니까?');
+        const confirmed = confirm(t('unsaved'));
         if (!confirmed) {
           router.events.emit('routeChangeError');
           throw 'Route change aborted by user.';
@@ -102,7 +99,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       router.events?.off?.('routeChangeStart', handleRouteChange);
     };
-  }, [isDirty, router]);
+  }, [isDirty, router, t]);
 
   useEffect(() => {
     if (item && article && mounted && !isDirty) {
@@ -115,12 +112,10 @@ export default function EditIgClient({ kind, itemId, item, article }) {
     if (submitting) return;
 
     if (!me) {
-      alert('잠시 뒤 다시 시도해주세요');
+      alert(t('retryLater'));
       return;
     } else if (!me.discord_id) {
-      if (
-        !confirm('계정에 디스코드 계정이 연결되지 않았습니다. 그래도 계속 진행하시겠습니까?')
-      ) {
+      if (!confirm(t('discordWarning'))) {
         return;
       }
     }
@@ -148,18 +143,18 @@ export default function EditIgClient({ kind, itemId, item, article }) {
       if (res.status === 204) {
         await tagManagerRef.current?.syncTags();
         isFormSubmitted.current = true;
-        alert(`${config.upperLabel} 수정 성공!`);
+        alert(t('editSuccess', { kind: kindLabel }));
         router.push(`${config.routeBase}/${itemId}`);
         router.refresh();
       } else if (res.status === 401) {
-        alert('로그인이 필요합니다.');
+        alert(t('loginRequired'));
         pushLoginWithRedirect(router);
       } else {
         const err = await res.json();
-        alert(`${config.upperLabel} 수정 실패: ` + (err.detail ?? JSON.stringify(err)));
+        alert(t('editFailure', { kind: kindLabel }) + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err.message || '네트워크 오류');
+      alert(err.message || t('networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -171,7 +166,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <h1 className={styles.title}>{`${config.upperLabel} 수정`}</h1>
+          <h1 className={styles.title}>{t('editHeading', { kind: kindLabel })}</h1>
         </div>
         <IgForm
           kind={kind}
@@ -188,7 +183,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
               initialTags={item?.tags}
               isExecutive={Boolean(me?.role >= minExecutiveLevel)}
               disabled={submitting}
-              targetLabel={config.targetLabel}
+              targetLabel={kindLabel}
             />
           }
         />

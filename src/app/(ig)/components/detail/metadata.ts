@@ -1,37 +1,35 @@
+import { getTranslations } from 'next-intl/server';
 import { fetchBackendServerJson } from '@/util/fetch/server';
 import type { Metadata } from 'next';
 import type { IgDetail, IgKind, IgParams } from './types';
 
 const METADATA_CONFIG = {
   sig: {
-    fallbackDescription: 'SIG 상세 페이지',
-    fallbackTitle: 'SIG | SCSC',
     routeBase: '/sig',
   },
   'small-group': {
-    fallbackDescription: '소모임 상세 페이지',
-    fallbackTitle: '소모임 | SCSC',
     routeBase: '/small-group',
   },
   pig: {
-    fallbackDescription: 'PIG 상세 페이지',
-    fallbackTitle: 'PIG | SCSC',
     routeBase: '/pig',
   },
 };
 
 export async function generateIgMetadata(kind: IgKind, params: IgParams): Promise<Metadata> {
+  const t = await getTranslations('Ig');
   const config = METADATA_CONFIG[kind];
+  const fallbackTitle = `${t(`kind.${kind}`)} | SCSC`;
+  const fallbackDescription = t('detailDescription', { kind: t(`kind.${kind}`) });
   const { id } = await params;
 
   try {
     const item = await fetchBackendServerJson<IgDetail>('GET', `/api/sig/${id}`);
     return {
       title: item.title,
-      description: item.description || config.fallbackDescription,
+      description: item.description || fallbackDescription,
       openGraph: {
         title: item.title,
-        description: item.description || config.fallbackDescription,
+        description: item.description || fallbackDescription,
         url: `https://scsc.dev${config.routeBase}/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],
@@ -40,15 +38,15 @@ export async function generateIgMetadata(kind: IgKind, params: IgParams): Promis
       twitter: {
         card: 'summary_large_image',
         title: item.title,
-        description: item.description || config.fallbackDescription,
+        description: item.description || fallbackDescription,
         images: ['/opengraph.png'],
       },
     };
   } catch {
     return {
-      title: config.fallbackTitle,
+      title: fallbackTitle,
       openGraph: {
-        title: config.fallbackTitle,
+        title: fallbackTitle,
         url: `https://scsc.dev${config.routeBase}/${id}`,
         siteName: 'SCSC',
         images: [{ url: '/opengraph.png', width: 1200, height: 630, alt: 'SCSC Logo' }],

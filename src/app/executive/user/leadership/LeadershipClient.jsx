@@ -1,17 +1,19 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { ExecutiveUserTable } from './ExecutiveUserTable';
 import * as AdminLayout from '@/app/executive/AdminLayout';
 
 export default function LeadershipClient({ users, majors }) {
+  const t = useTranslations('Executive');
   const [debugMessage, setDebugMessage] = useState('');
 
   const handleShowDetail = (user) => {
     try {
       setDebugMessage(JSON.stringify(user, null, 2));
     } catch (_err) {
-      setDebugMessage('사용자 정보를 출력하지 못했습니다.');
+      setDebugMessage(t('userOutputFailed'));
     }
   };
 
@@ -23,7 +25,7 @@ export default function LeadershipClient({ users, majors }) {
           htmlFor="leadership-debug-console"
           style={{ display: 'block', marginBottom: '0.5rem' }}
         >
-          디버깅 메시지 콘솔
+          {t('debugConsole')}
         </label>
         <AdminLayout.AdminTextarea
           id="leadership-debug-console"
@@ -35,7 +37,7 @@ export default function LeadershipClient({ users, majors }) {
           }}
           readOnly
           value={debugMessage}
-          placeholder="상세 보기 버튼을 누르면 이곳에 JSON이 표시됩니다."
+          placeholder={t('debugPlaceholder')}
         />
       </div>
     </div>

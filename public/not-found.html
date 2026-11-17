@@ -37,6 +37,7 @@ SCSC는 SIG(Special Interested Group) 또는 PIG를 통해 스터디와 연구�
       .NF_Root {
         min-height: 100vh;
         background: var(--main-bg-gradient, #f8f9fa);
+        box-sizing: border-box;
         color: var(--color-text-body, #333);
         display: grid;
         place-items: center;
@@ -44,8 +45,8 @@ SCSC는 SIG(Special Interested Group) 또는 PIG를 통해 스터디와 연구�
         position: relative;
         overflow: hidden;
       }
-      html {
-        overflow-y: hidden;
+      body {
+        margin: 0;
       }
       .NF_Backdrop {
         position: absolute;
