@@ -69,7 +69,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
     control,
     handleSubmit,
     reset,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm({
     defaultValues: generateDefaultForms(item, article),
   });
@@ -176,6 +176,7 @@ export default function EditIgClient({ kind, itemId, item, article }) {
           onSubmit={onSubmit}
           editorKey={editorKey}
           isCreate={false}
+          errors={errors}
           afterFields={
             <SigTagManager
               ref={tagManagerRef}
