@@ -14,12 +14,19 @@ import styles from './SigTagManager.module.css';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/form-control/Checkbox';
 
+const noExcludedTagTexts = [];
+
 const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const t = useTranslations('Ig');
   const {
     sigId,
     initialTags,
     initialTagIds,
+    selectedTags,
+    onSelectedTagsChange,
+    onCreatingTagChange,
+    excludedTagTexts = noExcludedTagTexts,
+    isCreate = false,
     isExecutive = false,
     onChange,
     disabled = false,
@@ -43,13 +50,18 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   );
 
   const [allTags, setAllTags] = useState([]);
-  const [attachedTagIds, setAttachedTagIds] = useState(resolvedInitialIds);
+  const [localAttachedTagIds, setAttachedTagIds] = useState(resolvedInitialIds);
   const [originalAttachedTagIds, setOriginalAttachedTagIds] = useState(resolvedInitialIds);
   const [selectedTagId, setSelectedTagId] = useState('');
   const [newTagText, setNewTagText] = useState('');
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
   const [loading, setLoading] = useState(false);
   const [catalogError, setCatalogError] = useState('');
+
+  const attachedTagIds = useMemo(
+    () => selectedTags?.map((tag) => String(tag.id)) ?? localAttachedTagIds,
+    [selectedTags, localAttachedTagIds],
+  );
 
   const sortTags = (tagList) =>
     [...tagList].sort((a, b) => {
@@ -92,27 +104,37 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const attachedTagIdSet = useMemo(() => new Set(attachedTagIds), [attachedTagIds]);
 
   const attachedTags = useMemo(() => {
-    return sortTags(allTags.filter((tag) => attachedTagIdSet.has(String(tag.id))));
-  }, [allTags, attachedTagIdSet]);
+    return sortTags(
+      selectedTags ?? allTags.filter((tag) => attachedTagIdSet.has(String(tag.id))),
+    );
+  }, [selectedTags, allTags, attachedTagIdSet]);
 
   const selectableTags = useMemo(() => {
     return sortTags(
       allTags.filter((tag) => {
         if (attachedTagIdSet.has(String(tag.id))) return false;
         if (!isExecutive && tag.is_major) return false;
-        return true;
+        return !excludedTagTexts.includes(tag.text);
       }),
     );
-  }, [allTags, attachedTagIdSet, isExecutive]);
+  }, [allTags, attachedTagIdSet, isExecutive, excludedTagTexts]);
+
+  const addTag = (tag) => {
+    const id = String(tag.id);
+    if (onSelectedTagsChange) {
+      if (!attachedTagIdSet.has(id)) onSelectedTagsChange([...selectedTags, tag]);
+    } else {
+      setAttachedTagIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    }
+  };
 
   const addExistingTag = () => {
-    if (!selectedTagId || loading || disabled) return;
+    if (loading || disabled) return;
 
-    setAttachedTagIds((prev) => {
-      const nextId = String(selectedTagId);
-      if (prev.includes(nextId)) return prev;
-      return [...prev, nextId];
-    });
+    const tag = selectableTags.find((tag) => String(tag.id) === selectedTagId);
+    if (!tag) return;
+
+    addTag(tag);
     setSelectedTagId('');
   };
 
@@ -127,13 +149,17 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           .trim()
           .toLowerCase() === normalizedText,
     );
-    if (existsInCatalog) {
+    if (
+      existsInCatalog ||
+      excludedTagTexts.some((tag) => tag.toLowerCase() === normalizedText)
+    ) {
       alert(translate ? translate('tagExists') : t('tags.duplicate'));
       return;
     }
 
     const createErrorMessage = translate ? translate('tagCreateFailed') : t('tags.createError');
     setLoading(true);
+    onCreatingTagChange?.(true);
 
     try {
       const res = await fetchBackendClient(isExecutive ? '/api/executive/tag' : '/api/tag', {
@@ -160,17 +186,14 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       const createdTag = await res.json();
 
       setAllTags((prev) => sortTags([...prev, createdTag]));
-      setAttachedTagIds((prev) => {
-        const nextId = String(createdTag.id);
-        if (prev.includes(nextId)) return prev;
-        return [...prev, nextId];
-      });
+      addTag(createdTag);
       setNewTagText('');
       setNewTagIsMajor(false);
     } catch {
       alert(createErrorMessage);
     } finally {
       setLoading(false);
+      onCreatingTagChange?.(false);
     }
   };
 
@@ -178,7 +201,12 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     if (loading || disabled) return;
     if (tag.is_major && !isExecutive) return;
 
-    setAttachedTagIds((prev) => prev.filter((id) => id !== String(tag.id)));
+    const id = String(tag.id);
+    if (onSelectedTagsChange) {
+      onSelectedTagsChange(selectedTags.filter((selected) => String(selected.id) !== id));
+    } else {
+      setAttachedTagIds((prev) => prev.filter((value) => value !== id));
+    }
   };
 
   const syncTags = useCallback(async () => {
@@ -247,7 +275,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
         <p className={styles.SigTagManagerDescription}>
           {translate
             ? translate('tagsSaveHelp', { value0: targetLabel ?? '' })
-            : t('tags.saveHint', { kind: targetLabel })}
+            : t(isCreate ? 'tags.createSaveHint' : 'tags.saveHint', { kind: targetLabel })}
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
@@ -327,6 +355,16 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           className={styles.SigTagInput}
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
+          onKeyDown={
+            isCreate
+              ? (event) => {
+                  if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+                    event.preventDefault();
+                    createAndAddTag();
+                  }
+                }
+              : undefined
+          }
           placeholder={translate ? translate('newTagName') : t('tags.newName')}
           disabled={loading || disabled}
         />

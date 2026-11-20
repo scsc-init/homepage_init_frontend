@@ -760,6 +760,7 @@
       "deleteError": "태그 삭제 실패",
       "addError": "태그 추가 실패",
       "heading": "태그",
+      "createSaveHint": "추가한 태그는 {kind} 개설 시 함께 저장됩니다.",
       "saveHint": "수정 후 반드시 {kind} 수정 버튼을 눌러주세요.",
       "empty": "등록된 태그 없음",
       "removeLabel": "{tag} 태그 삭제",

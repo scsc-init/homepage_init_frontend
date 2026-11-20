@@ -3,10 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import IgForm from '@/app/(ig)/components/editor/IgForm';
+import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
 import styles from '@/app/(ig)/components/editor/IgEditorPage.module.css';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
 import { sanitizeWebsites } from '@/util/websites';
@@ -37,6 +39,8 @@ const CREATE_CONFIG = {
   },
 };
 
+const categoryTags = Object.values(CREATE_CONFIG).flatMap(({ tags }) => tags);
+
 export default function CreateIgClient({ kind, scscGlobalStatus }) {
   const config = CREATE_CONFIG[kind];
   const t = useTranslations('Ig');
@@ -45,16 +49,8 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
   const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const parsed = useMemo(() => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const saved = sessionStorage.getItem(config.storageKey);
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  }, [config.storageKey]);
+  const [creatingTag, setCreatingTag] = useState(false);
+  const [loadedStorageKey, setLoadedStorageKey] = useState(null);
 
   const {
     register,
@@ -64,20 +60,21 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     reset,
     formState: { isDirty },
   } = useForm({
-    defaultValues: parsed || {
+    defaultValues: {
       title: '',
       description: '',
       editor: '',
       is_rolling_admission: config.getDefaultRolling(scscGlobalStatus),
+      selectedTags: [],
     },
   });
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(config.storageKey);
-    if (!saved) return;
     try {
-      reset(JSON.parse(saved));
+      const saved = sessionStorage.getItem(config.storageKey);
+      if (saved) reset({ selectedTags: [], ...JSON.parse(saved) });
     } catch {}
+    setLoadedStorageKey(config.storageKey);
   }, [config.storageKey, reset]);
 
   useEffect(() => {
@@ -89,10 +86,10 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
 
   const watched = watch();
   useEffect(() => {
-    if (!isFormSubmitted.current) {
+    if (loadedStorageKey === config.storageKey && !isFormSubmitted.current) {
       sessionStorage.setItem(config.storageKey, JSON.stringify(watched));
     }
-  }, [config.storageKey, watched]);
+  }, [config.storageKey, loadedStorageKey, watched]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -122,7 +119,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
   }, [isDirty, router, t]);
 
   const onSubmit = async (data) => {
-    if (submitting) return;
+    if (submitting || creatingTag || isFormSubmitted.current) return;
 
     if (!user) {
       alert(t('retryLater'));
@@ -145,7 +142,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
-          tags: config.tags,
+          tags: [...new Set([...config.tags, ...data.selectedTags.map((tag) => tag.text)])],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -188,6 +185,25 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
           onSubmit={onSubmit}
           editorKey={0}
           isCreate={true}
+          submitDisabled={!user || submitting || creatingTag}
+          afterFields={
+            <Controller
+              name="selectedTags"
+              control={control}
+              render={({ field }) => (
+                <SigTagManager
+                  isCreate
+                  selectedTags={field.value}
+                  onSelectedTagsChange={field.onChange}
+                  excludedTagTexts={categoryTags}
+                  onCreatingTagChange={setCreatingTag}
+                  isExecutive={Boolean(user?.role >= minExecutiveLevel)}
+                  disabled={!user || submitting}
+                  targetLabel={kindLabel}
+                />
+              )}
+            />
+          }
         />
       </div>
     </div>
