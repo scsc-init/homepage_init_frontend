@@ -62,7 +62,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     handleSubmit,
     watch,
     reset,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm({
     defaultValues: parsed || {
       title: '',
@@ -188,6 +188,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
           onSubmit={onSubmit}
           editorKey={0}
           isCreate={true}
+          errors={errors}
         />
       </div>
     </div>

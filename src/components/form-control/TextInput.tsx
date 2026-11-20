@@ -13,6 +13,9 @@ type TextInputProps<TFieldValues extends FieldValues> = {
   required?: boolean;
   className?: string;
   labelClassName?: string;
+  errorMessage?: string;
+  requiredIndicator?: boolean;
+  requiredMessage?: string;
 };
 
 export default function TextInput<TFieldValues extends FieldValues>({
@@ -24,6 +27,9 @@ export default function TextInput<TFieldValues extends FieldValues>({
   required = true,
   className,
   labelClassName,
+  errorMessage,
+  requiredIndicator = false,
+  requiredMessage,
 }: TextInputProps<TFieldValues>) {
   const ID = `textinput-${name.replaceAll('.', '-')}`;
 
@@ -31,13 +37,31 @@ export default function TextInput<TFieldValues extends FieldValues>({
     <div className={styles.textInputGroup} key={name}>
       <label htmlFor={ID} className={`${styles.textInputLabel} ${labelClassName ?? ''}`.trim()}>
         {label}
+        {requiredIndicator ? (
+          <span className={styles.requiredMark} aria-hidden="true">
+            {' '}
+            *
+          </span>
+        ) : null}
+        {errorMessage ? (
+          <span className={styles.errorMessage} role="alert">
+            {' '}
+            {errorMessage}
+          </span>
+        ) : null}
       </label>
       <input
         type="text"
         id={ID}
         placeholder={placeholder}
         className={`${styles.textInput} ${className ?? ''}`.trim()}
-        {...register(name, { required })}
+        {...register(name, {
+          validate: required
+            ? (value) => value.trim().length > 0 || (requiredMessage ?? false)
+            : undefined,
+        })}
+        aria-required={required}
+        aria-invalid={Boolean(errorMessage)}
         onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
           if (e.nativeEvent?.isComposing) return;
           if (e.key === 'Enter') {
