@@ -741,6 +741,9 @@
     "admissionAlways": "항상 가입 받기",
     "admissionRecruiting": "{kind} 가입 기간에만 가입 받기",
     "admissionNever": "항상 가입 받지 않기",
+    "joinAlwaysAvailable": "상시 가입 가능",
+    "joinAvailable": "모집 기간 가입 가능",
+    "joinUnavailable": "현재 가입 불가",
     "titlePlaceholder": {
       "sig": "AI SIG",
       "pig": "INIT",

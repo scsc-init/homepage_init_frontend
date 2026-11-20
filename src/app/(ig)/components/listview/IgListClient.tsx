@@ -11,6 +11,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { LuCrown } from 'react-icons/lu';
 import { useMe } from '@/util/hooks/useMe';
+import { is_sigpig_join_available } from '@/util/constants';
 import styles from './IgList.module.css';
 
 export default function IgListClient({
@@ -162,13 +163,28 @@ export default function IgListClient({
                   </span>
                 </div>
                 <div className={styles.description}>{item.description}</div>
-                <SigPigTagList
-                  tags={item?.tags}
-                  itemId={item.id}
-                  listClassName={styles.tagList}
-                  tagClassName={styles.tagText}
-                  majorClassName={styles.major}
-                />
+                <div className={styles.tagRow}>
+                  <SigPigTagList
+                    tags={item?.tags}
+                    itemId={item.id}
+                    listClassName={styles.tagList}
+                    tagClassName={styles.tagText}
+                    majorClassName={styles.major}
+                  />
+                  <AdmissionIndicator
+                    status={item.status}
+                    admission={item.is_rolling_admission}
+                    label={t(
+                      item.is_rolling_admission === 'always' &&
+                        is_sigpig_join_available(item.status, item.is_rolling_admission)
+                        ? 'joinAlwaysAvailable'
+                        : item.is_rolling_admission === 'during_recruiting' &&
+                            is_sigpig_join_available(item.status, item.is_rolling_admission)
+                          ? 'joinAvailable'
+                          : 'joinUnavailable',
+                    )}
+                  />
+                </div>
               </div>
             </Link>
           );
@@ -222,7 +238,6 @@ function SigPigTagList({
   majorClassName?: string;
 }) {
   const sortedTags = sortSigPigTags(tags);
-  if (sortedTags.length === 0) return null;
 
   return (
     <div className={listClassName}>
@@ -235,6 +250,33 @@ function SigPigTagList({
         </span>
       ))}
     </div>
+  );
+}
+
+function AdmissionIndicator({
+  status,
+  admission,
+  label,
+}: {
+  status: string;
+  admission: string;
+  label: string;
+}) {
+  const isAvailable = is_sigpig_join_available(status, admission);
+  const className =
+    admission === 'always' && isAvailable
+      ? styles.admissionAlways
+      : admission === 'during_recruiting' && isAvailable
+        ? styles.admissionRecruiting
+        : styles.admissionClosed;
+
+  return (
+    <span
+      className={cx(styles.admissionDot, className)}
+      role="img"
+      aria-label={label}
+      title={label}
+    />
   );
 }
 

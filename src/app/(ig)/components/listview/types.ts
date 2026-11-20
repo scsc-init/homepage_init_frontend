@@ -5,7 +5,14 @@ export type IgSearchParams = Promise<Record<string, string | string[] | undefine
 
 export type IgListItem = Pick<
   IgDetail,
-  'title' | 'description' | 'owner' | 'year' | 'semester' | 'status' | 'tags'
+  | 'title'
+  | 'description'
+  | 'owner'
+  | 'year'
+  | 'semester'
+  | 'status'
+  | 'is_rolling_admission'
+  | 'tags'
 > & {
   id: number;
   members?: { user_id?: UserId; user?: { id?: UserId } }[] | null;

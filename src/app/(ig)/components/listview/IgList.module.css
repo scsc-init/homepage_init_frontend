@@ -189,12 +189,45 @@
   margin-top: 0.1rem;
 }
 
+.tagRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.1rem;
+}
+
+.tagRow .tagList {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 0;
+}
+
 .tagText {
   display: inline;
   font-size: 0.84rem;
   line-height: 1.35;
   color: var(--color-text-subtle);
   font-weight: 500;
+}
+
+.admissionDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: 0 0 0.55rem;
+  align-self: center;
+  border-radius: 50%;
+}
+
+.admissionAlways {
+  background-color: #2784e8;
+}
+
+.admissionRecruiting {
+  background-color: #2eaa62;
+}
+
+.admissionClosed {
+  background-color: #9299a3;
 }
 
 @media (max-width: 640px) {

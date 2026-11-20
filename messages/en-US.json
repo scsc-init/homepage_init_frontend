@@ -741,6 +741,9 @@
     "admissionAlways": "Always accept new members",
     "admissionRecruiting": "Accept members only during {kind} recruitment",
     "admissionNever": "Do not accept new members",
+    "joinAlwaysAvailable": "Always open for membership",
+    "joinAvailable": "Open during recruitment",
+    "joinUnavailable": "Membership currently closed",
     "titlePlaceholder": {
       "sig": "AI SIG",
       "pig": "INIT",
