@@ -60,6 +60,8 @@ export default function TextInput<TFieldValues extends FieldValues>({
             ? (value) => value.trim().length > 0 || (requiredMessage ?? false)
             : undefined,
         })}
+        aria-required={required}
+        aria-invalid={Boolean(errorMessage)}
         onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
           if (e.nativeEvent?.isComposing) return;
           if (e.key === 'Enter') {
