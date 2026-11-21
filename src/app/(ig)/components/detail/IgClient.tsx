@@ -61,6 +61,9 @@ export default function IgClient({
 
   return (
     <div className={styles.detailContainer}>
+      <Link href={`/${kind}`} className={styles.backToList}>
+        <span aria-hidden="true">←</span> {t('backToList')}
+      </Link>
       <h1 className={styles.title}>{item.title}</h1>
       <p className={styles.info}>
         {hasCreated
@@ -81,28 +84,23 @@ export default function IgClient({
           {normalizedTagText.map((text) => `#${text}`).join(' ')}
         </div>
       ) : null}
-      <div className={styles.actionRow}>
-        <Link href={`/${kind}`} className={styles.actionButton}>
-          {t('backToList')}
-        </Link>
-        {!isLoading && me ? (
-          <>
-            {isJoinAvailable(item.status, item.is_rolling_admission) ? (
-              <IgJoinLeaveButton kind={kind} igId={itemId} initialIsMember={isMember} />
-            ) : null}
-            <EditIgButton kind={kind} itemId={itemId} canEdit={canEdit} />
-            {isOwner ? (
-              <IgOwnerHandoverButton
-                kind={kind}
-                igId={itemId}
-                members={members}
-                owner={item.owner}
-              />
-            ) : null}
-            <IgDeleteButton kind={kind} itemId={itemId} canDelete={canEdit} isOwner={isOwner} />
-          </>
-        ) : null}
-      </div>
+      {!isLoading && me ? (
+        <div className={styles.actionRow}>
+          {isJoinAvailable(item.status, item.is_rolling_admission) ? (
+            <IgJoinLeaveButton kind={kind} igId={itemId} initialIsMember={isMember} />
+          ) : null}
+          <EditIgButton kind={kind} itemId={itemId} canEdit={canEdit} />
+          {isOwner ? (
+            <IgOwnerHandoverButton
+              kind={kind}
+              igId={itemId}
+              members={members}
+              owner={item.owner}
+            />
+          ) : null}
+          <IgDeleteButton kind={kind} itemId={itemId} canDelete={canEdit} isOwner={isOwner} />
+        </div>
+      ) : null}
       <hr className={styles.divider} />
       <IgContents kind={kind} content={articleContent} />
       {hasSectionBelowDivider ? <hr className={styles.divider} /> : null}

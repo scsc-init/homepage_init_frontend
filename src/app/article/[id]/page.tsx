@@ -188,6 +188,9 @@ export default function ArticleDetail() {
 
   return (
     <div className={styles.DetailContainer}>
+      <Link href={`/board/${article.board_id}`} className={styles.BackToList}>
+        <span aria-hidden="true">←</span> {t('backToList')}
+      </Link>
       <h1 className={styles.Title}>{article.title}</h1>
       <p className={styles.Info}>
         {t('createdAt', {
@@ -199,24 +202,16 @@ export default function ArticleDetail() {
         })}
       </p>
 
-      <div className={`${styles.ActionRow} ${isDeleting ? 'is-busy' : ''}`}>
-        <Link href={`/board/${article.board_id}`} className={styles.Button}>
-          {t('backToList')}
-        </Link>
-        {isAuthor && (
-          <>
-            <button
-              className={styles.Button}
-              onClick={() => router.push(`/article/edit/${id}`)}
-            >
-              {t('edit')}
-            </button>
-            <button className={styles.Button} onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? t('deleting') : t('delete')}
-            </button>
-          </>
-        )}
-      </div>
+      {isAuthor && (
+        <div className={`${styles.ActionRow} ${isDeleting ? 'is-busy' : ''}`}>
+          <button className={styles.Button} onClick={() => router.push(`/article/edit/${id}`)}>
+            {t('edit')}
+          </button>
+          <button className={styles.Button} onClick={handleDelete} disabled={isDeleting}>
+            {isDeleting ? t('deleting') : t('delete')}
+          </button>
+        </div>
+      )}
 
       <hr className={styles.Divider} />
 
