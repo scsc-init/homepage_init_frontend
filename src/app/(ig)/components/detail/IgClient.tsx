@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import EditIgButton from '@/app/(ig)/components/detail/EditIgButton';
 import IgContents from '@/app/(ig)/components/detail/IgContents';
 import IgDeleteButton from '@/app/(ig)/components/detail/IgDeleteButton';
@@ -60,6 +61,9 @@ export default function IgClient({
 
   return (
     <div className={styles.detailContainer}>
+      <Link href={`/${kind}`} className={styles.backToList}>
+        <span aria-hidden="true">←</span> {t('backToList')}
+      </Link>
       <h1 className={styles.title}>{item.title}</h1>
       <p className={styles.info}>
         {hasCreated

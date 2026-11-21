@@ -42,6 +42,7 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github.css';
 import styles from './page.module.css';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import Comments from './Comments';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -187,6 +188,9 @@ export default function ArticleDetail() {
 
   return (
     <div className={styles.DetailContainer}>
+      <Link href={`/board/${article.board_id}`} className={styles.BackToList}>
+        <span aria-hidden="true">←</span> {t('backToList')}
+      </Link>
       <h1 className={styles.Title}>{article.title}</h1>
       <p className={styles.Info}>
         {t('createdAt', {
