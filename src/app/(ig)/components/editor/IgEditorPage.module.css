@@ -32,6 +32,12 @@
   color: var(--color-text-subtle);
 }
 
+.defaultTagHint {
+  margin: 0 1.25rem;
+  font-size: 0.9rem;
+  color: var(--color-text-subtle);
+}
+
 .container :global(.C_InputLabel) {
   color: var(--color-text-subtle);
 }

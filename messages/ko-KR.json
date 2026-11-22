@@ -761,6 +761,7 @@
       "addError": "태그 추가 실패",
       "heading": "태그",
       "additional": "추가 태그 (선택)",
+      "defaultHint": "<strong>#{tag}</strong> 태그는 개설 시 자동으로 추가됩니다.",
       "additionalPlaceholder": "쉼표로 구분 (예: 웹개발, 프론트엔드)",
       "majorRestricted": "{tag} 태그는 운영진만 추가할 수 있습니다.",
       "saveHint": "수정 후 반드시 {kind} 수정 버튼을 눌러주세요.",

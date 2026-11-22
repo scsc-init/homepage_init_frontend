@@ -262,13 +262,21 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
           isCreate={true}
           submitDisabled={!user || submitting}
           afterFields={
-            <TextInput
-              name="additionalTags"
-              label={t('tags.additional')}
-              placeholder={t('tags.additionalPlaceholder')}
-              register={register}
-              required={false}
-            />
+            <>
+              <p className={styles.defaultTagHint}>
+                {t.rich('tags.defaultHint', {
+                  tag: config.tags[0],
+                  strong: (text) => <strong>{text}</strong>,
+                })}
+              </p>
+              <TextInput
+                name="additionalTags"
+                label={t('tags.additional')}
+                placeholder={t('tags.additionalPlaceholder')}
+                register={register}
+                required={false}
+              />
+            </>
           }
         />
       </div>
