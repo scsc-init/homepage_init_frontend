@@ -180,32 +180,34 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
           <h1 className={styles.title}>{t('createHeading', { kind: kindLabel })}</h1>
           <p className={styles.subtitle}>{t('createSubtitle', { kind: kindLabel })}</p>
         </div>
-        <IgForm
-          kind={kind}
-          register={register}
-          control={control}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
-          editorKey={0}
-          isCreate={true}
-          submitDisabled={!user || submitting || creatingTag}
-          afterFields={
-            <Controller
-              name="tagTexts"
-              control={control}
-              render={({ field }) => (
-                <SigTagManager
-                  selectedTagTexts={field.value}
-                  onSelectedTagTextsChange={field.onChange}
-                  onCreatingTagChange={setCreatingTag}
-                  isExecutive={Boolean(user?.role >= minExecutiveLevel)}
-                  disabled={!user || submitting}
-                  targetLabel={kindLabel}
-                />
-              )}
-            />
-          }
-        />
+        {loadedStorageKey === config.storageKey && (
+          <IgForm
+            kind={kind}
+            register={register}
+            control={control}
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit}
+            editorKey={0}
+            isCreate={true}
+            submitDisabled={!user || submitting || creatingTag}
+            afterFields={
+              <Controller
+                name="tagTexts"
+                control={control}
+                render={({ field }) => (
+                  <SigTagManager
+                    selectedTagTexts={field.value}
+                    onSelectedTagTextsChange={field.onChange}
+                    onCreatingTagChange={setCreatingTag}
+                    isExecutive={Boolean(user?.role >= minExecutiveLevel)}
+                    disabled={!user || submitting}
+                    targetLabel={kindLabel}
+                  />
+                )}
+              />
+            }
+          />
+        )}
       </div>
     </div>
   );
