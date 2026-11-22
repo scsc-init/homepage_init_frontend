@@ -3,11 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import IgForm from '@/app/(ig)/components/editor/IgForm';
-import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
+import TextInput from '@/components/form-control/TextInput';
 import styles from '@/app/(ig)/components/editor/IgEditorPage.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { minExecutiveLevel } from '@/util/constants';
 import { pushLoginWithRedirect } from '@/util/loginRedirect';
 import { useMe } from '@/util/hooks/useMe';
@@ -39,7 +39,66 @@ const CREATE_CONFIG = {
   },
 };
 
-const categoryTags = Object.values(CREATE_CONFIG).flatMap(({ tags }) => tags);
+const categoryTagKeys = Object.values(CREATE_CONFIG).flatMap(({ tags }) =>
+  tags.map((tag) => tag.toLowerCase()),
+);
+
+function getAdditionalTagNames(value) {
+  const seen = new Set(categoryTagKeys);
+  return (value ?? '')
+    .split(',')
+    .map((tag) => tag.trim().replace(/^#/, '').trim())
+    .filter((tag) => {
+      const key = tag.toLowerCase();
+      if (!tag || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+async function readTagResponse(response, fallback) {
+  if (response.ok) return response.json();
+
+  const error = await response.json().catch(() => null);
+  const message = typeof error?.detail === 'string' ? error.detail : fallback;
+  throw Object.assign(new Error(message), { status: response.status });
+}
+
+async function resolveAdditionalTags(names, isExecutive, t) {
+  if (!names.length) return [];
+
+  const loadCatalog = async () => {
+    const response = await fetchBackendClient('/api/tags', { cache: 'no-store' });
+    return readTagResponse(response, t('tags.loadError'));
+  };
+
+  const tagNames = [];
+  let catalog = await loadCatalog();
+  const findTag = (text) =>
+    catalog.find((tag) => tag.text === text) ??
+    catalog.find((tag) => tag.text.toLowerCase() === text.toLowerCase());
+
+  for (const text of names) {
+    let tag = findTag(text);
+    if (!tag) {
+      const response = await fetchBackendClient('/api/tag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      if (response.status === 409) {
+        catalog = await loadCatalog();
+        tag = findTag(text);
+      }
+      tag ??= await readTagResponse(response, t('tags.createError'));
+    }
+    if (tag.is_major && !isExecutive) {
+      throw new Error(t('tags.majorRestricted', { tag: tag.text }));
+    }
+    tagNames.push(tag.text);
+  }
+  return tagNames;
+}
 
 export default function CreateIgClient({ kind, scscGlobalStatus }) {
   const config = CREATE_CONFIG[kind];
@@ -49,7 +108,6 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
   const { me: user, isLoading, isUnauthenticated } = useMe();
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const [creatingTag, setCreatingTag] = useState(false);
   const [loadedStorageKey, setLoadedStorageKey] = useState(null);
 
   const {
@@ -65,14 +123,21 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
       description: '',
       editor: '',
       is_rolling_admission: config.getDefaultRolling(scscGlobalStatus),
-      selectedTags: [],
+      additionalTags: '',
     },
   });
 
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(config.storageKey);
-      if (saved) reset({ selectedTags: [], ...JSON.parse(saved) });
+      if (saved) {
+        const { selectedTags, ...draft } = JSON.parse(saved);
+        reset({
+          ...draft,
+          additionalTags:
+            draft.additionalTags ?? selectedTags?.map((tag) => tag.text).join(', ') ?? '',
+        });
+      }
     } catch {}
     setLoadedStorageKey(config.storageKey);
   }, [config.storageKey, reset]);
@@ -119,7 +184,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
   }, [isDirty, router, t]);
 
   const onSubmit = async (data) => {
-    if (submitting || creatingTag || isFormSubmitted.current) return;
+    if (submitting || isFormSubmitted.current) return;
 
     if (!user) {
       alert(t('retryLater'));
@@ -137,12 +202,17 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
+      const additionalTags = await resolveAdditionalTags(
+        getAdditionalTagNames(data.additionalTags),
+        user.role >= minExecutiveLevel,
+        t,
+      );
       const res = await fetchBackendClient('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
-          tags: [...new Set([...config.tags, ...data.selectedTags.map((tag) => tag.text)])],
+          tags: [...config.tags, ...additionalTags],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -164,7 +234,12 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
         alert(t('createFailure', { kind: kindLabel }) + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err?.message || t('networkError'));
+      if (err?.status === 401) {
+        alert(t('loginRequired'));
+        pushLoginWithRedirect(router);
+      } else {
+        alert(err?.message || t('networkError'));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -185,23 +260,14 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
           onSubmit={onSubmit}
           editorKey={0}
           isCreate={true}
-          submitDisabled={!user || submitting || creatingTag}
+          submitDisabled={!user || submitting}
           afterFields={
-            <Controller
-              name="selectedTags"
-              control={control}
-              render={({ field }) => (
-                <SigTagManager
-                  isCreate
-                  selectedTags={field.value}
-                  onSelectedTagsChange={field.onChange}
-                  excludedTagTexts={categoryTags}
-                  onCreatingTagChange={setCreatingTag}
-                  isExecutive={Boolean(user?.role >= minExecutiveLevel)}
-                  disabled={!user || submitting}
-                  targetLabel={kindLabel}
-                />
-              )}
+            <TextInput
+              name="additionalTags"
+              label={t('tags.additional')}
+              placeholder={t('tags.additionalPlaceholder')}
+              register={register}
+              required={false}
             />
           }
         />
