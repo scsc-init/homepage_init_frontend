@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { fetchBackendClient } from '@/util/fetch/client';
 import IgForm from '@/app/(ig)/components/editor/IgForm';
-import SigTagManager from '@/app/(ig)/components/editor/SigTagManager';
+import SigTagManager, { createIgTag } from '@/app/(ig)/components/editor/SigTagManager';
 import styles from '@/app/(ig)/components/editor/IgEditorPage.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -39,15 +39,36 @@ const CREATE_CONFIG = {
   },
 };
 
+async function registerPendingTag(tag, isExecutive, t) {
+  const response = await createIgTag(tag, isExecutive);
+
+  if (response.ok) return;
+
+  if (response.status === 409) {
+    const catalogResponse = await fetchBackendClient('/api/tags', { cache: 'no-store' });
+    if (catalogResponse.ok) {
+      const catalog = await catalogResponse.json();
+      const existing = catalog.find((entry) => entry.text === tag.text);
+      if (existing && (isExecutive || !existing.is_major)) return;
+    }
+  }
+
+  const error = await response.json().catch(() => null);
+  const message = typeof error?.detail === 'string' ? error.detail : t('tags.createError');
+  throw Object.assign(new Error(message), {
+    status: response.status,
+  });
+}
+
 export default function CreateIgClient({ kind, scscGlobalStatus }) {
   const config = CREATE_CONFIG[kind];
   const t = useTranslations('Ig');
   const kindLabel = t(`kind.${kind}`);
   const router = useRouter();
   const { me: user, isLoading, isUnauthenticated } = useMe();
+  const isExecutive = Boolean(user?.role >= minExecutiveLevel);
   const isFormSubmitted = useRef(false);
   const [submitting, setSubmitting] = useState(false);
-  const [creatingTag, setCreatingTag] = useState(false);
   const [loadedStorageKey, setLoadedStorageKey] = useState(null);
 
   const {
@@ -56,6 +77,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -64,13 +86,21 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
       editor: '',
       is_rolling_admission: config.getDefaultRolling(scscGlobalStatus),
       tagTexts: config.tags,
+      pendingTags: [],
     },
   });
 
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(config.storageKey);
-      if (saved) reset({ tagTexts: config.tags, ...JSON.parse(saved) });
+      if (saved) {
+        const draft = JSON.parse(saved);
+        reset({
+          pendingTags: [],
+          ...draft,
+          tagTexts: [...new Set([...config.tags, ...(draft.tagTexts ?? [])])],
+        });
+      }
     } catch {}
     setLoadedStorageKey(config.storageKey);
   }, [config, reset]);
@@ -117,12 +147,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
   }, [isDirty, router, t]);
 
   const onSubmit = async (data) => {
-    if (submitting || creatingTag || isFormSubmitted.current) return;
-
-    if (!data.tagTexts.length) {
-      alert(t('tags.selectionRequired'));
-      return;
-    }
+    if (submitting || isFormSubmitted.current) return;
 
     if (!user) {
       alert(t('retryLater'));
@@ -140,12 +165,22 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     setSubmitting(true);
 
     try {
+      for (const tag of data.pendingTags) {
+        await registerPendingTag(tag, isExecutive, t);
+      }
+
       const res = await fetchBackendClient('/api/sig/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: data.title,
-          tags: data.tagTexts,
+          tags: [
+            ...new Set([
+              ...config.tags,
+              ...data.tagTexts,
+              ...data.pendingTags.map((tag) => tag.text),
+            ]),
+          ],
           description: data.description,
           content: data.editor,
           is_rolling_admission: data.is_rolling_admission,
@@ -167,7 +202,12 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
         alert(t('createFailure', { kind: kindLabel }) + (err.detail ?? JSON.stringify(err)));
       }
     } catch (err) {
-      alert(err?.message || t('networkError'));
+      if (err?.status === 401) {
+        alert(t('loginRequired'));
+        pushLoginWithRedirect(router);
+      } else {
+        alert(err?.message || t('networkError'));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -189,7 +229,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
             onSubmit={onSubmit}
             editorKey={0}
             isCreate={true}
-            submitDisabled={!user || submitting || creatingTag}
+            submitDisabled={!user || submitting}
             afterFields={
               <Controller
                 name="tagTexts"
@@ -198,8 +238,12 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
                   <SigTagManager
                     selectedTagTexts={field.value}
                     onSelectedTagTextsChange={field.onChange}
-                    onCreatingTagChange={setCreatingTag}
-                    isExecutive={Boolean(user?.role >= minExecutiveLevel)}
+                    pendingTags={watched.pendingTags}
+                    onPendingTagsChange={(tags) =>
+                      setValue('pendingTags', tags, { shouldDirty: true })
+                    }
+                    lockedTagTexts={config.tags}
+                    isExecutive={isExecutive}
                     disabled={!user || submitting}
                     targetLabel={kindLabel}
                   />

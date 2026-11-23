@@ -761,7 +761,7 @@
       "addError": "Failed to add a tag",
       "heading": "Tags",
       "createSaveHint": "Selected tags are saved when you create the {kind}.",
-      "selectionRequired": "Add at least one tag.",
+      "addNew": "Add new tag",
       "saveHint": "After changing tags, click Edit {kind} to save.",
       "empty": "No tags added",
       "removeLabel": "Remove tag {tag}",

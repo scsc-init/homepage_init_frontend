@@ -14,6 +14,19 @@ import styles from './SigTagManager.module.css';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/form-control/Checkbox';
 
+const normalizeTagText = (text) =>
+  String(text ?? '')
+    .trim()
+    .toLowerCase();
+
+export function createIgTag({ text, is_major }, isExecutive) {
+  return fetchBackendClient(isExecutive ? '/api/executive/tag' : '/api/tag', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(isExecutive ? { text, is_major } : { text }),
+  });
+}
+
 const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const t = useTranslations('Ig');
   const {
@@ -22,7 +35,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     initialTagIds,
     selectedTagTexts,
     onSelectedTagTextsChange,
-    onCreatingTagChange,
+    pendingTags,
+    onPendingTagsChange,
+    lockedTagTexts,
     isExecutive = false,
     onChange,
     disabled = false,
@@ -97,24 +112,32 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   }, [attachedTagIds, onChange]);
 
   const attachedTagIdSet = useMemo(() => new Set(attachedTagIds), [attachedTagIds]);
+  const pendingTagKeys = useMemo(
+    () => new Set(pendingTags?.map((tag) => normalizeTagText(tag.text))),
+    [pendingTags],
+  );
 
   const attachedTags = useMemo(() => {
     if (isCreate) {
-      return sortTags(
-        selectedTagTexts.map(
+      return sortTags([
+        ...selectedTagTexts.map(
           (text) =>
             allTags.find((tag) => tag.text === text) ?? { id: text, text, is_major: false },
         ),
-      );
+        ...pendingTags.map((tag) => ({ ...tag, id: `pending:${tag.text}`, pending: true })),
+      ]);
     }
     return sortTags(allTags.filter((tag) => attachedTagIdSet.has(String(tag.id))));
-  }, [allTags, attachedTagIdSet, isCreate, selectedTagTexts]);
+  }, [allTags, attachedTagIdSet, isCreate, pendingTags, selectedTagTexts]);
 
   const selectableTags = useMemo(() => {
     return sortTags(
       allTags.filter((tag) => {
         if (
-          isCreate ? selectedTagTexts.includes(tag.text) : attachedTagIdSet.has(String(tag.id))
+          isCreate
+            ? selectedTagTexts.includes(tag.text) ||
+              pendingTagKeys.has(normalizeTagText(tag.text))
+            : attachedTagIdSet.has(String(tag.id))
         ) {
           return false;
         }
@@ -122,7 +145,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
         return true;
       }),
     );
-  }, [allTags, attachedTagIdSet, isCreate, isExecutive, selectedTagTexts]);
+  }, [allTags, attachedTagIdSet, isCreate, isExecutive, pendingTagKeys, selectedTagTexts]);
 
   const addTag = (tag) => {
     if (isCreate) {
@@ -153,30 +176,29 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     const text = newTagText.trim();
     if (!text || controlsDisabled) return;
 
-    const normalizedText = text.toLowerCase();
+    const normalizedText = normalizeTagText(text);
     const existsInCatalog = allTags.some(
-      (tag) =>
-        String(tag.text ?? '')
-          .trim()
-          .toLowerCase() === normalizedText,
+      (tag) => normalizeTagText(tag.text) === normalizedText,
     );
     if (existsInCatalog) {
       alert(translate ? translate('tagExists') : t('tags.duplicate'));
       return;
     }
 
+    if (isCreate) {
+      if (!pendingTagKeys.has(normalizedText)) {
+        onPendingTagsChange([...pendingTags, { text, is_major: isExecutive && newTagIsMajor }]);
+      }
+      setNewTagText('');
+      setNewTagIsMajor(false);
+      return;
+    }
+
     const createErrorMessage = translate ? translate('tagCreateFailed') : t('tags.createError');
     setLoading(true);
-    onCreatingTagChange?.(true);
 
     try {
-      const res = await fetchBackendClient(isExecutive ? '/api/executive/tag' : '/api/tag', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
-        ),
-      });
+      const res = await createIgTag({ text, is_major: newTagIsMajor }, isExecutive);
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -201,16 +223,21 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       alert(createErrorMessage);
     } finally {
       setLoading(false);
-      onCreatingTagChange?.(false);
     }
   };
 
+  const isTagLocked = (tag) =>
+    lockedTagTexts?.includes(tag.text) || (tag.is_major && !isExecutive);
+
   const removeTag = (tag) => {
-    if (controlsDisabled) return;
-    if (tag.is_major && !isExecutive) return;
+    if (controlsDisabled || isTagLocked(tag)) return;
 
     if (isCreate) {
-      onSelectedTagTextsChange(selectedTagTexts.filter((text) => text !== tag.text));
+      if (tag.pending) {
+        onPendingTagsChange(pendingTags.filter((entry) => entry.text !== tag.text));
+      } else {
+        onSelectedTagTextsChange(selectedTagTexts.filter((text) => text !== tag.text));
+      }
       return;
     }
 
@@ -296,7 +323,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
         ) : (
           <div className={styles.SigAttachedTagList}>
             {attachedTags.map((tag) => {
-              const locked = tag.is_major && !isExecutive;
+              const locked = isTagLocked(tag);
               return (
                 <div
                   key={tag.id}
@@ -392,7 +419,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           onClick={createAndAddTag}
           disabled={controlsDisabled || !newTagText.trim()}
         >
-          {translate ? translate('createAndAddTag') : t('tags.create')}
+          {translate
+            ? translate('createAndAddTag')
+            : t(isCreate ? 'tags.addNew' : 'tags.create')}
         </Button>
       </div>
     </div>
