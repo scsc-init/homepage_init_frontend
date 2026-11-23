@@ -14,18 +14,37 @@ import styles from './SigTagManager.module.css';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/form-control/Checkbox';
 
+const normalizeTagText = (text) =>
+  String(text ?? '')
+    .trim()
+    .toLowerCase();
+
+export function createIgTag({ text, is_major }, isExecutive) {
+  return fetchBackendClient(isExecutive ? '/api/executive/tag' : '/api/tag', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(isExecutive ? { text, is_major } : { text }),
+  });
+}
+
 const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const t = useTranslations('Ig');
   const {
     sigId,
     initialTags,
     initialTagIds,
+    selectedTagTexts,
+    onSelectedTagTextsChange,
+    pendingTags,
+    onPendingTagsChange,
+    lockedTagTexts,
     isExecutive = false,
     onChange,
     disabled = false,
     targetLabel = 'SIG',
     translate,
   } = props;
+  const isCreate = Array.isArray(selectedTagTexts);
 
   const resolvedInitialIds = useMemo(() => {
     if (Array.isArray(initialTagIds)) {
@@ -49,7 +68,9 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   const [newTagText, setNewTagText] = useState('');
   const [newTagIsMajor, setNewTagIsMajor] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
   const [catalogError, setCatalogError] = useState('');
+  const controlsDisabled = loading || disabled || (isCreate && !catalogLoaded);
 
   const sortTags = (tagList) =>
     [...tagList].sort((a, b) => {
@@ -63,6 +84,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
 
     const data = await res.json();
     setAllTags(sortTags(Array.isArray(data) ? data : []));
+    setCatalogLoaded(true);
     setCatalogError('');
   }, [translate, t]);
 
@@ -90,45 +112,85 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
   }, [attachedTagIds, onChange]);
 
   const attachedTagIdSet = useMemo(() => new Set(attachedTagIds), [attachedTagIds]);
+  const pendingTagKeys = useMemo(
+    () => new Set(pendingTags?.map((tag) => normalizeTagText(tag.text))),
+    [pendingTags],
+  );
 
   const attachedTags = useMemo(() => {
+    if (isCreate) {
+      return sortTags([
+        ...selectedTagTexts.map(
+          (text) =>
+            allTags.find((tag) => tag.text === text) ?? { id: text, text, is_major: false },
+        ),
+        ...pendingTags.map((tag) => ({ ...tag, id: `pending:${tag.text}`, pending: true })),
+      ]);
+    }
     return sortTags(allTags.filter((tag) => attachedTagIdSet.has(String(tag.id))));
-  }, [allTags, attachedTagIdSet]);
+  }, [allTags, attachedTagIdSet, isCreate, pendingTags, selectedTagTexts]);
 
   const selectableTags = useMemo(() => {
     return sortTags(
       allTags.filter((tag) => {
-        if (attachedTagIdSet.has(String(tag.id))) return false;
+        if (
+          isCreate
+            ? selectedTagTexts.includes(tag.text) ||
+              pendingTagKeys.has(normalizeTagText(tag.text))
+            : attachedTagIdSet.has(String(tag.id))
+        ) {
+          return false;
+        }
         if (!isExecutive && tag.is_major) return false;
         return true;
       }),
     );
-  }, [allTags, attachedTagIdSet, isExecutive]);
+  }, [allTags, attachedTagIdSet, isCreate, isExecutive, pendingTagKeys, selectedTagTexts]);
 
-  const addExistingTag = () => {
-    if (!selectedTagId || loading || disabled) return;
+  const addTag = (tag) => {
+    if (isCreate) {
+      if (!selectedTagTexts.includes(tag.text)) {
+        onSelectedTagTextsChange([...selectedTagTexts, tag.text]);
+      }
+      return;
+    }
 
     setAttachedTagIds((prev) => {
-      const nextId = String(selectedTagId);
+      const nextId = String(tag.id);
       if (prev.includes(nextId)) return prev;
       return [...prev, nextId];
     });
+  };
+
+  const addExistingTag = () => {
+    if (controlsDisabled) return;
+
+    const tag = selectableTags.find((tag) => String(tag.id) === selectedTagId);
+    if (!tag) return;
+
+    addTag(tag);
     setSelectedTagId('');
   };
 
   const createAndAddTag = async () => {
     const text = newTagText.trim();
-    if (!text || loading || disabled) return;
+    if (!text || controlsDisabled) return;
 
-    const normalizedText = text.toLowerCase();
+    const normalizedText = normalizeTagText(text);
     const existsInCatalog = allTags.some(
-      (tag) =>
-        String(tag.text ?? '')
-          .trim()
-          .toLowerCase() === normalizedText,
+      (tag) => normalizeTagText(tag.text) === normalizedText,
     );
     if (existsInCatalog) {
       alert(translate ? translate('tagExists') : t('tags.duplicate'));
+      return;
+    }
+
+    if (isCreate) {
+      if (!pendingTagKeys.has(normalizedText)) {
+        onPendingTagsChange([...pendingTags, { text, is_major: isExecutive && newTagIsMajor }]);
+      }
+      setNewTagText('');
+      setNewTagIsMajor(false);
       return;
     }
 
@@ -136,13 +198,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     setLoading(true);
 
     try {
-      const res = await fetchBackendClient(isExecutive ? '/api/executive/tag' : '/api/tag', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          isExecutive ? { text, is_major: Boolean(newTagIsMajor) } : { text },
-        ),
-      });
+      const res = await createIgTag({ text, is_major: newTagIsMajor }, isExecutive);
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -160,11 +216,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
       const createdTag = await res.json();
 
       setAllTags((prev) => sortTags([...prev, createdTag]));
-      setAttachedTagIds((prev) => {
-        const nextId = String(createdTag.id);
-        if (prev.includes(nextId)) return prev;
-        return [...prev, nextId];
-      });
+      addTag(createdTag);
       setNewTagText('');
       setNewTagIsMajor(false);
     } catch {
@@ -174,9 +226,20 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
     }
   };
 
+  const isTagLocked = (tag) =>
+    lockedTagTexts?.includes(tag.text) || (tag.is_major && !isExecutive);
+
   const removeTag = (tag) => {
-    if (loading || disabled) return;
-    if (tag.is_major && !isExecutive) return;
+    if (controlsDisabled || isTagLocked(tag)) return;
+
+    if (isCreate) {
+      if (tag.pending) {
+        onPendingTagsChange(pendingTags.filter((entry) => entry.text !== tag.text));
+      } else {
+        onSelectedTagTextsChange(selectedTagTexts.filter((text) => text !== tag.text));
+      }
+      return;
+    }
 
     setAttachedTagIds((prev) => prev.filter((id) => id !== String(tag.id)));
   };
@@ -247,7 +310,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
         <p className={styles.SigTagManagerDescription}>
           {translate
             ? translate('tagsSaveHelp', { value0: targetLabel ?? '' })
-            : t('tags.saveHint', { kind: targetLabel })}
+            : t(isCreate ? 'tags.createSaveHint' : 'tags.saveHint', { kind: targetLabel })}
         </p>
         {catalogError ? <p className={styles.SigTagErrorText}>{catalogError}</p> : null}
       </div>
@@ -260,7 +323,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
         ) : (
           <div className={styles.SigAttachedTagList}>
             {attachedTags.map((tag) => {
-              const locked = tag.is_major && !isExecutive;
+              const locked = isTagLocked(tag);
               return (
                 <div
                   key={tag.id}
@@ -272,7 +335,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
                       type="button"
                       className={styles.SigAttachedTagRemove}
                       onClick={() => removeTag(tag)}
-                      disabled={loading || disabled}
+                      disabled={controlsDisabled}
                       aria-label={
                         translate
                           ? translate('removeTagLabel', { value0: String(tag.text) })
@@ -298,7 +361,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           className={styles.SigTagSelect}
           value={selectedTagId}
           onChange={(e) => setSelectedTagId(e.target.value)}
-          disabled={loading || disabled}
+          disabled={controlsDisabled}
         >
           <option value="">{translate ? translate('selectTag') : t('tags.select')}</option>
           {selectableTags.map((tag) => (
@@ -312,7 +375,7 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           variant="secondary"
           className={styles.SigTagActionButton}
           onClick={addExistingTag}
-          disabled={loading || disabled || !selectedTagId}
+          disabled={controlsDisabled || !selectedTagId}
         >
           {translate ? translate('addExistingTag') : t('tags.add')}
         </Button>
@@ -327,15 +390,25 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           className={styles.SigTagInput}
           value={newTagText}
           onChange={(e) => setNewTagText(e.target.value)}
+          onKeyDown={
+            isCreate
+              ? (event) => {
+                  if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+                    event.preventDefault();
+                    createAndAddTag();
+                  }
+                }
+              : undefined
+          }
           placeholder={translate ? translate('newTagName') : t('tags.newName')}
-          disabled={loading || disabled}
+          disabled={controlsDisabled}
         />
         {isExecutive ? (
           <Checkbox
             className={styles.SigTagCheckboxLabel}
             checked={newTagIsMajor}
             onChange={(e) => setNewTagIsMajor(e.target.checked)}
-            disabled={loading || disabled}
+            disabled={controlsDisabled}
           >
             {t('tags.major')}
           </Checkbox>
@@ -344,9 +417,11 @@ const SigTagManager = forwardRef(function SigTagManager(props, ref) {
           variant="secondary"
           className={styles.SigTagActionButton}
           onClick={createAndAddTag}
-          disabled={loading || disabled || !newTagText.trim()}
+          disabled={controlsDisabled || !newTagText.trim()}
         >
-          {translate ? translate('createAndAddTag') : t('tags.create')}
+          {translate
+            ? translate('createAndAddTag')
+            : t(isCreate ? 'tags.addNew' : 'tags.create')}
         </Button>
       </div>
     </div>

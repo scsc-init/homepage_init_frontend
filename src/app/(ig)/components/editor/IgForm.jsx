@@ -16,6 +16,7 @@ export default function IgForm({
   editorKey,
   isCreate,
   afterFields,
+  submitDisabled,
 }) {
   const t = useTranslations('Ig');
   const kindLabel = t(`kind.${kind}`);
@@ -70,7 +71,7 @@ export default function IgForm({
       ) : null}
       {afterFields ? <div className={styles.afterFields}>{afterFields}</div> : null}
 
-      <ButtonInput isSubmit={true}>
+      <ButtonInput isSubmit={true} disabled={submitDisabled}>
         {t(isCreate ? 'create' : 'editHeading', { kind: kindLabel })}
       </ButtonInput>
     </form>
