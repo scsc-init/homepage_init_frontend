@@ -32,6 +32,11 @@
   color: var(--color-text-subtle);
 }
 
+.afterFields {
+  margin-block: 3rem;
+  padding-inline: 1rem;
+}
+
 .container :global(.C_InputLabel) {
   color: var(--color-text-subtle);
 }

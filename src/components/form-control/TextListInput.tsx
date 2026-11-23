@@ -27,12 +27,20 @@ type TextListInputProps<
   register: UseFormRegister<TFieldValues>;
   control: Control<TFieldValues>;
   inputKey: keyof FieldArray<TFieldValues, TName> & string;
+  alignItemsWithInput?: boolean;
 };
 
 export default function TextListInput<
   TFieldValues extends FieldValues,
   TName extends ArrayPath<TFieldValues> = ArrayPath<TFieldValues>,
->({ label, name, register, control, inputKey }: TextListInputProps<TFieldValues, TName>) {
+>({
+  label,
+  name,
+  register,
+  control,
+  inputKey,
+  alignItemsWithInput = false,
+}: TextListInputProps<TFieldValues, TName>) {
   const { fields, append, remove } = useFieldArray<TFieldValues, TName>({ control, name });
   const ref = useRef<HTMLInputElement>(null);
   const t = useTranslations('TextListInput');
@@ -60,7 +68,13 @@ export default function TextListInput<
         register={(() => ({ ref })) as unknown as UseFormRegister<TFieldValues>}
         onEnter={handleAdd}
       />
-      <div className={styles.currentTextList}>
+      <div
+        className={
+          alignItemsWithInput
+            ? `${styles.currentTextList} ${styles.alignedTextList}`
+            : styles.currentTextList
+        }
+      >
         {fields.map((field, index) => {
           const fieldValue = field[inputKey];
           if (fieldValue === '') return null;
