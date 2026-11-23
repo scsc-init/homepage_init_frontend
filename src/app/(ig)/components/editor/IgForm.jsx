@@ -53,7 +53,7 @@ export default function IgForm({
         register={register}
         control={control}
         inputKey="url"
-        alignItemsWithInput={!isCreate}
+        alignItemsWithInput
       />
       <DropdownInput
         label={t('admission')}
