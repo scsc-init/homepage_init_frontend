@@ -56,9 +56,7 @@ export default function TextInput<TFieldValues extends FieldValues>({
         placeholder={placeholder}
         className={`${styles.textInput} ${className ?? ''}`.trim()}
         {...register(name, {
-          validate: required
-            ? (value) => value.trim().length > 0 || (requiredMessage ?? false)
-            : undefined,
+          required: required ? (requiredMessage ?? true) : false,
         })}
         aria-required={required}
         aria-invalid={Boolean(errorMessage)}

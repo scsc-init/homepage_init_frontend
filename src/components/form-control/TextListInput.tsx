@@ -59,6 +59,7 @@ export default function TextListInput<
         placeholder={t('placeholder')}
         register={(() => ({ ref })) as unknown as UseFormRegister<TFieldValues>}
         onEnter={handleAdd}
+        required={false}
       />
       <div className={styles.currentTextList}>
         {fields.map((field, index) => {
