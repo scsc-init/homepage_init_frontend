@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -78,7 +78,7 @@ export default function FundApplyForm({
   const tImageUpload = useTranslations('ImageUpload');
   const router = useRouter();
   const t = useTranslations('UsFundApply');
-  const locale = useLocale();
+  const group = useTranslations('Ig');
   const instructionsByType = {
     contest: t('instructions.contest'),
     fund: t('instructions.fund'),
@@ -115,8 +115,10 @@ export default function FundApplyForm({
 
   const [usePrevTerm, setUsePrevTerm] = useState<boolean>(false);
   const prevTermLabel = academicTerm2string(prevTerm);
-  const displayPrevTermLabel =
-    locale === 'en-US' ? `${prevTerm.year}, semester ${prevTerm.semester}` : prevTermLabel;
+  const displayPrevTermLabel = group('academicTerm', {
+    year: prevTerm.year,
+    semester: prevTerm.semester,
+  });
 
   const {
     register,

@@ -1,12 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import styles from './page.module.css';
 import type { CSSProperties } from 'react';
 
 const MENUS = [
-  { label: 'About', href: '/about' },
+  { label: 'About', labelKey: 'aboutLink', href: '/about' },
   {
     label: 'SIG/PIG',
     children: [
@@ -14,7 +15,7 @@ const MENUS = [
       { label: 'PIG', href: '/pig' },
     ],
   },
-  { label: 'Contact', href: '/us/contact' },
+  { label: 'Contact', labelKey: 'contactLink', href: '/us/contact' },
 ] as const;
 
 const VB_W = 1000;
@@ -40,6 +41,7 @@ const rowY = (anchorY: number, index: number) => anchorY + FIRST_GAP + index * R
 const DASH = 420;
 
 export default function JoinMenu() {
+  const t = useTranslations('Home');
   const rootRef = useRef<HTMLElement>(null);
   const [entered, setEntered] = useState(false);
   const [openLabel, setOpenLabel] = useState<string | null>(null);
@@ -117,12 +119,13 @@ export default function JoinMenu() {
       ref={rootRef}
       className={styles.joinMenu}
       data-in={entered ? '' : undefined}
-      aria-label="더 알아보기"
+      aria-label={t('more')}
     >
-      <p className={styles.joinMenuKicker}>더 알아보기</p>
+      <p className={styles.joinMenuKicker}>{t('more')}</p>
 
       <ul className={styles.joinMenuList}>
         {MENUS.map((menu, index) => {
+          const label = 'labelKey' in menu ? t(menu.labelKey) : menu.label;
           const children = 'children' in menu ? menu.children : undefined;
           const hasChildren = Boolean(children);
           const open = openLabel === menu.label;
@@ -161,7 +164,7 @@ export default function JoinMenu() {
                   textAnchor="end"
                   fontSize={WORD_SIZE}
                 >
-                  {menu.label}
+                  {label}
                 </text>
                 <text
                   className={styles.joinWordDraw}
@@ -173,7 +176,7 @@ export default function JoinMenu() {
                   strokeDashoffset={DASH}
                   aria-hidden="true"
                 >
-                  {menu.label}
+                  {label}
                 </text>
 
                 {hasChildren && anchor && (
@@ -217,7 +220,7 @@ export default function JoinMenu() {
                     aria-expanded={open}
                     onClick={() => setOpenLabel((v) => (v === menu.label ? null : menu.label))}
                   >
-                    <span className={styles.srOnly}>{menu.label}</span>
+                    <span className={styles.srOnly}>{label}</span>
                   </button>
                   <ul className={styles.joinSubList}>
                     {children!.map((child, childIndex) => (
@@ -250,7 +253,7 @@ export default function JoinMenu() {
                   className={styles.joinHit}
                   onClick={suppressSmoothScroll}
                 >
-                  <span className={styles.srOnly}>{menu.label}</span>
+                  <span className={styles.srOnly}>{label}</span>
                 </Link>
               )}
             </li>

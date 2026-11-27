@@ -1,51 +1,20 @@
 import { defineRouting } from 'next-intl/routing';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
+const baseDomain = isDevelopment ? 'localhost:3000' : 'scsc.dev';
+const devLocale = isDevelopment ? process.env.NEXT_PUBLIC_I18N_DEV_LOCALE : undefined;
+const defaultLocale = devLocale === 'en-US' || devLocale === 'ru-RU' ? devLocale : 'ko-KR';
 
-const baseRouting = defineRouting({
-  locales: ['ko-KR', 'en-US'],
-  defaultLocale: 'ko-KR',
+export const routing = defineRouting({
+  locales: ['ko-KR', 'en-US', 'ru-RU'],
+  defaultLocale,
   localePrefix: 'never',
-  domains: isDevelopment
-    ? [
-        {
-          domain: 'localhost:3000',
-          defaultLocale: 'ko-KR',
-          locales: ['ko-KR'],
-        },
-        {
-          domain: 'en.localhost:3000',
-          defaultLocale: 'en-US',
-          locales: ['en-US'],
-        },
-      ]
-    : [
-        {
-          domain: 'scsc.dev',
-          defaultLocale: 'ko-KR',
-          locales: ['ko-KR'],
-        },
-        {
-          domain: 'en.scsc.dev',
-          defaultLocale: 'en-US',
-          locales: ['en-US'],
-        },
-      ],
+  domains:
+    defaultLocale === 'ko-KR'
+      ? [
+          { domain: baseDomain, defaultLocale, locales: [defaultLocale] },
+          { domain: `en.${baseDomain}`, defaultLocale: 'en-US', locales: ['en-US'] },
+          { domain: `ru.${baseDomain}`, defaultLocale: 'ru-RU', locales: ['ru-RU'] },
+        ]
+      : [{ domain: baseDomain, defaultLocale, locales: [defaultLocale] }],
 });
-
-// Development-only: test English on the main localhost origin.
-export const routing =
-  process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_I18N_DEV_LOCALE === 'en-US'
-    ? defineRouting({
-        locales: ['ko-KR', 'en-US'],
-        defaultLocale: 'en-US',
-        localePrefix: 'never',
-        domains: [
-          {
-            domain: 'localhost:3000',
-            defaultLocale: 'en-US',
-            locales: ['en-US'],
-          },
-        ],
-      })
-    : baseRouting;

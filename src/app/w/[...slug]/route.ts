@@ -40,16 +40,18 @@ export async function GET(
 
 async function notFoundPage(request: Request) {
   const locale = getRequestLocale(request);
-  const fileName = locale === 'en-US' ? 'not-found.en-US.html' : 'not-found.html';
+  const fileName = locale === 'ko-KR' ? 'not-found.html' : `not-found.${locale}.html`;
   const filePath = path.join(process.cwd(), 'public', fileName);
   let html;
   try {
     html = await fs.readFile(filePath, 'utf-8');
   } catch {
-    html =
-      locale === 'en-US'
-        ? '<!doctype html><html lang="en"><meta charset="utf-8"><title>404</title><h1>Page not found</h1>'
-        : '<!doctype html><html lang="ko"><meta charset="utf-8"><title>404</title><h1>페이지를 찾을 수 없습니다.</h1>';
+    const titles = {
+      'ko-KR': '페이지를 찾을 수 없습니다.',
+      'en-US': 'Page not found',
+      'ru-RU': 'Страница не найдена',
+    };
+    html = `<!doctype html><html lang="${locale}"><meta charset="utf-8"><title>404</title><h1>${titles[locale]}</h1>`;
   }
   return new Response(html, {
     status: 404,

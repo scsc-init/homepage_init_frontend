@@ -1002,5 +1002,28 @@
       "meal": "Use the following guidelines when writing your application.\n\nApproval: Subject to review by club officers\nSupport limit: KRW 50,000 for SIG; no separate limit for PIG\nApproval must be obtained before payment is made.\nSpecify the SIG or PIG requiring support and the purpose of the gathering.",
       "pair": "Use the following guidelines when writing your application.\n\nApproval: Subject to review by club officers\nSupport limit: KRW 20,000 per member\nThe mentor/mentee pairing must be valid."
     }
+  },
+  "Home": {
+    "question": "<b>Hangul, Lineage, Aion.</b><br></br>What do they have in common?",
+    "hangul": "The first Korean word processor, <b>Hangul 1.0</b>,<br></br>was unveiled at the <b>third SCSC exhibition</b>.",
+    "alumni": "<b>Lee Chan-jin, Kim Hyeong-jip, Woo Won-sik, and Kim Taek-jin</b> are among the many SCSC alumni<br></br>who founded companies and helped shape Korea’s software and games industries.",
+    "origin": "These stories began with <b>SCSC</b>.",
+    "today": "<b>SCSC today</b>",
+    "events": "We organize the <b>SKYSH</b> hackathon and the <b>SCPC</b> programming contest,<br></br>invite professional developers to give seminars,<br></br>and run a variety of events.",
+    "members": "Our <b>200 or so members</b> come from many different majors.<br></br>We help them develop their own expertise in <b>apps, the web, AI, algorithms</b>,<br></br>and other areas.",
+    "onward": "<b>SCSC keeps moving forward!</b>",
+    "activityNote": "Throughout the year, we host social gatherings, seminars, guest talks and events,<br></br>as well as SIGs, PIGs and informal groups of all sizes.",
+    "joinKicker": "Want to join SCSC?",
+    "joinHeadline": "Take your first step toward becoming a developer.<br></br>We look forward to meeting you.",
+    "scpc": "We organize SCPC, a programming contest supported by industry sponsors.",
+    "init": "Our INIT project team develops the SCSC website.",
+    "skysh": "We run a joint hackathon with clubs from other universities.",
+    "scroll": "Scroll to the introduction",
+    "activities": "Featured activities",
+    "join": "Join the club",
+    "more": "Learn more",
+    "aboutLink": "About",
+    "contactLink": "Contact",
+    "clubName": "서울대학교 중앙컴퓨터연구회"
   }
 }
