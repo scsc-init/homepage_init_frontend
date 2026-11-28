@@ -5,6 +5,7 @@ import DropdownInput from '@/components/form-control/DropdownInput';
 import ToggleInput from '@/components/form-control/ToggleInput';
 import ButtonInput from '@/components/form-control/ButtonInput';
 import TextListInput from '@/components/form-control/TextListInput';
+import styles from './IgEditorPage.module.css';
 
 export default function IgForm({
   kind,
@@ -16,6 +17,7 @@ export default function IgForm({
   isCreate,
   errors,
   afterFields,
+  submitDisabled,
 }) {
   const t = useTranslations('Ig');
   const kindLabel = t(`kind.${kind}`);
@@ -60,6 +62,7 @@ export default function IgForm({
         register={register}
         control={control}
         inputKey="url"
+        alignItemsWithInput
       />
       <DropdownInput
         label={t('admission')}
@@ -74,9 +77,9 @@ export default function IgForm({
       {!isCreate ? (
         <ToggleInput label={t('extend')} name="should_extend" control={control} />
       ) : null}
-      {afterFields ? <div style={{ margin: '3rem 0' }}>{afterFields}</div> : null}
+      {afterFields ? <div className={styles.afterFields}>{afterFields}</div> : null}
 
-      <ButtonInput isSubmit={true}>
+      <ButtonInput isSubmit={true} disabled={submitDisabled}>
         {t(isCreate ? 'create' : 'editHeading', { kind: kindLabel })}
       </ButtonInput>
     </form>

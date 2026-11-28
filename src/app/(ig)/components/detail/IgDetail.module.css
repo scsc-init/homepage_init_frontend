@@ -23,6 +23,22 @@
   -webkit-user-select: none;
 }
 
+.backToList {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding-block: 0.25rem;
+  color: var(--color-text-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.backToList:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
 .title {
   font-size: 2rem;
   font-weight: 700;

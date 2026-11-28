@@ -264,6 +264,7 @@
     "loadError": "Unable to load the club rules. Please use the link below to read the original."
   },
   "Article": {
+    "backToList": "Back to list",
     "notFound": "Article not found.",
     "emptyContent": "This article is empty.",
     "deleteConfirm": "Are you sure you want to delete this article?",
@@ -675,6 +676,7 @@
     }
   },
   "Ig": {
+    "backToList": "Back to list",
     "kind": {
       "sig": "SIG",
       "pig": "PIG",
@@ -761,6 +763,8 @@
       "deleteError": "Failed to remove a tag",
       "addError": "Failed to add a tag",
       "heading": "Tags",
+      "createSaveHint": "Selected tags are saved when you create the {kind}.",
+      "addNew": "Add new tag",
       "saveHint": "After changing tags, click Edit {kind} to save.",
       "empty": "No tags added",
       "removeLabel": "Remove tag {tag}",
