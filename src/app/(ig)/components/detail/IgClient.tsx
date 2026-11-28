@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import EditIgButton from '@/app/(ig)/components/detail/EditIgButton';
 import IgContents from '@/app/(ig)/components/detail/IgContents';
 import IgDeleteButton from '@/app/(ig)/components/detail/IgDeleteButton';
@@ -11,6 +12,7 @@ import { sortSigPigTags } from '@/app/(ig)/utils/sortSigPigTags';
 import { is_sigpig_join_available, minExecutiveLevel } from '@/util/constants';
 import { getMemberIdentity } from '@/app/(ig)/utils/memberIdentity';
 import { useMe } from '@/util/hooks/useMe';
+import { getKvClient } from '@/util/fetch/client-util';
 import styles from './IgDetail.module.css';
 import type { IgDetail, IgKind, IgMember, IgWebsite } from './types';
 
@@ -39,7 +41,28 @@ export default function IgClient({
 }: IgClientProps) {
   const { me, isLoading } = useMe();
   const t = useTranslations('Ig');
+  const [recruitmentDeadline, setRecruitmentDeadline] = useState('');
   const isJoinAvailable = JOIN_AVAILABILITY[kind];
+
+  useEffect(() => {
+    if (item.is_rolling_admission !== 'during_recruiting') {
+      setRecruitmentDeadline('');
+      return;
+    }
+
+    let isCurrent = true;
+    getKvClient('group-recruitment-deadline')
+      .then((value) => {
+        if (isCurrent) setRecruitmentDeadline(value);
+      })
+      .catch(() => {
+        if (isCurrent) setRecruitmentDeadline('');
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [item.is_rolling_admission]);
 
   if (!isJoinAvailable) {
     console.error(`IgClient: unsupported kind ${kind}`);
@@ -57,6 +80,21 @@ export default function IgClient({
   const normalizedTagText = sortSigPigTags(item?.tags)
     .map((tag) => String(tag?.text ?? '').trim())
     .filter(Boolean);
+  const admissionAvailable = isJoinAvailable(item.status, item.is_rolling_admission);
+  const admissionLabel =
+    item.is_rolling_admission === 'never'
+      ? t('joinNeverLabel')
+      : item.is_rolling_admission === 'always' && admissionAvailable
+        ? t('joinAlwaysLabel')
+        : item.is_rolling_admission === 'during_recruiting' && admissionAvailable
+          ? t('joinRecruitingLabel')
+          : t('joinUnavailableLabel');
+  const admissionClassName =
+    item.is_rolling_admission === 'always' && admissionAvailable
+      ? styles.admissionAlways
+      : item.is_rolling_admission === 'during_recruiting' && admissionAvailable
+        ? styles.admissionRecruiting
+        : styles.admissionClosed;
 
   return (
     <div className={styles.detailContainer}>
@@ -75,11 +113,24 @@ export default function IgClient({
         {t('status', { status: t('statusLabel', { status: item.status }) })}
       </p>
       <p className={styles.description}>{item.description}</p>
-      {normalizedTagText.length > 0 ? (
-        <div className={styles.tagInline}>
-          {normalizedTagText.map((text) => `#${text}`).join(' ')}
-        </div>
-      ) : null}
+      <div className={styles.tagInline}>
+        {normalizedTagText.length > 0 ? (
+          <span>{normalizedTagText.map((text) => `#${text}`).join(' ')}</span>
+        ) : null}
+        <span className={styles.admissionInfo}>
+          <span
+            className={`${styles.admissionDot} ${admissionClassName}`}
+            role="img"
+            aria-label={admissionLabel}
+          />
+          <span>
+            {admissionLabel}
+            {item.is_rolling_admission === 'during_recruiting' && recruitmentDeadline.trim()
+              ? ' · ' + t('recruitmentDeadline', { date: recruitmentDeadline })
+              : ''}
+          </span>
+        </span>
+      </div>
       {!isLoading && me ? (
         <div className={styles.actionRow}>
           {isJoinAvailable(item.status, item.is_rolling_admission) ? (

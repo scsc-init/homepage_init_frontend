@@ -132,6 +132,18 @@ export default function IgListClient({
           const itemKey = String(item.id);
           const isJoined = myJoinedIds.has(itemKey);
           const isMine = myOwnedIds.has(itemKey);
+          const admissionAvailable = is_sigpig_join_available(
+            item.status,
+            item.is_rolling_admission,
+          );
+          const admissionLabel =
+            item.is_rolling_admission === 'never'
+              ? t('joinNeverLabel')
+              : item.is_rolling_admission === 'always' && admissionAvailable
+                ? t('joinAlwaysLabel')
+                : item.is_rolling_admission === 'during_recruiting' && admissionAvailable
+                  ? t('joinRecruitingLabel')
+                  : t('joinUnavailableLabel');
           return (
             <Link
               key={item.id}
@@ -174,15 +186,7 @@ export default function IgListClient({
                   <AdmissionIndicator
                     status={item.status}
                     admission={item.is_rolling_admission}
-                    label={t(
-                      item.is_rolling_admission === 'always' &&
-                        is_sigpig_join_available(item.status, item.is_rolling_admission)
-                        ? 'joinAlwaysAvailable'
-                        : item.is_rolling_admission === 'during_recruiting' &&
-                            is_sigpig_join_available(item.status, item.is_rolling_admission)
-                          ? 'joinAvailable'
-                          : 'joinUnavailable',
-                    )}
+                    label={admissionLabel}
                   />
                 </div>
               </div>
@@ -271,12 +275,10 @@ function AdmissionIndicator({
         : styles.admissionClosed;
 
   return (
-    <span
-      className={cx(styles.admissionDot, className)}
-      role="img"
-      aria-label={label}
-      title={label}
-    />
+    <span className={styles.admissionInfo}>
+      <span>{label}</span>
+      <span className={cx(styles.admissionDot, className)} aria-hidden="true" />
+    </span>
   );
 }
 

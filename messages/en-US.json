@@ -744,6 +744,11 @@
     "joinAlwaysAvailable": "Always open for membership",
     "joinAvailable": "Open during recruitment",
     "joinUnavailable": "Membership currently closed",
+    "joinAlwaysLabel": "Always recruiting",
+    "joinRecruitingLabel": "Recruiting",
+    "joinUnavailableLabel": "Recruitment closed",
+    "joinNeverLabel": "Never accepts members",
+    "recruitmentDeadline": "Recruitment deadline: {date}",
     "titlePlaceholder": {
       "sig": "AI SIG",
       "pig": "INIT",

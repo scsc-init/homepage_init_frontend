@@ -2,6 +2,9 @@
   --theme-anim-duration: 0s;
   --color-button-disabled-bg: #d1d5db;
   --color-button-disabled-text: #9ca3af;
+  --color-admission-always: #2784e8;
+  --color-admission-recruiting: #2eaa62;
+  --color-admission-closed: #9299a3;
 }
 html.theme-animating {
   --theme-anim-duration: 400ms;
@@ -83,6 +86,9 @@ html.theme-animating {
 }
 
 .dark {
+  --color-admission-always: #60a5fa;
+  --color-admission-recruiting: #4ade80;
+  --color-admission-closed: #9ca3af;
   --color-primary: #1e1e1e;
   --color-button-bg: #4bb0c9;
   --color-button-border: #2f4f67;

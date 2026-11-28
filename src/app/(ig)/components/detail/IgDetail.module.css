@@ -42,11 +42,40 @@
 }
 
 .tagInline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
   margin-top: 0.5rem;
   font-size: 0.9rem;
   color: var(--color-text-subtle);
   line-height: 1.4;
   word-break: keep-all;
+}
+
+.admissionInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admissionDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: 0 0 0.55rem;
+  border-radius: 50%;
+}
+
+.admissionAlways {
+  background-color: var(--color-admission-always);
+}
+
+.admissionRecruiting {
+  background-color: var(--color-admission-recruiting);
+}
+
+.admissionClosed {
+  background-color: var(--color-admission-closed);
 }
 
 .divider {

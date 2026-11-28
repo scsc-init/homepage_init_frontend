@@ -218,16 +218,26 @@
   border-radius: 50%;
 }
 
+.admissionInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text-subtle);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
 .admissionAlways {
-  background-color: #2784e8;
+  background-color: var(--color-admission-always);
 }
 
 .admissionRecruiting {
-  background-color: #2eaa62;
+  background-color: var(--color-admission-recruiting);
 }
 
 .admissionClosed {
-  background-color: #9299a3;
+  background-color: var(--color-admission-closed);
 }
 
 @media (max-width: 640px) {

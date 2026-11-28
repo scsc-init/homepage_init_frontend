@@ -744,6 +744,11 @@
     "joinAlwaysAvailable": "상시 가입 가능",
     "joinAvailable": "모집 기간 가입 가능",
     "joinUnavailable": "현재 가입 불가",
+    "joinAlwaysLabel": "상시 모집",
+    "joinRecruitingLabel": "모집중",
+    "joinUnavailableLabel": "모집 마감",
+    "joinNeverLabel": "항상 가입 불가",
+    "recruitmentDeadline": "모집 마감일: {date}",
     "titlePlaceholder": {
       "sig": "AI SIG",
       "pig": "INIT",
