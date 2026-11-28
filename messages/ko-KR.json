@@ -736,6 +736,7 @@
     "create": "{kind} 생성",
     "name": "{kind} 이름",
     "description": "{kind} 한 줄 설명",
+    "requiredField": "필수 항목입니다.",
     "introduction": "{kind} 소개",
     "websiteLabel": "웹사이트",
     "admission": "가입 기간",

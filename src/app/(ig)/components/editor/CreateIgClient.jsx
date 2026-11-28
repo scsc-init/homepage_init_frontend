@@ -78,7 +78,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
     watch,
     reset,
     setValue,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm({
     defaultValues: {
       title: '',
@@ -229,6 +229,7 @@ export default function CreateIgClient({ kind, scscGlobalStatus }) {
             onSubmit={onSubmit}
             editorKey={0}
             isCreate={true}
+            errors={errors}
             submitDisabled={!user || submitting}
             afterFields={
               <Controller

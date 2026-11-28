@@ -736,6 +736,7 @@
     "create": "Create {kind}",
     "name": "{kind} name",
     "description": "{kind} short description",
+    "requiredField": "This field is required.",
     "introduction": "About this {kind}",
     "websiteLabel": "Websites",
     "admission": "Admission period",

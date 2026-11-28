@@ -15,6 +15,7 @@ export default function IgForm({
   onSubmit,
   editorKey,
   isCreate,
+  errors,
   afterFields,
   submitDisabled,
 }) {
@@ -24,6 +25,7 @@ export default function IgForm({
   return (
     <form
       className="space-y-4"
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -35,12 +37,18 @@ export default function IgForm({
         placeholder={t(`titlePlaceholder.${kind}`)}
         register={register}
         name="title"
+        requiredIndicator
+        requiredMessage={t('requiredField')}
+        errorMessage={errors?.title?.message}
       />
       <TextInput
         label={t('description', { kind: kindLabel })}
         placeholder={t(`descriptionPlaceholder.${kind}`)}
         register={register}
         name="description"
+        requiredIndicator
+        requiredMessage={t('requiredField')}
+        errorMessage={errors?.description?.message}
       />
       <EditorInput
         label={t('introduction', { kind: kindLabel })}
