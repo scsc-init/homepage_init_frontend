@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,6 @@ import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { MdArrowOutward, MdOutlineInfo, MdLogout } from 'react-icons/md';
 import { getKvsClient } from '@/util/fetch/client-util';
-import { ROLE_MAP } from '@/util/constants';
 import type { UserProfile } from '@/types/user';
 
 const cx = (...classes: unknown[]) => classes.filter(Boolean).join(' ');
@@ -37,7 +36,7 @@ async function onAuthFail() {
 export default function MyProfileClient() {
   const { status } = useSession();
   const t = useTranslations('AboutMyPage');
-  const locale = useLocale();
+  const roles = useTranslations('Executive.roles');
   const { me } = useMe();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [inviteLinks, setInviteLinks] = useState({ kakao: '', discord: '' });
@@ -95,7 +94,7 @@ export default function MyProfileClient() {
         <div className={styles['user-name-container']}>
           <div className={styles['user-name']}>
             {user
-              ? `${user.name} [${(locale === 'en-US' ? ROLE_MAP[user.role]?.english : ROLE_MAP[user.role]?.korean) || t('unknownRole')}]`
+              ? `${user.name} [${roles.has(String(user.role)) ? roles(String(user.role)) : t('unknownRole')}]`
               : ''}
           </div>
         </div>

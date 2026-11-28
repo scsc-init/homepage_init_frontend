@@ -70,7 +70,8 @@ export const authOptions: NextAuthOptions = {
         const target = new URL(url, baseUrl);
         if (
           target.origin === baseUrl ||
-          (shareAuthCookies && target.origin === 'https://en.scsc.dev')
+          (shareAuthCookies &&
+            ['https://en.scsc.dev', 'https://ru.scsc.dev'].includes(target.origin))
         ) {
           return target.href;
         }

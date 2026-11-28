@@ -8,8 +8,8 @@ import styles from '../about.module.css';
 export const dynamic = 'force-dynamic';
 
 async function fetchMarkdown(locale: string) {
-  if (locale === 'en-US') {
-    return readFile(path.join(process.cwd(), 'public/about/rules/en-US.md'), 'utf8');
+  if (locale === 'en-US' || locale === 'ru-RU') {
+    return readFile(path.join(process.cwd(), `public/about/rules/${locale}.md`), 'utf8');
   }
 
   const res = await fetch(RULES_MARKDOWN_LINK, { cache: 'no-store' });
@@ -38,7 +38,7 @@ export default async function RegulationPage() {
           <div className={styles.inner}>
             <h1 className={styles.title}>{t('title')}</h1>
             <div className={styles.regulationCard}>
-              {locale === 'en-US' && <p>{t('translationNotice')}</p>}
+              {(locale === 'en-US' || locale === 'ru-RU') && <p>{t('translationNotice')}</p>}
               <p>
                 <a href={RULES_MARKDOWN_LINK} target="_blank" rel="noopener noreferrer">
                   {t('original')}

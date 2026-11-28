@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -19,19 +19,12 @@ import CopyButton from '@/components/CopyButton';
 import InAppBrowserOutButton from '@/components/InAppBrowserOutButton';
 import { useMe } from '@/util/hooks/useMe';
 
-const IN_APP_BROWSER_NAMES_EN: Record<string, string> = {
-  kakaotalk: 'KakaoTalk',
-  everytimeapp: 'Everytime',
-  instagram: 'Instagram',
-  line: 'LINE',
-};
-
 const IN_APP_BROWSER_NAMES = {
-  kakaotalk: '카카오톡',
-  everytimeapp: '에브리타임',
-  instagram: '인스타그램',
-  line: '라인',
-};
+  kakaotalk: 'kakaotalk',
+  everytimeapp: 'everytime',
+  instagram: 'instagram',
+  line: 'line',
+} as const;
 
 type AuthClientProps = {
   initialRedirect?: string | null;
@@ -70,7 +63,7 @@ export default function AuthClient({
 }: AuthClientProps) {
   const { me } = useMe();
   const t = useTranslations('UsLogin');
-  const locale = useLocale();
+  const browserName = useTranslations('InAppBrowser.browserNames');
   const [inAppWarning, setInAppWarning] = useState(false);
   const [pendingMode, setPendingMode] = useState<PendingMode>(null);
   const [inAppBrowserName, setInAppBrowserName] = useState('');
@@ -145,11 +138,11 @@ export default function AuthClient({
 
       if (re.test(ua)) {
         setInAppWarning(true);
-        setInAppBrowserName(locale === 'en-US' ? IN_APP_BROWSER_NAMES_EN[key] || name : name);
+        setInAppBrowserName(browserName(name));
         break;
       }
     }
-  }, [locale]);
+  }, [browserName]);
 
   return (
     <div id={styles['GoogleSignupContainer']}>
